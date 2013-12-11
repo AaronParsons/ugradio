@@ -1,0 +1,66 @@
+;actually make jeff's fig...
+
+if ps eq 1 then psopen, 'jeff_fig.ps', xsize=8, ysize=4, /inch, /times, /bold, /isolatin1
+
+
+restore, 'jeff_fig1.sav'
+symsize=1
+
+!p.multi=[0,2,1]
+plot, td, yd, psym=-6 , symsize=symsize, $
+	xra=[-3,3], xtit= 't', /xsty, $
+	yra=[-3,4], ytit= 'y' , /ysty, $
+	title='Conventional Fit', font=ps-1
+
+;oplot, td_g, yd_g, lines= 2 ;;,psym=-2, symsize=symsize;;, font=ps-1 ;;, color=!red
+
+y_conv= coeffs[0] + coeffs[1]* td
+oplot, td, y_conv, psym=-7, symsize=symsize, lines=1 ;;, font=ps-1 ;;color=!green
+sigyt= sqrt( diag_matrix( sig))
+sigyt= reform( sigyt,2,5)
+errplot, td, yd-sigyt[1,*], yd+sigyt[1,*]
+
+xdd= [-2.5, -2]
+ydd= [3.,3.]
+dydd= 0.5*[1,1]
+oplot, xdd, ydd, psym=-6, symsize=symsize  
+;oplot, xdd, ydd-dydd, lines=2 ;;, psym=-2, symsize=symsize  
+oplot, xdd, ydd-1.*dydd, lines=1 , psym=-1, symsize=symsize  
+
+xyouts, xdd[1]+.1, ydd[0], 'Data'
+;xyouts, xdd[1]+.1, ydd[0]-dydd[0], 'Best-fit Data'
+xyouts, xdd[1]+.1, ydd[0]- 1.*dydd[1], 'Best-fit Data'
+
+;------------------------------
+
+plot, td, yd, psym=-6, symsize=symsize, $
+	xra=[-3,3], xtit= 't', /xsty, $
+	yra=[-3,4], ytit= 'y' , /ysty, font=ps-1, $
+	title= 'Proper Fit'
+
+oplot, td_g, yd_g, lines= 2 ,psym=-2, symsize=symsize;;, font=ps-1 ;;, color=!red
+
+y_conv= coeffs[0] + coeffs[1]* td
+;oplot, td, y_conv, lines=1 ;;, psym=-1, symsize=symsize ;;, font=ps-1 ;;color=!green
+
+for nr=0,4 do begin
+;for nr=2,2 do begin
+sig0= sig[ 2*nr:2*nr+1, 2*nr:2*nr+1]
+get_ellipse, invert(sig0), x, y
+oplot, x+td[nr], y+yd[nr]
+endfor
+
+xdd= [-2.5, -2]
+ydd= [3.,3.]
+dydd= 0.5*[1,1]
+oplot, xdd, ydd, psym=-6, symsize=symsize  
+oplot, xdd, ydd-dydd, lines=2 , psym=-2, symsize=symsize  
+;oplot, xdd, ydd-2.*dydd, lines=1;;, psym=-1, symsize=symsize  
+
+xyouts, xdd[1]+.1, ydd[0], 'Data'
+xyouts, xdd[1]+.1, ydd[0]-dydd[0], 'Best-fit Data'
+;xyouts, xdd[1]+.1, ydd[0]- 2.*dydd[1], 'Conventionally-fit Data'
+
+if ps eq 1 then psclose
+
+end

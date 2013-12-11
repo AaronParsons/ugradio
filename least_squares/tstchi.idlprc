@@ -1,0 +1,25 @@
+n200 = 2000
+delchi = fltarr( n200)
+
+dela0 = 0.
+dela1 = 0.
+dela2 = 0.
+
+dela0 = 0.01 * (findgen( n200) - (0.5*n200))
+;dela1 = 0.01 * (findgen( n200) - (0.5*n200))
+
+for nr=0, n200-1 do begin
+dela = [dela0[ nr], dela1, dela2]
+;dela = [dela0, dela1[nr], dela2]
+delchi[ nr] = dela ## ss_chi ## transpose( dela)
+endfor
+
+plot, dela0, delchi
+indx = where( delchi lt m^2)
+print, dela0[ minmax(indx)]
+
+;plot, dela1, delchi
+;indx = where( delchi lt m^2)
+;print, dela1[ minmax(indx)]
+
+end

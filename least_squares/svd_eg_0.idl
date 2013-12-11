@@ -1,0 +1,81 @@
+
+s = double(s)
+t = double(t) 
+ss=transpose(s)##s
+st = transpose(s)##t
+ssi = invert(ss, status)
+a = ssi ## st
+bt = s ## a
+sigsq = total((t - bt)^2)/(n-m)
+dc =  ssi[ (m+1) * indgen(m)]
+sigdcsq = sigsq * dc
+sigdc = sqrt(sigdcsq)
+ncov = ssi/sqrt(dc # dc)
+
+;WE ASSUMING SIGMA_DATA  = 1. THEREFORE, CHISQ IS ... 
+chisq = total( (t-bt)^2)
+printf, filenr, 'status = ', status
+
+printf, filenr
+printf, filenr, '======================================================'
+printf, filenr, '======================================================'
+printf, filenr, spec
+printf, filenr, '======================================================'
+printf, filenr, '======================================================'
+printf, filenr
+
+printf, filenr, 'ss:'
+printf, filenr, ss
+printf, filenr, 'ssi'
+printf, filenr, ssi
+
+;printf, filenr, '================== 
+;printf, filenr, 's' 
+;printf, filenr, s                                                                      ; 
+printf, filenr, '' 
+printf, filenr, 'ncov'
+printf, filenr, ncov 
+
+printf, filenr
+printf, filenr, '-------Now we do SVD --------'       
+lsfit_svd, s, t, u, v, wgt, a_svd, vara_svd, siga_svd, ncov_svd, s_sq 
+
+printf, filenr, 'v'
+printf, filenr, v
+
+printf, filenr,''
+printf, filenr, 'wgt'
+printf, filenr, wgt                                                            
+
+printf, filenr
+printf, filenr, 'a, siga' 
+printf, filenr, transpose(a), sigdc
+
+printf, filenr, 'a_svd, siga_svd'
+printf, filenr, a_svd, siga_svd 
+
+;!p.multi=[0,1,3]
+;plot, time, xsty=2, ysty=3, yra=minmax( timesq), psym=-4, title=spec
+;oplot, timesq, lines=2
+
+!p.multi=[0,1,2]
+plot, s[0,*], xra= [0,3], xstyle=2, yra=minmax(s), ystyle=3, psym=-2, $
+      ytit='The column vectors of S', xtit='Measurement number', tit=specc
+oplot, [-10, 10], [0,0], lines=2
+oplot, s[1,*], color=!red , psym=-2, symsize=1.5
+oplot, s[2,*], color=!green , psym=-4
+xyouts, .5, .93, /norm, '0', align=0.5
+xyouts, '1', color=!red
+xyouts, '2', color=!green
+;xyouts, .5, .8, \norm, spec, align=0.5
+
+plot, u[0,*], xra= [0,3], xstyle=2, yra=minmax(u), ystyle=3, psym=-2, $
+      ytit='The column vectors of U', xtit='Measurement number', tit=specc
+oplot, [-10, 10], [0,0], lines=2
+oplot, u[1,*], color=!red , psym=-2, symsize=1.5
+oplot, u[2,*], color=!green , psym=-4
+xyouts, .5, .43, /norm, '0', align=0.5
+xyouts, '1', color=!red
+xyouts, '2', color=!green
+!p.multi=0
+;xyouts, .5, .43, /norm, spec, align=0.5

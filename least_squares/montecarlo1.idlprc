@@ -1,0 +1,21 @@
+;MONTE CARLO SIMULATION OF POLYFIT PROBLEM...
+
+n1024= 1024
+
+a0 = [ 96.625000,  4.5000000,  0.87500000]
+
+x0 = [ 5, 7, 9, 11]
+y0 = [ 142, 168, 211, 251] 
+
+;polyfit, x0, y0, 2, coeffs, sigcoeffs
+
+a = fltarr( 3, n1024)
+
+
+for nr=0,n1024-1 do begin
+y = y0 + randomn( seed, 4)
+polyfit, x0, y, 2, coeffs, sigcoeffs, yfit, sigma, nr3bad, cov
+a[ *, nr]= coeffs
+endfor
+
+end

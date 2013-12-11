@@ -1,0 +1,879 @@
+%\documentstyle[12pt,aasms4]{article}
+\documentstyle[11pt,aaspp4]{article}
+%\documentstyle[aas2pp4]{article}
+\begin{document}
+
+\title{LEAST-SQUARES AND CHI-SQUARE FITTING FOR THE BUDDING, \\ 
+AND ALSO THE POST-BUDDING, \\ AFICIONADO \\ \today} 
+
+\author{Carl Heiles}
+
+	In our never-ending attempt to make your life easier, we present
+you with this highly instructive, time-saving, and labor-saving
+informative document! Here we give the derivations and, also, the
+prescription for doing least-squares the easy way using IDL.  This
+prescription is given as an example in \S 5, and the budding-aficionado
+{\it power-user} can skip the details and go directly there.  The
+sections after the numerical example are for the more advanced
+post-budding aficionado. 
+
+\section{LEAST-SQUARE FITTING FOR TWO PARAMETERS, AS WITH A STRAIGHT
+LINE.}
+
+\subsection{The closed-form expressions in Taylor.}
+
+	First consider the least squares fit to a straight line.  Let
+$\theta_i$ be the $i^{th}$ measurement of the observed quantity (e.g.,
+the forward measurement of zenith distance angle); $t_i$ be the time of
+the $i^{th}$ measurement; $N$ = the total number of observations, i.e. 
+$i$ runs from 1 to $N$.  Remember that in the least-squares technique,
+quantities such as $t_i$ are regarded to be known with high accuracy
+while the quantity $\theta_i$ has uncertainties in its measurement. 
+
+	We expect the zenith distance $\theta_i$ to change linearly with
+time as follows:
+
+\begin{equation}
+\label{basicone}
+A + B t_i = \theta_i \; .
+\end{equation}
+
+\noindent Given this, one looks at Taylor's equations (8.10) and (8.11)
+and sees how to solve for the unknowns $A$ and $B$; these equations are
+the closed form of the solution for the pair of equations (8.8) and
+(8.9). 
+
+\subsection{Better is the following generalized notation.}
+
+	Taylor's closed-form expressions are simply longhand ways to
+write matrix math.  We will express them as matrices below in \S 3.  But
+to ease into this gently, we first will carry through an intermediate
+stage of notation. 
+
+	First rewrite equation (1) in the more general form
+
+\begin{equation}
+A s_i + B t_i = \theta_i \; .
+\end{equation}
+
+\noindent To correspond to equation (1), $s_i = 1$ for all $i$, but for
+a more general application $s$ might be some parameter other than time
+that varies from one measurement to another.  We have $N$ equations like
+equation (2).  They are known as the {\it equations of condition}
+because they are the equations that specify the theoretical model to
+which we are fitting the data. 
+
+	There are $N$ equations of condition and only two unknowns ($A$
+and $B$).  This is too many equations! We have to end up with a system
+in which the number of equations is equal to the number of unknowns.
+
+	To accomplish this, from equation (2) we form the {\it normal
+equations}.  The number of normal equations is equal to the number of
+unknowns, so in this case we will have two.  To do this, first define
+the following notation:
+
+\begin{mathletters}
+\label{sseqn}
+\begin{equation} 
+[ss] = \sum_{i=0}^{N-1} s_i s_i \;, \\ 
+\end{equation} 
+\begin{equation} [st] = \sum_{i=0}^{N-1} s_i t_i \; , \\
+\end{equation} 
+\begin{equation} [s\theta] = \sum_{i=0}^{N-1} s_i \theta_i \;, \; {\rm etc.} 
+\end{equation} 
+\end{mathletters}
+
+\noindent {\it Note}: Above and from now on, we consider $i = 0
+\rightarrow (N-1)$ instead of $i = 1 \rightarrow N$ for consistency with
+IDL's convention.  Then the two normal equations are
+
+\begin{mathletters}
+\begin{equation}
+[ss]A + [st]B = [s\theta] \; ,
+\end{equation}
+\begin{equation}
+[ts]A + [tt]B = [t\theta] \; .
+\end{equation}
+\end{mathletters}
+
+\noindent These are precisely analogous to Taylor's equations (8.8) and
+(8.9).  You could write the solution in closed form, as in Taylor's
+equations (8.10) and (8.11).  
+
+\section{LEAST-SQUARE FITTING FOR MANY PARAMETERS, AS WITH A CUBIC.}
+
+	With this notation it's easy to generalize to more ($M$)
+unknowns: the method is obvious because in each equation of condition
+(like equation (2)) we simply add equivalent additional terms such as $C
+c_i$, $D d_i$, etc; and in the normal equations (equation 4) we have
+more products and also more normal equations. 
+
+	Let's take an example with four unknowns ($M=4$), which we will
+denote by $A, B, C, D$; this would be like fitting a cubic.  With $M=4$
+we need at least five data points ($N=5$), so there must be at least
+five equations of condition.  The generalization of equation (2) is the
+$N$ equations
+
+\begin{equation}
+\label{eqcond}
+A s_i + B t_i + C u_i + D v_i = \theta_i \; ,
+\end{equation}
+
+\noindent with $i = 0 \rightarrow (N-1)$.  Again, the least squares
+fitting process assumes that the $s_i, t_i, u_i, v_i$ are known with
+zero uncertainty; all of the uncertainties are in the measurements of
+$\theta_i$.  We then form the four normal equations; the generalization
+of equation (4) is:
+
+\begin{eqnarray}
+\label{smeqn} 
+\left[ 
+\begin{array}{cccc} 
+{[ss]} & {[st]} & {[su]} & {[sv]} \\ 
+{[ts]} & {[tt]} & {[tu]} & {[tv]} \\ 
+{[us]} & {[ut]} & {[uu]} & {[uv]} \\ 
+{[vs]} & {[vt]} & {[vu]} & {[vv]} \\
+\end{array} 
+\; \right] 
+\left[ 
+\begin{array}{c} 
+A \\ 
+B \\ 
+C \\ 
+D \\
+\end{array} 
+\; \right] 
+\; = 
+\left[ 
+\begin{array}{c} 
+{[s \theta]} \\ 
+{[t \theta]} \\ 
+{[u \theta]} \\ 
+{[v \theta]} \\ 
+\end{array} 
+\; \right]
+\end{eqnarray} 
+
+\noindent Note that this equation is really a matrix equation, and that
+the $M \times M$ matrix on the left is symmetric; this means that you can
+actually {\it solve} for $A, B, C, D$! 
+
+\section{FAR, FAR BEST AND EASIEST: MATRIX ALGEBRA.} 
+
+	The above equations are terribly cumbersome to solve in a
+computer code because they require lots of loops.  However, it becomes
+trivial if we use matrices.  Here we designate a {\bf matrix} by {\bf
+boldface} type. 
+
+	We illustrate the matrix method by carrying through the above
+$M=4$ example, and we assume that there are 5 independent measurements
+($N=5$).  We first define the matrices
+
+\begin{mathletters}
+\label{satmatrices} 
+\begin{eqnarray} 
+{\bf S} = \left[
+\begin{array}{cccc} 
+{s_0} & {t_0} & {u_0} & {v_0} \\ 
+{s_1} & {t_1} & {u_1} & {v_1} \\ 
+{s_2} & {t_2} & {u_2} & {v_2} \\ 
+{s_3} & {t_3} & {u_3} & {v_3} \\
+{s_4} & {t_4} & {u_4} & {v_4} \\
+\end{array} 
+\; \right] 
+\end{eqnarray}
+%\end{mathletters}
+
+%\begin{mathletters}
+\begin{eqnarray}
+{\bf A} = \left[
+\begin{array}{c}
+A \\
+B \\
+C \\
+D \\
+\end{array} \; \right] 
+\end{eqnarray}
+%\end{mathletters}
+
+%\begin{mathletters}
+\begin{eqnarray}
+{\bf T} = \left[
+\begin{array}{c} 
+{\theta_0} \\ 
+{\theta_1} \\ 
+{\theta_2} \\ 
+{\theta_3} \\ 
+{\theta_4} \\ 
+\end{array} 
+\; \right]
+\end{eqnarray} 
+\end{mathletters} 
+
+\noindent so, in matrix form, the equations of condition (equation (5))
+are simply the single matrix equation
+
+\begin{equation}
+\label{equationofcondition}
+{\bf S \cdot A} = {\bf T} \; .
+\end{equation}
+
+	Again, there are more equations than unknowns so we can't solve
+this matrix equation directly.  So next we form the normal equations
+from these matrices.  In matrix form, the normal equations (equation
+(6)) reduce to the single equation 
+
+\begin{equation}
+{\bf SS \cdot A} = {\bf ST} \; ,
+\end{equation}
+
+\noindent where
+
+\begin{mathletters} 
+\label{ssdef}
+\begin{eqnarray} 
+{\bf SS} = \left[
+\begin{array}{cccc} 
+{[ss]} & {[st]} & {[su]} & {[sv]} \\ 
+{[ts]} & {[tt]} & {[tu]} & {[tv]} \\ 
+{[us]} & {[ut]} & {[uu]} & {[uv]} \\ 
+{[vs]} & {[vt]} & {[vu]} & {[vv]} \\
+\end{array} 
+\; \right] 
+\end{eqnarray} 
+%\end{mathletters} 
+
+\noindent and
+
+%\begin{mathletters} 
+\begin{eqnarray} 
+{\bf ST} = \left[
+\begin{array}{c} 
+{[s \theta]} \\ 
+{[t \theta]} \\ 
+{[u \theta]} \\ 
+{[v \theta]} \\ 
+\end{array} 
+\; \right]
+\end{eqnarray} 
+\end{mathletters} 
+
+\noindent Now the number of equations is equal to the number of
+unknowns, so the solution of the matrix equation is easy (in IDL, that
+is). 
+
+	In IDL, we generate the matrix {\bf SS} by
+
+\begin{mathletters}
+\label{idlssdef}
+\begin{equation}
+{\bf SS} = {\bf transpose(S) \# \# S} \; 
+\end{equation}
+
+\noindent and the matrix {\bf ST} by
+
+\begin{equation}
+\label{idlssdefb}
+{\bf ST} = {\bf transpose(S) \# \# transpose(T)} \; .
+\end{equation}
+\end{mathletters}
+
+\noindent In IDL, $\#\#$ is the matrix multiplication
+operator.\footnote{In equation~\ref{idlssdefb} we could have used {\bf
+T} instead of {\bf transpose T}; however, in the unusual case in which
+you are solving for a single unknown, {\bf transpose T} works and {\bf
+T} doesn't.}
+
+	To solve the matrix equation (9) for {\bf A}, first rewrite it
+by multiplying both sides by the inverse of ${\bf SS}$ (that is, by
+${\bf SS}^{-1})$; this gives
+
+\begin{equation}
+\label{adef}
+{\bf A} = {\bf SS^{-1} \cdot ST} \; .
+\end{equation}
+
+\noindent To compute $\bf SS^{-1}$ in IDL we use IDL's invert function
+and we multiply matrices by typing $\#\#$.  Thus, in IDL, first
+calculate the inverse matrix $\bf SS^{-1}$, which we denote by {\bf
+SSI}:
+
+\begin{equation}
+\label{ssidef}
+{\bf SSI} = {\bf invert(SS)} \; ,
+\end{equation}
+
+\noindent and then carry out the multiplication in equation~\ref{adef}:
+
+\begin{equation}
+\label{idladef}
+{\bf A} = {\bf SSI \ \#\# \ ST} \; .
+\end{equation}
+
+\section{UNCERTAINTIES IN THE DERIVED COEFFICIENTS.}
+
+	How about the uncertainties in the derived quantities contained
+in the matrix ${\bf A}$?
+
+	The first thing to do is derive the variance $\sigma^2$ (the
+square of standard deviation, or mean error, or dispersion, etc) of the
+individual data points using the generalization of Taylor's equation
+(8.14).  The generalization is, simply, to replace the $N-2$ in the
+denominator by $N-M$.  For example, with the fit to a linear line there
+are 2 parameters, Taylor's $A$ and $B$, so $M=2$ and the denominator is
+$N-2$.  So the generalization is
+
+\begin{equation} \sigma^2 = {1 \over N - M} \sum_{i=0}^{N-1} (\theta_i -
+\bar{\theta_i})^2 \; , 
+\end{equation}
+
+\noindent where $\bar{\theta_i}$ are the values for $\theta_i$ {\it
+predicted by the derived quantities.} Note the difference: $\theta_i$
+are the {\it observed} values, while $\bar{\theta_i}$ are the values
+{\it predicted by the least squares fit}.  The predicted values are
+those that are computed from the derived coefficients $A, B, C\dots$ The
+$N$ quantities $(\theta_i - \bar{\theta_i})$ are called the {\it
+residuals} or {\it deviations} from the fit (Taylor, page 98). 
+
+	It's easy to calculate the $\bar{\theta_i}$ with matrices. First
+define the matrix ${\bf \bar T}$ that contains these values:
+
+\begin{eqnarray}
+{\bf \bar T} = \left[
+\begin{array}{c} 
+{\bar{\theta_0}} \\ 
+{\bar{\theta_1}} \\ 
+{\bar{\theta_2}} \\ 
+{\bar{\theta_3}} \\ 
+{\bar{\theta_4}} \\ 
+\end{array} 
+\; \right]
+\end{eqnarray} 
+
+{\noindent} Calculating ${\bf \bar T}$ is simple:
+
+\begin{equation}
+{\bf \bar T} = {\bf S \cdot A} \; . 
+\end{equation}
+
+\noindent Note that {\bf S} is already defined (equation 7a) and {\bf A}
+was solved for in equation (12) and (14).  
+
+	Let's do all this in IDL.  To do equation (17) in IDL (in IDL we
+designate ${\bf \bar T}$ by {\bf BT}):
+
+\begin{equation}
+\label{bteqn}
+{\bf BT} = {\bf S \ \#\# \ A} \; .
+\end{equation}
+
+\noindent To get $\sigma^2$ (equation (15)) in IDL:
+
+\begin{equation}
+\label{sigsq}
+sigsq = {\bf total}( ({\bf T - BT}) \wedge 2 )/(N-M) \; . 
+\end{equation}
+
+\noindent $({\bf T - BT})$ is the array of residuals; it is usually a
+good idea to plot all three quantities {\bf T}, {\bf BT}, and $({\bf T -
+BT})$ to make sure your fit looks reasonable and to check for bad data
+points. 
+
+	OK, now the error of the derived coefficients is given by the
+analogy to Taylor's equations (8.15) and (8.16).  In IDL, let's
+designate the array that contains the squares of errors of the $N$
+derived coefficients by {\bf sigdcsq} (think of ``{\bf sig}ma of {\bf
+d}erived {\bf c}oefficients {\bf sq}uared''); you get this from the
+diagonal elements of {\bf SSI}, whose indices are given in IDL
+by\footnote{Specifically, for any M-sized square array {\bf Q} the
+vector of its diagonal elements is given by {\bf Q[(M+1)*indgen(M)]}.}
+
+\begin{equation}
+\label{lscoefferror}
+{\bf sigdcsq} = sigsq * {\bf SSI[(M+1)*indgen(M)]} \; .
+\end{equation}
+
+\noindent Or, to put it simply in words: to get the square of the
+``error of coefficient $j$'' in the matrix ${\bf A}$, multiply
+$\sigma^2$ (that's the single number $sigsq$ in IDL) by the $j^{th}$
+diagonal element of the inverse matrix ${\bf
+SS^{-1}}$. And it should be obvious that the standard
+deviation of the coefficients is just $sqrt({\bf sigdcsq})$. 
+
+	Although the above equation is correct, there is more to the
+story because of covariance. 
+
+\subsection{The covariance matrix and its normalized counterpart}
+
+\label{ncov}
+
+	Finally, you can calculate the {\it normalized covariance
+matrix}\footnote{It is a pleasure to thank Doug Finkbiener for
+introducing me to this concept.} {\bf ncov} using the following two IDL
+statements:
+ 
+\begin{mathletters}
+\begin{equation}
+{\bf dc = SSI[(M+1)*indgen(M)]}
+\end{equation}
+\begin{equation}
+{\bf ncov = SSI/{\it sqrt}(dc \# dc)}
+\end{equation}
+\end{mathletters}
+
+\noindent In the above, ${\bf dc \# dc}$ is an $M \times M$ matrix
+consisting of products of the diagonals of ${\bf SSI}$, so dividing
+${\bf SSI}$ by $sqrt({\bf dc \# dc})$ generates a ``normalized'' version
+of ${\bf SSI}$.  So you might guess that if {\bf ncov} is a {\it
+normalized} covariance matrix, it's non-normalized parent is {\bf
+SSI}---and you'd be right.  
+
+	In ${\bf ncov}$, the diagonal elements are all unity and the
+off-diagonal elements reflect the interdependence of the derived
+coefficients (called the ``covariance'') on each other; the off-diagonal
+elements can range from $-1 \rightarrow 1$.  Values significantly
+different from zero show a high covariance.  The normalized covariance
+matrix is useful because you can tell at a glance how bad things are. 
+
+	Here's what the covariance means.  Suppose you are least-squares
+fitting for two derived coefficients ($A_0$ and $A_1$).  When you do a
+least-squares fit to a set of data, you are fitting one set of data out
+of a possible infinity of possible sets that you'd get by repeating the
+experiment, and your particular set of data happens to produce specific
+values of $A_0$ and $A_1$, which differ from the {\it true} values by
+amounts $\delta A_0$ and $\delta A_1$.  If their covariance is zero,
+then in the infinity of data sets you'd find that $\delta A_0$ is
+uncorrelated with $\delta A_1$.  But if it is nonzero, these two
+quantities would be correlated. 
+
+	A high covariance is ``bad'' because the derived variables
+depend on each other.  If you're evolving from being a {\it budding}
+aficionado to a real one, then you should see section~\ref{chicoeffs}
+below.  Often a high covariance results from a poor choice of
+coefficients that you are fitting or even a bad choice of the zero point
+of the independent variable (Sound like gobbledygook? See the numerical
+example in \S5.).  And, as in that example, you can often (not always!)
+eliminate the bad covariance by reformulating the problem---you don't
+even need to take more data!
+
+\section{A NUMERICAL EXAMPLE AND ITS SOLUTION IN IDL.}
+
+	{\bf (1) First, generate the numerical example.} Suppose that we
+make four measurements of the angle $\theta$ and we want to fit to a
+parabolic function in time.  In the notation of equation~\ref{eqcond},
+$s$ would be unity, $t$ the time, and $u$ the time squared, so the
+number of unknowns is three ($M=3$).  Because there are four independent
+measurements ($N=4$) the subscripts run from $i = 0 \rightarrow 3$. 
+Suppose that the four values of time are 5, 7, 9, 11. 
+
+	First we create the matrix {\bf S} in IDL
+
+\begin{equation}
+{\bf S = fltarr(M,N) = fltarr(3,4)}
+\end{equation}
+	
+\noindent and then we populate it with numbers.  In your own work, you
+would normally do this by reading a data file and transferring the
+numbers to the matrix using IDL commands; to work through this example,
+you might manually type them in.  After populating the matrix, in direct
+correspondence to equation~\ref{satmatrices}a we have $s_i = 1$, $t_i =
+time_i$, $u_i = time_i^2$:
+
+\begin{mathletters}
+\begin{eqnarray}
+{\bf S} = \left[
+\begin{array}{ccc}
+1  &  5   &  25  \\
+1  &  7   &  49  \\
+1  &  9   &  81  \\
+1  &  11  &  121 \\
+\end{array} \; \right] 
+\end{eqnarray}
+\end{mathletters}
+
+\noindent and suppose that four measured values of $\theta$ are
+(equation~\ref{satmatrices}c)
+
+\begin{mathletters}
+\begin{eqnarray}
+{\bf T} = \left[
+\begin{array}{c}
+142 \\
+168 \\
+211 \\
+251 \\
+\end{array} \; \right] \; .
+\end{eqnarray}
+\end{mathletters}
+
+	{\bf (2) Now solve it in IDL.} In IDL we calculate the normal
+equation matrices (equations~\ref{ssdef}a, ~\ref{idlssdef}a):
+
+\begin{mathletters}
+\begin{equation}
+{\bf SS} = {\bf transpose(S) \# \# S} \; ,
+\end{equation}
+
+\noindent and (equations~\ref{ssdef}b, ~\ref{idlssdef}b)
+
+\begin{equation}
+{\bf ST} = {\bf transpose(S) \# \# transpose(T)} \; .
+\end{equation}
+\end{mathletters}
+
+\noindent In IDL we take the inverse of {\bf SS} (equation~\ref{ssidef}):
+
+\begin{equation}
+{\bf SSI} = {\bf invert(SS)} \; .
+\end{equation}
+
+	The least-square fitted quantities are in the matrix {\bf A}
+(equations~\ref{adef}, ~\ref{idladef}), which we obtain in IDL with
+
+\begin{equation}
+{\bf A} = {\bf SSI \ \#\# \ ST} \; .
+\end{equation}
+
+	To get the uncertainties, follow the prescription in \S 4.  More
+specifically, the IDL statements of equations~\ref{bteqn}, \ref{sigsq},
+and \ref{lscoefferror} provide the matrix of squares of the
+uncertainties, {\bf sigdcsq}. 
+
+	For this numerical example, the solution (the array of derived
+coefficients) is
+
+\begin{mathletters}
+\label{avalues}
+\begin{eqnarray}
+{\bf A} = \left[
+\begin{array}{c}
+96.6250 \\
+4.49805 \\
+0.875122 \\
+\end{array} \; \right] 
+\end{eqnarray}
+
+\noindent and the errors in the derived coefficients [the square root of
+the $\sigma^2$'s of the derived coefficients, i.e.  $(\sigma_j^2)^{1/2}$
+or, in IDL, $sqrt({\bf sigdcsq})$ in equation~\ref{lscoefferror}] are:
+
+\begin{eqnarray}
+{\bf \sigma_A} = \left[
+\begin{array}{c}
+34.0118 \\
+8.99995 \\
+0.559014 \\
+\end{array} \; \right] \; .
+\end{eqnarray}
+
+\noindent The normalized covariance matrix (equation 21) is
+
+\begin{eqnarray}
+{\bf ncov} = \left[
+\begin{array}{ccc}
+1  &  -.989848   &  .969717  \\
+-.989848  &  1   &  -.993808  \\
+.969717  & -.993808 &  1  \\
+\end{array} \; \right] \; .
+\end{eqnarray}
+\end{mathletters}
+
+	These results look {\it horrible}! The uncertainties are large
+fractions of the derived coefficients, and the normalized covariance
+matrix has large off-diagonal elements.  
+
+	In this seemingly innocuous example we have an excellent case of
+a poor choice of zero point for the independent variable (the time). 
+Retry this example making the zero point of the time equal to the mean
+of all the times, that is set $(time_i = time_i - 8)$, and try it again;
+note the amazingly better results! Different {\it answers} for {\bf A},
+too! In doing this, you are taking a partial step towards fitting
+coefficients of the orthonormal set of Chebyshev polynomials---it's
+always a good idea to fit orthogonal functions if you can express the
+problem in those terms. 
+
+	You might also want to try out another example in Taylor's \S 8.5.
+
+\section{CHI-SQUARE FITTING, AND WEIGHTED FITTING}
+
+	Chi-square fitting is very much like our least-squares fitting
+above, with one additional wrinkle.  Chi-square ($\chi^2$) is equal to
+the ratio of the variance of the {\it fit} ($\sigma^2$) to the intrinsic
+variances of the datapoints ($\sigma_{data}^2$).  So it should be
+obvious that In Chi-square fitting, you must know the measurement
+uncertainties of the individual data points beforehand.  If you want to
+give the various datapoints different weights, then that is just like
+Chi-square fitting except that you can adopt an arbitrary scale factor
+for the uncertainties (section~\ref{weightedcase}). 
+
+\subsection{The Chi-square when all datapoints have identical dispersions}
+\label{sectionchisq}
+
+	Suppose, first, that all datapoints have the same intrinsic
+measurement uncertainty $\sigma_{data}$.{\footnote{Our discussion follows
+{\it Numerical Recipes} \S 14.4.3, {\it Solution by Use of the Normal
+Equations}, which we denote by NR.}   This is a function {\it only}
+of the {\it instrument} and the {\it data-taking procedure}: if you know
+the properties of the instrument, and if you understand how it works,
+and if there are no systematic errors, then you should be able to
+specify $\sigma_{data}$. Specifically, $\sigma_{data}$ is most certainly
+{\it not} the same thing as the dispersion of the points from the
+least-squares fit. 
+
+	This case, in which all datapoints have the same intrinsic
+measurement uncertainty $\sigma_{data}$, occurs frequently, for example
+when the datapoints are taken under identical conditions.  Least-squares
+assumes a Gaussian distribution of datapoints around the true
+value, which is characterized by the dispersion $\sigma_{data}$.  In
+this case, Chi-square fitting is just like least-squares fitting except
+for the following:
+
+	{\bf (1)} Divide each equation of condition by $\sigma_{data}$. 
+You are generating a new matrix ${\mathbf S_X}$, which is identical to
+{\bf S} except that each row is divided by $\sigma_{data}$.  This new
+matrix is the same as NR's {\it design matrix}. 
+
+	{\bf (2)} Divide each datapoint by $\sigma_{data}$.  You are
+generating a new matrix ${\mathbf T_X}$, which is identical to {\bf T}
+except that each row is divided by $\sigma_{data}$.  This new matrix is
+the same as NR's vector {\bf b}. 
+
+	{\bf (3)} In our equation~\ref{sigsq}, obtain the {\it reduced}
+observed chi-square $\widehat{\chi_{obs}}^2$ by replacing {\bf T} by
+${\mathbf T_X}$ and {\bf BT} by $\mathbf{BT_X} = {\mathbf S_X \#\#
+A_X}$ (cf equation~\ref{bteqn}).  That is, in IDL
+
+\begin{equation}
+\label{chisq}
+\widehat{\chi_{obs}^2} = {\bf total}( ({\bf T_X - BT_X}) \wedge 2 )/(N-M) \; . 
+\end{equation}
+
+\noindent The reduced chi-square $\widehat{\chi_{obs}}^2$ is equal to the
+ordinary chi-square $\chi_{obs}^2$ except that it is divided by the
+number of degrees of freedom, ordinarily denoted by $\nu$, which is
+equal to $(N-M)$. 
+
+	Look at the effect of all these three steps somewhat carefully. 
+In steps {\bf (1)} and {\bf (2)}, you've taken our entire matrix
+equation~\ref{equationofcondition} and divided both sides by the same
+quantity, $\sigma_{data}$.  Obviously, this doesn't change the derived
+results for {\bf A}---as it shouldn't.  So $\mathbf{A_X} = \mathbf{A}$. 
+However, in equation~\ref{chisq} the vectors ${\mathbf T_X}$ and
+${\mathbf BT_X}$ are multiplied by the factor $1 \over \sigma_{data}$,
+so equation~\ref{chisq} calculates $\widehat{\chi_{obs}^2} =
+{\sigma^2 \over \sigma_{data}^2}$. 
+
+	This is exactly what we {\it should} get! Suppose, for example,
+that the least-squares fit model is perfect and the only deviations from
+the fitted curve result from measurement error.  Then by necessity we
+have $\sigma = \sigma_{data}$ and $\widehat{\chi_{obs}^2} = 1$. 
+
+	In the case $\widehat{\chi_{obs}^2} = 1$ the dispersion of the
+observed points $\sigma$ is equal to the intrinsic dispersion of the
+datapoints $\sigma_{data}$ and the mathematical model embodied in the
+least-squares fit is perfect.  That, at least, is the {\it theoretical}
+conclusion.  In practice, however, you're obtaining such a low, good
+value for $\chi^2$ might mean instead that you are using {\it too large}
+a value for $\sigma_{data}$: you are ascribing more error to your
+datapoints than they really have, perhaps by not putting enough faith in
+your instrument.  Specifically, if the datapoints really have intrinsic
+measurement dispersion $\sigma_{data}$ and you specify that they have $2
+\sigma_{data}$ when computing $(\mathbf{S_X},\mathbf{T_X})$, then you'll
+find $\widehat{\chi_{obs}^2} = 0.25$. 
+
+	High values of $\widehat{\chi_{obs}^2}$ indicate that the model
+is not perfect and could be improved by the use of a different model,
+such as the addition of more parameters---or, alternatively, that you
+think your equipment works better than it really does and you are
+ascribing {\it less} error to your datapoints than they really have. 
+
+	We don't discuss the interpretation of $\chi^2$ here, because
+that is done very adequately in textbooks on statistics. In particular,
+we recommend Taylor's chapter on Chi-square (\S 12), which provides a
+nice introduction and discussion. 
+
+\subsection{The case in which datapoints have different dispersions,
+or different weights: like a weighted average}
+
+\label{weightedcase}
+
+	In this case, each row of the equation-of-condition matrix {\bf
+S} and each element of the data vector {\bf T} get divided by their
+corresponding $\sigma_{data}$.  The equation embodied in each row of the
+matrix equation~\ref{equationofcondition} remains unchanged, but the
+different rows are weighted differently with respect to each other. 
+
+	Consider two measurements with intrinsic measurement
+uncertainties $(\sigma_1, \sigma_2)$; suppose $\sigma_1 < \sigma_2$. 
+After being divided by their respective $\sigma_{data}$'s, all of the
+numbers in row 1 are larger than those in row 2.  In all subsequent
+matrix operations, these larger numbers contribute more to all of the
+matrix-element products and sums.  Thus, the measurement with smaller
+uncertainty has more influence on the final result, as it should. 
+
+	Suppose that the above two measurements were taken under
+identical conditions except that measurement 1 received more integration
+time than measurement 2; we have ${\sigma_1 \over \sigma_2} = \left({t_1
+\over t_2}\right)^{-1/2}$, so the rows of ${\mathbf S_X}$ are weighted
+as $t^{1/2}$.  This means that during the computation of ${\mathbf
+SS_X}$, the self-products of row 1 are weighted as $t$ (and each row
+multiplies {\it only} itself; see equations~\ref{sseqn} and
+\ref{smeqn}).  This means that each datapoint is weighted as $t$, which
+is exactly what you'd expect! Note that this is also exactly the same
+weighting scheme used in a weighted average, in which the weights are
+proportional to $\left(1 \over \sigma_{data}\right)^2$.  We conclude
+that weighting scheme of the three steps in section~\ref{sectionchisq}
+agrees with common sense. 
+
+	Suppose you don't know the intrinsic measurement dispersion
+$\sigma_{data}$, but you {\it do} know the {\it relative} dispersion of
+the various measurements.  For example, this would be the case if the
+datapoints were taken under identical conditions except for integration
+time; then $\sigma_{data} \propto t^{-1/2}$.  In this case, multiply
+each row by its weight $w \propto {1 \over \sigma_{data}}$ and proceed
+as above. 
+
+\subsection{The uncertainties of the derived coefficients }
+\label{chicoeffs}
+
+	The above two subsections deal with the Chi-square of the fitted
+points, and provide information about how well the model fits the data. 
+It says nothing about the uncertainties in the derived coefficients.  To
+get this{\footnote{Our discussion follows {\it Numerical Recipes} \S
+14.5, the first three italicized subsections, which we denote by NR.},
+you re-express equation~\ref{lscoefferror} in terms of the new
+parameters, namely
+
+\begin{equation}
+\label{lscoefferror1}
+{\bf sigdcsq} = \widehat{\chi_{obs}^2} * {\bf SSI_X[(M+1)*indgen(M)]} \; ,
+\end{equation}
+
+\noindent where $\widehat{\chi_{obs}^2}$ is from equation~\ref{chisq}. 
+However, {\it this is most definitely not the whole story} because you
+are doing a multiparameter fit, and generally speaking the derived
+parameters have nonzero covariance. 
+
+	Consider the example of the first two coefficients in our above
+example.  In this example, the fit gives $y = A_0 + A_1 t + A_2 t^2$,
+where the numerical values are given in vector form by
+equation~\ref{avalues}. The coefficient $A_0$ is the $y$-intercept and
+$A_1$ is the slope. They have derived values $A_0 = 96 \pm 34$ and $A_1
+= 4 \pm 9$. 
+
+	Remember what these uncertainties really mean: in an infinity of
+similar experiments, you'll obtain an infinity of values of $(A_0,A_1)$
+that are normally distributed with dispersions (34,9).  Loosely
+speaking, this means that $A_0$ lies between $(96-34=62)$ and
+$(96+34=130)$ and $A_1$ lies between $-4.5$ and $13.5$.  If you are
+interested in knowing about $A_0$ {\it without regard to $A_1$}, then
+its uncertainty is indeed 96; ditto for $A_1$.  In other words,
+equations~\ref{lscoefferror} and \ref{lscoefferror1} apply.  Thus, if
+you don't care about $A_1$, then you can conclude $A_0 = 130$; and if
+you don't care about $A_0$, then you can conclude $A_1=13.5$ (both with
+$68.3\%$ probability). 
+
+	However, if you are interested in knowing about {\it both}, you
+must include their covariance.  In our example, the large negative
+covariance follows logically just from looking at a graph: if you fit
+some points, all of which lie at positive $t$, then a more negative
+derived slope will raise the $y$-intercept. 
+
+	Specifically, the large negative covariance means that positive
+departures of $A_0$ are associated with negative departures of $A_1$. 
+So even though the {\it individual} values $A_0=130$ and $A_1=13.5$ are
+acceptable, you {\it cannot} conclude that the {\it pair} of values
+$(A_0,A_1) = (130, 13.5)$ is acceptable, because this pair has large
+positive departures of both.  In contrast, what {\it is} acceptable here
+would be something like $(A_0,A_1) = (130, -4.5)$. 
+
+	We stress that the acceptable ranges of values depend on what
+you are interested in.  This is sort of like the observer's influence in
+quantum mechanics.  If you are interested in $A_1$ alone, then you can
+say $A_1 = 4 \pm 9$ and, in making this statement, you have to realize
+that, as $A_1$ varies over this range, $A_0$ can vary over (formally, at
+least) the range $(\infty \rightarrow -\infty)$: you just don't give a
+damn {\it what} happens to $A_0$ because you're not interested.  But the
+moment you become interested and restrict its possible range, that
+influences the possible range for $A_1$, too. 
+ 
+	There is no simple relationship between the covariance matrix
+elements and the acceptable ranges.  For two variables, the best way to
+express this matters is to construct the ellipses that define the loci
+of constant $\Delta \chi^2$ and present them on a graph as in NR's
+Figure 14.5.4.  For three variables, these ellipses become ellipsoids;
+for four, they become four-dimensional volumes, etc. 
+
+	To construct these curves/surfaces/volumes/etc., follow the
+prescription defined by the six bullets at the end of the section NR's
+{\it Probability Distribution of Parameters in the Normal Case}.  This
+description is a bit curt, but it is accurate.  To make sure that you
+understand it, take a numerical example and try applying the
+prescription to the case of deriving the uncertainties of a single
+coefficient (the case $\nu = 1$); that case is the case covered by
+equations~\ref{lscoefferror} and \ref{lscoefferror1} above.  In this
+case, you have the usual normal distribution function for that variable,
+in which its formal error (as defined in equations~\ref{lscoefferror}
+and \ref{lscoefferror1} above) defines a range within which the derived
+value will fall $68.3\%$ of the time in the infinity of
+experiments---it's just like any other normal distribution. 
+
+\section{YOU WANT MORE? YOU GOT IT!}
+
+	In our above example, a true expert (there aren't many of these,
+even among professional astronomers) would often do something more
+involved, namely to fit an orthogonal set of polynomials (i.e., in this
+case the first three terms of Chebyshev polynomials) instead of just a
+cubic.  Because this set is orthogonal, the off-diagonal elements of
+${\bf ncov}$ would automatically equal zero. 
+
+	There are two ``bibles'' of least-square fitting.  Most
+important is Press {\it et al.}'s {\it Numerical Recipes}, which
+provides a wide-ranging treatment of computational techniques.  Our
+treatment follows theirs quite closely, but I wrote this before knowing
+of their treatment so didn't use their notation.  Our matrices
+correspond to theirs pairwise (ours, theirs) as follows: $({\bf S},{\bf
+A})$; $({\bf T},{\bf \beta})$; $({\bf S^T \cdot S} \ [= {\bf SS}],{\bf
+\alpha})$; $({\bf SSI} \ [= {\bf SS}^{-1}],{\bf C} \ [= {\bf
+\alpha}^{-1}])$. 
+
+	An ancient (1863!---and in this case, age is beauty!) treatise
+by William Chauvenet, the Appendix of {\it A Manual of Spherical and
+Practical Astronomy}, treats complicated cases such as least-square
+fitting in the presence of known constraints (e.g.  if three angles of a
+triangle are measured, their sum is constrained to be $180^\circ$).  But
+it doesn't use matrices. 
+
+\section{ADDENDUM: FITTING A LINE WHEN BOTH X AND Y HAVE
+UNCERTAINTIES}
+
+	We've mentioned that one of the essential assumptions of least
+squares is that the independent variables are known with high precision
+and the errors occur only in the measured data.  Suppose you're fitting
+two variables, $t$ and $\theta$, as in equation~\ref{basicone}.  This
+essential assumption means that $t$ is known with high precision and all
+the uncertainty is in $\theta$, and you are minimizing the squares of
+the residuals in the $\theta$-direction only. 
+
+	If {\it both} variables have uncertainties, then you have to be
+careful because the essential assumption is violated.  Before doing
+anything, read (lightly) Isobe, Feigelson, Akritas, and Babu (1990, ApJ
+364, 104).  Then adopt one of the two following procedures:
+
+	{\bf (1)} You may be able to reformulate the problem by defining
+two new variables, one of which has much less fractional uncertainty
+than the other.  The most straightforward reformulation is to define
+$x=(\theta + t)$ and $y=(\theta - t)$.  The sum, $x$, has smaller
+fractional uncertainty than $y$ so its dispersion {\it might} not matter
+as much.  In such a redefinition, you should include a scaling factor on
+one of the original variables to make the two original dispersions about
+equal. 
+
+	Before proceeding with this option, re-read Isobe et al!
+
+	{\bf (2)} More generally, use the prescription in Isobe et al. 
+Lucky for me, I haven't had to delve into this method---but their
+formulation looks good!
+
+\end{document}
+

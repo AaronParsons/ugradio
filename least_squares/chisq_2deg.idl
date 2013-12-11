@@ -1,0 +1,162 @@
+;GENERATE AN EXAMPLE FOR THE WRITEUP USING A CONST PLUS SLOPE.
+
+n1024 = 1024
+sigma_meas = 1.3
+
+m=8
+n=2
+x = dblarr(2,m)
+
+delta_a = fltarr( 2, n1024)
+chisq = fltarr( n1024)
+
+time = double([5,7,9,11])
+time = double([5,7,9,11,5,7,9,11])
+;time = double( [7,9,11])
+;time=time-8.
+time=time-7.d0
+x[0,*]=1.
+x[1,*]=time
+
+;DEFINE THE PARENT SOLUTION...
+y_nonoise= double( 100. + 5.* time)
+
+;DEFINE THE SIGMAS...
+sigma = fltarr(M) + sigma_meas
+
+for nrexpt= 0, n1024-1 do begin
+y = y_nonoise + sigma_meas* randomn( seed, m)
+
+y = transpose( y)
+
+;CREATE A DIAGONAL MATRIX WHOSE ELEMENTS ARE THE INVERSES OF THE SIGMAS...
+w = fltarr( m,m)
+w [ indgen(m) * (m+1)] = 1./sigma
+
+;DERIVE WEIGHTED VERSIONS OF X AND Y
+xw = w ## x
+yw = w ## y
+
+xxw= transpose( xw) ## xw
+xyw = transpose(xw) ## yw
+xxwi = invert(xxw)
+
+a = xxwi ## xyw
+ybarw = xw ## a
+delyw = yw - ybarw
+
+delta_a[ *, nrexpt]= a - [100., 5.]
+
+ybar = invert( w) ## xw ## a 
+dely = y - ybar
+sigmasq = total( dely^2)/(m-n)
+
+chisq[ nrexpt] = total((yw - ybarw)^2)
+reduced_chisq = total((yw - ybarw)^2)/(m-n)
+
+dcw =  xxwi[ (n+1) * indgen(n)]
+vardc_official = dcw
+vardc_realworld = reduced_chisq* dcw
+sigdc_official = sqrt( vardc_official)
+sigdc_realworld = sqrt( vardc_realworld)
+
+endfor
+
+ncov_chi = xxwi/sqrt(dcw # dcw)
+
+;stop
+
+
+;----------------
+
+;GENERATE A GRID OF DELTA A VALUES FOR COMPUTATION...
+
+dela0_v =  0.02* sigdc_official[ 0]*(findgen( 200) - 100.)
+dela1_v =  0.02* sigdc_official[ 1]*(findgen( 200) - 100.)
+dela0 = fltarr( 200,200)
+dela1 = fltarr( 200,200)
+
+for nr=0,199 do dela0[*, nr]= dela0_v
+for nr=0,199 do dela1[nr, *]= dela1_v
+
+for nrx=0,199 do begin 
+for nry=0, 199 do begin 
+dela = [dela0[ nrx, nry], dela1[ nrx, nry]] 
+delchisq_n[ nrx, nry] = $
+        dela ## xxw ## transpose(dela) 
+endfor 
+endfor
+
+contour, delchisq_n, dela0_v, dela1_v, levels=[2.3], $
+        xtit='!4d!Xa!D0!N', ytit= '!4d!Xa!D1!N'    , $
+        xra = [-1.5,1.5], /xsty, yra=[-0.6,0.6], /ysty  $
+	, path_xy=path_xy, /path_data_coords, path_info=path_info
+
+contour, delchisq_n, dela0_v, dela1_v, levels=[1,2.3], $
+        xtit='!4d!Xa!D0!N', ytit= '!4d!Xa!D1!N'    , $
+        xra = [-1.5,1.5], /xsty, yra=[-0.6,0.6], /ysty 
+
+xypath = fltarr( (path_info.n)[1], (path_info.n)[1])
+
+for nr=0,1 do xypath[ nr,*] = path_xy[ nr, (path_info.offset)[1]:*]
+
+plots, sigdc_official[0], -sigdc_official[1], psym=2  ;, color=green
+oplot, delta_a[0,*], delta_a[1,*], psym=3
+
+oplot, [sigdc_official[0],sigdc_official[0]], [-2,2], lines=1
+
+oplot, [-4,4],-[sigdc_official[1],sigdc_official[1]], lines=1
+
+xyouts, -1.3, -0.57, 'CONTOURS AT !4Dv!X!U2!N=1 AND 2.3', align=0
+;xyouts, -.57, .88, '!4Dt!X!U2!N=2.3', align=.5
+
+;GET ONE-D PROJECTION FRACTIONS FOR THE CHI^2=1 CURVE...
+indx0 = where( abs( delta_a[0,*]) lt sigdc_official[0], count0)
+indx1 = where( abs( delta_a[1,*]) lt sigdc_official[1], count1)
+print, 'fractions are ', float(count0)/n1024, float(count1)/n1024
+
+pointsinside, delta_a[0,*], delta_a[1,*], xypath[0,*], xypath[1,*], indx
+
+oplot, delta_a[0,indx], delta_a[1,indx],psym=3, color=red
+
+print, 'fraction inside chisq = 2.3 = ', n_elements( indx)/float(n1024)
+
+stop
+
+;---------------------STOP STOP STOP ----------------------------------
+;----------------GET TWO-D FRACTIONS FOR the CHI^2=2.30 CURVE-----------
+
+;WE GENERATED OUR CONTOURS FROM A 200 BY 200 ARAY. FIRST, GENERATE AN
+;	EMPTY BYTE ARRAY OF THAT SIZE.
+tst_theory = bytarr( 200,200)
+;THEN MAKE IT NONZERO INSIDE DELCHI=2.3
+indx = where( delchisq_n le 1)
+tst_theory[ indx]= 1b
+
+;NOW GENERATE AN IMAGE CONTAINING THE DATAPOINTS WITH SAME PIXEL COUNT...
+tst_data = bytarr( 200,200)
+;now convert the measured datapoints to this 200 by 200 grid.
+dela0_v =  0.02* sigdc_official[ 0]*(findgen( 200) - 100.)
+dela1_v =  0.02* sigdc_official[ 1]*(findgen( 200) - 100.)
+delta_a0_pixels = 100.0 + delta_a[ 0,*]/ (0.02* sigdc_official[ 0])
+delta_a1_pixels = 100.0 + delta_a[ 1,*]/ (0.02* sigdc_official[ 1]) 
+
+;TAKE CARE OF STRAGGLERS...
+delta_a0_pixels = ( (0 > delta_a0_pixels) < 199)
+delta_a1_pixels = ( (0 > delta_a1_pixels) < 199)
+
+for nr=0, n1024-1 do $
+	tst_data[ delta_a0_pixels[ nr], delta_a1_pixels[ nr]] = $
+	tst_data[ delta_a0_pixels[ nr], delta_a1_pixels[ nr]] + 1b
+
+;NOW WE HAVE TWO IMAGES. TST_THEORY IS NONZERO ONLY INSIDE THE CONTOUR;
+;	TST_DATA IS NONZERO ONLY WHERE MEASURED POINTS EXIST.
+;TAKE THE PRODUCT; IT IS NONZERO ONLY WHERE POINTS EXIST INSIDE THE CONTOUR
+
+product = tst_data* tst_theory
+
+print, total(product)/n1024
+
+
+
+end

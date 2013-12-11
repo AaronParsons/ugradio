@@ -1,0 +1,37 @@
+;calculate ellipses for a0, a1...
+
+;first, set up a 2-d grid of values containing guessed values of dela0, dela1...
+
+dela0 = findgen(200) - 100.
+dela1 = 0.1*( findgen(200) - 100.)
+
+a0 = 96.625 + dela0
+a1 = 4.50 + dela1
+
+a0 = 0.1* dela0
+a1 = 0.1* dela1
+
+a0 = dela0
+a1 = dela1
+
+a0grid = fltarr( 200,200)
+a1grid = fltarr( 200,200)
+delchi = fltarr( 200,200)
+
+for nr=0, 199 do a0grid[ *, nr] = a0
+for nr=0, 199 do a1grid[ nr, *] = a1
+
+for nr0 = 0, 199 do begin
+for nr1 = 0, 199 do begin
+avec = [ a0grid[ nr0, nr1], a1grid[ nr0, nr1], 0]
+delchi[ nr0, nr1] = avec ## ss ## transpose( avec)
+endfor
+endfor
+
+contour, delchi, dela0, dela1, levels=[0.5,1.0,1.5,2.0], $
+	xra=[-20,20],yra=[-3,3], /xsty, /ysty
+
+
+
+
+end

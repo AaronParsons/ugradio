@@ -1,0 +1,30 @@
+
+x = [-2.,-1,1,2]
+y = [2., -1, -1, 2]
+
+x = [-2.,-1,0, 1,2]
+y = [2., -1, 0, -1, 2]
+
+print, median(y)
+
+lad= ladfit( x,y)
+
+polyfit, x, y, 1, coeffs, sigcoeffs, yfit
+print,coeffs
+
+;TEST OF LADFIT...
+print, lad
+
+del_lad= [0, 0.1]
+
+plot, x, y, psym=2, yra=[-5,5], xra=[-3,3]
+for nr=-1,1 do begin
+ladnr= lad+ nr* del_lad
+print, ladnr
+print, nr, ( abs( y - (ladnr[0] + ladnr[1]*x )))
+oplot, x, (ladnr[0] + ladnr[1]*x ), psym=-4
+print, 'totals' , nr, total( abs( y - (ladnr[0] + ladnr[1]*x )))
+endfor
+;print, 'delylad total = ', delylad
+
+end

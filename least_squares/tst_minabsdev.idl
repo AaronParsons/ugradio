@@ -1,0 +1,15 @@
+
+y= [0,0,0,0,10.]
+;y = [2., -1, 0, -1, 2]
+
+for y0= -5,5 do begin
+absdev= ( abs( y-y0))
+print, 'total absdev = ', y0, total(absdev)
+;print, y0, absdev
+endfor
+
+
+
+
+
+end

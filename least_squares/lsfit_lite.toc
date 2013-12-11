@@ -1,0 +1,28 @@
+\contentsline {section}{\numberline {0}LEAST-SQUARES FITTING FOR TWO PARAMETERS, AS WITH A STRAIGHT LINE.}{3}
+\contentsline {subsection}{\numberline {0.1}The closed-form expressions for a straight-line fit}{3}
+\contentsline {subsection}{\numberline {0.2}Better is the following generalized notation.}{3}
+\contentsline {section}{\numberline {1}LEAST-SQUARES FITTING FOR MANY PARAMETERS, AS WITH A CUBIC}{4}
+\contentsline {section}{\numberline {2}FAR, FAR BEST AND EASIEST: MATRIX ALGEBRA}{5}
+\contentsline {section}{\numberline {3}UNCERTAINTIES IN THE DERIVED COEFFICIENTS}{7}
+\contentsline {section}{\numberline {4}A NUMERICAL EXAMPLE AND ITS SOLUTION IN IDL}{9}
+\contentsline {subsection}{\numberline {4.1}Generation of the numerical example}{9}
+\contentsline {subsection}{\numberline {4.2}Solution of the Numerical Example in IDL}{10}
+\contentsline {subsection}{\numberline {4.3}Discussion of the numerical example}{12}
+\contentsline {section}{\numberline {5}THE COVARIANCE MATRIX AND ITS NORMALIZED COUNTERPART}{12}
+\contentsline {subsection}{\numberline {5.1} Definition of the normalized covariance (or correlation) matrix}{12}
+\contentsline {subsection}{\numberline {5.2} The covariance in our numerical example}{14}
+\contentsline {section}{\numberline {6}REJECTING BAD DATAPOINTS I.: CHAUVENET'S CRITERION}{16}
+\contentsline {section}{\numberline {7}NONLINEAR LEAST SQUARES}{18}
+\contentsline {section}{\numberline {8}CHI-SQUARE FITTING AND WEIGHTED FITTING: DISCUSSION IGNORING COVARIANCE }{21}
+\contentsline {subsection}{\numberline {8.1} The weighted mean: the simplest chi-square fit}{22}
+\contentsline {subsection}{\numberline {8.2}The multivariate chi-square fit}{24}
+\contentsline {subsection}{\numberline {8.3}Which equation---8.9\hbox {} or 8.10\hbox {}?}{26}
+\contentsline {subsection}{\numberline {8.4}Datapoints with known {\it relative} but unknown {\it absolute} dispersions}{26}
+\contentsline {subsection}{\numberline {8.5} Persnickety Diatribe on Choosing $\sigma _{m}$ }{27}
+\contentsline {subsubsection}{\numberline {8.5.1}Choosing and correcting $\sigma _{m}$}{27}
+\contentsline {subsubsection}{\numberline {8.5.2}When you're using equation 8.9\hbox {}\dots }{28}
+\contentsline {subsubsection}{\numberline {8.5.3}Think about your results!}{28}
+\contentsline {subsubsection}{\numberline {8.5.4}When your measurements are correlated\dots }{28}
+\contentsline {section}{\numberline {9}BRUTE FORCE CHI-SQUARE AND THE CURVATURE MATRIX}{29}
+\contentsline {subsection}{\numberline {9.1}Parameter Uncertainties in Brute Force chi-square Fitting}{29}
+\contentsline {section}{\numberline {10} NOTATION COMPARISON WITH NUMERICAL RECIPES}{30}

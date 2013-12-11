@@ -1,0 +1,768 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU enscript 1.6.4
+%%CreationDate: Wed Mar 24 12:15:44 2010
+%%Orientation: Landscape
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 4
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 4
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 7 7 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 4
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      5 0 moveto fname show
+      45 0 rmoveto fmodstr show
+      45 0 rmoveto pagenumstr show
+    } ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 720 def
+/d_page_h 576 def
+/d_header_x 0 def
+/d_header_y 561 def
+/d_header_w 720 def
+/d_header_h 15 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 720 def
+/d_footer_h 0 def
+/d_output_w 720 def
+/d_output_h 561 def
+/cols 2 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 1 def
+/fname (svd_eg.txt) def
+/fdir () def
+/ftail (svd_eg.txt) def
+% User defined strings:
+/fmodstr (Wed Mar 24 12:15:31 2010) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 551 M
+(status =            0) s
+5 535 M
+(======================================================) s
+5 527 M
+(======================================================) s
+5 519 M
+(<time> = 0.0; <time^2> = 0.0) s
+5 511 M
+(======================================================) s
+5 503 M
+(======================================================) s
+5 487 M
+(ss:) s
+5 479 M
+(       4.0000000       0.0000000       0.0000000) s
+5 471 M
+(       0.0000000       20.000000       0.0000000) s
+5 463 M
+(       0.0000000       0.0000000       64.000000) s
+5 455 M
+(ssi) s
+5 447 M
+(      0.25000000       0.0000000      -0.0000000) s
+5 439 M
+(      -0.0000000     0.050000000      -0.0000000) s
+5 431 M
+(       0.0000000      -0.0000000     0.015625000) s
+5 415 M
+(ncov) s
+5 407 M
+(       1.0000000       0.0000000      -0.0000000) s
+5 399 M
+(      -0.0000000       1.0000000      -0.0000000) s
+5 391 M
+(       0.0000000      -0.0000000       1.0000000) s
+5 375 M
+(-------Now we do SVD --------) s
+5 367 M
+(v) s
+5 359 M
+(       0.0000000       0.0000000      -1.0000000) s
+5 351 M
+(       0.0000000       1.0000000      -0.0000000) s
+5 343 M
+(       1.0000000      -0.0000000      -0.0000000) s
+5 327 M
+(wgt) s
+5 319 M
+(       8.0000000       4.4721360       2.0000000) s
+5 303 M
+(a, siga) s
+5 295 M
+(       193.00000       18.500000      0.87500000) s
+5 287 M
+(       2.2360680       1.0000000      0.55901699) s
+5 279 M
+(a_svd, siga_svd) s
+5 271 M
+(       193.00000       18.500000      0.87500000) s
+5 263 M
+(       2.2360680       1.0000000      0.55901699) s
+5 255 M
+(status =            0) s
+5 239 M
+(======================================================) s
+5 231 M
+(======================================================) s
+5 223 M
+(<time> = 0.0; <time^2> = 5.0) s
+5 215 M
+(======================================================) s
+5 207 M
+(======================================================) s
+5 191 M
+(ss:) s
+5 183 M
+(       4.0000000       0.0000000       20.000000) s
+5 175 M
+(       0.0000000       20.000000       0.0000000) s
+5 167 M
+(       20.000000       0.0000000       164.00000) s
+5 159 M
+(ssi) s
+5 151 M
+(      0.64062500       0.0000000    -0.078125000) s
+5 143 M
+(      -0.0000000     0.050000000       0.0000000) s
+5 135 M
+(    -0.078125000      -0.0000000     0.015625000) s
+5 119 M
+(ncov) s
+5 111 M
+(       1.0000000       0.0000000     -0.78086881) s
+5 103 M
+(      -0.0000000       1.0000000       0.0000000) s
+5 95 M
+(     -0.78086881      -0.0000000       1.0000000) s
+5 79 M
+(-------Now we do SVD --------) s
+5 71 M
+(v) s
+5 63 M
+(     -0.12218326      -0.0000000      0.99250756) s
+5 55 M
+(      -0.0000000      -1.0000000      -0.0000000) s
+5 47 M
+(     -0.99250756      -0.0000000     -0.12218326) s
+5 31 M
+(wgt) s
+5 23 M
+(       12.902020       4.4721360       1.2401159) s
+5 7 M
+(a, siga) s
+365 551 M
+(       188.62500       18.500000      0.87500000) s
+365 543 M
+(       3.5794553       1.0000000      0.55901699) s
+365 535 M
+(a_svd, siga_svd) s
+365 527 M
+(       188.62500       18.500000      0.87500000) s
+365 519 M
+(       3.5794553       1.0000000      0.55901699) s
+365 511 M
+(status =            0) s
+365 495 M
+(======================================================) s
+365 487 M
+(======================================================) s
+365 479 M
+(<time> = 8.0; <time^2>= 69.0 ) s
+365 471 M
+(======================================================) s
+365 463 M
+(======================================================) s
+365 447 M
+(ss:) s
+365 439 M
+(       4.0000000       32.000000       276.00000) s
+365 431 M
+(       32.000000       276.00000       2528.0000) s
+365 423 M
+(       276.00000       2528.0000       24228.000) s
+365 415 M
+(ssi) s
+365 407 M
+(       57.840625      -15.150000      0.92187500) s
+365 399 M
+(      -15.150000       4.0500000     -0.25000000) s
+365 391 M
+(      0.92187500     -0.25000000     0.015625000) s
+365 375 M
+(ncov) s
+365 367 M
+(       1.0000000     -0.98984828      0.96971818) s
+365 359 M
+(     -0.98984828       1.0000000     -0.99380799) s
+365 351 M
+(      0.96971818     -0.99380799       1.0000000) s
+365 335 M
+(-------Now we do SVD --------) s
+365 327 M
+(v) s
+365 319 M
+(    -0.011343442     -0.25388182      0.96716873) s
+365 311 M
+(     -0.10382472     -0.96170395     -0.25366503) s
+365 303 M
+(     -0.99453092      0.10329346     0.015450176) s
+365 287 M
+(wgt) s
+365 279 M
+(       156.50898       3.5949367      0.12717580) s
+365 263 M
+(a, siga) s
+365 255 M
+(       96.625000       4.5000000      0.87500000) s
+365 247 M
+(       34.011946       9.0000000      0.55901699) s
+365 239 M
+(a_svd, siga_svd) s
+365 231 M
+(       96.625000       4.5000000      0.87500000) s
+365 223 M
+(       34.011946       9.0000000      0.55901699) s
+365 215 M
+(status =            1) s
+365 199 M
+(======================================================) s
+365 191 M
+(======================================================) s
+365 183 M
+(<time> = 8.0; time^2 = time \(DEGENERATE\)) s
+365 175 M
+(======================================================) s
+365 167 M
+(======================================================) s
+365 151 M
+(ss:) s
+365 143 M
+(       4.0000000       32.000000       32.000000) s
+365 135 M
+(       32.000000       276.00000       276.00000) s
+365 127 M
+(       32.000000       276.00000       276.00000) s
+365 119 M
+(ssi) s
+365 111 M
+(     -0.40000000     0.050000000       1.0000000) s
+365 103 M
+(       3.4500000     -0.40000000      -0.0000000) s
+365 95 M
+(   4.4408921e-16      -1.0000000       0.0000000) s
+365 79 M
+(ncov) s
+365 71 M
+(      -1.0000000      0.12500000        Infinity) s
+365 63 M
+(       8.6250000      -1.0000000            -NaN) s
+365 55 M
+(        Infinity       -Infinity            -NaN) s
+365 39 M
+(-------Now we do SVD --------) s
+365 31 M
+(v) s
+365 23 M
+(     0.081751616      0.99665273       0.0000000) s
+365 15 M
+(      0.70473991    -0.057807122     -0.70710678) s
+365 7 M
+(      0.70473991    -0.057807122      0.70710678) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 2 def
+/fname (svd_eg.txt) def
+/fdir () def
+/ftail (svd_eg.txt) def
+% User defined strings:
+/fmodstr (Wed Mar 24 12:15:31 2010) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 543 M
+(wgt) s
+5 535 M
+(       23.573546      0.53658073   9.8154969e-16) s
+5 519 M
+(a, siga) s
+5 511 M
+(       6564.5000       45.000000      -6546.0000) s
+5 503 M
+(            -NaN            -NaN       0.0000000) s
+5 495 M
+(a_svd, siga_svd) s
+5 487 M
+(       45.000000   5.8874768e+15  -5.8874768e+15) s
+5 479 M
+(       170.41743   6.6096303e+16   6.6096303e+16) s
+5 463 M
+(******************************************************) s
+5 455 M
+(******************************************************) s
+5 447 M
+(Now we do SVD using inverse weights, one set to zero) s
+5 439 M
+(******************************************************) s
+5 431 M
+(******************************************************) s
+5 415 M
+(a_svd, siga_svd) s
+5 407 M
+(       45.000000       9.2500000       9.2500000) s
+5 399 M
+(       15.428869      0.92870878      0.92870878) s
+5 383 M
+(1 deg polyfit:) s
+5 375 M
+(ncov_polyfit) s
+5 367 M
+(       1.0000000     -0.96308682) s
+5 359 M
+(     -0.96308682       1.0000000) s
+5 343 M
+(a_polyfit, siga_polyfit) s
+5 335 M
+(       45.000000       18.500000) s
+5 327 M
+(       10.909858       1.3133926) s
+5 311 M
+(enscript -r -2 -p svd_eg.txt.ps svd_eg.txt) s
+_R
+S
+%%Trailer
+%%Pages: 2
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

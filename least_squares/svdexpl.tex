@@ -1,0 +1,273 @@
+\documentclass[psfig,preprint]{aastex}
+
+\makeatletter
+\renewcommand\theequation{\thesection.\arabic{equation}}
+	\@addtoreset{equation}{section}
+\renewcommand\thefigure{\thesection.\arabic{figure}}
+	\@addtoreset{figure}{section}
+\renewcommand\thetable{\thetable.\arabic{table}}
+	\@addtoreset{table}{section}
+\makeatother
+
+\begin{document}
+
+\setcounter{section}{-1}
+
+\title{LEAST-SQUARES AND CHI-SQUARE FOR THE BUDDING AFICIONADO: \\ 
+ART AND PRACTICE } 
+
+\author{\copyright Carl Heiles \today }
+
+
+\section{USING SINGULAR VALUE DECOMPOSITION (SVD)} \label{SVD}
+
+	Occasionally, a normal-equation matrix $[\alpha] = {\bf X^T
+\cdot X}$ is degenerate, or at least sufficiently ill-posed that
+inverting it using standard matrix inversion doesn't work.  In its
+\verb$invert$ function, IDL even provides a keyword called \verb$status$
+to check on this (although I find that it is not perfectly reliable; the
+best indicator of reliability is to check that the matrix product ${\bf
+[\alpha ^{-1}] \cdot [\alpha]} = {\bf I}$, the unitary matrix).  In
+these cases, Singular Value Decomposition (SVD) comes to the rescue. 
+
+	First, we reiterate the least-squares problem.  Least squares
+begins with equations of condition (equation \ref{equationofcondition}),
+which are expressed in matrix form as
+
+\begin{equation} \label{eqnofcond}
+{\bf X \cdot a} = {\bf y}
+\end{equation}
+
+\noindent In our treatments above we premultiply both sides by $\bf
+X^T$, on the left generating the curvature matrix $[\alpha]$ to obtain
+the normal equations (equation \ref{matrixnormal} or its equivalent
+derived from equations \ref{matrixcalcs})
+
+\begin{equation} \label{alphabeta1}
+[\alpha] {\bf \cdot a} =  {\bf X^T \cdot y} \ ,
+\end{equation}
+
+\noindent for which the solution is, of course,
+
+\begin{equation} \label{alphabeta2}
+{\bf a} =  \left( [\alpha]^{-1} {\bf \cdot X^T} \right) {\bf \cdot y}
+\end{equation}
+
+\noindent We need to find the inverse matrix $[\alpha]^{-1}$. Above in
+this document we did this using simple matrix inversion, which doesn't
+work if $[\alpha]$ is degenerate. 
+
+	SVD provides a bombproof and interestingly informative way do
+least squares.  Perhaps surprising, with SVD you don't form normal
+equations.  Rather, you solve for the coefficients directly.  In
+essence, SVD provides the combination $\left( [\alpha]^{-1} {\bf \cdot
+X^T} \right)$ without taking any inverses.  By itself, this doesn't
+prevent blowup degenerate cases; however, SVD provides a straightforward
+way to eliminate the blowup and get reasonable solutions. 
+
+For a discussion of the details of SVD, see NR \S 2.6; for SVD applied
+to least squares, see NR \S 15.4; if you are rusty on matrix algebra,
+look at NR \S 11.0. Below, we provide a brief description of
+SVD. Implementing SVD in our least-squares solutions is trivially easy,
+and we provide the IDL prescription below in \S \ref{svdandidl} and \S
+\ref{myidl}.  {\it Be sure} to look at \S \ref{svdimport}!!
+
+\subsection{Phenomenological description of SVD} \label{svdphenom}
+
+The cornerstone of SVD is that our (or any) $M \times N$ ($M$ rows, $N$
+columns) matrix {\bf X}, where $M \ge N$, can be expressed as a product
+of three matrices:
+
+\begin{equation} \label{basicsvd}
+{\bf X} = {\bf U \cdot} [ w ] {\bf \cdot V^T}
+\ ,
+\end{equation}
+
+\noindent where \begin{enumerate}
+
+	\item $\bf U$ is $M \times N$, $[w]$ is $N \times N$ and
+diagonal, and $\bf V$ is $N \times N$; and
+
+	\item the columns of $\bf U$ and $\bf V$ are unit vectors that are
+orthonormal. Because $\bf V$ is square, its rows are also orthonormal so
+that ${\bf V \cdot V^T} = 1$. Recall that, for square orthonormal
+vectors, the transpose equals the inverse so $\bf V^T = V^{-1}$.
+
+\end{enumerate}
+
+\noindent So what?
+
+Consider a single {\it row} $m$ of the matrix $\bf X$. This row has a
+single value of $x_m$, with an associated value of $y_m$. For this row,
+we can consider the entry of each column $n$ of $\bf X$ to be a basis
+function $f_n(x_m)$, evaluated at $x_m$. The $N$ columns contain $N$
+basis functions. And, of course, we have $N$ coefficients in the
+vector $\bf a$. These $N$ basis functions and associated coefficients
+represent the entire set of $M$ measurements $y_m$ taken at positions
+$x_m$.
+
+Now consider a single {\it column} $n$ of the matrix $\bf X$. This
+column consists of the entire set of $M$ values of $f_n(x_m)$ for a
+single value of $n$. We can regard the $M$ values of $x_m$ to be a
+vector of length $M$. Similarly, we can regard each column $n$ of $\bf
+X$ to be an $M$-length vector consisting of the elements $f_n(x_m)$.
+
+Finally, consider the {\it set of $N$ columns} of the matrix $\bf X$. Each
+column $n$ is an $M$-element vector with elements $f_n(x_m)$. 
+Now, there is no reason for these $N$ column vectors
+of $\bf X$ to have any special property, such as being orthogonal. In
+fact, consider a typical least-squares polynomial fit; this basis set is
+certainly {\it not} orthogonal, as we illustrated in our simple
+numerical example of \S \ref{***}. 
+What SVD does is to replace the set of $N$ original nonorthogonal
+vectors $\bf X$ by an orthogonal basis set that consists of the $N$ rows
+of $\bf V$---in fact, they are not only orthogonal, but
+orthonormal. 
+
+\subsection{Using SVD for Least Squares} \label{nonsquare}
+
+Some of the original nonorthogonal column vectors of $\bf X$ might
+not only be nonorthogonal, they might be degenerate! This happens if the
+particular set of the $M$ values $x_m$ make some of the original
+nonorthogonal vectors linear combinations of others. This leads to the
+unfortunate situation of the curvature matrix $\alpha$ not having an
+inverse. In such cases, SVD comes to the rescue.
+
+
+With SVD you {\it don't form normal equations}, so you don't explicitly
+calculate $[\alpha]^{-1}$. We apply SVD to $\mathbf X$, as in equation
+\ref{basicsvd}:
+
+\begin{equation} \label{basicsvd0}
+{\bf X} = {\bf U \cdot} [ w ] {\bf \cdot V^T}
+\ ,
+\end{equation}
+
+\noindent NR \S 15.4 shows that the covariance matrix is given by
+
+\begin{equation} \label{alphainveqn}
+[\alpha ^{-1}] = {\bf V \cdot} \left[ 1 \over w^2 \right] \cdot {\bf V^T}
+\end{equation}
+
+\noindent Given this, the fact that $\mathbf{V^T \cdot V = I}$, and the general
+matrix identity $\mathbf{(P \cdot Q)^T = Q^T \cdot P^T}$ it's
+straightforward to show that 
+
+\begin{mathletters}
+\begin{equation} \label{aeqn}
+\mathbf{ a = }  \left( \mathbf{V \cdot} \left[ {1 \over w} \right]
+\mathbf{ \cdot U^T } \right) \mathbf{\cdot y}
+\end{equation}
+\noindent or
+\begin{equation} \label{aeqn1}
+\mathbf{ a =   \left( V \cdot \left[ {1 \over w} \right] \right)
+\cdot \left( U^T   \mathbf{\cdot y} \right) }
+\end{equation}
+\end{mathletters}
+
+\noindent Here in equation \ref{aeqn}, we see that $\left( \mathbf{V
+\cdot} \left[ {1 \over w} \right] \mathbf{ \cdot U^T } \right)$ is
+identical to $\left( [\alpha]^{-1} {\bf \cdot X^T} \right)$ in equation
+\ref{alphabeta2}. In the rewritten equation \ref{aeqn1} we see that we
+can regard the coefficient vector being defined by the orthogonal
+vectors of $\bf V$. Moreover, the covariance matrix of equation
+\ref{alphainveqn} is diagonal, so that the principal axes of the
+$\chi^2$ ellipse are defined by the orthonormal column vectors of $\bf
+V$ with lengths proportional to $\left[ 1 \over w^2 \right]$. See NR
+Figure 15.6.5 and the associated discussion.
+
+The $N$ orthonormal vectors in $\bf V$ define an $N$-dimensional space
+for $\bf a$ with $N$ orthogonal directions.  Suppose that a particular value $w_n$
+is small. In equation \ref{basicsvd0}, this means that the associated
+orthonormal vector $v_n$---i.e., the associated direction $n$---in $\bf V$
+is not well-represented by the set of original nonorthogonal vectors in
+$\bf X$. This, in turn, means that you can't represent that direction
+in $\bf a$ of equation \ref{aeqn} without 
+amplifying that orthonormal vector by a large factor; these
+amplification factors $\propto w_n^{-1}$. This is an unsatisfactory
+situation because it means some combinations of the original $m$
+measurements are highly weighted. As $w_n \rightarrow 0$ this situation
+becomes not only unsatisfactory, but numerically impossible. 
+
+Consider the limiting case, $w_n=0$.  In this case, the original $x_m$
+values do not have any projection along associated orthonormal vector
+$v_n$ in $\bf V$. (These $v_n$ are called ``null'' orthonormal vectors.)
+In equation \ref{aeqn}, you can add any multiple of the null $v_n$ to
+the solution for $\bf a$ and it won't change $\bf a$ at all (!) because
+it has absolutely no effect on the fit to the data (because of the
+particular set of values $x_m$).
+
+What multiple is appropriate? Common sense says that, because these $\bf
+V$ vectors have no meaning for the solution, the multiple should be {\it
+zero}.  So in equation \ref{aeqn}, instead of trying, in vain, to
+include this null vector $v_n$ by using a huge multiple, you toss in the
+towel and eliminate it altogether by replacing its corresponding
+$w_n^{-1} = \infty$ by $w_n^{-1} = 0$. So we have the rule: {\it
+wherever $w_n = 0$ (or sufficiently small), replace $w_n^{-1}$ by 0!}
+This replacement provides the minimum length for $\bf x$ and thereby
+constitutes the least-squares solution.
+
+\subsubsection{Important Conclusion for Least Squares!!!} \label{svdimport}
+
+	Suppose you have degeneracy, or near-degeneracy. {\it This, in
+turn, means that the formulation of the least-squares model is faulty}:
+some of the original basis functions represent (or {\it nearly})
+represent the same physical quantity, or at least one of the functions
+is (nearly) a linear combination of others.  Sometimes you can discover
+the problem and fix it by imposing additional constraints, or by finding
+two unknown coefficients that are nearly identical.  If so, you can
+reformulate the model and try again.
+
+Even if you can't discover the root cause(s) and remove the degeneracy,
+the SVD solution allows you to bypass problems associated with
+degeneracy and provides reasonable best-fit parameter values.
+
+\subsubsection{How Small is ``Small''?}
+
+	When looking at $w_n$, just exactly how small is ``small''? 
+
+\subsubsection{Strictly Speaking\dots}
+
+	Strictly speaking, this is governed by numerical machine
+accuracy. NR suggests measuring this by the ratio of the largest $w_n$
+to the smallest. This ratio is the {\it condition number}. Single
+precision 32-bit floats have accuracy $\sim 10^{-6}$, so if the
+condition number is larger than $10^6$ you certainly have problems.
+
+\subsubsection{Practically Speaking\dots}
+
+	Practically speaking it's not machine accuracy that counts.
+Rather, it's the accuracy of your data and the ability of those
+uncertain data to define the parameters. In any real problem, plot the
+vector $w$. If the values span a large range, then the data with small
+$w_n$ might not be  defining the associated vectors well enough. If so, 
+then {\it practically} speaking, these vectors are degenerate. 
+
+	How to tell what constitutes ``small $w_n$''? As far as I know,
+and as far NR says, it's an art.
+
+\subsection {Doing SVD in IDL} \label{svdandidl}
+
+	Doing SVD in IDL is easy.  Ida's \verb$la_svd$
+procedure\footnote{Old versions of IDL (before 5.6) had a significantly
+worse algorithm called {\it svdc}.  Don't use this unless you have to.}
+provides the SVD decomposition.  Thus for equation \ref {basicsvd}, the
+IDL SVD decomposition is given by
+
+\begin{equation}
+{\bf la\_svd, X, w, U, V} \ ;
+\end{equation}
+
+\noindent the notation is identical to that in equation \ref {basicsvd}. 
+
+\subsection{My routine {\it lsfit\_svd}} \label{myidl}
+
+	I've written an IDL routine \verb$lsfit_svd$ that makes the
+above process of dealing with the weights easy.  When used without
+additional inputs, it returns the standard least-squares results such
+as the derived coefficients and the covariance matrix; it also returns
+$[w]$, $\mathbf {U}$, and $\mathbf {V}$. It allows you to input those
+matrices and, also, the $\left[ 1 \over w \right]$ matrix so that you
+can tailor the weights to your heart's content. 
+
+\end{document}

@@ -1,0 +1,33 @@
+	You are fitting a one-degree polynomial $y = a0 + a1x$. Take
+$[a0*, a1*] = [100., 5.]$. Do a large number $J$ of numerical
+experiments, each having $M$ measurements. You do two sets of $J$
+experiments. In the first set,  you measure $y$ at $x = [5,7,9,11]$
+(i.e.\ $M=4$); in the second set you measure $y$ at $x =
+[5,7,9,11,5,7,9,11]$ (i.e. $M=8$). In each, add random noise having a
+variance that is {\it NOT} equal to unity, say 1.3.  For each set of
+experiments:
+
+	\item Plot the numerical histogram of the $\chi^2$ and overplot 
+it with the expected distribution.
+
+	\item Calculate the derived variance in the two parameters
+$(a0,a1)$. Compare it with the theoretically expected one (i.e.\ the
+relevant elements of the covariance matrix). These had better agree
+pretty well! Compare this with the expected ``variance in the variance''
+(Cowan
+****).
+
+	\item Calculate the normalized covariance matrix.
+
+	\item On the $\delta a0,\delta a1$ plane, drawa the expected
+$\Delta \chi^2=Z$ contours, for $Z = 1$ and 2.3. Also plot the derived
+points for each experiment $\delta a0_i = (a0_i - a0*)$, etc. Find the
+fraction of experimental points that lie within the $\chi^2 = 2.3
+contours. This had better be close to the thoeretically expected value!
+
+	{\it Help}: I have never found it easy to select the points
+inside a closed curve. Accordingly, I've written a procedure to do this.
+It's called {\bf pointsinside.pro} and is available in \~ \
+heiles/idl/gen .
+
+	

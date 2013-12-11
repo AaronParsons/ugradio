@@ -1,0 +1,148 @@
+
+We use the example of the 2 deg polyfit in the lsfit handout. we obtain
+the following results by editing the file svd_eg.idl
+
+note in the following that v columns are length unity and orthogonal 
+
+===================================
+===================================
+
+FIRST, THE EXAMPLE ITSELF. NO ZERO ADJ ON TIME.
+
+s
+       1.0000000       5.0000000       25.000000
+       1.0000000       7.0000000       49.000000
+       1.0000000       9.0000000       81.000000
+       1.0000000       11.000000       121.00000
+
+ncov
+       1.0000000     -0.98984828      0.96971818
+     -0.98984828       1.0000000     -0.99380799
+      0.96971818     -0.99380799       1.0000000
+---------------
+v
+    -0.011343442     -0.25388182      0.96716873
+     -0.10382472     -0.96170395     -0.25366503
+     -0.99453092      0.10329346     0.015450176
+
+wgt       156.50898       3.5949367      0.12717580
+
+a, siga
+       96.625000       4.5000000      0.87500000
+       34.011946       9.0000000      0.55901699
+a_svd, siga_svd
+       96.625000       4.5000000      0.87500000
+       34.011946       9.0000000      0.55901699
+ 
+comment: wgt[0] is for the constant term. it's biggest because to zeroth
+order, given the time values the soln is most sensitive to the
+constant. Next the slope, and finally the curvature (because the range
+of time is small).
+
+the coeff solutions for conventional normal eqns and svd are identical.
+
+==================================
+==================================
+
+NEXT, THE TOTALLY ORTHOGONALIZED VERSION:
+      time - mean(time)
+      timesq - mean(timesq)
+
+s
+       1.0000000      -3.0000000       4.0000000
+       1.0000000      -1.0000000      -4.0000000
+       1.0000000       1.0000000      -4.0000000
+       1.0000000       3.0000000       4.0000000
+
+ncov
+       1.0000000       0.0000000      -0.0000000
+      -0.0000000       1.0000000      -0.0000000
+       0.0000000      -0.0000000       1.0000000
+---------------
+v
+       0.0000000      -0.0000000      -1.0000000
+       0.0000000      -1.0000000      -0.0000000
+       1.0000000       0.0000000      -0.0000000
+
+wgt       8.0000000       4.4721360       2.0000000
+
+a, siga
+       193.00000       18.500000      0.87500000
+       2.2360680       1.0000000      0.55901699
+a_svd, siga_svd
+       193.00000       18.500000      0.87500000
+       2.2360680       1.0000000      0.55901699
+
+==================================
+==================================
+
+NEXT, THE TOTALLY ORTHOGONALIZED VERSION, but for the third term use
+      time instead of time^2:
+      time - mean(time)
+      timesq - mean(timesq)
+
+==================
+s
+       1.0000000      -3.0000000      -3.0000000
+       1.0000000      -1.0000000      -1.0000000
+       1.0000000       1.0000000       1.0000000
+       1.0000000       3.0000000       3.0000000
+
+ncov
+       1.0000000      -0.0000000            -NaN
+      -0.0000000       1.0000000        Infinity
+            -NaN       -Infinity            -NaN
+---------------
+
+v
+      -0.0000000      -1.0000000       0.0000000
+     -0.70710678      -0.0000000     -0.70710678
+     -0.70710678      -0.0000000      0.70710678
+
+wgt       6.3245553       2.0000000       0.0000000
+
+a, siga 
+       193.00000       388.50000      -370.00000
+       4.1533119       1.8574176       0.0000000
+(these values are meaningless: no inverse of curvature matrix,
+so the covariance matrix is undefined!)
+
+a_svd, siga_svd
+            -NaN            -NaN            -NaN
+            -NaN            -NaN            -NaN
+svd doesn't lie!
+
+=================================
+
+**** NOW FOLLOW THE PRESCRIPTION: ****
+use inverse weights, and set the last one to zero instead of \infty.
+
+V remains the same
+
+wgt-inv       0.15811388      0.50000000       0.0000000
+
+a_svd, siga_svd
+       193.00000       9.2500000       9.2500000
+       4.1533119      0.92870878      0.92870878
+
+It does the very gentlemanly thing of treating the degenerate
+coefficients equally.
+
+================================
+
+compare with 1d polyfit:
+
+1 deg polyfit:
+ncov_polyfit
+       1.0000000      -0.0000000
+      -0.0000000       1.0000000
+
+a_polyfit, siga_polyfit
+       193.00000       18.500000
+       2.9368350       1.3133926
+
+not only does svd treat the 2 degenerate coeffs equally, it treats their
+errors equally, so the sum of the svd solutions and errors is the same
+as the 1 deg polyfit!
+
+enscript -r -2 -p svd_eg.notes.ps svd_eg.notes

@@ -1,0 +1,26 @@
+;====================== rerun svd fit with inverse wgts -----------
+
+
+
+wgt_inv = 1./wgt
+wgt_inv[ 2]= 0.
+
+lsfit_svd, s, t, u, v, wgt, $
+  a_svd, vara_svd, siga_svd, ncov_svd, s_sq, $
+  wgt_inv= wgt_inv
+
+printf, filenr
+printf, filenr, '******************************************************'
+printf, filenr, '******************************************************'
+printf, filenr, 'Now we do SVD using inverse weights, one set to zero'
+printf, filenr, '******************************************************'
+printf, filenr, '******************************************************'
+;printf, filenr
+;printf, filenr, 'v'
+;printf, filenr, v
+;printf, filenr,''
+;printf, filenr, 'wgt', wgt
+;printf, filenr,''
+;printf, filenr, 'a, siga' 
+;printf, filenr, transpose(a), sigdc 
+

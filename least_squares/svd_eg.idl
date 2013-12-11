@@ -1,0 +1,86 @@
+openw, 1, 'svd_eg.txt'
+filenr=1
+filenr=0
+
+s = fltarr(3,4)
+n=4
+m=3
+t=[142,168,211,251]
+time_orig = [5., 7., 9., 11.]
+meantime= mean(time_orig)
+
+;=================== '<time> = 0.0; <time^2> = 0.0' ============
+spec= '<time> = 0.0; <time^2> = 0.0'
+specc= textoidl( spec)
+time= time_orig
+time=time - meantime
+s[0,*]=1.
+s[1,*]=time
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2 - meantimesq
+s[2,*]= timesq
+;s[2,*]= time
+
+ps_ch, 'svd_eg0.ps', /color, /defaults
+@svd_eg_0.idl
+;@svd_eg_1.idl
+ps_ch, /close
+;stop
+
+;=================== '<time> = 0.0; <time^2> = 5.0' ============
+spec= '<time> = 0.0; <time^2> = 5.0'
+specc= textoidl( spec)
+time=time_orig - meantime
+s[0,*]=1.
+s[1,*]=time
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2; - meantimesq
+s[2,*]= timesq
+;s[2,*]= time
+
+ps_ch, 'svd_eg1.ps', /color, /defaults
+@svd_eg_0.idl
+ps_ch, /close
+;@svd_eg_1.idl
+
+;stop
+
+;=================== '<time> = 8.0; <time^2>=69.0' ============
+spec= '<time> = 8.0; <time^2>= 69.0 '
+specc= textoidl( spec)
+time=time_orig
+s[0,*]=1.
+s[1,*]=time
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2; - meantimesq
+s[2,*]= timesq
+;s[2,*]= time
+
+ps_ch, 'svd_eg2.ps', /color, /defaults
+@svd_eg_0.idl
+;@svd_eg_1.idl
+ps_ch, /close
+;stop
+
+;=================== '<time> = 8.0; time^2>=time' ============
+spec= '<time> = 8.0; time^2 = time (DEGENERATE)'
+specc= textoidl( spec)
+time=time_orig
+s[0,*]=1.
+s[1,*]=time
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2; - meantimesq
+s[2,*]= timesq
+s[2,*]= time
+
+ps_ch, 'svd_eg3.ps', /color, /defaults
+@svd_eg_0.idl
+@svd_eg_1.idl
+@svd_eg_2.idl
+ps_ch, /close
+
+close, 1

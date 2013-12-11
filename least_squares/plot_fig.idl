@@ -1,0 +1,20 @@
+;contour, delchisq_n, dela0_v, dela1_v, levels=[2.3], $
+;        xtit='!4d!Xa!D0!N', ytit= '!4d!Xa!D1!N'    , $
+;        xra = [-2.5,2.5], /xsty, yra=[-1.5,1.5], /ysty  $
+;        , path_xy=path_xy, /path_data_coords, path_info=path_info
+
+contour, delchisq_n, dela1_v, dela2_v, levels=[1,2.3], c_linestyle=[0,2], $
+	xtit='!4d!Xa!D1!N', ytit= '!4d!Xa!D2!N', $
+	xra = [-2.5,2.5], /xsty, yra=[-1.5,1.5], /ysty
+
+;plots, sigsqdc_official[1], -sigsqdc_official[2], psym=2  ;, color=green
+
+oplot, [sigsqdc_official[1],sigsqdc_official[1]], [-2,2], lines=2
+oplot, -[sigsqdc_official[1],sigsqdc_official[1]], [-2,2], lines=2
+
+oplot, [-4,4],-[sigsqdc_official[2],sigsqdc_official[2]], lines=2
+oplot, [-4,4],[sigsqdc_official[2],sigsqdc_official[2]], lines=2
+
+;xyouts, -.24, .59, '!4Dt!X!U2!N=1', align=.5
+;xyouts, -.45, .88, '!4Dt!X!U2!N=2.3', align=.5
+

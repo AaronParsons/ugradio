@@ -1,0 +1,53 @@
+;REDO THE LEAST SQUARES FIT, DOING A CHI SQUARES FIT INSTEAD...
+;SUBSCRIPT ALL CHI FIT ARRAYS BY _CHI...
+; assume many many observations.
+
+m=1024
+n=3
+s = dblarr( 3,m)
+tdata = dblarr( 1024)
+
+;FROM THE LEAST SQUARES FIT, WE FIND...
+sigma = sqrt( 20.d0)
+
+time = double([ 5,7,9,11])
+time = 5.d0 + (11.d0 - 5.d0)*findgen(1024)/1023.
+tdata = 96.625d0 + 4.5d0*(time) + 0.875d0 * time^2 + sigma*randomu( seed, m)
+;time=time-8.
+s[0,*]=1.
+s[1,*]=time
+s[2,*]=time^2
+;tdata= double([142,168,211,251]) + normaln( seed, 4)
+
+;DERIVE THE DESIGN MATRIX; DIVIDE THE DATA MATRIX BY SIGMA...
+;ALL CHISQ QUANTITIES ARE SUBSCRIPTED BY _CHI...
+s_chi = s / sigma
+t_chi = tdata / sigma
+
+ss_chi=transpose(s_chi)##s_chi
+st_chi = transpose(s_chi)##t_chi
+ss_chi_i = invert(ss_chi)
+a_chi = ss_chi_i ## st_chi
+bt_chi = s_chi ## a_chi
+dely_chi = t_chi - bt_chi
+
+bt = s ## a_chi
+dely = t - bt
+sigmasq = total( dely^2)/(m-n)
+
+chisq = total((t_chi - bt_chi)^2)
+reduced_chisq = total((t_chi - bt_chi)^2)/(m-n)
+
+dc_chi =  ss_chi_i[ (n+1) * indgen(n)]
+sigdcsq_ch = chisq * dc_chi
+sigdc_ch = sqrt(sigdcsq_ch)
+
+sigdcsq_nm = dc_chi
+sigdc_nm = sqrt(sigdcsq_nm)
+
+ncov_chi = ss_chi_i/sqrt(dc_chi # dc_chi)
+
+
+
+
+

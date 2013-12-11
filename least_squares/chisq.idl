@@ -1,0 +1,148 @@
+
+;openplotps, filenm='chisq.ps', xsize=5, ysize=5
+
+;REDO THE LEAST SQUARES FIT, DOING A CHI SQUARES FIT INSTEAD...
+;follow notation in section 8.1.4...
+;SUBSCRIPT ALL CHI FIT ARRAYS BY _CHI...
+
+;a_parent =double( [ 184., 18., 0.8])
+
+x = dblarr(3,4)
+m=4
+n=3
+
+;FROM THE LEAST SQUARES FIT, WE FIND...
+sigma = sqrt( 20.d0)
+
+time = double([5,7,9,11])
+;time=time-8.
+time=time-7.75d0
+x[0,*]=1.
+x[1,*]=time
+x[2,*]=time^2
+y= double([142,168,211,251])
+ydata = y
+y = transpose( y)
+
+;DEFINE THE SIGMAS...
+sigma = fltarr(M) + 1.
+sigma = dblarr(M) + sqrt(20.d0)
+;sigma = 1. + findgen(m)
+
+;CREATE A DIAGONAL MATRIX WHOSE ELEMENTS ARE THE INVERSES OF THE SIGMAS...
+w = fltarr( m,m)
+w [ indgen(m) * (m+1)] = 1./sigma
+
+;DERIVE WEIGHTED VERSIONS OF X AND Y
+xw = w ## x
+yw = w ## y
+
+xxw= transpose( xw) ## xw
+xyw = transpose(xw) ## yw
+xxwi = invert(xxw)
+
+a = xxwi ## xyw
+ybarw = xw ## a
+delyw = yw - ybarw
+
+ybar = invert( w) ## xw ## a 
+dely = y - ybar
+sigmasq = total( dely^2)/(m-n)
+
+chisq = total((yw - ybarw)^2)
+reduced_chisq = total((yw - ybarw)^2)/(m-n)
+
+dcw =  xxwi[ (n+1) * indgen(n)]
+vardc_official = dcw
+vardc_realworld = reduced_chisq* dcw
+sigsqdc_official = sqrt( vardc_official)
+sigsqdc_realworld = sqrt( vardc_realworld)
+
+ncov_chi = xxwi/sqrt(dcw # dcw)
+
+;----------------
+
+;generate a grid of delta a values for computation...
+
+dela0_v =  0.02* sigsqdc_official[ 0]*(findgen( 200) - 100.)
+dela1_v =  0.02* sigsqdc_official[ 1]*(findgen( 200) - 100.)
+dela2_v =  0.02* sigsqdc_official[ 2]*(findgen( 200) - 100.)
+dela0 = fltarr( 200,200)
+dela1 = fltarr( 200,200)
+dela2 = fltarr( 200,200)
+for nr=0,199 do dela0[*, nr]= dela0_v
+for nr=0,199 do dela1[*, nr]= dela1_v
+for nr=0,199 do dela2[nr, *]= dela2_v
+
+;--------------------------------------------------------------------
+;THE BELOW MAKES CONTOURS OF CONTANT CHI SQ FOR DELA1, DELA2, CALCULATED
+;	USING BRUTE FORCE LEAST SQUARES ON A GRIE.
+
+;chisq_n = fltarr( 200,200)
+;.run try2.pro
+;contour, chisq_n, dela1_v, dela2_v, levels=[2,3.6]
+;plots, sigsqdc_official[1], -sigsqdc_official[2], psym=4
+
+;THE ABOVE MAKES CONTOURS OF CONTANT CHI SQ FOR DELA1, DELA2, CALCULATED
+;	USING BRUTE FORCE LEAST SQUARES ON A GRIE.
+;------------------------------------------------------------------------
+;stop
+;--------------------------------------------------------------------
+;THE BELOW MAKES CONTOURS OF CONTANT CHI SQ FOR DELA1, DELA2, CALCULATED
+;	USING NM'S TECHNIQUE ON A GRIE.
+
+indx_new = [0,1]
+;indx_new = [0]
+indx_new= [1,2]
+
+xxwi_new = pminor( indx_new, xxwi)
+xxw_new = invert( xxwi_new)
+
+delchisq_n = fltarr( 200,200)
+.run try3.pro
+;contour, delchisq_n, dela1_v, dela2_v, levels=[1,2.3]
+;plots, sigsqdc_official[1], -sigsqdc_official[2], psym=4, color=green
+
+@plot_fig.idl
+
+.run chisq_3d.idl
+
+;THE ABOVE MAKES CONTOURS OF CONTANT CHI SQ FOR DELA1, DELA2, CALCULATED
+;	USING NM'S TECHNIQUE ON A GRIE.
+;------------------------------------------------------------------------
+
+if !d.name eq 'PS' then closeps
+
+stop
+
+;-----------------------------------------------------------------------
+;NOW DO THE SAME AS ABOVE, BUT FIND CHI OFFSET FOR DELA0, CLACULATED USING
+;	BRUTE FORCE METHOD. 
+
+chisq_n1 = fltarr(200)
+.run try2_1.pro
+plot, dela0_v, chisq_n1
+plots, sigsqdc_official[ 0], 2, /data, color=red, psym=2
+;-----------------------------------------------------------------------
+
+stop
+
+;-----------------------------------------------------------------------
+;NOW DO THE SAME AS ABOVE, BUT FIND CHI OFFSET FOR DELA0, CLACULATED USING
+;	NM method
+
+indx_new = [0]
+
+xxwi_new = pminor( indx_new, xxwi)
+xxw_new = invert( xxwi_new)
+
+delchisq_n1 = fltarr( 200)
+.run try3_1.pro
+;contour, delchisq_n, dela1_v, dela2_v, levels=[1,2.6]
+;plots, sigsqdc_official[1], -sigsqdc_official[2], psym=4, color=green
+
+plot, dela0_v, delchisq_n1
+plots, sigsqdc_official[ 0], 1, /data, color=red, psym=2
+;-----------------------------------------------------------------------
+
+

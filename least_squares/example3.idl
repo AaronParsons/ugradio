@@ -1,0 +1,24 @@
+;this example is for fit of theta to frequency.
+
+freq = 1414.4 + findgen(2048)*12.5/2047.
+
+thetazro = 90.
+;rimagpart = randomn(seed1, 2048, /normal)
+;rrealpart = randomn(seed2, 2048, /normal)
+rimagpart = randomn(seed11, 2048, /normal)
+rrealpart = randomn(seed22, 2048, /normal)
+
+mult=4.
+
+imagpart = mult*sin(!dtor*12.*(freq-freq[0]) + thetazro) + rimagpart
+
+realpart = mult*cos(!dtor*12.*(freq-freq[0]) + thetazro) + rrealpart
+
+theta = !radeg*atan(imagpart,realpart)
+
+;seed11 = seed1
+;seed22 = seed2
+;print, seed1,seed2
+
+save, imagpart, realpart, freq, file='problem3.sav'
+

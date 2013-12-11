@@ -1,0 +1,70 @@
+\contentsline {section}{\numberline {0}LEAST-SQUAREs FITTING FOR TWO PARAMETERS, AS WITH A STRAIGHT LINE.}{4}
+\contentsline {subsection}{\numberline {0.1}The closed-form expressions for a straight-line fit}{4}
+\contentsline {subsection}{\numberline {0.2}Better is the following generalized notation.}{5}
+\contentsline {section}{\numberline {1}LEAST-SQUARES FITTING FOR MANY PARAMETERS, AS WITH A CUBIC}{6}
+\contentsline {section}{\numberline {2}FAR, FAR BEST AND EASIEST: MATRIX ALGEBRA}{7}
+\contentsline {section}{\numberline {3}UNCERTAINTIES IN THE DERIVED COEFFICIENTS}{8}
+\contentsline {section}{\numberline {4}A NUMERICAL EXAMPLE AND ITS SOLUTION IN IDL}{10}
+\contentsline {subsection}{\numberline {4.1}Generation of the numerical example}{11}
+\contentsline {subsection}{\numberline {4.2}Solution of the Numerical Example in IDL}{12}
+\contentsline {subsection}{\numberline {4.3}Discussion of the numerical example}{14}
+\contentsline {section}{\numberline {5}THE COVARIANCE MATRIX AND ITS NORMALIZED COUNTERPART}{14}
+\contentsline {subsection}{\numberline {5.1} Definition of the normalized covariance (or correlation) matrix}{14}
+\contentsline {subsection}{\numberline {5.2} The covariance in our numerical example}{16}
+\contentsline {section}{\numberline {6}REJECTING BAD DATAPOINTS I.: CHAUVENET'S CRITERION}{18}
+\contentsline {section}{\numberline {7}NONLINEAR LEAST SQUARES}{20}
+\contentsline {section}{\numberline {8}CHI-SQUARE FITTING AND WEIGHTED FITTING: DISCUSSION IGNORING COVARIANCE }{23}
+\contentsline {subsection}{\numberline {8.1} The weighted mean: the simplest chi-square fit}{24}
+\contentsline {subsection}{\numberline {8.2}The multivariate chi-square fit}{25}
+\contentsline {subsection}{\numberline {8.3}Which equation---8.9\hbox {} or 8.10\hbox {}?}{28}
+\contentsline {subsection}{\numberline {8.4}Datapoints with known {\it relative} but unknown {\it absolute} dispersions}{28}
+\contentsline {subsection}{\numberline {8.5} Persnickety Diatribe on Choosing $\sigma _{m}$ }{29}
+\contentsline {subsubsection}{\numberline {8.5.1}Choosing and correcting $\sigma _{m}$}{29}
+\contentsline {subsubsection}{\numberline {8.5.2}When you're using equation 8.9\hbox {}\dots }{29}
+\contentsline {subsubsection}{\numberline {8.5.3}Think about your results!}{30}
+\contentsline {subsubsection}{\numberline {8.5.4}When your measurements are correlated\dots }{30}
+\contentsline {section}{\numberline {9}CHI-SQUARE FITTING AND WEIGHTED FITTING: DISCUSSION INCLUDING COVARIANCE }{31}
+\contentsline {subsection}{\numberline {9.1} Phenomenological description}{31}
+\contentsline {subsection}{\numberline {9.2} Calculating the uncertainties of a single parameter---gedankenexperiment}{34}
+\contentsline {subsection}{\numberline {9.3} Calculating the uncertainties of two parameters---gedankenexperiment}{34}
+\contentsline {subsection}{\numberline {9.4} Calculating the uncertainties of three parameters---gedankenexperiment}{35}
+\contentsline {subsection}{\numberline {9.5} Doing these calculations the non-gedanken easy way}{35}
+\contentsline {subsection}{\numberline {9.6} Important comments about uncertainties}{37}
+\contentsline {section}{\numberline {10}BRUTE FORCE CHI-SQUARE AND THE CURVATURE MATRIX}{37}
+\contentsline {subsection}{\numberline {10.1}Parameter Uncertainties in Brute Force chi-square Fitting}{37}
+\contentsline {section}{\numberline {11}USING SINGULAR VALUE DECOMPOSITION (SVD)}{38}
+\contentsline {subsection}{\numberline {11.1}Phenomenological description of SVD}{39}
+\contentsline {subsection}{\numberline {11.2}Using SVD for Least Squares}{40}
+\contentsline {subsection}{\numberline {11.3}Important Conclusion for Least Squares!!!}{42}
+\contentsline {subsection}{\numberline {11.4}How Small is ``Small''?}{42}
+\contentsline {subsubsection}{\numberline {11.4.1}Strictly Speaking\dots }{42}
+\contentsline {subsubsection}{\numberline {11.4.2}Practically Speaking\dots }{42}
+\contentsline {subsection}{\numberline {11.5}Doing SVD in IDL}{43}
+\contentsline {subsubsection}{\numberline {11.5.1}IDL's SVD routine {\tt la\_svd}}{43}
+\contentsline {subsubsection}{\numberline {11.5.2}My routine {\it lsfit\_svd}}{43}
+\contentsline {section}{\numberline {12}REJECTING BAD DATAPOINTS II: STETSON'S METHOD PLUS CHAUVENET'S CRITERION}{43}
+\contentsline {subsection}{\numberline {12.1}Stetson's sliding weight}{44}
+\contentsline {subsection}{\numberline {12.2}Implementation of the weight in our matrix equations}{45}
+\contentsline {section}{\numberline {13}MEDIAN/MARS, INSTEAD OF LEAST-SQUARES, FITTING}{46}
+\contentsline {subsection}{\numberline {13.1} The Median versus the MARS}{46}
+\contentsline {subsubsection}{\numberline {13.1.1} For the Standard Median---it's the MARS}{47}
+\contentsline {subsubsection}{\numberline {13.1.2} For an arbitrary function, e.g.\ the slope---it's a weighted MARS}{47}
+\contentsline {subsection}{\numberline {13.2} The General Technique for Weighted MARS Fitting}{49}
+\contentsline {subsection}{\numberline {13.3}Implementation, a Caution, and When To Stop Iterating}{50}
+\contentsline {subsection}{\numberline {13.4}Errors in the Derived Parameters}{50}
+\contentsline {subsection}{\numberline {13.5} Pedantic Comment: The MARS and the Double-sided Exponential pdf}{50}
+\contentsline {subsection}{\numberline {13.6}IDL's related resources}{51}
+\contentsline {section}{\numberline {14}FITTING WHEN MORE THAN ONE MEASURED PARAMETERS HAVE UNCERTAINTIES}{52}
+\contentsline {subsection}{\numberline {14.1}A preliminary: Why the slope is systematically small}{52}
+\contentsline {subsection}{\numberline {14.2}Jefferys' Method: Introduction}{54}
+\contentsline {subsection}{\numberline {14.3}The Data Matrix and Vector}{54}
+\contentsline {subsection}{\numberline {14.4} The Data Covariance Matrix and Defining Chi-Square}{57}
+\contentsline {subsection}{\numberline {14.5}Formulation of the Problem and its Solution with Lagrange Multipliers}{58}
+\contentsline {subsection}{\numberline {14.6}The Derivative Matrices}{59}
+\contentsline {subsection}{\numberline {14.7}The Specific Example}{59}
+\contentsline {subsection}{\numberline {14.8}The Solution to the Lagrangian: Two Matrix Equations}{61}
+\contentsline {subsection}{\numberline {14.9} Solving Equations 14.18a\hbox {} and 14.18b\hbox {} Iteratively}{62}
+\contentsline {subsection}{\numberline {14.10}Taking all those derivatives!}{63}
+\contentsline {subsection}{\numberline {14.11}The Initial Guess}{64}
+\contentsline {subsection}{\numberline {14.12}The Covariance Matrix (and errors) of the Derived Parameters}{64}
+\contentsline {section}{\numberline {15} NOTATION COMPARISON WITH NUMERICAL RECIPES}{64}

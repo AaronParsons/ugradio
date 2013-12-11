@@ -1,0 +1,71 @@
+s = fltarr(3,4)
+n=4
+m=3
+
+time = [5,7,9,11]
+;time=time-8.
+s[0,*]=1.
+s[1,*]=time
+s[2,*]=time^2
+t=[142,168,211,251]
+
+ss=transpose(s)##s
+st = transpose(s)##t
+ssi = invert(ss)
+a = ssi ## st
+bt = s ## a
+sigsq = total((t - bt)^2)/(n-m)
+dc =  ssi[ (m+1) * indgen(m)]
+sigdcsq = sigsq * dc
+sigdc = sqrt(sigdcsq)
+ncov = ssi/sqrt(dc # dc)
+
+timex = findgen(14)
+sx = fltarr(3,14)
+sx[0,*]=1.
+sx[1,*]=timex
+sx[2,*]=timex^2
+tx = sx ## reform(a)
+
+plot, time, t, psym=2, xra=[0,12],yra=[0,300], $
+	xtit = 'TIME', ytit= 'T'
+oplot, timex, tx
+
+;---------------------------------------------------------
+
+time = [5,7,9,11]
+time=time-8.
+s[0,*]=1.
+s[1,*]=time
+s[2,*]=time^2
+t=[142,168,211,251]
+
+ss=transpose(s)##s
+st = transpose(s)##t
+ssi = invert(ss)
+a = ssi ## st
+bt = s ## a
+sigsq = total((t - bt)^2)/(n-m)
+dc =  ssi[ (m+1) * indgen(m)]
+sigdcsq = sigsq * dc
+sigdc = sqrt(sigdcsq)
+ncov = ssi/sqrt(dc # dc)
+
+timex = findgen(14)-7.
+sx = fltarr(3,14)
+sx[0,*]=1.
+sx[1,*]=timex
+sx[2,*]=timex^2
+tx = sx ## reform(a)
+
+oplot, [8,8], [0,400], linestyle=2
+
+arrow, 1,60,0,100, /data
+xyouts, 1, 60, 'Y-INTERCEPT FOR ORIGINAL TIME'
+
+arrow, 6,220,8,188.625, /data
+xyouts, 6, 220, 'Y-INTERCEPT FOR (TIME-8)', align=1
+
+
+;oplot, timex+8., tx, color=red
+

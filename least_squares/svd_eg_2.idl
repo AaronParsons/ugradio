@@ -1,0 +1,18 @@
+
+printf, filenr
+printf, filenr, 'a_svd, siga_svd'
+printf, filenr, a_svd, siga_svd
+
+;============= compare with a simple linear fit...
+
+polyfit, time, t, 1, a_polyfit, siga_polyfit, yfit, sigma, nr3bad, $
+  ncov_polyfit
+
+printf, filenr,''
+printf, filenr, '1 deg polyfit:'
+printf, filenr, 'ncov_polyfit'
+printf, filenr, ncov_polyfit
+printf, filenr,''
+printf, filenr, 'a_polyfit, siga_polyfit'
+printf, filenr, a_polyfit, siga_polyfit
+

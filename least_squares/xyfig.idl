@@ -1,0 +1,76 @@
+;GENERATE FIG FOR ERRORS IN BOTH COORDINATES PLOT...
+;openplotps, filenm= 'xyfig.ps', xsize=5, ysize=4.5
+psopen, 'xyfig.ps', xsize=5, ysize=4.5, /inches
+
+;GENERATE THE STRAIGHT LINE...
+a0 = 1
+a1 = 1.5
+xdata = 0.005*findgen( 1000)
+ydata = a0 + a1* xdata
+plot, xdata, ydata, xtit = 'X', ytit= 'Y', $
+;	yra = [0,4.5], /ysty, xra=[0,4.5], /xsty, /isotropic
+	yra = [0,4.5], /ysty, xra=[-0.5,4.5], /xsty  ;, /isotropic
+
+;GENERATE A DATAPOINT...
+x_m = xdata[ 400]
+y_m = 2.
+deltay = ydata[ 400]- y_m
+
+plots, x_m, y_m, psym = 6
+
+sigmax = 0.75
+sigmay = 0.4
+
+;sigmax = 2.0
+;sigmay = 2.0
+
+delx = (-deltay/a1) / ( 1 + (sigmay/(sigmax*a1))^2 )
+dely = deltay/( 1 + (a1*sigmax/sigmay)^2 )
+
+plots, x_m, y_m + deltay, psym=4
+plots, x_m + delx, y_m + dely, psym=2
+
+;GENERATE ELLIPSE...
+
+constant_factor= [.25, 1.0, 4.]
+lines= [ 1, 0, 1]
+for nr = 0, 2 do begin
+constant = constant_factor[ nr]* ( (delx/sigmax)^2 + (dely/sigmay)^2 )
+delxmax = sigmax* sqrt(constant - (dely/sigmay)^2 )
+xellipse = -sqrt(constant) + findgen( 1000)* 2.*sqrt(constant)/999.
+yellipse = sigmay* sqrt( constant - (xellipse/sigmax)^2)
+oplot, x_m + xellipse, y_m + yellipse, lines=lines[ nr]
+oplot, x_m + xellipse, y_m -yellipse, lines=lines[ nr]
+endfor
+
+;ANNOTATE...
+yoffset1 = dely
+xoffset1 = 0.5
+arrow, x_m, y_m+ yoffset1, x_m + delx, y_m+ yoffset1, /data
+arrow, x_m, y_m, x_m, y_m + dely, /data
+
+arrow, 1.2,1.8, x_m-.1, y_m + 2* yoffset1/4., /data
+oplot, [1, 1.2], [1, 1.8]
+xyouts, 1,1, '!4d!Xy!Dm!N', align=1.1 ;;;;;;;, color=!red
+;xyouts, x_m, y_m + yoffset1/2., '!4d!Xy!Dm!N'
+
+arrow, 1.2,3.5, 1.94, 3.14, /data
+oplot, [1, 1.2], [4, 3.5]
+xyouts, 1,4, '-a!D1!N!4d!Xx!Dm!N', align=1.1;;;;;;;;;, color=!red
+;xyouts, x_m,  0.5*(y_m+ yoffset1+ ydata[400]), '-a!D1!N!4d!Xx!Dm!N'
+
+
+xyouts, x_m + delx/2., y_m+ yoffset1, '!4d!Xx!Dm!N', align=.5
+arrow, x_m, y_m+ yoffset1, x_m, ydata[400], /data
+arrow, x_m+ xoffset1, y_m, x_m+ xoffset1, ydata[400], /data
+;xyouts, x_m+ xoffset1, 0.5*(y_m+ ydata[400]), '!4D!Xy!Dm!N=!4d!Xy!Dm!N-a!D1!N!4d!Xx!Dm!N '
+xyouts, x_m+ xoffset1, 3.5, '!4D!Xy!Dm!N=!4d!Xy!Dm!N-a!D1!N!4d!Xx!Dm!N '
+
+yoffset2 = 0.1
+xyouts, x_m , y_m - yoffset2, '(x!Dm!N, y!Dm!N)'
+xyouts, x_m+delx, y_m+dely , '(x*!Dm!N, y*!Dm!N)', align=1
+
+psclose
+;closeplotps
+
+end

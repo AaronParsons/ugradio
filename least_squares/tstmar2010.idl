@@ -1,0 +1,40 @@
+;this compares eigenvectors/eigenvalues of the curvature matrix to SVD
+;matrices V and w.
+
+filenr= -1
+
+s = fltarr(3,4)
+n=4
+m=3
+t=[142,168,211,251]
+time_orig = [5., 7., 9., 11.]
+meantime= mean(time_orig)
+
+
+
+;=================== '<time> = 8.0; <time^2>=69.0' ============
+spec= '<time> = 8.0; <time^2>= 69.0 '
+specc= textoidl( spec)
+time=time_orig
+s[0,*]=1.
+s[1,*]=time
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2; - meantimesq
+s[2,*]= timesq
+;s[2,*]= time
+
+
+...skipping one line
+@svd_eg_0.idl
+;@svd_eg_1.idl
+ps_ch, /close
+;stop
+
+eigenval_curv= EIGENQL( ss, EIGENVECTORS=eigenvect_curv) 
+
+cov= ssi
+cov[ *,0]= cov[ 0,*]
+cov[ *,1]= cov[ 1,*]
+cov[ *,2]= cov[ 2,*]
+eigenval_cov = EIGENQL( cov, EIGENVECTORS=eigenvect_cov) 

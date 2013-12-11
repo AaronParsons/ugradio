@@ -1,0 +1,113 @@
+
+
+
+;;for nr=0,3 do s[*,nr] = (nr+1)*s[*,nr]
+;ss = transpose(s) ## s
+;print, ss
+;ssi = invert(ss)
+;;stop
+
+s = fltarr(3,4)
+n=4
+m=3
+
+time = [5,7,9,11]   
+meantime= mean(time)
+time=time - meantime
+s[0,*]=1.
+s[1,*]=time
+
+timesq = time^2
+meantimesq = mean(timesq)
+timesq = time^2 - meantimesq
+s[2,*]= timesq
+s[2,*]= time
+
+t=[142,168,211,251]
+
+s = double(s)
+t = double(t)
+
+ss=transpose(s)##s
+st = transpose(s)##t
+ssi = invert(ss, status)
+a = ssi ## st
+bt = s ## a
+sigsq = total((t - bt)^2)/(n-m)
+dc =  ssi[ (m+1) * indgen(m)]
+sigdcsq = sigsq * dc
+sigdc = sqrt(sigdcsq)
+ncov = ssi/sqrt(dc # dc)
+
+;WE ASSUMING SIGMA_DATA  = 1. THEREFORE, CHISQ IS ...
+
+chisq = total( (t-bt)^2)
+
+print, 'status = ', status
+print, 'ss:'
+print, ss
+print, 'ssi'
+print, ssi
+
+print, '==================
+print, 's'
+print, s
+
+print, ''
+print, 'ncov'
+print, ncov
+
+print, '---------------'
+
+lsfit_svd, s, t, u, v, wgt, $
+  a_svd, vara_svd, siga_svd, ncov_svd, s_sq
+
+print, 'v'
+print, v
+print,''
+print, 'wgt', wgt
+print,''
+
+print, 'a, siga' 
+print, transpose(a), sigdc 
+print, 'a_svd, siga_svd'
+print, a_svd, siga_svd
+
+;====================== rerun svd fit with inverse wgts -----------
+
+wgt_inv = 1./wgt
+wgt_inv[ 2]= 0.
+
+lsfit_svd, s, t, u, v, wgt, $
+  a_svd, vara_svd, siga_svd, ncov_svd, s_sq, $
+  wgt_inv= wgt_inv
+
+print, 'v'
+print, v
+print,''
+print, 'ncov_svd'
+print, ncov_svd
+print,''
+print, 'wgt', wgt
+print,''
+
+print, 'a, siga' 
+print, transpose(a), sigdc 
+print, 'a_svd, siga_svd'
+print, a_svd, siga_svd
+
+;============= compare with a simple linear fit...
+
+polyfit, time, t, 1, a_polyfit, siga_polyfit, yfit, sigma, nr3bad, $
+  ncov_polyfit
+
+print,''
+print, '1 deg polyfit:'
+print, 'ncov_polyfit'
+print, ncov_polyfit
+print,''
+print, 'a_polyfit, siga_polyfit'
+print, a_polyfit, siga_polyfit
+
+
+
