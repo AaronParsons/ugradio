@@ -1,0 +1,38 @@
+\contentsline {section}{\numberline {0}THE INTEGRAL FOURIER TRANSFORM: TIME $\leftrightarrow $ FREQUENCY}{3}
+\contentsline {subsection}{\numberline {0.1}Classical Fourier transforms}{3}
+\contentsline {section}{\numberline {1}EFFECTS OF $T$ BEING FINITE: INTEGRAL TRANSFORMS}{4}
+\contentsline {subsection}{\numberline {1.1}Spectral Resolution}{4}
+\contentsline {subsection}{\numberline {1.2}Spectral Leakage}{5}
+\contentsline {section}{\numberline {2}DISCRETELY SAMPLED SIGNALS}{5}
+\contentsline {subsection}{\numberline {2.1}Discretely-Sampled Signals: The Nyquist Criterion.}{6}
+\contentsline {subsection}{\numberline {2.2}A Popular MISCONCEPTION!!!}{6}
+\contentsline {section}{\numberline {3}DISCRETE SAMPLING AND THE FOURIER TRANSFORM}{7}
+\contentsline {subsection}{\numberline {3.1}The maximum recoverable bandwidth: the Nyquist frequency}{7}
+\contentsline {subsection}{\numberline {3.2}Summary: The Two Fundamental Parameters in Discrete Sampling and Fourier Transforms}{8}
+\contentsline {section}{\numberline {4}THE DISCRETE FOURIER TRANSFORM AND DISCRETE SAMPLING}{8}
+\contentsline {subsection}{\numberline {4.1}IMPORTANT DETAIL Regarding Limits of Summation and Periodicities}{9}
+\contentsline {subsection}{\numberline {4.2} Again: The Periodic Nature of the Discrete FT}{10}
+\contentsline {section}{\numberline {5}THAT WEIRD-LOOKING POWER SPECTRUM---IT'S JUST A MATTER OF STANDARD CONVENTION}{10}
+\contentsline {subsection}{\numberline {5.1} Enough Preaching! Let's Try an Example in IDL}{11}
+\contentsline {subsection}{\numberline {5.2} Is this weirdness perfectly clear? }{13}
+\contentsline {subsubsection}{\numberline {5.2.1}Verbal Description}{13}
+\contentsline {subsubsection}{\numberline {5.2.2}An Example}{14}
+\contentsline {subsubsection}{\numberline {5.2.3}Wait a Minute! You Mean the TIME Isn't CONTINUOUS?}{16}
+\contentsline {section}{\numberline {6}THE SPECTRUM AT AN ARBITRARY FREQUENCY}{16}
+\contentsline {subsection}{\numberline {6.1}Two examples}{17}
+\contentsline {subsubsection}{\numberline {6.1.1}The first example: a spike centered on integral $k$}{17}
+\contentsline {subsubsection}{\numberline {6.1.2}The second example: a spike {\it not} centered on integral $k$}{19}
+\contentsline {subsection}{\numberline {6.2} The repeating windows for nonintegral $k$}{19}
+\contentsline {section}{\numberline {7}THE FAST FOURIER TRANSFORM}{19}
+\contentsline {subsection}{\numberline {7.1}On Padding with Zeros}{20}
+\contentsline {section}{\numberline {8}CORRELATION AND CONVOLUTION}{20}
+\contentsline {subsection}{\numberline {8.1}Digital Calculation of the Autocorrelation Function.}{22}
+\contentsline {subsection}{\numberline {8.2}!!!!!!!!!!WARNING!!!!!!!!!}{23}
+\contentsline {subsection}{\numberline {8.3}Calculating correlation functions in IDL}{23}
+\contentsline {subsection}{\numberline {8.4}Calculating the Fourier Transform of the Autocorrelation Function}{24}
+\contentsline {subsection}{\numberline {8.5}The FX versus XF methods: Not Entirely Equivalent!!}{24}
+\contentsline {section}{\numberline {9}COSINE AND SIN TRANSFORMS}{25}
+\contentsline {section}{\numberline {10}SOME FINAL POINTS}{27}
+\contentsline {subsection}{\numberline {10.1}What's This Business About {\it Negative Frequencies}?}{27}
+\contentsline {subsection}{\numberline {10.2}For Real Inputs, How Do These Negative Frequencies Enter the Power Calculation?}{28}
+\contentsline {subsection}{\numberline {10.3}A Detail on Normalization and ``Going Back and Forth''}{28}

@@ -1,0 +1,28 @@
+openplotps, filenm='fig1.ps', xsize=5, ysize=2.5
+
+;GENERATE FIGURE 1...
+t_smpl= 0.01
+
+f_n= 0.5/t_smpl
+
+deltaf= 0.25* f_n
+frq1= f_n - deltaf
+frq2= f_n+ deltaf
+
+scale=1.0
+time= scale* t_smpl* findgen( 64)
+times= scale* 0.01* t_smpl* findgen(6400)
+
+data1= cos( 2.*!pi* frq1* time)
+data1s= cos( 2.*!pi* frq1* times)
+
+data2= cos( 2.*!pi* frq2* time)
+data2s= cos( 2.*!pi* frq2* times)
+
+plot, time, data1, psym=2, xra=[0, .1], xtit='TIME', yra=[-1.1,1.1], /ysty
+;oplot, time, data2, psym=4, lines=2    ;;;, color=red
+
+oplot, times, data1s
+oplot, times, data2s, lines=2    ;;;;color=red
+
+closeplotps

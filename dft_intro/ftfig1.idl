@@ -1,0 +1,39 @@
+ps=0
+ps=1
+!p.charsize=1.5
+radius= 1
+size=6.
+
+if ps eq 1 then psopen, 'ftfig1.ps', xsize=size, ysize=size, /inches, $
+	/HELVETICA, /BOLD, /ISOLATIN1
+x= radius*cos( findgen( 360)* !dtor)
+y= radius*sin( findgen( 360)* !dtor)
+
+plot, x, y, /isotropic, xsty=7, ysty=7
+
+angles= 45.*findgen(8)
+xo= radius* cos( angles*!dtor)
+yo= radius* sin( angles*!dtor)
+
+plotsym, 0, 1, /fill
+oplot, xo, yo, psym=8
+
+mult=1.15
+for nr=1,7 do xyouts, mult*xo[nr], mult*yo[nr], strtrim( string(nr), 2), $
+	align=.5, font=ps-1
+nr=0
+xyouts, mult*xo[nr], mult*yo[nr], strtrim( string(nr), 2) + ' ,8' , align=.5, font=ps-1
+mult=1.3
+nr=0
+;xyouts, mult*xo[nr], mult*yo[nr], ', 8' , align=.25, font=ps-1
+mult=0.85
+xr=reverse( xo)
+yr=reverse( yo)
+xr= xo
+yr= yo
+for nr=0,7 do xyouts, mult*xr[nr], mult*yr[nr], '-' + $
+	strtrim( string(8-nr), 2), align=.5, font=ps-1
+
+!p.charsize=0
+if ps eq 1 then psclose
+

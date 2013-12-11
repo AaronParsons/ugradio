@@ -1,0 +1,52 @@
+frq = 8.
+ej0 =  cos( 2. * !pi * (frq/64.) * findgen(64))
+ejp1 = cos( 2. * !pi * ((frq+1.)/64.) * findgen(64))
+ejm1 = cos( 2. * !pi * ((frq-1.)/64.) * findgen(64))
+ejp2 = cos( 2. * !pi * ((frq+2.)/64.) * findgen(64))
+ejm2 = cos( 2. * !pi * ((frq-2.)/64.) * findgen(64))
+ej = ej0 + 0.5*(ejp1 + ejm1) + 0.*(ejp2 + ejm2)
+wset, 0
+plot, ej, xstyle=1, xrange=[0,64], xticks = 4, $
+	xtickv=16*indgen(5), xminor=4, xtitle='IDL index', $
+	ystyle=1, yrange=[-2.2, 2.2], ytitle = 'E(j)', $
+	position = [0.15, 0.55, 0.95, 0.95]
+oplot, ej, psym=7
+pk = fft(ej)
+pk = float( pk*conj(pk))
+wset, 1
+plot, pk, xstyle=1, xrange=[0,64], xticks = 4, $
+	xtickv=16*indgen(5), xminor=4, xtitle='IDL index', $
+	ystyle=1, yrange=[-0.025, 0.3], ytitle = 'P(k)', $
+	position = [0.15, 0.55, 0.95, 0.95]
+oplot, pk, psym=7
+ejj = fltarr(257)
+pkk = ejj
+indx = intarr(257)
+indx = -128 + indgen(257)
+
+for nr = 0, 3 do begin &$
+	ejj(nr*64:nr*64+63) = ej &$
+	pkk(nr*64:nr*64+63) = pk &$
+endfor
+
+wset, 0
+plot, indx, ejj, xstyle=1, xrange=[-128, 128], xticks=4, $
+	xtickv=[-128+64*indgen(5)], xminor=4, xtitle = 'j', $
+	ystyle=1, yrange=[-2.2, 2.2], ytitle = 'E(j)', $
+	position = [0.15, 0.1, 0.95, 0.45], /noerase
+oplot, [0,0], [-2.2,2.2], linestyle=1
+oplot, [63,63], [-2.2,2.2], linestyle=1
+oplot, [0,63], [1.8, 1.8], linestyle=1
+oplot, [0, -128], [2.2, 3.44], linestyle=2, clip=[-128, 0, 128, 4]
+oplot, [63, 128], [2.2, 3.44], linestyle=2, clip=[-128, 0, 128, 4]
+
+wset, 1
+plot, indx, pkk, xstyle=1, xrange=[-128, 128], xticks=4, $
+	xtickv=[-128+64*indgen(5)], xminor=4, xtitle = 'k', $
+	ystyle=1, yrange=[-0.025, 0.3], ytitle = 'P(k)', $
+	position = [0.15, 0.1, 0.95, 0.45], /noerase
+oplot, [0,0], [-2.2,2.2], linestyle=1
+oplot, [63,63], [-2.2,2.2], linestyle=1
+oplot, [0,63], [0.27, 0.27], linestyle=1
+oplot, [0, -128], [0.3, .392], linestyle=2, clip=[-128, 0, 128, 1]
+oplot, [63, 128], [0.3, .392], linestyle=2, clip=[-128, 0, 128, 1]

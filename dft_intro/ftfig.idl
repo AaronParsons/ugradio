@@ -1,0 +1,108 @@
+fileout= 'fourierbfig.ps'
+
+;to plot on terminal, set fileout='x'.
+;otherwise, it plots on a filename set equal to fileout.
+
+;PLOT IN PS IF APPROPRIATE...
+if (fileout ne 'x') then begin &$
+	set_plot, 'ps' &$
+	device, file=fileout, /portrait, bits_per_pixel=8, $
+		xsize=7.5, ysize=10, xoff=0.5, yoff=0.5, /inch &$
+endif
+
+frq = 8.
+ej0 =  cos( 2. * !pi * (frq/64.) * findgen(64))
+ejp1 = cos( 2. * !pi * ((frq+1.)/64.) * findgen(64))
+ejm1 = cos( 2. * !pi * ((frq-1.)/64.) * findgen(64))
+ejp2 = cos( 2. * !pi * ((frq+2.)/64.) * findgen(64))
+ejm2 = cos( 2. * !pi * ((frq-2.)/64.) * findgen(64))
+ej = ej0 + 0.5*(ejp1 + ejm1) + 0.*(ejp2 + ejm2)
+
+plot, ej, xstyle=1, xrange=[0,64], xticks = 4, $
+	xtickv=16*indgen(5), xminor=4, xtitle='IDL index', $
+	ystyle=1, yrange=[-2.2, 2.2], ytitle = 'EJ', $
+	yticks=4, ytickv=-2.+indgen(5), yminor=2, $
+	position = [0.15, 0.80, 0.95, 0.95], title='Figure A--Input Signal (j or time)'
+oplot, ej, psym=7
+pk = fft(ej)
+pk = float( pk*conj(pk))
+oplot, [32, 32], [1,2], linestyle=0
+oplot, [32, 28], [1.5, 1.5], linestyle=0
+oplot, [31, 32], [1.7, 1.5]
+oplot, [31, 32], [1.3, 1.5]
+oplot, [16, 12], [1.5, 1.5], linestyle=0
+oplot, [13, 12], [1.7, 1.5]
+oplot, [13, 12], [1.3, 1.5]
+xyouts, 27.5, 1.4, 'positive times', align=1.0
+oplot, [32, 36], [1.5, 1.5], linestyle=0
+oplot, [33, 32], [1.7, 1.5]
+oplot, [33, 32], [1.3, 1.5]
+xyouts, 36.5, 1.4, 'negative times', align=0.0
+oplot, [48, 52], [1.5, 1.5], linestyle=0
+oplot, [51, 52], [1.7, 1.5]
+oplot, [51, 52], [1.3, 1.5]
+
+plot, pk, xstyle=1, xrange=[0,64], xticks = 4, $
+	xtickv=16*indgen(5), xminor=4, xtitle='IDL index', $
+	ystyle=1, yrange=[-0.025, 0.3], ytitle = 'PK', $
+	yticks=3, ytickv=0.+0.1*indgen(4), yminor=2, $
+	position = [0.15, 0.30, 0.95, 0.45], /noerase, title='Figure B--Power Spectrum (k or frequency)'
+oplot, pk, psym=7
+oplot, [32, 32], [.20, .28], linestyle=0
+oplot, [32, 28], [.24, .24], linestyle=0
+oplot, [31, 32], [.22, .24]
+oplot, [31, 32], [.26, .24]
+oplot, [16, 12], [.24, .24], linestyle=0
+oplot, [13, 12], [.22, .24]
+oplot, [13, 12], [.26, .24]
+
+;oplot, [29, 28], [.22, .24]
+;oplot, [29, 28], [.26, .24]
+xyouts, 27.5, .23, 'positive freqs', align=1.0
+oplot, [32, 36], [.24, .24], linestyle=0
+oplot, [32, 33], [.24, .22]
+oplot, [32, 33], [.24, .26]
+oplot, [48, 52], [.24, .24], linestyle=0
+oplot, [51, 52], [.26, .24]
+oplot, [51, 52], [.22, .24]
+xyouts, 36.5, .23, 'negative freqs', align=0.0
+
+
+ejj = fltarr(257)
+pkk = ejj
+indx = intarr(257)
+indx = -128 + indgen(257)
+
+for nr = 0, 3 do begin &$
+	ejj(nr*64:nr*64+63) = ej &$
+	pkk(nr*64:nr*64+63) = pk &$
+endfor
+
+plot, indx, ejj, xstyle=1, xrange=[-128, 128], xticks=4, $
+	xtickv=[-128+64*indgen(5)], xminor=4, xtitle = 'j', $
+	ystyle=1, yrange=[-2.2, 2.2], ytitle = 'E(j)', $
+	ytickv=-2.+indgen(5), yminor=2, $
+	position = [0.15, 0.575, 0.95, 0.725], /noerase
+oplot, [0,0], [-2.2,2.2], linestyle=1
+oplot, [63,63], [-2.2,2.2], linestyle=1
+oplot, [0,63], [1.8, 1.8], linestyle=1
+oplot, [0, -128], [2.4, 4.13], linestyle=2, clip=[-128, 0, 128, 4]
+oplot, [63, 128], [2.4, 4.13], linestyle=2, clip=[-128, 0, 128, 4]
+
+
+plot, indx, pkk, xstyle=1, xrange=[-128, 128], xticks=4, $
+	xtickv=[-128+64*indgen(5)], xminor=4, xtitle = 'k', $
+	ystyle=1, yrange=[-0.025, 0.3], ytitle = 'P(k)', $
+	yticks=3, ytickv=0.+0.1*indgen(4), yminor=2, $
+	position = [0.15, 0.075, 0.95, 0.225], /noerase
+oplot, [0,0], [-2.2,2.2], linestyle=1
+oplot, [63,63], [-2.2,2.2], linestyle=1
+oplot, [0,63], [0.27, 0.27], linestyle=1
+oplot, [0, -128], [0.32, .44], linestyle=2, clip=[-128, 0, 128, 1]
+oplot, [63, 128], [0.32, .44], linestyle=2, clip=[-128, 0, 128, 1]
+oplot, [-200, 200], [.89, .89], linestyle=4, clip=[-200, 0, 200, 1]
+
+if (fileout ne 'x') then begin &$
+	device, /close &$
+	set_plot, 'x' &$
+endif
