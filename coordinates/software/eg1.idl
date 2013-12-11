@@ -1,0 +1,12 @@
+
+long= 325.05 ;* !dtor
+lat= -6.52 ;* !dtor
+
+phi= 41.36 * !dtor
+
+r_hadectoazalt= [ [-sin(phi), 0., cos(phi)], [0, -1, 0], [cos(phi), 0, sin(phi)]]
+
+r= r_hadectoazalt
+
+@convert.idl
+

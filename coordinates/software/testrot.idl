@@ -1,0 +1,33 @@
+reqgal[0,0]=-.066989
+reqgal[0,1]=-.872756
+reqgal[0,2]=-.483539
+reqgal[1,0]=.492728
+reqgal[1,1]=.450347
+reqgal[1,2]=.744585
+reqgal[1,1]=-.450347
+reqgal[2,0]=-.867601
+reqgal[2,1]=-.188375
+reqgal[2,2]=.460200
+
+reg = transpose(reqgal)
+
+alfa = 2.*!pi*(5. + 31.5/60.)/24.
+delta = !dtor * (21. + 50./60.)
+
+xx=fltarr(3)
+xx[0] = cos(delta)*cos(alfa)
+xx[1] = cos(delta)*sin(alfa)
+xx[2] = sin(delta)
+
+xp = reg ## xx
+
+glong = atan(xp[1],xp[0])
+glat = asin(xp[2])
+
+print, !radeg*glong, 360.+!radeg*glong, !radeg*glat
+
+xxx = transpose(reg) ## xp
+ranew =atan(xxx[1],xxx[0])
+decnew =asin(xxx[2])
+print, alfa, ranew
+print, delta, decnew

@@ -1,0 +1,16 @@
+;before entering this set r = desired rotation matrix.
+;and define long, lat as initial angles in degrees.
+;standard rotation matrices are defined in r2gen.idl
+
+x = fltarr(3)
+x(0) = cos(!dtor*lat) * cos(!dtor*long)
+x(1) = cos(!dtor*lat) * sin(!dtor*long)
+x(2) = sin(!dtor*lat)
+
+xp = r ## x
+
+longp = !radeg*atan(xp(1), xp(0))
+latp = !radeg*asin(xp(2))
+
+print, 'inputs: ' , long, lat
+print, 'outputs: ',longp, latp

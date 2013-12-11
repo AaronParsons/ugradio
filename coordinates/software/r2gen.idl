@@ -1,0 +1,43 @@
+;this idl batch file defines standard rotation matrices...
+;BEFORE ENTERING, define...
+;	phi to be the terrestrial latitude in degrees
+;	lst to be the lst in degrees
+
+;FIRST, (HA, DEC) TO (AZ, ALT)
+rhaaz = fltarr(3,3)
+rhaaz(0,0) = -sin(!dtor*phi)
+rhaaz(0,2) = cos(!dtor*phi)
+rhaaz(2,0) = rhaaz(0,2)
+rhaaz(1,1) = -1.0
+rhaaz(2,2) = -rhaaz(0,0)
+
+;NEXT, (RA, DEC) TO (L, B)
+reqgal = fltarr(3,3)
+reqgal(0,0) = -0.066989
+reqgal(0,1) = 0.492728
+reqgal(0,2) = -.867601
+
+reqgal(1,0) = -0.872756
+reqgal(1,1) = -0.450347
+reqgal(1,2) = -0.188375
+
+reqgal(2,0) = -0.483539
+reqgal(2,1) = 0.744585
+reqgal(2,2) = 0.460200
+
+;NEXT, (RA, DEC) TO (HA, DEC) IN TWO STEPS
+;step one is ra ---> ra-lst
+r1 = fltarr(3,3)
+r1(0,0) = cos(!dtor*lst)
+r1(1,1) = r1(0,0)
+r1(1,0) = sin(!dtor*lst)
+r1(0,1) = -r1(1,0)
+r1(2,2) = 1.0
+
+;step two is ra-lst ---> lst-ra
+r2 = fltarr(3,3)
+r2(0,0) = 1
+r2(1,1) = -1
+r2(2,2) = 1.
+
+rraha = r2##r1
