@@ -1,0 +1,4 @@
+
+enscript  -p emacskeyops.ps -fCourier9 emacskeyops.txt
+
+#enscript --output=emacskeyops.ps -fCourier9 emacskeyops.txt

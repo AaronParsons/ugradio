@@ -1,0 +1,155 @@
+\documentclass[preprint]{aastex}
+
+\begin{document}
+\setlength{\parskip}{0.02in}
+
+\title{A Beginners Guide to Emacs}
+
+\author{Nicholas Szandor Hakobian; updated by Carl Heiles}
+\affil{University of California, Berkeley, Undergraduate Radio
+Astronomy Laboratory}
+\affil{Version 2, \today}
+\email{nick@ugastro.berkeley.edu}
+
+\section{So What Is Emacs?}
+Emacs is a text file editor in Unix environments. This includes our
+lab which runs a variant of Unix called Solaris, and other, more
+readily available operating systems such as Linux. You can use emacs
+to quickly edit a simple text file, as an editor for your IDL source
+code, or as a nice front end to typesetting documents in \LaTeX, the
+required typesetting utility in this class. This document will outline
+the basics of using emacs.
+
+\section{The Basics}
+
+\subsection{Opening}
+Most of the programs that you will be using on these systems will be
+started from the command line. To begin a new document, simply
+navagate (via the Unix command line) to the directory where you want
+the file to be and type: 
+\begin{verbatim}
+emacs something.txt &
+\end{verbatim}
+Where {\tt something.txt} is the new file that you wish to create, or
+the old file that you wish to update. After a few moments, a new window
+will popup with a blank screen that you can type into. You can use the
+mouse to navigate the menus at the top. See table 1 for information on
+what the different menu options do.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|} \hline
+Buffers & Contains information about the currently open files in this
+instance of \\ & Emacs.\\ \hline
+Files & Contains basic commands for opening, saving, and closing
+files.\\ \hline
+Tools & Contains advanced functions for doing things like version
+control.\\ \hline
+Edit & Contains cut, paste, and spell checking capabilities of
+emacs.\\ \hline
+Search & Contains search and replace functions.\\ \hline
+Mule & Advanced editing functions.\\ \hline
+TeX & LaTeX specific functions. Only appears when the filename you are
+\\ & editing ends with \emph{.tex}.\\ \hline
+IDL or IDLWAVE & IDL specific functions. Only appears when you are
+editing a filename\\ & that end with \emph{.idl} or \emph{.pro}\\ \hline
+Help & Emacs' extensive help and configuration area. \\ \hline
+\end{tabular}
+\end{center}
+\caption{Emacs Menu Items}
+\end{table}
+
+Now that you have emacs open you can type something in the text
+area. In the next section we will save the file.
+
+\subsection{Saving}
+In Emacs, saving a document is as simple as $\pi$. You can click on
+the \verb1Files1 menu, then click on \verb1Save Buffer...1 You can
+also save by using the keyboard shortcut \verb1C-x C-s1. In the
+interest of simplifing your life, this document will concentrate on
+the usage of keyboard shortcuts in using emacs. 
+
+\subsection{Keyboard Shortcuts}
+Just about every aspect of emacs can be accessed and configured with
+keyboard shortcuts. This means that to work on a document, you rarely
+need to move your hands away from the keyboard and use the mouse. This
+increases productivity, and just makes things easier. All the keyboard
+shortcuts that I mention in this document will be summarized at the
+end.
+
+All keyboard shortcuts are represented in a format like
+\verb1C-x C-f1. When you see a \verb1-1, that means you hold the key
+that comes before and after the \verb1-1 down at the same time. The
+capitol \verb1C1 however, does not correspond to the letter c, but
+rather the control button (abbreviated \verb1CTRL1) on the
+keyboard. So, if you see \verb1C-x C-f1, that means press and hold the
+\verb1CTRL1 button, then press the \verb1x1 key, then press the
+\verb1f1 key, then release the \verb1CTRL1 button. If you see
+something of the form \verb1C-x d1, then that means to press and hold
+the \verb1CTRL1 button, press \verb1x1, release \verb1CTRL1, then
+press \verb1d1. I think you get the picture.
+
+In some of the menus, you will see keyboard shortcuts that are
+labelled as \tt M-\% \normalfont. On the Sun workstations that
+corresponds to the $\Diamond$, and works identically to the
+\verb1CTRL1 key. On non-Sun workstations this key is simulated by
+pressing \verb1ESC1 then \verb1CTRL-1whatever.
+
+Some basic  keystrock {\it Shortcuts}: \\
+Opening - \verb1C-x C-f1\\
+Saving - \verb1C-x C-s1\\
+Exiting Emacs - \verb1C-x C-c1\\
+Pasting - \verb1C-y1\\
+Deleting a line - \verb1C-k1\\
+Move to the beginning of a line - \verb1C-a1\\
+Move to the end of a line - \verb1C-e1\\
+
+\subsection{Cutting, Pasting, and Navigation}
+In Emacs cutting and pasting is simple, yet slightly different from what
+you may be used to. {\it To do it using keystrokes only}:
+\begin{enumerate}
+
+\item Select and cut the block of text by \begin{enumerate}
+  \item moving the cursor to its beginning, type {\tt C-spacebar}.
+  \item using the arrow keys, move the cursor to its end abd type {\tt C-k}.
+\end{enumerate}
+
+\item Paste the block by \begin{enumerate}
+  \item moving the cursor to where you want to paste
+    \item type {\tt C-y} .
+\end{enumerate}
+\end{enumerate}
+
+{\it To do it using the mouse}: Select the text with your mouse and
+the double right click in the selection. To paste, move the cursor to
+where you want to paste and click the middle mouse button. 
+
+\section{\LaTeX Integration}
+Emacs has nice \LaTeX integration. If you start a file with the ending
+\emph{.tex}, Emacs will automatically load up in a mode to highlight
+special characters and special modes to make life a little
+easier. Emacs also has a couple modes to automatically compile \LaTeX
+files and display the result in xdvi (refer to the \LaTeX handout if
+none of this makes sense to you. Below are the basic \LaTeX shortcuts.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|} \hline
+Compile \LaTeX file & \verb1C-c C-f1\\ \hline
+View file in xdvi & \verb1C-c C-v1\\ \hline
+\end{tabular}
+\end{center}
+\caption{\LaTeX - Emacs commands}
+\end{table}
+
+\section{IDL Integration}
+
+Emacs also has a nice mode for integrating with IDL. For the purposes
+of this lab, we will only need to use the highlighting features of
+Emacs. This checks to make sure that you have matching parentheses,
+that you correctly close if...then...endif statements, and will color
+special keywords separately from other commands. It is recommended
+that you execute your IDL files from the IDL command prompt. 
+
+
+\end{document}

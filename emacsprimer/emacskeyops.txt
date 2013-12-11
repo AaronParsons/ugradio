@@ -1,0 +1,137 @@
+COMMON EDITING TASKS AND THEIR EMACS KEYSTROKE COUNTERPARTS 
+
+REAL GEEKS:
+	1. Don't use mice unless they have to; they work faster with
+keystrokes. Below we supply the most common keystroke commands, which
+work for Unix, Linux, Emacs, and our configuration of IDL.
+
+	2. Interchange the "Caps Lock" and "Ctrl" keys, because the Ctrl
+key is used for many keystrokes and it needs easy access to forstall
+carpal tunnel problems. To do this, type "swapcaps" in any terminal; to
+change back, type "swapcaps" again.
+
+	3. Often don't want Emacs to open up a new window, but instead
+to use the current window. To accomplish this, type "emacs -nw
+filename". 
+
+---------------------- Keystroke Commands ------------------------
+
+The following are the most common editing tasks and their keystroke
+counterparts:
+
+IMPORTANT:
+ctrl-g: Returns to basic editing; escapes any Emacs questions or loops.
+
+CURSOR LOCATION CONTROL:
+arrow keys, "Page Up/Down", "Home", and "End" work as expected
+ctrl-e: move cursor to the end of the line
+ctrl-a: move cursor to the beginning of the line
+ctrl-x g: move cursor to line number XX; XX is prompted for.
+
+DELETING LINE-BY-LINE (CUTTING)
+ctrl-k (twice per line: once for text, once for carriage return)
+
+RESTORING THE DELETED LINES (PASTING)
+move the cursor to where you want to restore the line(s) and type
+ctrl-y
+
+MOVING OR DELETING BLOCKS OF TEXT: Three steps: 
+
+First you need to mark (HIGHLIGHT) the block of text.  Set the beginning
+(or ending) mark with
+ctrl-space
+Use the arrows to highlight the block. 
+
+Second you delete the text (CUT it)
+ctrl-w
+
+Third you move the cursor to where you want to insert the text (PASTE it)
+ctrl-y
+
+If you screwed up and want to stop:
+ctrl-g
+
+UNDO: 
+ctrl-/: undoes what you did. You can keep undoing by repeating ctrl-/.
+
+CONVERT TO UPPER CASE: alt-u or esc-u: You can hold the alt key down and
+keep punching u and it will keep going; esc-u does it only once.
+
+CONVERT TO lower CASE: alt-l or esc-l
+
+Capitalizing First Letter: alt-c
+
+FILL: 
+You've modified the text, the text looks awful, you want it nicely
+formatted. Works only on a paragraph-by-paragraph basis: esc-q or alt-q
+
+SEARCHING:
+Generally, ctrl-s searches forwards and ctrl-r searches backwards
+
+ctrl-s ctrl-w: word search. Forward searches for the exact match to what you
+type. Can be repeated simply by typing ctrl-s (replace ctrl-s by ctrl-r
+to search backwards)
+
+ctrl-s: incremental search (searches character-by-character as you type).
+Can be repeated simply by typing ctrl-s.
+
+ctrl-s enter: simple search. Cannot be repeated.
+ctrl-s enter ctrl-w: simple word search. Cannot be repeated.
+
+if you screwed up and want to stop: 
+ctrl-g
+
+SEARCH AND REPLACE WITH QUERY: 
+F9. Asks for the search string on the bottom line of the screen. Hit
+enter after the string. For each find, type 'y' to replace, 'n' to not
+replace. To terminage, type ctrl-g.
+
+if you screwed up and want to stop:
+ctrl-g
+
+WRITE THE FILE TO DISK (We suggest that you do this frequently!):
+ctrl-s
+
+EXITING EMACS
+ctrl-x ctrl-c
+
+CHANGE FONT SIZE: shift - left mouse button
+
+-----------advanced---------------
+
+DEFINE A KEYBOARD MACRO:
+You can dedfine a macro: a combination of sequential keystrokes that you
+want to execute repeatedly. To define the macro:
+
+ctrl-x (: defines the beginning of a macro. After typing this, type the
+sequential keystrokes you want to execute. Aafter the last keystroke,
+type  
+
+ctrl-x ) to end. 
+
+To execute the macro once, type
+ctrl-x e 
+
+To execute the macro N types:
+Esc N
+ctrl-x e
+
+ISPELL:A MARKED REGION
+ctrl-x $
+
+COUNT NR OF WORDS IN A MARKED REGION
+ctrl-x w
+
+DO EMACS WITHOUT IN CURRENT TERMINAL--NO NEW X WINDOW
+emacs -nw filename  ...or...  mem filename
+
+-------------------------------------------------------------------
+To use Carl's emacs setup you need to replace your .emacs file with his:
+
+1.	from the UNIX prompt in your home directory, rename your.emacs
+file so you can retrieve it again if necessary:
+	mv .emacs .emacs_original
+
+2.	then copy Carl's file to yours:
+	cp ~heiles/.emacs . or get it from the website.
+
