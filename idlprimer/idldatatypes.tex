@@ -1,0 +1,556 @@
+\documentclass[psfig,preprint]{aastex}
+
+%\documentstyle[11pt,psfig,aaspp4]{article}
+\begin{document}
+\title{\bf QUICK IDL TUTORIAL NUMBER TWO: IDL DATATYPES AND
+ORGANIZATIONAL STRUCTURES\\ \today}
+
+\tableofcontents
+
+	By the term {\it datatype} we mean, for example, integers,
+floating point variables, strings, complex numbers.  By the term {\it
+organizational structures} we mean scalars, vectors, arrays, and
+structures.  We cover these in the following sections.  All
+available datatypes can be arranged in all available organizational
+structures.  For example, we can have arrays of strings, vectors of
+complex numbers. 
+
+\section {DATATYPES}
+
+	Here we cover only the basic IDL datatypes.  There are others,
+including unsigned integers and complex numbers. 
+
+\subsection{ DIGITS, BITS, BYTES, AND WORDS}
+
+	We have gotten to the place where you need to know a little
+about the internal workings of computers. Specifically, how the computer
+stores numbers and characters.
+
+	Humans think of numbers expressed in powers-of-ten, or {\it
+decimal numbers}.  This means that there are 10 digits $(0 \rightarrow
+9)$ and you begin counting with these digits.  When you reach the
+highest number expressible by a single digit, you use two digits and
+generate the next series of numbers, $10 \rightarrow 99$.  Let $f$ and
+$s$ be the {\it first} (1) and {\it second} (0) digits, respectively; then the
+number is $f*10^1 + s*10^0$.  And so on with more digits. 
+
+	Fundamentally, all computer information is stored in the form of
+{\it binary numbers}, meaning powers-of-two.  How many digits? Two! They
+are 0 and 1.  The highest number expressible by a single digit is 1. 
+The two-digit numbers range from 10 to 11; the number is $f*2^1 + s*2^0$.  And
+so on with more digits.  But wait a minute! The word ``digit'' is a
+misnomer---it implies something about 10 fingers.  Here it's the word
+{\bf bit} that counts.  Each binary ``digit'' is really a {\bf bit}.  So
+the binary number 1001 is a 4-bit number.  What decimal number does the
+binary number 1001 equal?
+
+	For convenience, computers and their programmers group the bits
+into groups of eight. Each group of 8 bits is called a {\bf byte}.
+Consider, then, the binary number 11111111; it's the maximum-sized
+number that can be stored in a byte. What is this number? 
+
+	Finally, computers group the bytes into {\bf words}.  The oldest
+PC's dealt with 8-bit words---one byte.  Many present-day PCs use 32-bit
+words---four bytes.  Macs and the more capable PCs deal with 64-bit
+words---8 bytes. What's the largest number you can store in a 4-byte
+word? And how about negative numbers?
+
+	Below we describe how IDL (and everybody else) gets around this
+apparent upper limit on numbers.  They do this by defining different
+data types.  Up to now, the details didn't matter much.  But now\dots We
+don't cover all datatypes below---specifically, we omit Complex (yes,
+complex numbers!), Hexadecimal, Octal;
+you can look these up if you are interested. 
+
+\subsection {INTEGER DATATYPES IN IDL}
+
+	{\it Integer} datatypes store the numbers just like you'd
+expect. IDL supports integers of four different lengths: 1, 2, 4, and 8
+bytes. The shorter the word, the less memory required; the longer the
+word, the larger the numbers can be. Different requirements require
+different compromises.
+
+\subsubsection {1 byte: The Byte Datatype}
+
+	The Byte datatype is a single byte long and always positive. 
+Therefore, its values run $0 \rightarrow 255$.  The byte datatype isn't all
+that useful for general computation, but it serves two essential purposes
+inside your computer: \begin{enumerate}
+
+  \item Images are always
+represented in bytes.  The {\it data} might not be in bytes, but the
+numbers that the computer sends to the video processor card are always
+bytes.  Video screens require lots of memory and really quick processing
+speed, so bytes are ideal.  When you write an image to the screen, which is
+done with the {\tt tv} command in IDL, you send a 2-d array---and those
+numbers must be bytes. Usually your image is calculated as floats (ordinary
+numbers with decimal points; see \S \ref{floats} below); convert these to
+bytes using IDL's {\tt bytscl} command.
+
+\item Characters (like the string variable `a') are represented as
+  bytes. This means that computers only have 255 chacters that can be used
+  in string variables (see \S \ref{strings} below).
+\end{enumerate}
+
+You can generate a byte array using {\bf bindgen};
+you can generate a single byte variable by saying {\bf
+x=3b}.  If, during a calculation, a byte number exceeds 255, then it
+will ``wrap around''; for example, 256 wraps to 0, 257 to 1, etc. 
+
+\subsubsection{2 bytes: Integers and Unsigned Integers} 
+
+	With 2 bytes, numbers that are always positive are called {\bf
+Unsigned Integers}.  They can range from $0 \rightarrow 256^2 -1$, or $0
+\rightarrow 65535$.  You generate an array using {\bf uindgen}.  How do
+you think unsigned integers wrap around?
+
+	Normally you want the possibility of negative numbers and you
+use {\bf Integers}.  The total number of integer values is $256^2 =
+65336 \ (=2 \cdot 32768)$.  One possible value is, of course, zero.  So the number of
+negative and positive values differ by one.  The choice is to favor
+negative numbers, so Integers cover the range $-32768 \rightarrow
+32767$.  You generate an array using {\bf indgen}.  What happens with
+wraparound? What if {\bf x=5}, {\bf y=30000} and {\bf z=x*y}? Check it
+out!
+
+\subsubsection{4 bytes: Long Integers and Unsigned Long Integers} 
+
+	The discussion here is exactly like that for 2-byte integers,
+except that $256^2$ becomes $256^4$.  What are the limits on these
+numbers? See IDL help under ``Data Types'' and ``Integer Constants'' for
+more information.  You generate arrays using {\bf ulindgen} and {\bf
+lindgen}. 
+
+\subsubsection{8 bytes: 64-bit Long Integers and Unsigned 64-bit Long
+Integers}
+
+	The discussion here is exactly like that for 2-byte integers,
+except that $256^2$ becomes $256^8$.  What are the limits on these
+numbers? See IDL help under ``Data Types'' and ``Integer Constants'' for
+more information.  You generate arrays using {\bf ul64indgen} and {\bf
+l64indgen}. 
+
+\subsection {FLOATING DATATYPES IN IDL} \label{floats}
+
+	The problem with integer datatypes is that you can't represent
+anything other than integral numbers---no fractions! Moreover, if you
+divide two integer numbers and the result should fractional, but it
+won't be; instead, it will be rounded down (e.g.  $5 \over 3$ is
+calculated as 1).  To get around this, the {\it floating} datatype uses
+some of the bits to store an {\it exponent}, which may be positive or
+negative.  You throw away some of the precision of the integer
+representation in favor of being able to represent a much wider range of
+numbers. 
+
+\subsubsection{4 bytes: Floats}
+
+	``Floating point'' means floating decimal point---it can wash all
+around.  With Floats, the exponent can range from about $-38 \rightarrow
++38$ and there is about 6 digits of precision.  You generate an array
+using {\bf findgen} and a single variable by including a
+decimal point ({\bf x=3.}) or using exponential notation ({\bf x=3e5}).
+
+	Printing floating point numbers to the full native precision,
+instead of what IDL regards as ``convenient'', 
+requires using a \verb$format$ statement in the \verb$print$ (or, when
+annotating a plot, the \verb$xyouts$) command. For example:
+
+\begin{verbatim}
+a= 1.23456789
+print, a, format='(f20.10)'
+\end{verbatim}
+
+\noindent prints out 10 decimal points and 20 characters including the
+decimal point.  Of course, we've defined \verb$a$ to higher precision
+than single-precision float carries, so the last bunch of numbers beyond
+the decimal won't be correct. To make that happen, you need\dots
+
+\subsubsection{8 bytes: Double-Precision}
+
+	Like Float, but the exponent can range from about $-307
+\rightarrow +307$ and there is about 16 digits of precision.  You
+generate an array using {\bf dindgen} and a single
+variable by writing {\bf x=3d} or {\bf x=3d5}. Then, when you do the
+following, it works:
+
+\begin{verbatim}
+a= 1.23456789d0
+print, a, format='(f20.10)'
+xyouts, xloc, yloc, string( a, format='(f20.10)')
+\end{verbatim}
+
+\noindent For annotating a plot with \verb$xyouts$, you explicitly
+convert the number to a string of the specified format; the \verb$print$
+statement does this too, but it's transparent because it automatically
+does it for you.  
+
+\subsection{COMPLEX NUMBERS}
+
+A complex number $C$ consists of a pair of real numbers, one the real and
+one the imaginary part [in IDL: {\tt real\_part(C)} and {\tt imaginary(C)}].
+The two numbers are always floats and can be either single- or
+double-precision. You generate a single-precision complex number $(2.2 +
+i3.9)$ with: {\tt C = complex( 2.2, 3.9)} and a double-precision one with
+{\tt dcomplex}. The arguments can be arrays, giving you a complex-number
+array. There are also the complex analogues {\tt cindgen} and {\tt
+  dcindgen} (like {\tt findgen} and {\tt dindgen}); and {\tt complexarr}
+and {\tt dcomplexarr} (like {\tt fltarr} and {\tt dblarr}).
+
+
+\subsection{ILLEGAL  NUMBERS}
+
+As we've seen, there are limits to the size of digitally-stored
+numbers. IDL follows the IEEE standard when calculations produce
+out-of-bound numbers: \begin{enumerate}
+
+\item A floating-point number that exceeds the upper limit is printed out
+  as the string {\tt Inf} (but it is stored as a float).
+  \item A float that is smaller than the lower limit is returned as zero
+    and the statement ``Program caused arithmetic error: Floating
+    underflow'' is written on the screen (unless the error reporting is
+    suppressed).
+\item An illegal number, such as $(-2)^{1/2}$, is printed out as the string
+  {\tt NaN} (but it is stored as a float).
+\item An integer number that exceeds either limit does not generate an
+  illegal number; rather, it ``wraps around''. 
+
+\end{enumerate}
+
+Some IDL routines, such as the {\tt plot} routine, ignore illegal
+numbers. Generally, however, you need a way to deal with these illegal
+numbers---for example, so that you can exclude them from subsequent
+mathematical operations. You do this with the {\tt finite} command. 
+
+  \subsection {STRINGS} \label{strings}
+
+	Strings store characters---letters, symbols, and numbers (but
+numbers as {\it characters}---you can't calculate with strings! A string
+constant such as {\bf hello} consists of five letters.  It takes 5 bytes
+to store this constant---one byte for each character.  There are 256
+possible characters for each of the bytes; with 2*26 letters (smalls and
+caps) and 10 digits, this leaves 104 other possibilities, which are used
+for things like semicolons and periods.  You can generate an array of
+strings with {\bf strarr} and a single string with {\bf x = 'Hi
+there!!!'}. 
+
+Characters are represnted by byte numbers. You can easily find the byte
+number for a particular character in IDL; for example, to find the byte
+number that represents the semicolon character, type {\tt print, byte(';')}.
+The answer: 59b. Similarly, to find the string variable represnted by the
+byte number 59b, type {\tt print, string(59b)}. Quick---what's the answer?
+
+\section{ ORGANIZATIONAL STRUCTURES}
+
+\subsection{ SCALARS}
+
+	A scalar is just a single number. For example, a string scalar
+is {\bf joename= 'joe'}.
+
+\subsection{ VECTORS}
+
+	A vector is a one-dimensional array. For example, a
+three-element vector of names is {\bf threenames = ['joe', 'ivan',
+'mark']}.
+
+\subsection{ ARRAYS}
+
+	IDL handles arrays up to 8 dimensions, i.e. with 8 subscripts.
+Arrays with two subscripts can be mathematically treated a matrices
+using the $\#$ and $\#\#$ operators, and various matrix manipulation
+routines; see IDL help under {\bf matrices} and {\bf matrix operators}. 
+You create vectors and arrays using, for example, the {\bf fltarr} or
+{\bf findgen} commands (for floating point numbers; equivalent commands
+exists for all variable types). You populate them as appropriate, but
+try to avoid using for loops; instead, use {\bf where}, appropriate use
+of the {\bf *} operator, etc.
+
+	IDL provides a great deal of flexibility in using subscripts to
+address particular array elements, and this flexibility is what makes
+IDL so useful. For example, consider a two-dimensional array {\bf
+a=findgen(100,100)}. Then:
+
+\begin{verbatim}
+b = a[ 23:25, 67:69]
+\end{verbatim}
+
+\noindent makes {\bf b} a $3 \times 3$ 2-d array equal to a's 
+array elements in the little box specified. The combination
+
+\begin{verbatim}
+indx = where( a gt 10.)
+b = a[ indx]
+\end{verbatim}
+
+\noindent makes {\bf b} a 1-d array equal to the elements of {\bf a}
+that are larger than 10. The combination
+
+\begin{verbatim}
+indx = where( a gt 10.)
+jndx = where( a[ indx] le 100.)
+b = a[ indx[ jndx]]
+\end{verbatim}
+
+\noindent shows that you can subscript arrays with other arrays, and
+makes {\bf b} equal to a 1-d array equal to the elements of {\bf a} that
+are both larger than 10 and less than or equal to 100.
+
+\subsection{MATRICES}
+
+        A matrix is just one step away from a 2-d array. IDL provides
+all of the standard, and many sophisticated and advanced matrix,
+operations. To multiply two matrices you use the $\#$ operator. Thus, the
+matrix product {\bf C} of two matrices {\bf A} and {\bf B} is {\bf C} =
+{\bf A} \# \# {\bf B}---or {\bf C} = {\bf A} \# {\bf B} depending on\dots a
+tricky little point about matrices having to do with row-major or
+column-major formats. 
+
+        In a computer, a multidimensional data set can be indexed in two
+ways, the {\it column-major} and {\it row-major} formats.  IDL uses the
+row-major format, as does Fortran; the other major language, C, uses
+column-major.  Suppose you have a $2 \times 2$ matrix called ${\bf A}$.
+In IDL's row-major format, when you type [{\it print, A}] IDL prints
+
+\begin{mathletters}
+\begin{eqnarray}
+\left[
+\begin{array}{rrr}
+A_{0,0} & A_{1,0} \\
+A_{0,1} & A_{1,1} \\
+\end{array}
+\; \right] \; ,
+\end{eqnarray}
+
+\noindent which is different from (i.e., it's the {\it transpose of}) what
+you are used to seeing in standard matrix notation which is the
+column-major format
+
+\begin{eqnarray}
+\left[
+\begin{array}{rrr}
+A_{0,0} & A_{0,1} \\
+A_{1,0} & A_{1,1} \\
+\end{array}
+\; \right] \; .
+\end{eqnarray}
+\end{mathletters}  
+
+        We use the row-major convention such that when displayed in a
+standard IDL {\it print} statement, they look correct. That means that
+our definition is the transpose of the standard one.
+
+        There are some matrix operations for which the difference is
+important. This includes not only multiplication, but also some other
+operations such as {\bf invert} and {\bf svsol}. IDL almost always
+assumes that the inputs to these other operations follow our row-major
+convention.
+
+        If you want to be a purist and define the matrices in the
+standard column-major manner, then go ahead and do so.  You then need to
+do three things.  First, if you want to see the matrix displayed in the
+usual way, then print its transpose by typing [{\it print,
+transpose(A)}].  Second, in all our IDL matrix equations, replace ${\bf
+\# \#}$ by ${\bf \#}$. Third, check any IDL procedure having a matrix as
+input to see what it assumes (The default is almost always row-major).
+        
+        To be specific: if you follow our row-major convention, which is the
+transpose of the standard one, then the matrix product must be written
+
+\begin{mathletters}
+\begin{equation}
+{\bf C = A \ \# \# \ B}
+\end{equation}
+
+\noindent while, in contrast, if you follow the standard  
+column-major one then you must write
+
+\begin{equation}
+{\bf C = A \ \# \ B}
+\end{equation}
+\end{mathletters}
+
+          Why does IDL do this nonstandard thing? It's because it's more
+straightforward for image processing, in which traditionally the images
+are scanned row-by-row (as in a TV set) instead of column-by-column. And
+IDL's origins are image processing, not matrix math. You might find
+IDL's convention annoying when you're doing matrix math, but this is
+more than compensated for by the intuitive feel you gain when doing
+image processing.
+
+\subsection{ STRUCTURES}
+
+	Structures are immensely useful for any project in which data of
+different types are related.  For example, if you have a catalog of
+stars with positions and reddenings, you can put the whole catalog in a
+structure array in which each element of the array contains many
+quantities such as the name and position.  And you can have arrays of
+structures.  Structures allow you to create and customize your own data
+base. Having done this, using the {\bf where} command allows you
+flexible access to anything with a one-line command.
+
+We refer you to Chapter 7 of {\it Building IDL Applications} for
+a complete discussion of structures.  Here we provide a quick
+example. There are two types of structure, {\it anonymous} and {\it
+  named}. In our experience, anonymous structures are usually preferred.
+
+\subsubsection{Anonymous Structures}
+
+Our abovementioned star catalog has several different data elements. We
+group them all into a {\it structure}; each data element is called a
+{\it tag}. Let's call the structure $A$. Then we define the structure
+tags with the statement
+
+\begin{verbatim}
+A = {name: 'alpha ori', ra:5.3345, dec:-7.6568,reddening:fltarr(12)}
+\end{verbatim}
+
+\noindent Now if you type {\tt help,/struct,a} or {\tt help,/st,a}, you
+will see on the screen
+
+\begin{verbatim}
+** Structure <752268>, 4 tags, length=72, data length=72, refs=1:
+   NAME            STRING    'alpha ori'
+   RA              FLOAT           5.33450
+   DEC             FLOAT          -7.65680
+   REDDENING       FLOAT     Array[12]
+\end{verbatim}
+
+\noindent The number \verb$<752268>$ is arbitrary and will change from
+one anonymous structure to the next. The fact that a {\it number} appears
+instead of a name means that $a$ is an {\it anonymous} structure. It
+has four tags: the name, the two positions, and 12 different measurements
+of reddening.  In IDL you refer to a particular tag, e.g.\ $dec$,
+by typing {\tt a.dec}:
+
+\begin{verbatim}
+print, a.dec
+\end{verbatim}
+
+\noindent You could change things by typing
+
+\begin{verbatim}
+a.dec = 5.5
+a.reddening[3] = 0.7
+\end{verbatim}
+
+\noindent Or you could could populate the 12
+reddening measurements by typing, for example,
+
+\begin{verbatim}
+a.reddening = [1.2, 1.4, 1.3, 1.6, 1.3, 1.4, 1.3, 1.3, 1.6, 1.3, 1.4, 1.3,]
+\end{verbatim}
+
+You can redefine the tag names and number of tags in an
+anonymous structure---but not for a named structure\dots
+
+\subsubsection{Named Structures}
+
+You can also create a {\bf named structure} by including the
+name (here the name is ``star''):
+
+\begin{verbatim}
+b = {star, name: 'alpha ori', ra:5.3345, dec:-7.6568, reddening:fltarr(12)} 
+\end{verbatim}
+
+\noindent Now if you type {\bf help, b, /str} you see
+
+\begin{verbatim}
+** Structure STAR, 4 tags, length=72, data length=72:
+   NAME            STRING    'alpha ori'
+   RA              FLOAT           5.33450
+   DEC             FLOAT          -7.65680
+   REDDENING       FLOAT     Array[12]
+\end{verbatim}
+
+\noindent This says that the structure $B$ is a named structure with
+name defined as {\it star}. We defined it to have the same tags as our
+anonymous structure $A$ above. In contrast to an anonymous structure,
+{\it Once a named structure is defined, you cannot change the names of
+  the tags or the number of tags}.
+
+\subsubsection{Arrays of Structures}
+
+	If this were all, then structures wouldn't be
+very useful because you have observed 585 stars, say, and you'd need a
+separate structure for each. But you can create {\it arrays of structures},
+e.g. for an anonymous structure we create the array {\it cataloga}
+
+\begin{verbatim}
+cataloga = replicate( a, 585) 
+\end{verbatim}
+
+\noindent and for our named structure we create the array {\it catalogb}
+
+\begin{verbatim}
+catalogb = replicate( {star}, 585) [OR catalogb = replicate( b, 585) ]
+\end{verbatim}
+
+\noindent These statements create structure arrays of 585 elements.  If
+you type {\tt help, cataloga} IDL tells you this fact by printing on the
+screen
+
+\noindent \verb$CATALOGA        STRUCT    = -> <Anonymous> Array[585]$
+
+\noindent and if you add the {\tt structure} keyword (typing {\tt help,
+cataloga, /st}) you get, as above, 
+
+\begin{verbatim}
+** Structure <752268>, 4 tags, length=72, data length=72, refs=2:
+   NAME            STRING    'alpha ori'
+   RA              FLOAT           5.33450
+   DEC             FLOAT          -7.65680
+   REDDENING       FLOAT     Array[12]
+\end{verbatim}
+
+\noindent You refer to particular elements of the array in the usual
+way, i.e.\ with an index number, but the index number comes directly
+after the array name, like this:
+
+\begin{verbatim}
+print, catalog[ 3].ra
+print, catalog[3].reddening[5]
+cataloga[ 3] = a
+\end{verbatim}
+
+\noindent Or you can set values within a structure, for example
+
+\begin{verbatim}
+cataloga[ 3].name = 'carl heiles'
+\end{verbatim}
+
+	Try using structures when taking data for your experiments.
+You'll grow to love them! 
+
+\section{APPENDIX: HOW FLOATING-POINT NUMBERS ARE STORED IN COMPUTERS}
+
+\subsection{The 32-bit IEEE standard}
+
+Here we describe the 32-bit word case and assume the IEEE convention; see
+{\it Numerical Recipes, \S 20.1}, for more complete information.  24 bits
+are reserved for the mantissa and 8 for the exponent. Each reserves one bit
+for the sign, leaving 23 and 7 bits for numbers. \begin{enumerate}
+\item For the exponent, the the maxima and minimum numbers are $\pm 2^{7} =
+  \pm 128$---or more accurately, --128 to +127.  This exponent applies to
+  a binary number; converting to decimal, we have $2^{128} \approx 1.7
+  \times 10^{38}$. Roughly, this is the maximum number that can be stored
+  as a single-precision float.
+\item For the mantissa, the maximum and minimum numbers are $\pm 2^{23}
+  \approx 10^{7}$. This means that the fractional error in a stored number
+  is about $10^{-7}$. As you do more and more calculations, using the
+  results of one in the next, this fractional error increasees.
+\item For double precision, the maximum number is about $10^{308}$ and
+    the precision is about $10^{{-16}}$.
+\end{enumerate}
+
+\subsection{The routine {\tt machar}}
+
+The IDL routine {\tt machar}, derived from the {\it Numerical Recipes}
+routine of the same name, returns a structure that contains all the above
+information. 
+
+
+
+\enddocument 
+\end
+
+
+
