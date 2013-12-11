@@ -1,0 +1,479 @@
+\documentstyle[11pt,aaspp4]{article}
+%\documentstyle[11pt,/home/ay120b/tex/aaspp4,/home/ay120b/tex/epsf,/home/ay120b/tex/eqsecnum]{article}
+\pagestyle{plain}
+\begin{document}
+
+\setlength{\parskip}{.02in}
+
+\title{A SHORT UNIX PRIMER}
+
+\author{Carl Heiles \altaffilmark{1} \\ \today}
+
+\altaffiltext{1}{Based on earlier versions by Anthony Truong and
+Jennefer King.}
+
+\tableofcontents
+
+\section{BEFORE WE BEGIN}\label{intro}
+
+	This handout is in two basic sections.  The first (\S 2) is for
+the first-time user, who has either no computer experience whatsoever or
+who has worked only with Windows (which is almost equivalent to having
+no computer experience whatsoever).  The second (\S 3) contains
+information that many people might find handy.  Finally, \S
+\ref{commands} is a list of basic UNIX commands that everybody ought to
+know for working efficiently. 
+
+\section{FOR THE FIRST-TIME USER ONLY} \label{first}
+
+	The best way, by far, to learn Unix is to sit in front of a
+computer for an hour or so and to try it out yourself.  Once you master
+some basic commands, you'll be amazed at the many useful things you can
+do. 
+
+\subsection{Logging In}\label{login}
+
+	Our Sun computers use an operating system called Solaris.  Under
+Solaris, you have a choice of desktop environments: {\it Open Windows}
+and the {\it Common Desktop Environment (CDE)}, which is the default. 
+Open Windows is easier to use and takes up less memory.  To use Open
+Windows, you must, before you log in, change the session to Open Windows
+under the Options menu. 
+
+\subsection{Customizing the DeskTop}
+	You can customize details of your desktop such as colors and
+fonts.  To accomplish this, first place the cursor on the background and
+right-click the desktop; then click {\it properties.  } A window should
+pop up allowing you to change the colors for your viewing pleasure.  By
+clicking {\it Category}, you can change all sorts of things other than
+color, too.  
+
+	As you can see by now, by {\it right}-clicking the desktop, a
+menu with a lot of useful commands will appear.  Experiment!
+
+\subsection{Directory Structure}\label{dirstruct}
+
+	The directory structure of Unix is organized in a hierarchical
+system, or by levels.  Each user's top level is the home directory in
+which you have full read/write/execute access.  When you move throughout
+the directory system, you are moving from {\it level to level}.  This
+directory is called {\em /home/loginname}.  Figure 1 shows what a sample
+directory tree structure might look like.  Here, {\it home}, {\it
+loginname}, and {\it lab1} are directories.  Notice that these
+directories are nested within one another; thus {\it loginname} is a
+subdirectory of {\it home}, and {\it lab1} is a subdirectory of {\it
+loginname}. 
+
+\begin{center}
+\begin{figure}[h!]
+\epsfysize=3in
+\epsffile{dirtree.ps}
+\caption{A sample Unix directory tree.}
+\end{figure}
+\end{center}
+
+	Organizing your files in subdirectories is very important
+because over the semester you will be generating hundreds, if not
+thousands, of files.  It makes sense to keep all files relevant to the
+first lab in a special subdirectory for that lab, called say {\it lab1},
+and perhaps you might wish to have separate subdirectories under {\it
+lab1} for the data, the writeup, and the analysis. 
+
+	And specifying the {\it permissions} of accessibility is also
+very important.  You might want the data to be accessible by everybody,
+both for reading and writing, but you certainly wouldn't want the
+writeup to be accessible by everybody, especially for writing.  And it
+makes sense to keep all your love letters in a separate file that isn't
+accessible in any way by anybody else---including their reicipent(s)!
+
+\subsection{Working with Directories}\label{dir}
+	
+	First, check to see where you are.  At the Unix prompt, type the
+following:
+
+\noindent {\bf ttauri\% pwd}
+
+\noindent The command {\bf pwd} stands for {\it present working
+directory}.  The computer should return something along these lines:
+{\bf /home/loginname}.  From this you know that you are in your {\it
+loginname} directory, which is located {\it beneath} the {\it home}
+directory. 
+
+	To see a listing on what already exists in your directory, use
+the {\bf ls} command.  This gives you a listing of the subdirectories
+and files in the directory that you are currently in. 
+
+\noindent {\bf ttauri\% ls}
+
+\noindent Depending on what's in your directory, you'll see different
+things.  In general, directories are indicated with a ``/'', as in {\it
+dirname}/, while files usually are just listed as {\it filename}.  If
+you've just gotten your account, chances are there's not much in your
+home directory.  As you work with Unix more and more, it will balloon to
+monstrous proportions unless you create subdirectories and place the
+file appropriately. 
+
+	Let's create a subdirectory called {\it lab1} that resides just
+under the home directory. To accomplish this:
+
+\begin{tabbing}
+\textbf{cd $\sim$} \hspace{1in} \= Make sure you are in your home
+directory (see below). \\
+\textbf{mkdir lab1} \> create the directory {\em /home/loginname/lab1}
+\\
+\end{tabbing}
+
+\noindent Now check to see the contents of your directory, using the
+{\bf ls} command.  Note that {\it lab1} is listed as a directory,
+denoted as {\it lab1}/.  Also notice something else---the directory that
+you've created is located in the directory that you were in when you
+typed the {\it mkdir} command.  Make sure you know where you are when
+you create a new directory or file.  (That's why {\it pwd} can be so
+useful.)
+
+	To move into and out of directories, use the {\bf cd} command. 
+The command used to move into a directory {\it below} your current
+location is {\bf cd dirname}.  To move {\it up} from your present
+directory one level, enter at the prompt {\bf cd ..} instead.  So if you
+were in your {\it loginname} directory, to move up into the {\it home}
+directory you would enter {\bf cd ..} at the prompt, and to move down
+into your {\it lab1} directory you would enter {\bf cd lab1}.  You can
+also move into directories by specifying the entire path---so if you
+wanted to get to your {\it lab1} directory you could type {\bf cd
+/home/loginname/lab1}. 
+
+	The \textbf{$\sim$} character is a shortcut to your home
+directory.  Suppose you are at some arbitrary subdirectory, deep down in
+the structure; to get to your home directory, you'd type \textbf{cd
+/home/loginname}.  But the shortcut allows the much easier \textbf{cd
+$\sim$}.  You can also use it as a shortcut to accessing your
+subdirectories.  Suppose you want to get into your newly created lab1
+subdirectory, then you can type either \textbf{cd /home/loginname/lab1}
+or \textbf{cd $\sim$/lab1}.  Of course, if you know that you're already
+in your home directory, you can just type {\bf cd lab1}. 
+
+	You can delete (remove) a directory (say, {\it lab1}) by first,
+deleting (removing) all the files in the directory (see below), and then
+typing
+
+\noindent {\bf rmdir lab1}
+
+\subsection{Creating and Viewing Files}\label{files}
+
+	Files can be created by using a text editor; it allows you to
+create a file and type in whatever you want.  You should
+learn {\bf emacs}.  Suppose you wish to compose a love letter and call
+the file {\it love1}.  
+	
+\noindent {\bf ttauri\% emacs love1}
+
+A new x window will pop up with a bar on the top that has menu-driven
+commands. You can experiment with these. But you should also learn the
+basic keystroke commands because they work not only in emacs but also on
+the unix command line. We summarize them below in \S \ref{keycommands}. 
+
+	Suppose you want to quickly view this file without editing it:
+type either {\bf more love1} or {\bf less love1} [which would you rather
+have? in this case, less is more! (because the arrow keys work as you'd
+expect and you can more not only downwards but upwards)].  The first
+page of your file will appear, and you can either view the rest of the
+file a page at a time by hitting the space bar, or line by line using
+the Return button.  To stop looking at the file, hit {\bf q} or {\bf
+Ctrl-c} and you will be returned to the Unix prompt. 
+
+\subsection{Moving and Copying Files}\label{movecopy}
+
+	Two other commands that you'll find useful will be the copy and
+move commands.  The copy command takes an existing file and copies its
+contents into a new file.  The move command takes an existing file and
+moves it to a new file\footnote{Note the subtle difference here---using
+copy, you are left with two files, with move only one file remains.}. 
+
+\noindent {\bf ttauri\% cp love1 love2}
+
+\noindent Here the contents of {\it love1} are copied into a new file
+named {\it love2}; this is handy if you want to send the same letter to
+a different person, for example, because you can edit {\it love2} to
+change the name.  If you want to copy it to a different directory, just
+include the directory name as part of the filename, like
+
+\noindent \textbf {ttauri\% cp love1 $\sim$/lab1/love2}
+
+\noindent You can {\it always} specify the filename with a different
+directory name in this way. Similarly, you can move a file with
+
+\noindent \textbf {ttauri\% mv $\sim$/lab1/love2 $\sim$/lab1/tex/love3}
+
+\subsection{Removing Stuff... Yikes!}\label{remove}
+
+	So far you've learned only how to create files and directories,
+but what about removing them? This can be done just as easily.  The
+command to remove a file is simply {\bf rm filename}.  The {\bf rm}
+command has options, one of which is to force you to confirm that you
+{\it really} want to remove the file; we include this option when we set
+up your default login files for new accounts.  Be sure that you want to
+remove a file when you do this! Once it's been removed, it's gone for
+good.  The same goes for removing a directory.  The command here is {\bf
+rmdir dirname}.  Always exercise caution when removing anything. You
+really should define an aliases for the following commands 
+in your {\it .aliasfile} by
+entering the lines
+
+\noindent {\bf alias rm "rm -i"}
+
+\noindent {\bf alias mv "mv -i"}
+
+\noindent {\bf alias cp "cp -ip"}
+
+\noindent these will force the system to ask you permission before
+overwriting anything\footnote{But in UNIX some commands still have the
+power to overwrite inadvertantly.  You'll learn this much to your
+chagrin some day.  Be sure to keep {\it current copies} of anything
+important in a different directory.}
+	
+	Example: if you wanted to remove the file {\it love1}, first
+you'd get into the directory that contains that file, and then you would
+enter:
+
+\noindent {\bf ttauri\% rm love1}
+
+\noindent Suppose that directory was {\it lab1} and you also wish to
+remove the whole directory.  First, remove all the files from that
+directory; then to remove the {\it lab1} directory, move into the
+directory just above it and then type:
+
+\noindent {\bf ttauri\% rmdir lab1} 
+
+\section{FOR EXPERIENCED USERS}
+
+\subsection{More About Listing Files, or the {\it ls} Command}
+
+	If you want to see a listing of the files in your directory, an
+{\bf ls} will give you all you need to know.  But sometimes you have
+other questions too, such as: How big are my files? What's the last file
+I worked on? This is where options can come in handy.  Options can be
+included in an {\bf ls} command to enable your files to be listed in a
+way that's the most useful to you.  Let's say you wanted to know what
+the last file is that you worked on.  You can use the {\bf -t} option, and
+enter at the prompt {\bf ls -lt}.  This should give you a listing of
+your files from most recently accessed to least recently accessed; the
+command {\bf ls -lrt} gives the same, but in reverse order.  The
+procedure for using other options is the same.  The following is a list of
+some of the options you can use with the {\it ls} command:
+
+\begin{tabbing}
+\textit{-a} \hspace{0.5in} \= Lists all of your files, including the dot, or hidden ones. \\
+\textit{-1} \> Your files are listed in a single column output. \\
+\textit{-s} \> The sizes of your files are listed. \\
+\textit{-t} \> Lists your files from most recently accessed to least recently accessed. \\
+\textit{-l} \> Long format; meaning that info such as permissions, owner, size, and date are included. \\
+\end{tabbing}
+
+	These are just a few of the options available.  To get more
+info, use {\bf man ls}.  You can get more info on {\it any} command by
+typing in {\bf man commandname}.  Usually there'll be more info than
+you'll ever need on that specific command; but it's definitely a good
+resource to keep in mind. 
+
+\subsection{Remote Logging In}\label{remote}
+
+	You can log in from home {\it if} your computer has the secure
+login software, called {\it ssh2}. 
+
+\noindent {\bf ssh2 rrlyrae}
+
+\noindent If you're logging in from home on an (ugh!) windows machine,
+you need to be able to use X windows; for this, run the program {\bf
+exceed} before logging in. You can get such software  from the CD  {\it
+Connecting @ Berkeley}, available for free from the big U.
+
+\subsection{Aliases and Shortcuts}\label{short}
+	
+	Aliases are shortcuts that you can use in place of typing out a
+long command over and over again.  You can define an alias on the
+command line; alternatively, if you want to define it permanently, you
+can define it by editing your {\it .cshrc} file (which resides in your
+home directory). 
+
+	Here's an example: suppose you want to force UNIX to check
+whether it will overwrite a file when you use the {\bf mv} command and,
+also, to ask you about it. To do this,
+you use the {\bf -i} option, and you redefine the command {\bf mv} by
+typing
+
+\noindent {\bf alias mv "mv -i"}
+
+\noindent If you type it in a window, it will apply henceforth to that
+window alone.  If you include it as a line in your {\it .cshrc} file, it
+will always apply (after you login again).  You can check the definition
+of an alias by typing
+
+\noindent {\bf which mv}
+
+\subsection{Permissions}\label{perm}
+
+	Permissions are important for security and privacy reasons and
+are set with {\bf chmod} and its options.  Among the users, there are
+three groups: {\bf u}user (yourself), {\bf g}roup (undefined here),
+world (``{\bf o}ther'') ({\bf u, g, o}).  Among the permissions, there
+are three important ones: {\bf r}ead, {\bf w}rite, e{\bf x}ecute ({\bf
+r,w,x}).  {\bf chmod} allows you to add, take away, and set exactly
+permissions for different users with the operators ({\bf +, --, =}). 
+
+	For example, to restrict your love letter {\bf love1} from being
+read, executed, or written on by everybody but yourself, type
+
+\noindent {\bf chmod go--wxr love1} \hspace{0.5in} (from group and other,
+remove write, execute, and read)
+
+\noindent You can apply permissions to a whole subdirectory instead of
+single file.  For example, your datafiles are located in
+\textit{$\sim$/lab1/data} and you wish to allow the world to read all
+your datafiles but not to write on them, so you type
+
+\noindent \textbf {chmod go+r,go--wx $\sim$/lab1/data}
+
+	You can check permissions with the {\bf ls -l} command, for
+which the permissions are listed in the first 9 columns in three groups
+of three columns.  The first group of three columns is the individual
+user, the second the group, and the third the world; and within each
+group, the first is execute, the second read, the third write.  Try it!
+
+\subsection{X Windows, Command-Line Editing, and Emacs}
+
+\label{keycommands}
+
+	You should always use X windows in UNIX because you can then
+both scroll backwards and use command-line editing.  The editor of
+choice is {\bf emacs}, for several reasons; among these is that it
+incorporates the same editing commands that work for command-line
+editing in X windows.  The most important editing commands are:
+
+\begin {tabbing}
+{\bf arrow keys} \hspace{0.8in} \= move the cursor as you'd expect. \\
+{\bf Ctrl-d} \> deletes the character under the cursor. \\
+{\bf backspace} \> deletes the character behind the cursor. \\
+{\bf Ctrl-e} \> moves the cursor to the end of the line. \\
+{\bf Ctrl-a} \> moves the cursor to the beginning of the line. \\
+{\bf Ctrl-k} \> deletes the the rest of the line.
+\end{tabbing}
+
+\noindent Sometimes, when command-line editing, you inadvertently hit
+{\bf Ctrl-s}; this prevents the cursor from responding to your
+keystrokes. If you encounter this condition, type {\bf Ctrl-q}, after
+which things will work normally again.
+
+	In Solaris, you can customize any X window to your desires
+(e.g.\ fontsize) by putting the cursor on the window, holding down the
+CTRL key and, simultaneously, holding down a mouse button; each one
+provides different options.  If you want to customize them permanently,
+edit the {\it .openwin-init} file in your home directory. 
+
+\subsection{Piping, etc: $|, >, <$}\label{help}
+
+	Piping directs the output of a command to the next succeeding
+command.  For example,
+
+\noindent \textbf{ ls $|$ grep /}
+
+\noindent directs the output of the listing command to {\it grep}, which
+here selects all names containing the string ``/''; those are
+directories, so this gives a list of directories just under the current
+directory. 
+
+	Normally the result of a UNIX command is written to the terminal
+for you to see. However, you can direct the output elsewhere. For
+example, 
+
+\noindent \textbf{ cat love1 love2}
+
+\noindent writes the concatenation of the files {\it love1} and {\it
+love2} onto the screen, while
+
+\noindent \textbf{ cat love1 love2 $>$ loveboth}
+
+\noindent writes the concatenation into a new file called {\it
+loveboth}.
+
+	Normally the input to a UNIX command is expected to be from the
+terminal. However, you can get the input from elsewhere. For example, 
+
+\noindent \textbf{ mail heiles $<$ complaint.txt}
+
+\noindent mails the file {\it complaint.txt} to heiles; try it! (Do you
+think it will do any good???)
+
+\eject
+
+\section{COMMON COMMANDS}\label{commands}
+
+	Following is a list of some useful UNIX commands, which can be
+used as a quick reference.  
+ 
+
+\begin{tabbing}
+\textit{passwd} \hspace{1.6in} \=  Useful for changing your account password. \\
+\textit{man commandname} \> Gets info for you on a specific command. \\
+\textit{pwd} \> Shows your ``present working directory''. \\
+\textit{cd dirname} \> Moves you into the subdirectory, below your 
+present directory. \\
+\textit{cd ..} \> Moves you out of a subdirectory into the directory above
+it. \\
+\textit{mkdir dirname} \> Creates a subdirectory named \textit{dirname}. \\
+\textit{rmdir dirname} \> Removes a subdirectory named \textit{dirname}. \\
+\textit{rm filename} \> Removes a file named \textit{filename}. \\ 
+\textit{cp file1 file2} \> Copies the contents of \textit{file1} into 
+\textit{file2}. You are left with two files. \\
+\textit{mv oldfile newfile} \> Moves (or renames) \textit{oldfile} as 
+\textit{newfile}. \\
+\textit{cat file1 file2 $>$ fileboth} \> Concatenates {\it file1} and {\it
+file2}, writing them into the new {\it fileboth}. \\
+\textit{which cp} \> tells the current definition of {\it cp} ({\it which}
+works for any command); \\
+\textit{history} \> gives a numbered list of the previous commands you've
+typed; \\
+\> typing {\bf !number} repeats that command. \\
+\textit{!!} \> Repeats the previous UNIX command. \\
+\textit{find dirname -name filename} \> finds all files with {\it
+filename} in and under the directory with {\it dirname}. \\
+\textit{find dirname -name '*love*'} \> Finds all files whose names 
+contain the string ``love''. \\
+\textit{ls -lrt} \> Lists the files and subdirectories 
+in the present directory. \\
+\>The {\it -lrt} gives a long format in reverse time order.\\
+\textit{ls -lrt $|$ grep /} \> Pipes the output to {\it grep}, which \\
+\> selects only those names containing ``/'' (which are directories). \\
+
+\textit{du -k dirname} \> Tells kilobytes used by everything in dirname. \\
+\>Also handy for giving the directory tree structure. \\
+
+\textit{df -k} \> Tells kilobytes used and available on all disks. \\
+
+
+\textit{grep -il text file} \> Searches the \textit{file} for occurrences of
+the string \textit{text} \\
+\> The {\it -i} ignores capitalization and {\it l} lists only the filename.\\
+\textit{lp filename} \> Prints the file \textit{filename}. \\
+\textit{less filename} \> Shows you the contents of the file named 
+\textit{filename} one screen at a time; \\
+\> more flexible than {\textit more}. \\
+\textit{tail -40 filename} \> Shows you the last 40 lines of the file
+{\it filename}. \\
+\textit{lpq} \> Displays the print queue. \\
+\textit{cancel jobnum} \> Removes the \textit{jobnum} in the print
+queue. You must own the job \\
+
+\textit{top} \> Shows CPU usage, etc, for jobs on your machine. \\
+\textit{ps -u username} \> List the programs that \textit{username} is
+currently \\
+\>  running on the machine you are logged onto. \\
+\textit{kill processnum} \> Kills the process listed with
+\textit{processnum}. You must own the process \\
+\end{tabbing}
+	
+
+
+
+\end{document}
+
+
