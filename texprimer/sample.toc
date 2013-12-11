@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}The Big Picture}{1}
+\contentsline {section}{\numberline {2}How To Use \unhbox \voidb@x L\raise .42ex\hbox {\count@ =0$\fam \count@ \scriptstyle \kern -.3em A$}\kern -.15emT\kern -.1667em\lower .5ex\hbox {E}\kern -.125emX\spacefactor \@m : The Most General Possible Summary}{2}
+\contentsline {section}{\numberline {3}Some Basic Syntax}{3}
+\contentsline {section}{\numberline {4}Labels/Referencing}{4}
+\contentsline {section}{\numberline {5}Style files, packages, and user defined commands}{5}
+\contentsline {section}{\numberline {6}Mathematics}{5}
+\contentsline {section}{\numberline {7}Figures}{6}
+\contentsline {section}{\numberline {8}Tables}{7}
