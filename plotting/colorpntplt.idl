@@ -1,0 +1,23 @@
+retall
+.run colorpntplt
+
+restore, 'play1.sav', /ve
+
+psyes=0
+
+bg=1
+
+plotsym, 8, 1, /fill
+symsize= (tx.flux < 2) + 0.4
+axcharsize=4
+charsize=0
+
+ps_ch, 'colorpntplt', /color, /defaults, xs=8, ys=6
+
+
+colorpntplt, tx.ell, tx.bee, tx.tx, xra=[360, 0], yra=[-20,90.], zra=[0,100], $
+           xtit='Gal Long', ytit='Gal Lat', ztit='Tspin', tit='Symsize is flux', $
+           psym=8, symsize=symsize, bg=bg
+
+ps_ch, /close
+

@@ -1,0 +1,6 @@
+plot, xd, yd, psym=7, $
+xrange=[0,10], yrange=[0,22], xstyle=1, ystyle=1, $
+xtitle='x-axis label (units)', $
+ytitle='y-axis label (units)', $
+title=title
+;oplot, xthy, ythy, 

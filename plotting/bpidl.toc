@@ -1,0 +1,19 @@
+\contentsline {section}{\numberline {1}PLOTTING BASICS}{2}
+\contentsline {subsection}{\numberline {1.1}The {\tt plot} Command}{2}
+\contentsline {subsection}{\numberline {1.2}Overplotting}{3}
+\contentsline {subsection}{\numberline {1.3}Annotating Plots}{4}
+\contentsline {subsection}{\numberline {1.4}You Want Greek Letters or Math? Use {\tt textoidl}}{4}
+\contentsline {section}{\numberline {2}MAKING ARRAYS OF PLOTS}{5}
+\contentsline {subsection}{\numberline {2.1}Arrays of plots using IDL's {\tt !p.multi} System Variable}{5}
+\contentsline {subsection}{\numberline {2.2}Arrays of plots using GSFC's {\tt multiplot}}{5}
+\contentsline {section}{\numberline {3}USE DIFFERENT-STYLED POINTS TO REPRESENT A THIRD (OR FOURTH! OR FIFTH!) VARIABLE}{7}
+\contentsline {section}{\numberline {4}SELECTING GROUPS OF POINTS IN A PLOT}{8}
+\contentsline {section}{\numberline {5}FOR DOCUMENTS AND TALKS, USE POSTSCRIPT}{9}
+\contentsline {subsection}{\numberline {5.1}Don't Ignore the Aesthetics!}{9}
+\contentsline {subsection}{\numberline {5.2}Some cautionary words about color.}{10}
+\contentsline {section}{\numberline {6}TWO EASY WAYS TO MAKE PostScript}{11}
+\contentsline {subsubsection}{\numberline {6.0.1}The easier way}{11}
+\contentsline {subsubsection}{\numberline {6.0.2}The slightly less easy way}{11}
+\contentsline {section}{\numberline {7}QUICK AND DIRTY: WRITING SCREEN PIXELS TO POSTSCRIPT}{12}
+\contentsline {subsection}{\numberline {7.1}Copying plots with {\tt hardplot}}{13}
+\contentsline {subsection}{\numberline {7.2}Copying images with {\tt hardimage}}{13}
