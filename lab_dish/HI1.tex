@@ -1,0 +1,516 @@
+\documentclass[preprint]{aastex}
+\usepackage{graphicx}
+\begin{document}
+\tolerance=10000
+\def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
+\def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
+
+\title{THE HI LINE, THE GALAXY, and SUPERNOVA SHOCKS}
+
+\tableofcontents
+
+\section{INTRODUCTION}
+
+	Diffuse atomic gas permeates all corners of interstellar space.
+On the largest scales, its distribution reveals a lot about Galactic
+structure and dynamics. On smaller scales, its morphology is dominated
+by shocks from energetic stellar winds and supernovae. On still smaller
+scales, magnetic fields, pressure differences, and thermal instability
+shape the gas into thin filaments and sheets. On still smaller scales,
+the densities get large from self-gravitation; the gas turns molecular
+and stars form. 
+
+For this lab, we outline a several projects in HI that are suitable for
+our 4.5-m diameter Leuschner dish. They fall into two categories. One
+explores large-scale Galactic structure and dynamics by obtaining HI
+spectra along great circles, presenting the data as position-velocity
+images, and interpreting those maps as discussed below. The other maps
+specific objects by sampling a grid of spectra over a large area,
+presenting the data as grey-scale images of velocity-integrated line
+intensity (i.e., antenna temperature $T_A$) or as images in which image
+brightness indicates velocity-integrated $T_A$ and color indicates
+velocity, and interpreting the data.
+
+We'd like each group to pick a single project and carry it through to
+completion by the time the lab reports are due, which is the last day of
+instruction (May 6). All projects involve making maps and images. One of
+the features of this lab is to learn about image processing and using
+colors in images.
+
+For the great-circle projects (\S \ref{galacticplane} and \S
+\ref{galacticpoles}), we gain large angular scale information
+in the sky by observing on great circles. Getting nice results
+requires data over the largest portions of the great circles you can
+get. For a full 360-degree circle, that's 180 pointings at $2^\circ$
+spacings.  Mostly, though, we can't cover a full great circle because
+some of the circle lies too far south, so we do as much as we can. 
+
+\section{SCHEDULE}
+
+The end of the semester is approaching like a freight train. Imagine
+yourself tied onto the tracks by a madman: you've gotta finish before it
+hits. Here's a schedule. If you don't keep up with this, you're in
+trouble! \begin{enumerate}
+
+\item Week 1, 05apr-12apr: Get the standard spectrum with the big horn
+  on Campbell's roof.
+
+\item Week 2, 12apr-19apr: Pick a group project. Get the standard
+  spectrum with the Leuschner dish. Figure out how you will get the data
+  for your project. Get some data. Reduce the data.
+
+\item Week 3, 19apr-26apr: Get the rest of your data. Figure out
+  how you want to present the data as images. Make some first-try
+  images. 
+
+\item Week 4, 16apr-03may: Finalize data. Make final images. Write
+report. Report is due the last day of claas, 03may.
+\end{enumerate}
+
+
+\section{ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE} \label{sampling} 
+
+All projects examine the angular dependence of the 21-cm line profile,
+so you need closely-spaced observations to make a map or an image. How
+closely should the observations be spaced?  The usual criterion is two
+samples per HPBW (Half-Power BeamWidth), because observing at more
+closely spaced angles just gives redundant information and takes extra
+time, while more widely spaced angles loses small-scale structural
+information. (This statement can be justified more exactly by Fourier
+transforming the structure of the sky in terms of angular frequency and
+then imposing the Nyquist criterion\dots).  The HPBW is $\sim 4^\circ$;
+using a spacing of $2^\circ$ is close to optimum, and it's being a round
+number is nice.
+
+For the mapping projects (not the great-circle ones), we need to cover
+areas of 1000 to 2000 square degrees. Consider the Orion-Eridanus
+Superbubble (\S \ref{eridanus} below), which wants to map the the region
+covering roughly $(\ell=160^\circ \rightarrow 220^\circ, b=-70^\circ
+\rightarrow -10^\circ)$. You might think you'd set up a regular grid in
+$(\ell,b)$ with $(\Delta \ell, \Delta b)$ both equal to
+$2^\circ$. That's find for $\Delta b$, but you'd be sampling too closely
+in $\ell$. That's because the true (great-circle) angular distance
+between two points is $\Delta \ell \cdot \cos(b)$; there's a
+foreshortening for $b \ne 0^\circ$ (e.g.: when you're at the Earth's
+North Pole, you can go completely around a small circle of constant $b$
+with just a few steps.). So you can save lots of observing time by
+observing at $\Delta \ell = {2^\circ \over \cos(b)}$ instead of $\Delta
+\ell = 2^\circ$.
+
+The true angular area is not the total extent in $\ell$ times the total
+extent in $b$ because of the foreshortening discussed in the above
+paragraph. So the actual angular area of the Orion-Eridanus area area
+isn't the range in $\ell$ times the range in $b$, i.e.\ $60^\circ
+\times 60^\circ = 3600$ square degrees (which would require 900
+pointings), but rather only about 2800 square degrees.  At $2^\circ$
+sampling, that's about 700 pointings.
+
+These projects require what seems like a lot of pointings,
+but---hey!---the telescope is automated. With the magic of our
+computer-controlled telescope you can do these observations in just one
+or two days. But it will require planning and coordination with other
+groups---all of you are in the same boat! (Or should we say, ``in the
+same dish''?) I suggest some trial observations to get started, both
+making sure you are observing correctly and also getting your datataking
+and reduction software in shape.
+
+\section{THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO 
+\boldmath{$(b=0^\circ$)}} 
+\label{galacticplane}
+
+	Point the telescope at a series of Galactic longitudes ($\ell$)
+along the Galactic plane (Galactic latitude $b = 0^\circ$), over the
+full longitude range that is observable for our telescope.  Getting nice
+results requires data over the largest section of the Galactic plane you
+can get, which is roughly (or somewhat less than) $\sim -10^\circ \simlt
+\ell \simlt 250^\circ$. This observation has two science goals:
+\begin{enumerate}
+
+	\item {\it The Galactic rotation curve}. Determine the rotation
+curve of the Galaxy for the portion of the Galaxy inside the Sun and use
+the result to estimate the {\it gravitational} mass $M_{grav}$ of the
+Galaxy that lies inside the Solar circle; for this, you just assume the
+usual $v^2 = {G M_{grav} \over R}$.  In fact, you can even get the
+radial dependence $M_{grav}(R)$! Also, use your observations to estimate
+the {\it gaseous} mass $M_{gas}(R)$ of the Galaxy.  What fraction of the
+total Galactic mass comes from interstellar gas? For this you'll need to
+know the radius of the Solar circle: it's 8.5 kpc.  See {\it Commentary}
+below for a discussion. 
+
+	\item {\it Spiral Structure of the Galaxy}.  All your life,
+you've been told that we live in a spiral galaxy.  Are they lying? In
+principle, to detect spiral structure you make a position-velocity plot
+along the Galactic plane [that's the image $T_A(\ell,V_{LSR})$ for
+$b=0^\circ$].  Bright regions are regions of excess density---or regions in
+which lots of HI is packed into a narrow velocity range (see \S
+\ref{coldensity} below). 
+
+	Do you see spirals in your position-velocity plot? How do you
+tell? There's only one easy way.  Make a model of a spiral arm and see
+how it projects onto position-velocity space.  To do this, you need to
+know the rotation curve.  You've measured it for the inner Galaxy; for
+the outer Galaxy (outside the Solar circle) assume that the rotation
+curve is constant beyond the solar circle [$V(R)$=220 km/s for $R > 8.5$
+kpc].  In polar coordinates, the equation for a spiral arm is
+
+\begin{equation}
+R_{arm}  =  R_0 e^ {\kappa (\phi - \phi_0)} 
+\end{equation}
+
+\noindent where $R_0$, $\kappa$, and $\phi_0$ are free parameters;
+$\kappa$ is the tangent of the {\it pitch angle}.  You project this into
+position-velocity space using equation \ref{vdopp} and your knowledge of
+the Galactic geometry.  
+
+{\it Comment:} Finding spiral arms inside the Solar circle is very
+difficult, and has thwarted efforts by astronomers over the past several
+decades. Finding them in the outer Galaxy is not so bad.
+
+\end{enumerate}
+
+\section{IS THE GALACTIC PLANE FLAT?}
+
+	External galaxies are often distorted (like the brim of a Fedora). 
+These distortions are probably produced primarily by nearby neighbors. 
+How about our own Galaxy? To determine this we want to look at the
+vertical structure of the Galactic plane and see where the peaks occur;
+a flat Galaxy would everywhere have the peaks at $b=0^\circ$. 
+
+The most comprehensive way to observe and display these distortions is
+with a map that covers the biggest possible swath in Galactic longitude
+$\ell$ for the range of Galactic latitude ($b$) from $-20^\circ$ to
+$+20^\circ$. This is a huge area---almost $10^4$ square degrees! At
+$2^\circ$ sampling, you'd need $\sim 2500$ profiles.  To make the
+project more manageable, you can increase the increment in $\ell$, say
+to 4 degrees, while keeping the same, fully-sampled increment in
+$b$. Resolution is $l$ is less important because---like a
+fedora---the warp doesn't change rapidly with $l$.
+
+This project affords a great opportunity to make a spectacular color
+image in $(\ell,b)$ coordinates: brightness showing the amount of gas,
+color the Galactic rotation.  Officially, the science goals here are to
+estimate the thicknesses of the Galactic disk and, also, to obtain an
+approximate Fourier representation of the warp---which is not so
+straightforward given the absence of data in the ``Southern'' Galaxy.
+
+\section{THE GALACTIC POLES: GREAT CIRCLES AT CONSTANT LONGITUDE $\ell$}
+\label{galacticpoles}
+
+How is the interstellar gas distributed within the Galaxy---for example,
+is it ``disklike'' or more spherically distributed? Are there any
+systematic motions other than just ``Galactic rotation''? (You'd be
+surprised!).  To answer these questions, determine the column density
+and mean velocity of interstellar gas as a function of Galactic latitude
+$b$. 
+
+	To answer this completely you'd need to do a sky survey! That's
+a big job.  So let's do something easier. We have one project (\S
+\ref{galacticplane}) that looks around a great circle, the Galactic
+equator (constant $b$). Other projects could check out one or more
+orthogonal great circles (at constant longitudes $\ell$) going from one
+Galactic pole to the other and back again (or, if not the whole 360
+degree circle, as much as possible).  Particularly appropriate sets of
+constant-longitude great circles are the pairs $\ell = (220^\circ,
+40^\circ)$ (partly because you can get the whole great circle) and $\ell
+= (130^\circ, 310^\circ)$ (because at positive latitudes there's weak
+high-velocity gas).
+
+	The science goals here are to characterize the thickness of the
+gas layer and to determine the vertical kinematics of the gas, and if
+possible an estimate of the energy involved in the vertical motions.
+
+%\section{MAPPING THE NORTH CELESTIAL POLE} \label{celestial}
+%
+%{\bf NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!}
+%The region near the North Celestial pole contains a large shell,
+%probably produced by one or more supernovae, and also to has angular
+%scales that are well-matched to our telescope and the available time for
+%your project. For this, you'd map the region covering roughly
+%$(\ell=105^\circ \ {\rm to} \ 160^\circ), (b=15^\circ \ {\rm to} \
+%50^\circ)$. Interesting features should produce antenna temperatures
+%$\sim 10$ K. This is about 1600 square degrees and, with 2 degree
+%spacing, requires about 400 profiles. 
+
+\section{MAPPING THE ORION-ERIDANUS SUPERBUBBLE} \label{eridanus}
+
+The ``Orion-Eridanus Superbubble'' was, and continues to be, produced by
+energetic stellar winds and supernovae that were located in immediate
+vicinity of the Orion nebula. For this, you'd map the region covering
+roughly $(\ell=160^\circ \rightarrow 220^\circ, b=-70^\circ \rightarrow
+-10^\circ)$. Interesting features should produce antenna temperatures
+$\sim 20$ K. This is almost 2800 square degrees and, with 2 degree
+spacing, requires almost 700 profiles. See \S \ref{sampling}!
+
+The goal here is to map the HI in the 3-d space of $(l, b, v)$ (that's
+Galactic longitude, latitude, and velocity) and then---the challenging
+part---present the results in one or more color images to show the
+hollowed-out shell with the swept-up gas piled up at the edges.
+
+\section{MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}
+
+This is a huge shell produced (and continuing) by several energetic
+stellar winds and supernovae that were located in the Sco/Oph
+association of stars. The shell contains not only HI but also
+relativistic electrons, so the shell is visible in both the 21-cm line
+and synchrotron emission. We can't easily see the latter, but we can see
+the HI---and the pattern of its velocity follows that of an expanding
+shell.
+
+For this, you'd map the region covering roughly $(\ell=210^\circ
+\rightarrow 20^\circ, b=0^\circ \rightarrow 90^\circ)$. (The longitude
+range is $170^\circ$: $210^\circ \rightarrow 360^\circ$ plus $0^\circ
+\rightarrow 20^\circ$). This is roughly 1/4 of the whole sky, so this is
+a huge area---almost 10000 square degrees! (This shell has an angular
+diameter of $120^\circ$). But (unfortunately) you can't measure the
+equivalent 2000 HI profiles because most of this area is too far
+south. At least, this makes the project do-able! In doing your
+observations, you need to cover as far south as you possibly can. See
+\S \ref{sampling}!
+
+The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
+Galactic longitude, latitude, and velocity) and then---the challenging
+part---present the results in one or more color images to show the
+hollowed-out shell with the expanding swept-up gas piled up at the
+edges.
+
+\section{MAPPING A BIG HIGH-VELOCITY CLOUD}
+
+When we look up, away from the Galactic plane, we see infalling
+gas---some a very high velocities. It's called ``High-Velocity Gas''.
+The line is weak (about 1 to 1.5 K), so you need high sensitivity---you
+need to use much longer integration times than for the above projects,
+at least a few minutes per point.  This project needs to map the region
+bounded roughly by $(\ell=60^\circ \rightarrow 180^\circ), b=20^\circ
+\rightarrow 60^\circ)$. This is about 3700 square degrees and needs
+about 900 profiles at $2^\circ$ spacing. See
+\S \ref{sampling}!
+
+The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
+Galactic longitude, latitude, and velocity) and then---the challenging
+part---present the results in one or more color images to show the
+hollowed-out shell with the expanding swept-up gas piled up at the
+edges.
+
+\section{MAPPING THE MAGELLANIC STREAM}
+
+The Magellanic Stream is an intergalactic tidal stream produced by
+gravitational interaction between the Magellanic Clouds and the Milky
+Way. The signal is weak ($\sim$ a few tenths K), so you need to use much
+longer integration times than for the above projects---a minimum of 10
+minutes per point. You need to map the pie-shaped area bounded roughly
+by $(\ell=60^\circ \rightarrow 110^\circ), b=-90^\circ \rightarrow
+-30^\circ)$. This is about 1250 square degrees and needs about 310
+profiles at $2^\circ$ spacing. See \S \ref{sampling}!  Also, the LSR
+velocity of this gas ranges from roughly $-400 \ {\rm to} \ -100$ km/s
+along its length, so you need frequency switch by a large enough
+interval!
+
+The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
+Galactic longitude, latitude, and velocity) and then---the challenging
+part---present the results in one or more color images to show the
+hollowed-out shell with the expanding swept-up gas piled up at the
+edges.
+
+\section{DETECTING OH MASERS IN W49}
+
+The OH molecule is an important one for star formation and molecular
+clouds because it is one of the first to form when a diffuse atomic
+cloud starts to become denser; in other words, OH marks the transition
+between atomic and molecular gas. It persists at higher densities. The
+ground rotational/vibrational state exhibits ``$\Lambda$ doubling'',
+which produces two spectral lines; each of these is hyperfine-split
+(just like the 21-cm line), and the net result is four lines centered at
+1612.2310, 1665.4018, 1667.3590, 1720.5300 MHz. At sufficiently high
+densities, OH can be ``pumped'' by collisions, IR, or UV radiation to
+make these lines shine as masers.
+
+The maser lines are strong, but our telescope is small, and the
+strongest source, W49, will produce $< 1$ K antenna temperature. We have
+interference, which makes the line difficult---maybe impossible---to
+detect. We've never detected it with our equipment. 
+
+The goal here is to detect the maser line in W49, which has $(ra,\
+ dec) = (19^h 10^m 17s, +09^\circ 06.0')$. This will require
+ investigating the time/frequency properties of the interference using
+ plots and images; excising the interference by hand; experimenting with 
+algorithms to reduce or eliminate the interference (known as ``signal
+ processing''), presenting the results, and learning some of the basic
+ maser theory. 
+
+We are currently working on this project to see if it is feasible. This
+project is more oriented towards computing and signal processing than
+``astronomy'', and as such would not appeal to everyone.
+
+\section{ IF YOU HAVE TIME and ARE TOTALLY IN LOVE WITH RADIO ASTRONOMY
+  (AND NOTHING OR NOBODY ELSE) THEN: MEASURE THE TELESCOPE BEAMWIDTH} 
+
+	Determine the beamwidth of the telescope by observing the Sun.  Also
+answer the question: is the beam circularly symmetric? You'd think so,
+given that the telescope has a circular aperture\dots
+
+	Here you are using the Sun as a ``point source'' so that its
+antenna temperature $T_A$ is proportional to the gain of the telescope as a
+function of angle. The resulting $T_A$ is just the telescope's diffraction
+pattern! The ``half power beam width'' (HPBW) is what radio astronomers
+generally use as the single-parameter specification of the angular size of
+the diffraction pattern. 
+
+          Measure the HPBW and compare it with a theoretical estimate of
+the HPBW, which you can make from the usual diffraction argument. 
+
+%\section{COMMENTARY}
+
+\section{BASICS OF THE 21-CM LINE.} \label{basics}
+
+\subsection{Column Density and Mass} \label{coldensity}
+
+	The 21-cm line, with frequency 1420.405751786 MHz, comes from
+atomic hydrogen (HI).  In the terrestrial environment, H atoms quickly
+become H$_2$ molecules; in interstellar space, where densities are far
+lower than in the best vacuum systems on Earth and there are ``lots'' of
+UV photons that dissociate H$_2$, H remains atomic unless it resides
+inside dark clouds where it is shielded from starlight.
+
+	The intensity of the 21-cm line is directly proportional to the
+column density of H atoms as long as the opacity of the line is small;
+this is a reasonably good approximation (but not perfect, particularly
+in the Galactic plane where the line is strong). With this
+approximation, 
+
+\begin{equation} \label{nh1}
+N_{HI} = 1.8 \times 10^{18} \int T_{B}(v) dv \ {\rm cm^{-2}}. 
+\end{equation}
+
+\noindent Here $N_{HI}$ is the column density of H atoms---the number of
+atoms in a 1 cm$^2$ column along the line of sight; $T_{B}(v)$ is the
+brightness temperature of the 21-cm line, which is a function of 
+velocity $v$; and $v$ is the velocity in km s$^{-1}$. The velocity $v$
+is produced by the Doppler effect, so a frequency shift $\Delta \nu$
+from line center corresponds to velocity $v = - c {\Delta \nu \over
+\nu}$ or, for the 21-cm line, $v = -{\Delta \nu \over 4.73 {\rm kHz}}$.
+Note the minus sign! It means that positive velocities are receding---a
+very convenient convention for astronomy, because of the expansion of
+the Universe. 
+
+          Note an important corollary to equation \ref{nh1}: If we
+consider a small velocity interval $\Delta v$, then the number of H
+atoms in the column in that velocity range is just 
+
+\begin{equation} \label{nh2}
+N_{HI}(v \rightarrow v + \Delta v) = 1.8 \times 10^{18} T_{B}(v) \Delta
+v \ {\rm cm^{-2}} \ .  
+\end{equation}
+
+\noindent This is very important, because it gives us the opportunity to
+make maps of the interstellar gas at different velocities and to
+determine how it moves.
+
+	To get the column density we need to get the brightness
+temperature $T_B$, which is not the same as our antenna temperature
+$T_A$. The relationship between these depends on the relative size of
+the source and the beam. This is equation (9) in the ``Fount of All
+Knowledge!'' handout, namely 
+
+\begin{equation} \label{taeqn}
+T_A \approx T_B {\Omega_s \over \Omega_s + \Omega_b} \ ,
+\end{equation}
+
+\noindent where $\Omega_s$ and $\Omega_b$ are the solid angles of the
+source and beam, respectively. From this, we see that if the source
+fills the beam ($\Omega_s \gtrsim \Omega_b$) then $T_A \approx \langle
+T_B\rangle$ (the brackets denote the average over solid angle);
+while if it is much smaller ($\Omega_s \ll \Omega_b$) then $T_A \approx
+{\langle T_B \Omega_s\rangle \over \Omega_b}$, i.e.\ $T_A$ is smaller by the ratio of
+the solid angles. 
+
+	To get the mass of HI from the column density, you need to know
+the area of the region in {\it linear} measure, which is just $\Omega \
+d^2$, where $d$ is the distance.  Each HI atom has mass $m_H$, so the
+total mass of HI in a region of size $\Omega$ is just
+
+\begin{mathletters} \label{masseqn}
+\begin{equation} 
+M_{HI} = m_H \ d^2 \ \langle N_{HI} \Omega\rangle \ .
+\end{equation}
+
+\noindent Here $\langle N_{HI} \Omega \rangle$ is shorthand for the
+general relation, which uses an integral:
+
+\begin{equation}
+\langle N_{HI} \Omega \rangle = \int_{\rm region} N_{HI} d \Omega
+\end{equation}
+\end{mathletters}
+
+\noindent Substituting for $N_{HI}$ from equation \ref{nh2}, we have
+
+\begin{equation}  \label{telemass}
+M_{HI}(v) = 1.8 \times 10^{18} \Delta v \ d^2 \  m_H \ \langle T_B  \Omega\rangle \ {\rm
+gm} \ . 
+\end{equation}
+
+\noindent Units are cgs. Sometimes there is a well-defined source with
+boundaries; in this case, to get the mass of the whole source, we use
+the solid angle occupied by the source, $\Omega_s$.
+
+	Sometimes (in fact, often) we want to know the mass seen {\it by
+the telescope} for some particular observation.  For an extended region
+with $\Omega \gg \Omega_b$, $T_A = T_B$ and the telescope sees the solid
+angle $\Omega_b$, so the product $\langle T_B \Omega\rangle = T_A
+\Omega_b$ because angular area seen by the telescope is limited by its
+beam size.  In contrast, if the HI emission is limited to a small
+region---a small source with $\Omega_s \ll \Omega_b$---then $T_A \approx
+{\langle T_B \Omega_b\rangle \over \Omega_s}$ so the product $\langle
+T_B \Omega_s\rangle = T_A \Omega_b$; the telescope sees the whole
+source.  
+
+For both extremes, the product $T_B \Omega = T_A \Omega_b$. 
+It's not only these two extremes, but for {\it all} sources the
+product $\langle T_B \Omega \rangle= T_A \Omega_b$.  Thus, it is always true that the
+mass seen by the telescope is
+
+\begin{equation}  \label{telemass1}
+M_{HI}(v) = 1.8 \times 10^{18} \Delta v \ d^2 \ m_H \ T_A  \Omega_b  \ {\rm
+gm} \ . 
+\end{equation}
+
+\noindent The distance $d$ is usually a function of velocity $v$,
+especially in the Galactic plane. 
+
+	$T_A(v)$ is directly measured and $\Omega_b$ is the telescope
+beam area, which is known, so it's easy to calculate $M_{HI}(v)$---but
+only if you know the distance! Often you don't know the distance, but
+you might have a hunch for a reasonable value for the distance. Suppose
+this is 100 parsecs. In this
+case, people usually evaluate the mass for this distance and, when
+giving the mass, say ``The mass is $xxx \times d_{100}$, where $d_{100}$
+is the distance in units of 100 pc''. 
+
+\subsection{Converting Galactic Rotation to Doppler Velocity}
+
+          Measurement of the Doppler shift caused by differential
+Galactic rotation for $0^\circ < \ell < 90^\circ$ allows a direct
+determination of the Galactic rotation curve inside the Solar circle,
+using the ``tangent point'' method. See Burton's article ``Structure
+of our Galaxy from Observations of HI'' in {\it Galactic and
+Extragalactic Radio Astronomy, second edition} (editors: G.L. Verschuur
+and K.I. Kellermann). In essence, you use the following equation.
+
+	We won't go through the derivation here; we cover it in class,
+and it is also done in Burton's article,
+page 303-304.  Let $V_{Dopp}$ be the Doppler velocity (this is also the
+observed LSR velocity), $V(R)$ be the Galactic rotation velocity at
+Galactocentric distance $R$, and let the subscript $\odot$ denote values
+at the Solar circle.  Then we have
+\begin{equation} \label{vdopp}
+V_{Dopp} = \left[ {V(R) \over R} - {V(R_\odot) \over R_\odot}\right]
+R_\odot \sin(\ell)
+\end{equation}
+\noindent The values at the solar circle are $V(R_\odot) \approx 220$
+km/s, $R_\odot \approx 8.5$ kpc.
+
+\end{document}
+
+\end
+
+
+

@@ -1,0 +1,140 @@
+----------- the weeks of dish HI observing
+
+==================== week0 ==========================
+: went out to leuschner. activities covered are documented (but only
+roughly) in 2008/week12/week12.notes
+
+==================== week1 ==========================
+
+------------- show and tell:
+     -each group staates what they've decided to do on a project.
+     -examplesl of dataataking. 
+		-how store data? structures?
+		-issue: integration time, velocity/freq resolution
+	       -calibrated in velocity?
+	       -calibrated in inensity? 
+	       -have each group get a spectrum at (l,b)=(120,0) just to make
+     sure. 
+	       -ref spectrum issues:
+--mention noise as a combo of noise in sig and ref spectra. how lab writeup
+shows equal time is desireable. ways to help:
+      -use a longer int time and use the ref for several spectra. if system
+      is stable you can avg all refs
+
+      -fourier filter the ref spectrum to increase s/n on ref. see
+       f_filter.ps on my web page. (you don't want to just smooth--changes
+       overall shape)
+
+------------- lab demo:
+
+theme: thermal noise power
+
+--liquid N2 demo, hot water, and imagine cold sky. use digital sampling to
+get powers so you don't have to worry about detector nonlinearity. convert
+to baseband so that you can see time dep of signal.
+
+--concept of rcvr noise power, sky noise power---> rcvr temp, sky temp
+--time dependence of noise--use scope to show it. also sampling.
+DO WE HAVE THE ADJUSTABLE FILTER??????
+
+--argument about integration time: every time interval of 1/B...SQRT n
+  STATISTICS. 
+
+state w/o proof that P = k T \Delta \nu. go thru numbers and get some powers.
+(section 10 in fount writeup)
+
+------------------- 544 session
+
+theme: thermal noise power, specific intensity, brightness temp.
+
+-definition of I (section 2 in fount.ps)
+
+state w/o proof that specific intensity is conserved along a ray
+path (section 3 in fount writeup). 'antenna specific intensity' and 'sky
+specific intensity'.
+
+relationship between I and T_B: blackbody formula for I(\nu) and the
+rayleigh jeans (section 4 in writeup)
+
+brightness temp, antenna temp 
+
+thermo argument for thermal power from a resistive load. (section 7 in
+writeup). 
+
+==================== week 2 ===============================
+
+SHOW AND TELL: 
+     -each group shows spectra on ref position -- correct? agreement?
+
+     -almost everywhere, most intense peak shold be at zero km/s.  
+     -almosst everywhere, vel structure at 'low' b should reflect Gal rotn.
+	      (+ - diagram of vels on Gal plane circle; solar circle
+     -lat dep should reflect Gal structure and hvc/ivc gas.
+     -reference spectra--how are theyh doint this> any use of averaging ref
+      spectra? fourier filtering?
+
+      -how much progress on project? data analysis keeping up? data
+       quality?
+
+'LECTURE'
+
+	how do results look in terms of expected for the Galaxy?
+	    -gal rotn curve
+
+	    how to derive HI mass from profiles. optically thin assumption.
+
+====================== week 3 (last before lab turnin date ===============
+
+show and tell:
+
+3 groups did galactic plane to do vel/long map. probable issues:
+   -display/image issues:
+	-nice looking grayscale image
+	-REVERSE grayscale
+	-colorbar?
+	-use 1d color table?	
+	-use directcolor instead of truecolor -- dynamic color table
+	-to make 1d images, use example in newdimensionalcolor.ps. 
+	 copy of code that does colorbar and X or ps: 
+	~heiles/dzd2/courses/handouts/images/1dcolor_eg_fortex.idl
+
+napping issues:
+	-projection of spiral arm onto (l,v) plane
+	-GRIDDING of (l,v) data onto galactic plane picture (R,l) map
+	-note the distance ambiguity for R<R_sun. section 7.2 in lab
+	writeup. 
+
+   -interpretation issues:
+	-what is location (Gal radius) of max vel? 
+	-how to measure the 'maximum velocity'?
+		a fixed T? a fraction of the highest-vel peak?
+	-how to derive the V(R) from max vel
+	-how to derive M(R) from V(R)
+	-how to derive Galactic HI mass (section 7.1 in lab handout)
+	-approximate fraction of gas mass.
+
+
+1 group is mapping:
+	-vel ranges. ideal opportunity for 2d or 3d color.
+	-NI(HI) and M(HI) calculation.
+	-display issues: projections. 
+		 -scale: always changes with position.
+		 -see my webpage, projections_handout.ps
+		 -issue is preserving shape (CONFORMAL)
+		 -eye at one point: (PERSPECTIVE)
+		 -AZIMUTHAL, a perspective projection. 3 types:
+			-eye at infinity (ORTHOGRAPHIC)
+			-eye at earth center (GNOMIC)
+			-eye at opposite pole (STEREOGRAPHIC)
+				conformal.
+	-gridding
+
+*** REQUIRED IN LAB REPORT: A CALIBRATED SPECTRUM AT (l,b)=(120,0)
+-------------- lecture-----------------
+
+brief RGB discussion
+
+go over newdimensionalcolor.ps. go over idl code in appendices.
+
+enscript -r -2 -p dish_weeks.ps dish_weeks.notes
+prizes: watts, spkr; da siklva, citation; colloq 1 leconte may 8.

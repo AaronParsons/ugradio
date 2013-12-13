@@ -1,0 +1,15 @@
+sp = findgen(256)
+
+spmod= [ reverse(sp), sp[1:*] ]
+spmod= [255, spmod]
+spmod_shift= shift( spmod, 256)
+
+a= fft( spmod_shift, /inverse)
+
+pmod= fft(a)
+pmod_shift= shift( pmod, 256)
+
+plot, spmod
+oplot, pmod_shift, color=!red
+
+print, minmax(spmod- pmod_shift)

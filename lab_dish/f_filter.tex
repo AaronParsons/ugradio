@@ -1,0 +1,131 @@
+\documentclass[preprint]{aastex}
+\usepackage{graphicx}
+                                                                                
+\begin{document}
+\tolerance=10000
+                                                                                
+\def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
+\def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
+                                                                                
+\title{HOW TO FOURIER FILTER YOUR REFERENCE SPECTRUM}
+
+We haven't covered this in class, but it a fact\footnote{This is a
+  result of the {\it correlation theorem} for Fourier transforms.} that when you calculate
+a power spectrum using Fourier methods, as we do for our 21-cm line
+detections, you can do it two ways: \begin{enumerate}
+
+\item Measure time samples $E(t_j)$ and take the Fourier transform. For
+  each frequency channel, the power spectrum is the square of the
+  length of the complex vector. This is what we do.
+
+\item Measure the autocorrelation function, which is $A(\tau) = \int
+  E(t) E(t+\tau) \ dt$, and take the cosine Fourier transform of
+  $A(\tau)$. (Here, $\tau$ represents time delay). 
+
+\end{enumerate}
+
+\noindent Here, in the second way, the important point is that---no
+matter which method you use---the power
+spectrum $P(f)$ is the Fourier transform of a quantity [which happens
+to be $A(\tau)$]. We emphasize: $P(f)$ is the cosine Fourier transform,
+{\it not} the square of the vector length as in (1). This means that we
+can recover $A(\tau)$ by taking the inverse cosine transform of $P(f)$.
+
+Now, our reference spectra are generally smooth with no fine structure
+in frequency. The fine structure in frequency comes from the long time
+delays in $A(\tau)$. This means that the best way to smooth our measured $P(f)$
+is to \begin{enumerate}
+
+\item Take the inverse transform of $P(f)$ to obtain $A(\tau)$.
+
+\item Zero out $A(\tau)$
+for $\tau \ge$ a suitable limit, chosen to ensure that no {\it real}
+structure in $P(f)$, which is all broad in frequency, is lost; this
+gets rid of the rapidly-varying noise.
+
+\item Using
+this modified version of $A(\tau)$, take its Fourier transform to
+retrieve a smoothed, much less noisy version of $P(f)$.
+
+\end{enumerate}
+
+So here's how to do it:
+
+\section{Derive $A(\tau)$}
+
+The power spectrum $P(f)$ is the cosine Fourier transform of $A(\tau)$,
+so $A(\tau)$ is the inverse cosine transform of $P(f)$. We could do this
+using the full-fledged expression for the Fourier transform, but it's
+much faster to use FFT. To force the FFT to take a cosine transform, we
+construct a symmetrized version of $P(f)$. In our digital spectrum we
+can write $P_n$ instead of $P(f)$; while $f$ runs from $-f_{Nyq}$ to
+$+f_{Nyq}$, $n$ runs from 0 to $N-1$, where $N$ is even and is equal to
+the number of spectral points in $P_n$.
+
+Let's call the symmetrized version $P_{sym,j}$. It contains $J= 2N$
+points. Consider $j$ to run from $-N$ to $N-1$. Then we have 
+
+\begin{mathletters}
+\begin{equation}
+P_{sym,j} = P_{n} \ , \ for \ j=n \ and \ n=0 \to N-1
+\end{equation}
+
+\begin{equation}
+P_{sym,j} = P_{n} \ , \ for \ j=-n \ and \ n=1 \to N-1
+\end{equation}
+\end{mathletters}
+
+\noindent These equations define $P_{sym,j}$ for the range $j=-(N-1) \ \to
+  +(N-1)$, a total of $2N-1$ points; $P_{sym}$ has an odd number of
+  points, with perfect reflection symmetry about the origin.
+
+We need to have an even number of points for the FFT, and we need to
+invent the point for $j=-N$. We should not set this invented point equal
+to zero; rather, we should set it equal to the nearest available point
+on the original $P_n$. Thus, set $P_{sym,-N} = P_{sym, -(N-1)}$ (which is
+  the same as setting $P_{sym,-N} = P_{sym, +(N-1)}$). 
+
+\section{CALCULATE $A(\tau)$}
+
+In IDL:
+
+\begin{verbatim}
+Psym_shift= shift( psym, N)
+A = fft(Psym_shift, /inverse)
+\end{verbatim}
+
+\noindent $A$ has $2N$ elements. $\tau=0$ is the first element and
+$\tau_{max}$ is the $N^{th}$ element.
+
+\section{ZERO OUT $A(\tau)$ FOR $\tau \ge \tau_{max}$}
+
+Choose a $\tau_{max}$. The smaller you make it, the less noisy will be the
+filtered spectrum. Set $A_{tau}=0$ for $\tau \ge tau_{max}$. {\it Also,
+  make sure} that you keep $A(\tau)$ symmetric by zeroing $\pm \tau$
+  symmetrically. Call this
+  modified version $A_{mod}$.
+
+\section{TRANSFORM BACK TO GET THE FOURIER-FILTERED $P(f)$}
+
+\begin{verbatim}
+Pmod = fft( Amod)
+\end{verbatim}
+
+\noindent At this point, the first $N$ channels of {\tt Pmod}
+are the filtered version of the original $P$. $P_{mod}$ will be complex;
+the imaginary values should be zero to within machine accuracy. What you
+want is the real values.
+
+\section{BEFORE BARGING AHEAD, TRY THESE REALITY CHECKS!!!}
+
+\begin{enumerate}
+
+\item Carry through the steps above but {\it don't} zero any
+elements of $A(\tau)$. You should regain the original spectrum!
+
+\item After you derive $P_{mod}$, make sure the imaginary values are
+  zero. If they are not, you're not zeroing $A(\tau)$ symmetrically for
+  $\pm \tau$.
+\end{enumerate}
+
+\end{document}

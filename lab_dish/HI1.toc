@@ -1,0 +1,15 @@
+\contentsline {section}{\numberline {1}INTRODUCTION}{2}
+\contentsline {section}{\numberline {2}SCHEDULE}{2}
+\contentsline {section}{\numberline {3}ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE}{3}
+\contentsline {section}{\numberline {4}THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO \relax \mathversion {bold}{$(b=0^\circ $)}}{4}
+\contentsline {section}{\numberline {5}IS THE GALACTIC PLANE FLAT?}{4}
+\contentsline {section}{\numberline {6}THE GALACTIC POLES: GREAT CIRCLES AT CONSTANT LONGITUDE $\ell $}{5}
+\contentsline {section}{\numberline {7}MAPPING THE ORION-ERIDANUS SUPERBUBBLE}{5}
+\contentsline {section}{\numberline {8}MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}{6}
+\contentsline {section}{\numberline {9}MAPPING A BIG HIGH-VELOCITY CLOUD}{6}
+\contentsline {section}{\numberline {10}MAPPING THE MAGELLANIC STREAM}{7}
+\contentsline {section}{\numberline {11}DETECTING OH MASERS IN W49}{7}
+\contentsline {section}{\numberline {12} IF YOU HAVE TIME and ARE TOTALLY IN LOVE WITH RADIO ASTRONOMY (AND NOTHING OR NOBODY ELSE) THEN: MEASURE THE TELESCOPE BEAMWIDTH}{8}
+\contentsline {section}{\numberline {13}BASICS OF THE 21-CM LINE.}{8}
+\contentsline {subsection}{\numberline {13.1}Column Density and Mass}{8}
+\contentsline {subsection}{\numberline {13.2}Converting Galactic Rotation to Doppler Velocity}{10}

@@ -1,0 +1,38 @@
+;goal is to compare averaging pwr with avg ampl, given that we are by
+;mistake avg ampl now!
+
+nfrq= 100l
+;nfrq= 1l
+
+ndata= 2048l*1024l
+tm= (1./5.d6) * dindgen(ndata)
+f1= 0.5*1.d6 + 1.d3*dindgen( nfrq)
+f2= 0.5*2.d6 + 1.d3*dindgen( nfrq)
+
+s1= fltarr( ndata)
+s2= fltarr( ndata)
+for nr=0l,nfrq-1 do s1= s1+ cos( 2.*!dpi* f1[nr]* tm)
+for nr=0l,nfrq-1 do s2= s2+ cos( 2.*!dpi* f2[nr]* tm)
+
+;s1= 1.0d*cos( 2.*!dpi* f1* tm)
+;s2= 1.0d*cos( 2.*!dpi* f2* tm)
+
+;sig= 0.0025*s1 + 0.0025*sqrt(2.)*s2
+sig= s1 + s2
+
+
+n1= 15.
+noise= n1* randomn( seed, ndata)
+
+meas= sig+ noise
+
+fmeas= abs( fft( meas))
+
+ampl= rebin( fmeas, 512)
+pwr= rebin( fmeas^2, 512)
+
+wset,0
+plot, ampl^2
+wset,1
+plot, pwr
+
