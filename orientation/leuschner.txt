@@ -1,0 +1,40 @@
+
+The three undergrad Astronomy lab courses (optical, radio, and infrared)
+constitute the crown jewel of the Department's undergraduate
+program. These courses are famous within United States research
+institutions because their students perform so well in summer internships
+and graduate schools. The radio course won the campus Educational
+Initiative Award in 1966. Carl Heiles, as instructor of the radio
+course, received the campus Noyce Prize for excellence in undergraduate
+teaching in 2002. James Graham, as instructor of the optical (infrared?)
+course, received the Noyce Prize in XXXX. [At least I think he did!]
+
+The radio lab course is famous among radio astronomers because its
+students know more about the techniques of radio observing, including
+signal processing, than the typical radio-based astronomy Ph.D--even
+BERKELEY radio-based Ph.D.s. Invited talks about the radio lab are
+regularly featured in the educational/instructional sessions at the
+national URSI and AAS meetings. Typical responses to these talks are the
+one by CalTech Professor Tom Phillips, Director of the Caltech
+Submillimeter Observatory (CSO) on Mauna Kea, to the effect "I wish I
+had such a course when I was a graduate student" (And remember: our
+courses are for UNDERgraduates!).
+
+The lab courses rely on the two telescopes--one optical, one radio--at
+the Leuschner Observatory site. For the optical, the inland location is
+important because skies are usually clear even when the Bay Area is
+fogged in, and in addition the sky is dark enough for "real
+astronomy". For the radio, Leuschner is shielded by the hills from
+strong Bay-Area interference sources such as airports, and this makes it
+radio-quiet enough--again--to do "real astronomy".
+
+Our current Leuschner radio telescope has several intrinsic problems and
+we have (through Geoff Bower) a ~$120K NSF instructional grant to
+upgrade it with a different dish and, finally, a capable mount.  The
+upgrade also includes a new control system and a new wide-band digital
+backend that will enable students to learn about, and observe, pulsars,
+polarization, and weak and polarized spectral lines. These new
+capabilities are also featured in the "broader impacts" sections of
+Heiles's NSF grants.  This upgrade will begin in October, just four
+weeks away, and will take almost a year--at no cost to UCB or the
+Department.
