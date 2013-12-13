@@ -1,0 +1,32 @@
+nu_smpl= 1.0e6
+ntot= 256
+times= -(ntot/2)/nu_smpl+ findgen(ntot)/nu_smpl
+
+freq= 1.35e5
+
+sig= cos(2.*!pi*freq*times) + 0.7*sin(2.*!pi*freq*times)
+
+freqs=  -nu_smpl/2 + findgen(ntot)*nu_smpl/ntot
+
+dft, times, sig, freqs, fsig
+
+wset,1
+plot, freqs, float(fsig)
+oplot, freqs, imaginary(fsig), color=!red
+
+fsig_real= real_part( fsig)
+dft, freqs, float( fsig), times, sig_recon_real, /inverse
+dft, freqs, imaginary( fsig), times, sig_recon_imag, /inverse
+
+dft, freqs, fsig, times, sig_recon, /inverse
+
+
+wset,0
+plot, times*1.e6, sig
+
+;oplot, times*1.e6, sig_recon, color=!green
+oplot, times*1.e6, sig_recon_real, color=!red, thick=3
+oplot, times*1.e6, sig_recon_imag, color=!green, thick=3
+
+oplot, times*1.e6, sig-sig_recon, color=!yellow
+

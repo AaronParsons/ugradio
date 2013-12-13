@@ -1,0 +1,140 @@
+
+---BASIC COLOR PHYSIOLOGY
+-Eye has three cones: red, green, blue.
+-Eye sensitiviy: green, red, blue a distant third
+-These colors are orhthogonal (but not orthnormal!)
+-Combinations of these colors give all colors perceptible.
+-Colors for standard device drivers are reprsented by BYTE
+	variables. Thus color intensities go from 0 to 255.
+-Note: an emitting color can be monochromatic, so TV phosphors can have
+       any combo of wavelengths as long as they don't overlap with cones
+       of other colors.
+
+-Basic color arithmetic:
+        r + g + b = white = w
+        r + g = w - b = magenta = m
+        r + b = w - g = yellow = y
+        g + b = w - r = cyan = c
+        r = w - (g + b) = w - cyan
+        g = w - (r + b) = w - magenta
+        b = w - (r + g) = w - yellow
+
+---SPECIFYING RGB COLORS
+
+Most computers these days use truecolor.  In truecolor, each color has
+256 possible intensities. The color is specified by a three-byte
+number, i.e. a number to the base 256::
+red:	0+0	      to  0+255
+green:	256+0	      to  256+255
+blue:	256^2+0	      to  256^2+255
+
+-We need to use long integers to express a color other than red:
+fully bright red:   255l		or !red	
+fully bright green: 256l * 255l		or !green 
+fully bright blue:  256l^2l * 255l	or !blue 
+
+-We need to use double-long integers when manipulating as below:
+half-bright red: 127l			or !red * 127ll/255ll
+half-bright green: 256l * 127l		or !green * 127ll/255ll
+half-bright red: 256l^2l * 127l 	or !blue * 127ll/255ll
+
+For a mixture of color with intensity (r, g, b), where each runs from 0
+      to 255:
+number = [256l^2 * b] + [256l * g] + [r]
+
+---DYES AND PIGMENTS: CMYK COLORS
+
+RGB colors are additive. Tottlly different are artists' paint and
+printer ink, which produce color by ABSORBING WHITE LIGHT and reflecting
+the unabsorbed remainder.  This leads to the CMYK system, used on
+printers, which is also required for ApJ submissions.  See CMYK color
+system in IDL help.  in IDL, you convert using CMYK_CONVERT (the
+documentation is wrong--conversion formulae differ. see the proc.
+
+converting from RGB to CMYK:
+
+K = 255 - max( r,g,b)
+C = 255 [1 - R/(255 - K)] (if K=255 then C=0)
+M = 255 [1 - G/(255 - K)] (if K=255 then M=0)
+Y = 255 [1 - B/(255 - K)] (if K=255 then Y=0)
+
+converting from CMYK to RGB:
+
+R = (255 - C) (1 - K/255)
+G = (255 - M) (1 - K/255)
+B = (255 - Y) (1 - K/255)
+K gives the overall intensity and the colors are in C, M,
+Y. High-quality color printing uses more colors than just CMY.
+
+EXAMPLE 1: Consider pure white light: (R,G,B)=255. Then
+	(C,M,Y,K)=0. This means that no ink is put on the paper.
+
+EXAMPLE 2. Consider pure blackness. (R,G,B=0). (C,M,Y,K)=(0,0,0,255) [but
+        CMYK_CONVERT erroneously returns (c,m,y,k)=255]. This means that
+        no C, M, or Y ink is jetted; and full B is jetted.
+
+EXAMPLE 3. Consider pure red at half full intensity. Then
+	(R,G,B)=(127,0,0). Then (C,M,Y,K)=(0,255,255,128), i.e. half
+	black, full M and Y. [Without the black (K=0), full M and Y
+	gives R.]
+
+---COLOR PLOTTING and COLORBLIND ISSUES
+
+the background and line width matter A LOT. LOOK at your final product!
+
+About 15% of males are red/green colorblind.  To learn about, and take a
+      test, go to
+      http://www.toledo-bend.com/colorblind
+      this also has links to other sites including one which lets a
+	   noncolorblind person see what a colorblind one would.
+
+The BASIC RULES: 
+    -BE COLORBLIND FRIENDLY! DON'T USE COLOR unless you have to!  
+    -use MAGENTA and CYAN, NOT RED and GREEN. 
+
+Check out some websites...
+
+      -from an irate proposal reviewer:
+      http://www.nature.com/nature/journal/v445/n7128/full/445593c.html
+	and its reference to
+      http://jfly.iam.u-tokyo.ac.jp/color/index.html
+
+Also...
+	http://colororacle.cartography.ch/
+	http://colorfilter.wickline.org/
+
+----PRINTING AND POWERPOINTING
+
+LASER PRINTERS are terrible for anything but primary colors Use Inkjets!
+the poster printer is an inkjet. See examples.
+
+IMPORTING INTO POWERPOINT AND OPENOFFICE: it really matters what hou
+do.
+
+PS is not accepted by PowerPoint: use 'convert' to change ps to eps.
+      EPS is converted to pixel image by PowerPoint and the result can
+      look unclear. Better: convert to a huge pixel image PNG file 
+
+  convert -verbose -antialias -density 600 -geometry 25% -quality 95
+
+      import, and downsize within PowerPoint. Play with
+      contrast--excellent results. (But it doesn't seem to work well in
+      early versions of openoffice. Mac?)
+
+---THE BEST OF CARL'S PLOTTING AND IMAGING HANDOUTS
+
+-PLOTTING using color, symsize, and symbol type:
+       Basic Plotting in IDL: (bpidl.ps, bpidl.pdf)
+
+-1D, 2D, and 3D images:
+     (newdimensionalcolor.ps, newdimensionalcolor.pdf)
+
+-Displaying and manipulating images using IDL commands (tv, etc):
+	Image Display and Manipulation in IDL (ididl.ps, ididl.pdf)
+
+-Displaying images with axis labels, etc.
+	IMAGE DISPLAY, ANNOTATION, AND EXAMINATION WITH TIM
+	     ROBISHAW'S {\tt display.pro} AND RELATED PROCEDURES
+	     (trdisplay.ps, trdisplay.pdf)
+
+enscript -r -2 -p week_19apr2011_handout.ps week_19apr2011_handout.txt

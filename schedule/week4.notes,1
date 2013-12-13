@@ -1,0 +1,105 @@
+
+lab reports due today, so there is no show/tell.
+
+so we will do show/tell with the interferometer
+
+---------------------- CARL INTRO:
+block diagram. heterodyne principle. how to determine the observing
+frequency. what are the observing freq band? 
+how to ensure that the lo freqs are what they are supposed
+to be.
+
+sanity check on interf: observe the sun. or the moon. The moon is up this
+year. 
+
+----------------------- GEOFF: HOW TO USE THE INTERFEROMETER
+	programs that control the telescopes
+	encoder basics: absolute verus incremental. homing.
+	programs that display and record the data.
+	how to set up an observing script
+
+------------------------ CARL: ANGULAR COORD SYSTEMS
+*********** go outside: it's a nice night.
+
+hour angle, declination
+longitude, latitude
+
+we will do the conversion. run thru physical pointing.
+
+how stars move in the sky : lst, ra, ha
+
+********* go inside
+
+TIME SYSTEMS: ASTRONOMICAL...
+right ascension
+hour angle
+LST -------------------> ha= lst - ra
+
+TIME SYSTEMS: CIVIL...
+PST
+UT
+
+R_earth=6378, so we have 2.2 millisec/meterm 2,2 sec/km, 3.5 sec/mile
+
+Julian day. Current is 2454509.0 = 6724 yr. ALWAYS UT. begins at
+noon Greenwich (and at midnight on the int'l date line). IDL routines: 
+	CALDAT gives calendar date from julian day
+	JULDAY gives julian day from calendar data
+	current julday: print, systime(/julian, /ut)
+	mjd =  jd - 2400000.5
+
+CONVERTING BETWEEN CIVIL AND ASTRONOMICAL TIME
+
+***what is the diff in RATE?
+earth goes around sun 365 times per year
+BETTER: sun goes around earth 365 times per year
+how many time per year does a star go around the earth?
+
+DANCE ROUTINE
+     diff: sun moves because of earth spin
+     star moves because of earath spin AND solar orbit.
+     THIS is the SIDEREAL day.
+     so a star goes around 366 times when sun goes around
+365.
+
+     THUS: a sidereal second is SHORTER than a solar second
+   DELTA SIDEREAL TIE = (365.25/366.25)* DELTA SOLAR TIME
+
+        a star rises earlier tomorrow than it does today.
+            how much earlier? 1/365 of a day. 4 min.
+            or: distance sun oves in one day: 1 degree!
+            annoying when you are at the telescope!
+
+***how is the ZERO POINT defined? LST is zero when sun crosses equator
+   going north.
+
+***Calculating LST from CT:  ROUTINES WE PROVIDE: (based on gsfc ct2lst)
+
+lst -- prints lst right now
+
+lstnow: a function.
+ilst: gives lst for a specified julian date: print, ilst(julian=juldate)
+lstnow: gives curr lst = lstnow()
+systime(/julian, /utc) gives current julian day (which contains the
+                        current ime, too--it's not just an integer
+                        number. the /utc is required for it to give
+			julian date relative to greenwich, which is the
+			only one that means anything.
+systime() gives current local ltime as a strin
+systime(/sec) gives seconds elapsed since 1 January 1970
+
+
+**************** go to 544 *************
+
+CARL
+coordinate conversions: rotation matrices. Go through handout.
+
+GEOFF
+interferometer concepts and math.
+
+local fringe frequency: 2 ways of looking at it.
+
+detecting source using fourier transform. use FFT, assume uniform
+sampling.
+
+enscript -r -2 -p week4.ps week4.notes

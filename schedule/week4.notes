@@ -1,0 +1,132 @@
+
+lab reports due today, so there is no show/tell.
+
+so we will do show/tell with the interferometer
+
+---------------------- CARL: INTERFEROMETER FRINGES
+
+basic principal of interferometry on scratch sheet:
+
+      fringes: lambda/B_p
+      fringe period ~ 40s/[cos(dec) cos(h)]
+      predict fringe freqs and look at power spectrum 
+      local fringe frequency: 2 ways of looking at it.
+
+
+detecting source using fourier transform. use FFT, assume uniform
+sampling. Make delta t = total interval/nr of samples. calculate freqs
+in the usual way. 
+
+
+sanity check on interf: observe the sun. or the moon. The moon is up this
+year. 
+
+------------------------ CARL: ANGULAR COORD SYSTEMS
+coordinate basics: go outside
+how stars move in the sky : lst, ra, ha
+	ha
+	dec
+	alt (latitude) -- za
+	az (longitude)
+
+	ra
+	dec
+
+----------------------- KETON: HOW TO USE THE INTERFEROMETER
+
+	programs that control the telescopes
+	encoder basics: absolute verus incremental. homing.
+	programs that display and record the data.
+	how to set up an observing script
+
+------------------ CARL: INTERF BLOCK DIAGRAM
+
+block diagram. (interferometer_signal_path.pdf)
+      heterodyne principle. 
+      how to determine the observing frequency. 
+      what are the observing freq band? 
+      using counter to chk freq
+
+------------------ CARL: CIVIL TIME
+
+TIME SYSTEMS: CIVIL...
+	PST
+	UT
+
+Earth circumf is 24000 miles. 
+	24 time zones. 
+	1 time zone \sim 1000 miles. 
+	1 mile \sim 3.5 sec. 
+	1 meter \sim 2.2 millisec
+
+JULIAN DAY (JD). 
+	Current is 2454509.0 = 6724 yr.	
+	ALWAYS UT. 
+	begins at noon Greenwich (and at midnight on the int'l date line).
+
+MODIFIED JULIAN DAY (MJD): 
+	current is 55600.964 = 152 yr
+	begins on intl date line (noon Greenwich). 
+
+------------------ CARL: ASTRONOMICAL (SIDEREAL) TIME
+
+RIGHT ASCENSION
+HOUR ANGLE
+LST 
+HA= LST - RA
+
+---------------- CONVERTING BETWEEN CIVIL AND ASTRONOMICAL TIME
+
+***what is the diff in RATE?
+earth goes around sun 365 times per year
+BETTER: sun goes around earth 365 times per year
+how many time per year does a star go around the earth?
+
+DANCE ROUTINE
+     diff: sun moves because of earth spin
+     star moves because of earth spin AND solar orbit.
+     THIS is the SIDEREAL day.
+     so a star goes around 366 times when sun goes around
+365.
+
+THUS: a sidereal second is SHORTER than a solar second
+	DELTA SIDEREAL TImE = (365.25/366.25)* DELTA SOLAR TIME
+
+a star rises earlier tomorrow than it does today.
+            how much earlier? 1/365 of a day. 4 min.
+            or: distance sun Moves in one day: 1 degree!
+            annoying when you are at the telescope!
+
+***how is the ZERO POINT defined? LST is zero when sun crosses equator
+   going north.
+
+------------------ SOFTWARE ------------------------
+
+ROUTINES WE PROVIDE: (based on gsfc ct2lst)
+
+IDL routines: 
+	CALDAT gives calendar date from julian day
+	JULDAY gives julian day from calendar data
+	current julday: print, systime(/julian, /ut)
+	mjd =  jd - 2400000.5
+
+lst -- prints lst right now
+
+lstnow: a function.
+ilst: gives lst for a specified julian date: print, ilst(julian=juldate)
+lstnow: gives curr lst = lstnow()
+systime(/julian, /utc) gives current julian day (which contains the
+                        current ime, too--it's not just an integer
+                        number. the /utc is required for it to give
+			julian date relative to greenwich, which is the
+			only one that means anything.
+systime() gives current local ltime as a strin
+systime(/sec) gives seconds elapsed since 1 January 1970
+
+
+---------------- CARL: rotation matrices
+COORDINATE CONVERSIONS: rotation matrices. Go through handout.
+
+
+
+enscript -r -2 -p week4.ps week4.notes

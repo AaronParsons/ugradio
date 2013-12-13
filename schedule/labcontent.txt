@@ -1,0 +1,53 @@
+
+CONTENT OF A GOOD LAB REPORT...
+
+TITLE: should encapsulate the contents and meaning. 
+
+ABSTRACT: short summary of report including most important results.
+purpose is to tell a prospective reader whether it is worth spending
+more time on article.
+
+INTRODUCTION: 
+
+	the context of the work. this includes:
+
+	overall purpose: why? what did you hope to accomplish? why is
+it important that you did this work? 
+
+	background: where are you starting from? where did you end up?
+
+OBSERVATIONS:
+
+	what you observed. 
+	who did it
+	when you did it
+	how you recorded data
+	any particulars or peculiarities.
+
+ANALYSIS:
+
+	theory according to which you analyze the data
+	how you actually did the analysis
+	results of your analysis
+
+	note: for this report, the analysis section consists of three
+parts, the ls fringe fit, the sun diameter, the moon diameter.
+
+	
+INTERP:
+
+	comparison of sun diam with what you know. how does this fit in
+with the astrophysics?
+
+	comparison of moon diam with what you know.
+
+SUMMARY:
+
+	summary of the results. did you achieve the goals set out in the
+introduction? what have you learned?
+
+	some stress here on what you learned: where are you now with
+respect to where you hoped to be? what aspects are lacking? how would
+you have done things better?
+
+

@@ -1,0 +1,56 @@
+
+week8.notes MAR 11 TO MAR 18
+
+SHOW AND TELL--lab report is due, but just some general questions...
+
+1. source positions:
+positions of sources: who did what? were minima well-defined?
+
+2. sun/moon diams:
+let's do some in-class stats on derived sizes and positions:
+
+compare dias of sun (shouldn't change much)
+compare dias of moon (changes by +/- 10% over month)
+WHY DISCREPANCIES?
+
+what is ra of moon? changes during obs. how far does moon move in a month?
+in 12 hr? (15 deg/day; 7 deg over tracking time)
+what is ra of sun? changes during obs. how far does moon move in a month?
+in 12 hr? (1 deg/day; 0.5 deg over tracking time)
+
+what are the decs? how much change?
+for moon: roughly +/- 28 deg in 1 mo, 56 deg in 2 weeks, 4 deg/day!
+for sun: +/- 23 deg oveer 1 yr, 46 deg in 6 mo, 7 deg/mo avg, 2 deg/week,
+2/7 deg/day, 1/7 deg over 12 hr -- that's 10 arcmin.
+
+
+------------ UPCOMING LAB -------------------
+
+general intro to transmission lines. mechanical analog: weight on a string
+(or, really: change in string [weight/length]/tension], how a wiggle will
+be transmitted. e.g. of phone cord.
+
+illustrate reflections:
+radar setup. have students 
+      change length of cable
+      change short to open
+      put 50 ohm load on
+      importance of boundary conditions.
+
+'imagine arecibo's 2 Mw radar if not properly matched!'
+
+reflections and standing waves. 
+
+illustrate standing waves using slotted line
+
+how does a slotted line work? probes; induced voltage with E field.
+	coax
+	waveguide in TE01 mode (show different modes)
+
+WEEK'S WORK: 
+	measure velocity in slotted coax
+	measure prop vel of flexible coax
+	measure vel versus freq in waveguide
+
+how to analyze the slotted line det of wavelength using polyfit
+

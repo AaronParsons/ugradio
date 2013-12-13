@@ -1,0 +1,54 @@
+
+
+show and tell...
+
+     using structures?
+
+--------------
+
+colors, plotting, imaging...
+
+summarixe bpidl
+
+bpidl needs some work...
+      caption for fig 1
+      move the greek x-axis label 
+      move psym footnote to earlier section
+      move 'setting bg' to proper place
+      diddle with color defs in section 5.2
+      divide sec 5.3 into 2 subsections; interchange them.
+
+newdimensional color
+
+trdisplay:
+	in sec 2.1, show the image so generated
+	in sec 3.1, include the full code and show the image
+	move sec 3.2 to sec 5, i think...show the image
+	in sec 6, show the image
+
+ididl is, i think, ok as is.
+
+============
+
+to illustrate dim images: 
+source $CARLPATH/courses/ay204/2010/graphs_images/lect1/lect1_alias
+
+maybe distribute
+$CARLPATH/courses/ay204/2010/graphs_images/lect2/lect2.ps
+
+$CARLPATH/courses/ay204/2010/graphs_images/lect3/lect3.ps
+
+(combine the above 2 into something more succinct)
+
+projections 
+
+for plotting, display /dzd2/heiles/courses/ay204/colors/pntplt_kyle.ps
+
+color intro:
+@runcolorbackground.idl
+also, a variant of colorblind.idl
+
+do not use color_adding.notes
+
+
+cmyk

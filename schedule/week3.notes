@@ -1,0 +1,72 @@
+
+ral computer.
+
+
+
+ok latex jan 28 2007
+ok emacs today
+ok sugg for lab reports jan 28 2011
+
+WEEK 3 CLASS -- 
+
+SHOW AND TELL ON MIXERS
+	-plots vs freq of upper sideband, lower sideband.
+	-plots vs time of waveform before and after fourier filtering
+
+MIXER AS A RELATIVE PHASE DETECTOR.
+	-what happens when frqs displaced by 1 Hz? how should mixer output
+change with time? [freq= {d(phase)dt} / 2 pi]
+
+	-discssion of fig 2 of lab handout. filters.
+
+how ssb mixer works--marked up handout.
+        fig 1 -- illus usb, lsb mapping to baseband.
+        page 7 fig 4 -- phases at different points rotating
+circle. wheel observed with slits.
+
+
+
+SSB mixer principles. SSB mixers need the concept of neg freqs. Circles
+rotating in diff dirs.
+
+do the SSB 'theory' in nonmathematical detail during the lab demo. how
+sampling at 90 deg phase diff breaks the +/- freq degeneracy
+
+carl LECTURE in room 544. cover DFT/FFT handout
+
+FOURIER FILTERING--pos, neg freqs. are filtered
+	-make sure inverse-transformed data real?
+
+-------------break...
+
+-----------'suggestionss for lab reports
+
+go over 'suggestions for lab reports' -- hardcopy dist week3, also on
+web.
+don't make idle speculation:
+      NO: 'this effect is because the mixer is old'
+      YES: 'we speculate that this effect occurs because the mixer is an
+      imperfect nonlinear device.'
+
+recall the handout for first lab, Suggestions for Lab Reports:
+        grammar:
+        spelling
+        data ARE
+        less/fewer
+
+ILLUSTRATE USE OF EMACS, DVI, ETC, including what happens when you make a
+mistake. !!! I FORGOT!
+
+ispell
+
+------------------
+----------------------
+
+emacs issues: key control.
+
+latex issues:
+        how to use dvi files.
+        how to fix errors
+
+======================
+
