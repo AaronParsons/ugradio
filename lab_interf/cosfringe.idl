@@ -1,0 +1,55 @@
+!p.charsize=1.7
+!p.charthick=2
+!p.multi= [0,1,2]
+!p.thick=6
+!x.thick=4
+!y.thick=4
+!p.font=ps-1
+
+if ps then psopen, 'cosfringe.ps', /times, /bold, /isolatin1
+
+x= (findgen( 1000)-500.)/1000.
+flatdist= fltarr( 1000)
+flatdist[ 250:750]= 0.5
+cosdist= cos( 2.*!pi* x)
+indx= where( cosdist lt 0)
+cosdist[ indx]= 0.
+
+plot, 2*x, cosdist, lines=2, $
+	yra= [-.1, 1.1], /ysty, ytit= 'Source Intensity, Arbitrary Units', $
+	xtit= 'Angular Offset from Center, Arbitrary Units'
+oplot, 2*x, flatdist
+
+
+fcarg = 0.1*findgen(1000)
+fcn = fltarr(1000)
+fcn0 = fcn
+num0 = sin(fcarg)
+denom0 = fcarg
+indxs0 = where(denom0 ne 0.)
+fcn0(indxs0) = 2.*num0(indxs0)/denom0(indxs0)
+;plot, fcarg/!pi, fcn0, linestyle=2, xrange=[0,8*!pi], xstyle=1
+plot, fcarg/!pi, fcn0, linestyle=0, xrange=[0,6], xstyle=1, $
+;	xtitle = 'Fringe Spacing/Source Diameter', $
+	xtitle = textoidl('Source Diameter \times f_f'), $
+	ytit= 'Fringe Amplitude, Arbitrary Units'
+
+num = cos(fcarg)
+denom = fcarg^2 - (0.5*!pi)^2
+indxs = where(denom ne 0.)
+fcn(indxs) = -!pi*num(indxs)/denom(indxs)
+oplot, fcarg/!pi, fcn, lines=2
+oplot, [0, 8], [0,0], linestyle=1
+
+xyouts, 0.7, 1.3, 'SOLID: Flat Brightness Distribution'
+xyouts, 0.7, 1.5, 'DASHED: Cosine Brightness Distribution'
+
+psclose
+
+!p.charsize=0
+!p.charthick=0
+!p.multi= 0
+!p.thick=0
+!x.thick=0
+!y.thick=0
+!p.font=-1

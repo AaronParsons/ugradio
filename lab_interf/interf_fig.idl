@@ -1,0 +1,51 @@
+;make fig for lab report...
+
+;window,0,xs=600,ys=900
+
+!p.font=ps-1
+!p.thick=6
+!x.thick=4
+!y.thick=4
+
+psopen, 'interf_fig.ps', xsize=5, ysize=10, /inch, /times, /roman, /bold
+
+setcolors, /system_variables
+
+plot, findgen(5), xra=[-1,1], yra=[-3,1], xsty=5, ysty=5, $
+	pos=[0,0,1,1], /nodata
+
+xfringe= (2./600.)*(findgen(600)- 300)
+fringe= cos( 2.*!pi*10.*xfringe)
+img= bytarr( 600, 600)
+for nr=0,599 do img[ *,nr]= 64*(fringe+1.)
+tv, img, 0, 1./2.,/norm
+
+;if (!d.name eq 'X') then tvcircle, 0.6, 0, 0, !black, /data, thick=5
+;if (!d.name ne 'X') then tvcircle, 0.6, 0, 0, !white, /data, thick=5
+tvcircle, 0.6, 0, 0, !white, /data, thick=5
+
+xyouts, 0,0,align=.5, 'TWO-D MUN', charsize=3,charthick=9, color=!white
+
+;stop
+;xfringe= 0.001*(findgen(2000)- 1000)
+
+oplot, [-1,1],-[1,1], lines=2, thick=5
+
+xsun= (findgen( 600)-300)/300.
+ysun= findgen(600)
+
+y = 0.6^2- xsun^2
+indxpos= where( y gt 0)
+indxneg= where( y le 0)
+ysun[indxneg]=0.
+ysun[indxpos]= sqrt( y[indxpos])
+oplot, xsun, ysun-2., thick=5
+
+oplot, xfringe,.95*fringe-2
+
+xyouts, 0,-2,align=.5, 'ONE-D MUN', charsize=3,charthick=9
+
+psclose
+setcolors, /system_variables
+
+
