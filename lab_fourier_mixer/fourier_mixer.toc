@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}GOALS}{2}
+\contentsline {section}{\numberline {2}SCHEDULE}{2}
+\contentsline {section}{\numberline {3}\ NYQUIST SAMPLING AND ALIASING: A SINGLE SINE WAVE (First Week)}{3}
+\contentsline {subsection}{\numberline {3.1}Your First Digital Sampling}{3}
+\contentsline {subsection}{\numberline {3.2}Let's Go to Extremes\dots }{4}
+\contentsline {subsection}{\numberline {3.3}For your Lab Report}{4}
+\contentsline {section}{\numberline {4} ON USING DFT AND FFT TO CALCULATE A POWER SPECTRUM (First Week)}{5}
+\contentsline {subsection}{\numberline {4.1}The Analytic Fourier Transform}{5}
+\contentsline {subsection}{\numberline {4.2}The Discrete Fourier Transform (DFT)}{5}
+\contentsline {subsection}{\numberline {4.3}OPTIONAL: The Fast Fourier Transform (FFT)}{6}
+\contentsline {section}{\numberline {5} LEAKAGE POWER AND FREQUENCY RESOLUTION (First Week)}{7}
+\contentsline {subsection}{\numberline {5.1}Leakage Power}{7}
+\contentsline {subsection}{\numberline {5.2}Frequency Resolution}{7}
+\contentsline {section}{\numberline {6} BASIC DOUBLE SIDEBAND (DSB) MIXER OPERATION: UPPER AND LOWER SIDEBANDS (Second Week)}{7}
+\contentsline {subsection}{\numberline {6.1}The Mixer}{8}
+\contentsline {subsection}{\numberline {6.2}For Your Lab Report}{8}
+\contentsline {subsection}{\numberline {6.3}On Fourier Filtering}{9}
+\contentsline {section}{\numberline {7}DSB MIXER AS A PHASE DETECTOR (Second Week)}{9}
+\contentsline {section}{\numberline {8}SOME COMMENTARY}{10}
+\contentsline {section}{\numberline {9} SOME THEORY: THE ORDINARY DOUBLE SIDEBAND (DSB) MIXER}{10}
