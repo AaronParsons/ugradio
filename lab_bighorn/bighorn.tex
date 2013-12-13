@@ -1,0 +1,190 @@
+\documentclass[11pt,preprint]{aastex}
+\usepackage{amsmath, amsfonts, amssymb}
+
+\begin{document}
+
+\title {21-cm LINE ASTRONOMY WITH A SSB MIXER}
+
+This week we will measure the 21-m line (colloquially known among
+astronomers as the {\it HI}---that's {\it H - ``Roman numeral I'',
+pronounced ``H-one''}) line shape, velocity, and intensity using the big
+horn on Campbell's roof.  Most of the measured power comes from our own
+electronics, not the HI line.  It's often called ``noise''.  We need to
+get rid of this instrumental contribution.  We need to get our {\it
+intensities properly calibrated} and the {\it Doppler correction
+properly applied}.  To this end, we want all groups to observe the same
+position on the sky to see if they get the same answer (This has never
+happened before in the history of this course!).  We want {\it each
+group} to do the measurements and {\it each individual} to do the
+reduction.
+
+{\bf Plots are due April 12 in class!!!}
+
+\section{The Measurements}
+
+Begin by getting the data!  Before beginning measurements in earnest,
+it's important to make sure the signal levels are OK and to
+experimentally determine which way frequency increases on your power
+spectra. So before getting out there in the rain to point the horn:
+\begin{enumerate}
+
+\item Set the system up as you will be using it to observe.  Take some
+data.  How fast must you sample? Remember that our low-pass filter has a
+$\sim 2$ MHz cutoff frequency.  What sample mode should you use for SSB
+sampling? 
+
+We recommend using the ``integer'' keyword for the sampler, which
+returns integer numbers instead of voltages; this is faster. If you do
+this you'll have to subtract the mean to get rid of the d.c.\ offset
+before taking Fourier transforms. In fact, it doesn't hurt to always do
+this, because there is usually an extraneous d.c.\ offset from
+imperfections of various sorts. 
+
+\item Look at the range of sample values by plotting a bunch of them. (If
+  you have enough time, you could try using the \verb$histogram$ function
+  for this).  The sampled numbers should cover plenty of bits; quantization
+  should be only barely, or not at all, visibly evident in the histogram.
+
+\item Insert a test signal so that it appears in the upper sideband and
+take some data; then change the test signal frequency so it's in the
+lower sideband.  You'll use this to determine whether the frequency axis
+is flipped or not.
+
+\end{enumerate}
+
+Having determined that the system works, it's time to do astronomy!
+Point the horn to Galactic coordinates $(l,b) = (120^\circ, 0^\circ$). 
+The rotation matrix for converston between equatorial and Galactic
+coordinates is in the coordinate-conversion handout.  We'll take three
+separate measurements.  Take plenty of samples---the more you take, the
+higher the signal-to-noise ratio.  Call this number NSAMP; you'll
+calculate the power spectrum from these\footnote{To get really good
+signal-to-noise, take lots (100?) of power spectra and average them}. 
+\begin{enumerate}
+
+\item Set the first local oscillator so that the HI line is roughly centered
+  in the baseband spectrum. (The HI line frequency is 1420.4058 MHz).
+  Because this is centered on the line, call this spectrum $s_{online}$.
+
+\item Displace the first l.o.\ so that the line falls outside of the baseband
+  spectrum. Because this is centered off the line, call this spectrum
+  $s_{offline}$.
+
+\item Repeat the offline spectrum with the cal on; call this one
+  $s_{offline, calon}$.
+\end{enumerate}
+
+\section{The Analysis}
+
+For the reduction: \begin{enumerate}
+
+\item Make a plot or a histogram\footnote{To make a histogram, you can
+  use IDL's native {\tt histogram.pro} or one of our wrappers:
+  the simpler one {\tt histo\_wrap.pro} or the more general {\tt
+  hist.pro} .} of some representative voltage values in one of your three
+  datasets to make sure that they are, indeed, not too quantized and
+  don't exceed the maximum range of the ADC. The histogram shape should
+  look like a well-known function. Which function? Does it?
+
+\item Make power spectra of the three measurements.  These spectra will
+look EXTREMELY NOISY! And they will have a number of points equal to the
+number of samples. Thus, the resolution (separation between adjacent
+channels on the power spectrum) will be the total bandwidth divided by
+NSAMP\footnote{By the way, what is the total bandwidth: is it the
+sampling frequency or half the sampling frequency? Remember---your input
+numbers are complex\dots}. This is much
+narrower than needed. No HI line with a width of less than 6 kHz has
+ever been detected, and for our purposes a resolution of 10 KHz is
+plenty good enough. 
+
+You can smooth over channels and reduce the noise. For example, suppose you
+want to reduce the the NSAMP channels in the power spectrum $pspect$ to 512
+channels. In IDL there are two
+easy ways to do this: \begin{enumerate}
+
+\item Use IDL's {\tt smooth} function: {\tt newspect = smooth(pspect,
+    NSAMP/512)}. This degrades the resolution, but you will still have
+  NSAMP channels in the output spectrum.
+
+\item Use IDL's {\tt rebin} function: {\tt newspect = rebin(pspect, 512)}.
+  This degrades the resolution and gives you 512 channels channels in the
+  output spectrum.
+\end{enumerate}
+
+  In the smoothed $s_{online}$ spectrum you should be able to see the HI
+line---together with the instrumental bandpass, and perhaps some other
+bumps. The instrumental bandpass is determined mainly by the low-pass
+filter, which should fall smoothly to zero as the frequency
+increases. Does it? 
+
+\item You can remove the instrumental bandpass, and thus get the shape
+  of the line (but not the intensity), by taking the ratio 
+
+\begin{equation}
+ratio = {s_{online} \over s_{offline}} \ .
+\end{equation}
+
+\noindent This is the {\it first} factor (i.e., the shape) in equation
+(13) in the spectral-line handout.
+
+\item To get the line intensity in terms of the calibration noise
+  source, multiply the ratio spectrum by $T_{sys}$---the second factor
+  in equation (13). We obtain $T_{sys}$ by combining the calon and
+  caloff spectra, as per equation (15) in the handout:
+
+\begin{equation}
+T_{sys} = {\sum s_{offline} \over \sum(s_{offline, calon} - s_{offline})} T_{cal}
+\end{equation}
+
+\noindent where the numerator and denominator are summed over all of the
+channels, as in equation (15). We think $T_{cal}$ is about 20 K.  Then
+the final, intensity-calibrated spectrum is equation (16) in the
+handout, namely
+\begin{equation}
+final \ calibrated \ spectrum = ratio \times T_{sys}
+\end{equation}
+
+\item Plot your final spectrum versus the r.f.\ frequency.
+
+\item Plot your final spectrum versus the Doppler
+  velocity\footnote{Astronomers usually express velocities in km s$^{-1}$.}.
+Remember that, by astronomical convention, positive velocity means
+motion away (remember the expansion of the Universe!), so
+
+\begin{equation}
+{v \over c} = -{\Delta f \over f_0} \ ,
+\end{equation}
+
+\noindent where $c$ is the speed of light and $\Delta f$ is the frequency
+offset from the line frequency $f_0$\footnote{Radio astronomers, being
+  frequency-oriented, use this equation; optical astronomers, of course,
+  use something different: ${v \over c} = {\Delta \lambda \over
+    \lambda_0}$.}. 
+
+\item Calculate the Doppler correction using the {\tt ugdoppler.pro}
+(for documentation use {\tt doc} or {\tt doc\_library}). Correct the
+velocities to the Local Standard of Rest (LSR) and make a third plot.
+
+{\it Notes on \verb$ugdoppler$}: \begin{enumerate}
+
+\item You need the Julian day of the observation, which you get from
+  IDL's {\tt JULDAY} function. The Julian day is defined for {\it
+  Greenwich}, whose time is 8 hours ahead of PST (and 7 hours ahead of
+  PDT!). That is, if the time in Berkeley is 6 pm (that's 18 hours) on
+  March 17, then the time in Greenwich is 1 hour on March 18, and that's
+  what you use as input to {\tt JULDAY}. To obtain the Julian day right
+  now, use {\tt systime( /julian, /ut)}. 
+
+\item You need the observatory coordinates (north latitude and west
+  longitude) in degrees; you could enter them with the pair of optional
+  input parameters {\tt (nlat, wlong)}, but you don't have to because the
+  default values are Campbell Hall's values.
+
+\end{enumerate}
+\end{enumerate}
+
+Hand in the plots together with relevant commentary.
+
+
+\end{document} 
+
