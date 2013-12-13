@@ -1,0 +1,28 @@
+\contentsline {section}{\numberline {1}GOALS}{2}
+\contentsline {section}{\numberline {2}SCHEDULE}{3}
+\contentsline {section}{\numberline {3}\ NYQUIST SAMPLING AND ALIASING: A SINGLE SINE WAVE (First Week)}{4}
+\contentsline {subsection}{\numberline {3.1}Your First Digital Sampling}{4}
+\contentsline {subsection}{\numberline {3.2}Let's Go to Extremes\dots }{5}
+\contentsline {subsection}{\numberline {3.3}For your Lab Report}{5}
+\contentsline {section}{\numberline {4} ON USING DFT AND FFT TO CALCULATE A POWER SPECTRUM (First Week)}{5}
+\contentsline {subsection}{\numberline {4.1}The Analytic Fourier Transform}{5}
+\contentsline {subsection}{\numberline {4.2}The Discrete Fourier Transform (DFT)}{6}
+\contentsline {subsection}{\numberline {4.3}OPTIONAL: The Fast Fourier Transform (FFT)}{7}
+\contentsline {section}{\numberline {5} LEAKAGE POWER AND FREQUENCY RESOLUTION (First Week)}{7}
+\contentsline {subsection}{\numberline {5.1}Leakage Power}{7}
+\contentsline {subsection}{\numberline {5.2}Frequency Resolution}{7}
+\contentsline {section}{\numberline {6} BASIC DOUBLE SIDEBAND (DSB) MIXER OPERATION: UPPER AND LOWER SIDEBANDS (Second Week)}{8}
+\contentsline {subsection}{\numberline {6.1}The Mixer}{8}
+\contentsline {subsection}{\numberline {6.2}For Your Lab Report}{9}
+\contentsline {subsection}{\numberline {6.3}On Fourier Filtering (OPTIONAL!!)}{9}
+\contentsline {section}{\numberline {7}DSB MIXER AS A PHASE DETECTOR (Second Week)}{10}
+\contentsline {section}{\numberline {8} CONSTRUCT AND INVESTIGATE A TWO-OUTPUT MIXER USABLE FOR DSB OR SSB (Second Week)}{10}
+\contentsline {subsection}{\numberline {8.1}The DSB Mixer}{11}
+\contentsline {subsection}{\numberline {8.2}The SSB Mixer}{11}
+\contentsline {section}{\numberline {9}SOME COMMENTARY}{12}
+\contentsline {section}{\numberline {10} SOME THEORY: THE ORDINARY DOUBLE SIDEBAND (DSB) MIXER}{12}
+\contentsline {section}{\numberline {11}MORE THEORY: THE SSB MIXER}{15}
+\contentsline {subsection}{\numberline {11.1}A Preliminary: The Quadrature Hybrid}{15}
+\contentsline {subsection}{\numberline {11.2}The SSB mixer: block diagram and graphical description}{16}
+\contentsline {subsection}{\numberline {11.3}The Digital ``Computer Voodoo'' Method}{17}
+\contentsline {subsection}{\numberline {11.4}Mathematical description}{18}

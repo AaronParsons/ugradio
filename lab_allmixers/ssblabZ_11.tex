@@ -1,0 +1,310 @@
+\documentclass[11pt,preprint]{aastex}
+
+\begin{document}
+\def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
+\def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
+
+%\noindent Astronomy 121 \hfill 2004 Feb 10
+
+\title {COMPLEX FOURIER TRANSFORMS AND SSB MIXERS \\
+the week beginning March 18}
+
+An earlier lab explored ordinary double-sideband (DSB) mixers, for which
+the upper and lower sidebands produce identical mixer output. Here we
+explore single-sideband (SSB) mixers, which display the remarkable
+property that upper and lower sidebands produce outputs at negative and
+positive baseband frequencies, respectively. In real life, SSB mixers
+allow such things as the transmission and reception of stereo FM
+signals; in olden days, FM transmission were all monophonic.
+
+In that same lab we used discrete Fourier transforms (DFTs) to obtain
+power spectra. We didn't look into the fundamentals of DFTs much---we
+just plowed ahead. Here, it's time to study those fundamentals in some
+detail from both the experimental and theoretical standpoints.
+
+\section{GOALS}
+
+\begin{itemize}
+
+\item Learn how FFTs are a particular implementation of DFTs, how they
+work, and what they provide.
+
+\item Explore leakage power in DFTs.
+
+\item Construct a two-output mixer, composed of two mixers, that can be
+  operated as either a DSB or an SSB mixer. 
+
+\item Use the two-output mixer in DSB and SSB modes and understand the
+  difference. 
+
+\item Learn how complex inputs to a FT break the negative/positive
+  frequency degeneracy.
+
+\end{itemize}
+
+
+
+\section{ CONSTRUCT A TWO-OUTPUT MIXER USABLE FOR DSB OR SSB}
+\label{upperlowerdsb}
+
+From the block diagram given below in Figure \ref{ssbmfig} and in class,
+construct a ``Computer Voodoo'' SSB mixer that achieves the phase delay
+with a cable instead of a quadrature hybrid. We will use it to experiment
+with no phase delay (a short cable) and a 90-degree phase delay (a long
+cable).
+
+For experimentation with this two-output mixer, use two SRS synthesizer
+oscillators as inputs.  The SRS synthesizers work up to 30 MHz.  Assign
+one of the SRS synthesizers to be your ``local oscillator'' with
+frequency $f_{lo}$, and the other your ``signal'' with frequencies $f_{sig}
+= f_{lo} \pm |\delta f|$.  To prevent aliasing and to filter out the sum
+frequency, we will use the 5-MHz low-pass filters, one on each output of
+the two-output mixer. Thus, we will want $|\delta f| < 5$ MHz. Moreover,
+remember the Nyquist criterion: we want to see mixing products up to at
+least 5 MHz, so you'll need to sample\dots at least how often?
+
+The computer's ADC samples the two outputs simultaneously. We use the
+two outputs as inputs to the DFT---one as the real, the other as the
+imaginary input.
+
+\section{THE DSB MIXER} \label{dsbmixer}
+
+First see what happens when the phase delay cable is short, so that the two
+outputs have no relative phase delay. Pick a value for $|\delta f|$ and
+take time series data for the two corresponding values of $f_{sig}$ (these
+are the upper and lower sidebands). Calculate the power spectra. When
+taking the Fourier transform, be sure to make the inputs complex---you have
+two simultaneous samples, one real and one imaginary. Looking at the power
+spectra alone, can you distinguish between positive and negative $\delta
+f$?
+
+
+\section{THE SSB MIXER---EXPERIMENT}
+
+We kind of lied above when we said that the quadrature hybrid is the
+heart of the SSB mixer. The function of the first (top) hybrid is to
+produce a $90^\circ$ phase shift between the two l.o.\ signals going to
+the two mixers. We could generate this phase shift in another way:
+replace the quadrature hybrid with an ordinary power splitter, and, in
+one leg, a cable of appropriate length (which would, of course, be
+$\lambda \over 4$).
+
+Now see what happens when the phase delay cable introduces a relative phase
+delay of $90^\circ$ between the l.o.\ signals going to the two mixers.
+Repeat what you did above in \S \ref{dsbmixer}. Looking at the power
+spectra alone, can you distinguish between positive and negative $\delta
+f$?
+
+If you have the time and inclination, verify that the phase difference
+between the two mixer outputs behaves as shown in Figure \ref{dsbmixer}.
+Why does it behave this way?  (Look at equations \ref{rhs} and \ref{lhs} in
+\S \ref{mathdescr}.)
+
+We could repeat the experiments on spectral leakage for the SSB case, but
+we'd find the same kind of results as we did for DSB, so don't bother
+unless you're really gung-ho.
+
+\section{THE SSB MIXER---THEORY}
+
+The SSB mixer has the capability of distinguishing whether the
+difference frequency $|\delta f|$ is positive or negative---that
+is, it distinguishes between the two sidebands.  The sidebands can, and
+usually do, contain completely independent signals. 
+
+\subsection{A Preliminary: The Quadrature Hybrid}
+
+        The heart of a SSB mixer is not the mixer. Rather, it's the
+quadrature hybrid. So before considering SSB mixers, we need to
+understand hybrids and quadrature hybrids\footnote{For an excellent and
+thorough discussion of hybrids and their applications, refer to:  Hagen,
+Jon B., ``Radio-Frequency Electronics, Circuits and Applications,''
+Cambridge University Press, 1996, pg. 188-200.}.
+
+
+\begin{figure}[!h]
+\begin{center}
+$\begin{array}{cc}
+        \includegraphics[width=2.0in]{hybrid1.plt}
+        &
+        \includegraphics[width=2.0in]{hybrid2.plt}
+        \\
+        \parbox[t]{3.0in}{\caption{Block diagram of a four port hybrid.
+\label{hybrid1}}}\hspace{0.4in}        &
+        \parbox[t]{3.0in}{\caption{Block diagram of a quadrature hybrid.
+\label{hybrid2}}}
+\end{array}$
+\end{center}
+\end{figure}
+
+
+        Figure\ \ref{hybrid1} shows the block diagram of a hybrid.  The
+signal acts just like the diagram shows: a signal entering port\ 1 will
+split into equal signals (--3 dB each) and exit through ports\ 2 and 3.
+No power is transmitted across the hybrid to port\ 4.  Internally, many
+hybrids look like center-tapped transformers; see Hagen's book.
+
+        Power is split between the two adjacent ports and nothing is
+transmitted across it.  In this way we think of a hybrid as a {\it power
+splitter}.  In fact, this is just what power splitters are: a hybrid
+with the fourth port terminated in a matched load. If you are wondering
+if it can be used in reverse as a power combiner, the answer is yes.  If
+inputs are made to ports\ 1 and 4, the sum of the inputs exit through
+ports\ 2 and 3. One point: all ports must present matched loads. By
+symmetry, ports 2 and 3 each get half the power, so if one of these is
+terminated then half the power is lost\footnote{Unless the combining
+  signals are identical with a particular phase relationship, in which
+  case all of the power can go to the unterminated port.}.
+
+        Hybrids can be made so that they add a phase angle, either
+$90^\circ$ symmetrically in two legs or $180^\circ$ in one leg.
+Figure\ \ref{hybrid2} shows a block diagram.  A signal incident on port\
+1
+splits and exits through ports\ 2 and 3, but  each signal is
+\emph{shifted} by the number of degrees specified in each corner of the
+schematic:  the output of port\ 2 is shifted by $90$ degrees with
+respect to the input while the
+output of port\ 3 is not shifted at all.
+
+
+\subsection{The SSB mixer: block diagram and graphical description}
+
+\begin{figure}[ht]
+        \begin{center}
+        \leavevmode
+        \includegraphics[width=3in]{ssbmix.plt}
+        \end{center}
+        \caption{Block diagram of the all-hardware and
+                hardware/software combination SSB mixer. In the lab,
+                we'll replace the upper quadrature hybrid with a
+                $\lambda \over 4$ length of cable.}\label{ssbmfig}
+\end{figure}
+
+Figure\ \ref{ssbmfig} shows a block diagram of the SSB mixer.  The RF
+input is split by a power splitter into two equal channels. The LO is
+split by a hybrid, so that the left hand side (LHS) leads the RHS by
+$90^\circ$.  These two channels are recombined with the second
+quadrature hybrid.
+
+Suppose that the signal ``RF in'' is a cosine wave in the {\it lower}
+sideband, with frequency {\it below} the l.o.\ frequency. The l.o.\ is a
+cosine wave on the RHS and a sine wave on the LHS (because of the
+$90^\circ$ shift). This makes the two mixer outputs $\propto \sin
+[\delta \omega t]$ and $\cos [\delta \omega t]$ for the LHS and RHS,
+respectively. These are shown in Figure \ref{mixerout}, with the LHS
+side [$MO(LHS)$] dashed and the RHS [$MO(RHS)$] solid. These are
+identical in amplitude: they have to be, because they come from the same
+original lower-sideband signal. But they are shifted in phase: for ``RF
+in'' being in the {\it lower} sideband, the dashed curve (the left-hand
+mixer) {\it lags} behind the solid one (the right-hand mixer).
+
+Now suppose ``RF in'' is a cosine wave in the {\it upper} sideband, with
+frequency {\it above} the l.o.\ frequency. Now the situation is
+reversed: the dashed curve (the left-hand mixer) {\it leads} the solid
+one (the right-hand mixer).
+
+
+\begin{figure}[h]
+%        \begin{center}
+\hspace{-0.5in}
+%        \leavevmode
+        \includegraphics{ssbm.ps}
+%        \end{center}
+\caption{Outputs of the first mixers for the two sideband cases. Dashed
+  curve shows the {\it left-hand} mixer, solid is the {\it right-hand}
+  mixer. Left panel shows ``RF in'' being in the {\it upper} sideband
+  (USB); right panel shows it being in the {\it lower} sideband (LSB).
+\label{mixerout}}
+\end{figure}
+
+\subsection{The Digital ``Computer Voodoo'' Method}
+
+In Figure \ref{ssbmfig}, we can regard the two independent signals
+marked ``To ADC for Computer Voodoo'', as as the real and imaginary
+components of the signal because, no matter what the input frequency,
+they differ in phase by $90^\circ$. So the signal is a complex
+number. With an ordinary DSB mixer the signal is a real number, so its
+Fourier transform must have Hermitian symmetry---meaning that the power
+spectrum is symmetric, with negative and positive frequencies being
+identical. Here, the signal is a complex number, and there is no
+symmetry. We won't delve into the math here, but the net result is that
+the Fourier transform keeps the negative and positive frequency
+components completely separate. Real geeks call this method ``QU
+sampling''. 
+
+\subsection{Mathematical description} \label{mathdescr}
+
+First, we mix the incoming signal with the real and imaginary (cosine
+and sine) components of the l.o. As in the DSB mixer, we use a low pass
+filter so we need consider only the difference frequencies. For the left
+hand side ($LHS$) the l.o.\ has the $90^\circ$ phase difference so it's
+a $\sin$ instead of a $\cos$ and for the Left-Hand Mixer Output
+[$MO(LHS)$] we have
+
+\begin{equation}
+MO(LHS)_\pm = {E_s \over 2} \sin [\pm|\delta \omega | t] \ .
+\end{equation}
+
+\noindent {\it Note} the -- and + subscript on $MO(LHS)$: these refer to
+``RF in'' being in the {\it lower} and {\it upper} sidebands (LSB and
+USB), respectively. 
+
+For the LSB input we have
+
+\begin{mathletters} \label{lsb}
+\begin{equation}
+MO(LHS)_- = {E_s \over 2} \sin [-|\delta \omega | t] =
+   -{E_s \over 2} \sin [|\delta \omega | t]
+\end{equation}
+\begin{equation}
+MO(RHS)_- = {E_s \over 2} \cos [-|\delta \omega | t] =
+   {E_s \over 2} \cos [|\delta \omega | t]
+\end{equation}
+\end{mathletters}
+
+\noindent Similarly, for the USB input we have
+
+\begin{mathletters} \label{usb}
+\begin{equation}
+MO(LHS)_+ = {E_s \over 2} \sin [+|\delta \omega | t] =
+   {E_s \over 2} \sin [|\delta \omega | t]
+\end{equation}
+\begin{equation}
+MO(RHS)_+ = {E_s \over 2} \cos [+|\delta \omega | t] =
+   {E_s \over 2} \cos [|\delta \omega | t]
+\end{equation}
+\end{mathletters}
+
+\noindent The RHS and LHS outputs have identical frequencies and
+amplitudes for the LSB and USB inputs. 
+
+{\it But the phase relationships differ for the two sidebands.}  For the
+{\it lower} sideband, the RHS output {\it lags} the LHS by $90^\circ$;
+for the {\it upper} sideband, the RHS output {\it leads} the LHS by
+$90^\circ$, just as in Figure \ref{mixerout}. In other words, for the
+LHS output, lower-sideband signals differ in sign from upper-sideband
+ones; this is equivalent to differing in phase by $180^\circ$.
+
+When we sample these two mixers simultaneously, and use one mixer as the
+{\it real} input to the DFT and the other as the {\it imaginary} input,
+the output frequency spectrum {\it separates the sidebands}. That's why
+this is known as a Single-Sideband Mixer, or Sideband-Separating
+Mixer---a SSB. 
+
+To see this, use equation \ref{**}, writing $\delta \omega$ instead of
+$2 \pi \nu$.  For the LSB in equations \ref{lsb}, the two mixer outputs
+are ${E_s \over 2} \sin(-|\delta \omega|t)$ and ${E_s \over 2}
+\cos(-|\delta \omega|t)$; using these as the imaginary and real inputs
+to fhe Fourier transform of equation \ref{***} and applying the trig
+identities, the integrand becomes
+
+\begin{equation}
+{\rm integrand} = {E_s \over 2} \left( \cos[(\delta \omega +
+    \omega)t] + j \sin[(\delta \omega + \omega)t] \right) \ .
+\end{equation}
+
+\noindent For large $T$ in equation \ref{***}, the integrand is nonzero
+only when $[(\delta \omega + \omega)t] =0$. For the LSB with negative
+$\delta \omega$, the integral is nonzero only for positive $\omega$.
+
+\end{document} 
+
