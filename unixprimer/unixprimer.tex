@@ -1,8 +1,13 @@
-\documentclass[psfig,preprint]{aastex}
+\documentclass[]{article}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{natbib}
+%\documentclass[psfig,preprint]{aastex}
 \begin{document}
 
 \title{A SHORT UNIX PRIMER}
-\author{Carl Heiles  \\ \today}
+%\author{Carl Heiles  \\ \today}
 
 %\author{Carl Heiles \altaffilmark{1} \\ \today}
 %\altaffiltext{1}{Based on earlier versions by Anthony Truong and
@@ -71,21 +76,33 @@ wildcard: for example, {\tt ls *ps} lists all files with the suffix {\tt
     ps} (these are usually PostScript files). 
 
 \item To change to a directory, e.g.\ the {\tt tex} directory under {\tt
-  lab1}, type {\tt cd /home/loginname/lab1/tex}. Or, shorter: \verb$~$
-  stands for your home directory, so you can type
-  \verb$cd ~/lab1/tex$. Or, if your present working directory (pwd) is
+  lab1}, type 
+\begin{verbatim}
+cd /home/loginname/lab1/tex
+\end{verbatim}
+Or, shorter: $\sim$ stands for your home directory, so you can type
+\begin{verbatim}
+cd ~/lab1/tex
+\end{verbatim}
+Or, if your present working directory (pwd) is
   {\tt lab1}, you can type just {\tt cd tex}.
 
 
 \item To create a new directory, e.g.\ a directory called {\tt monday}
-  under {\tt data}, type \\ \verb$mkdir ~/lab1/data/monday$. Or, if your
-  pwd is \verb$~/lab1/data$, you need only type {\tt mkdir monday}. If
+  under {\tt data}, type 
+\begin{verbatim}
+mkdir ~/lab1/data/monday
+\end{verbatim}
+Or, if your cwd is {\tt ~/lab1/data}, you need only type {\tt mkdir monday}. If
   you want to eliminate (remove) a directory, get rid of all the files
   and type {\tt rmdir monday}.
 
 \item To copy a file from one directory to another, e.g.\ the file {\tt
-  carl} from \verb$~$ to \verb$~/lab1/idl$, type
-  \verb$cp ~/carl ~/lab1/idl$. You end up with two copies of the file. You
+  carl} from $\sim$ to {\tt \~{}/lab1/idl}, type
+\begin{verbatim}
+cp ~/carl ~/lab1/idl
+\end{verbatim}
+ You end up with two copies of the file. You
   can instead move the file using {\tt mv}. To remove a file, use {\tt
   rm}.
 
@@ -136,7 +153,9 @@ eliminate the write permissions, {\tt chmod go-w data}. To check your
 work, do a long listing of the directory ({\tt ls -l data}). On your
 screen, it would write
 
-\noindent \verb$drwxr-xr-x 1 heiles bin 10 2007-01-20 17:58 data/$
+\begin{verbatim}
+drwxr-xr-x 1 heiles bin 10 2007-01-20 17:58 data/
+\end{verbatim}
 
 \noindent Translation: The first character, {\tt d}, means it's a
 directory. The next three specify the permissions for the user (that's
@@ -223,7 +242,7 @@ You can check the definition of the alias for {\tt mv} by typing
 \noindent {\tt which mv}
 
 Finally, you can bypass any defined alias by using a backslash. For
-example, \verb$\rm carl$ invokes the {\tt rm} command without the {\tt
+example, {\tt \\rm carl} invokes the {\tt rm} command without the {\tt
 -i} option that is defined in your {\tt .aliasfile}, which means\dots it
 removes the file {\tt carl} {\it without asking}. Using {\tt rm}, {\tt
   cp}, or {\tt mv} without the {\tt -i} option is {\it dangerous}: Once
@@ -231,10 +250,12 @@ a file has been overwritten or deleted, it's gone for good!
 
 \subsection{Piping, etc: $|, >, <$}\label{help}
 
-	Piping (\verb$|$)  directs the output of a command to the next succeeding
+	Piping ($|$)  directs the output of a command to the next succeeding
 command.  For example,
 
-\noindent \verb$ls | grep /$
+\begin{verbatim}
+ls | grep /
+\end{verbatim}
 
 \noindent directs the output of the listing command to {\it grep}, which
 here selects all names containing the string ``/''; those are
@@ -249,14 +270,18 @@ example,
 
 \noindent prints the file {\tt love1} on your screen, while
 
-\noindent \verb$more love1 > love2$
+\begin{verbatim}
+more love1 > love2
+\end{verbatim}
  
 \noindent creates the file {\tt love2} and writes the content into it.
 
 	Normally the input to a UNIX command is expected to be from the
 terminal. However, you can get the input from elsewhere. For example, 
 
-\noindent \verb$mail heiles < complaint.txt$
+\begin{verbatim}
+mail heiles < complaint.txt
+\end{verbatim}
 
 \noindent uses the file {\tt complaint.txt} as input to the command {\tt
   mail}, which means that it mails the file {\tt complaint.txt} to
@@ -281,67 +306,67 @@ Berkeley}, available for free from the big U.
 \vspace{-0.2in}
 
 \begin{tabbing}
-%\textit{passwd} \hspace{1.6in} \=  Useful for changing your account password. \\
-\textit{man commandname} \hspace{0.7in} \= Gets voluminous (usually overly so) info for you on a specific command. \\
-\textit{apropos topic} \> Tells which commands are
+%{\it passwd} \hspace{1.6in} \=  Useful for changing your account password. \\
+{\it man commandname} \hspace{0.7in} \= Gets voluminous (usually overly so) info for you on a specific command. \\
+{\it apropos topic} \> Tells which commands are
 relevant to the {\it topic}. \\
-\textit{pwd} \> Shows your ``present working directory''. \\
-\textit{cd dirname} \> Moves you into the subdirectory, below your 
+{\it pwd} \> Shows your ``present working directory''. \\
+{\it cd dirname} \> Moves you into the subdirectory, below your 
 present directory. \\
-\textit{cd ..} \> Moves you out of a subdirectory into the directory above
+{\it cd ..} \> Moves you out of a subdirectory into the directory above
 it. \\
-\textit{cd -} \> Moves you to previous directory you were in. \\
-\textit{mkdir dirname} \> Creates a subdirectory named \textit{dirname}. \\
-\textit{rmdir dirname} \> Removes a subdirectory named \textit{dirname}. \\
-\textit{rm filename} \> Removes a file named \textit{filename}; it must
+{\it cd -} \> Moves you to previous directory you were in. \\
+{\it mkdir dirname} \> Creates a subdirectory named {\it dirname}. \\
+{\it rmdir dirname} \> Removes a subdirectory named {\it dirname}. \\
+{\it rm filename} \> Removes a file named {\it filename}; it must
 be empty. \\ 
-\textit{cp file1 file2} \> Copies the contents of \textit{file1} into 
-\textit{file2}. You are left with two files. \\
-\textit{mv oldfile newfile} \> Moves (or renames) \textit{oldfile} as 
-\textit{newfile}. \\
-\textit{cat file1 file2 $>$ fileboth} \> Concatenates {\it file1} and {\it
+{\it cp file1 file2} \> Copies the contents of {\it file1} into 
+{\it file2}. You are left with two files. \\
+{\it mv oldfile newfile} \> Moves (or renames) {\it oldfile} as 
+{\it newfile}. \\
+{\it cat file1 file2 $>$ fileboth} \> Concatenates {\it file1} and {\it
 file2}, writing them into the new {\it fileboth}. \\
-\textit{which cp} \> Tells the current definition of {\it cp} ({\it which}
+{\it which cp} \> Tells the current definition of {\it cp} ({\it which}
 works for any command); \\
-\textit{history} \> Gives a numbered list of the previous commands you've
+{\it history} \> Gives a numbered list of the previous commands you've
 typed; \\
 \> typing {\bf !number} repeats that command. \\
-\textit{!!} \> Repeats the previous UNIX command. \\
-\textit{find dirname -name filename} \> finds all files with {\it
+{\it !!} \> Repeats the previous UNIX command. \\
+{\it find dirname -name filename} \> finds all files with {\it
 filename} in and under the directory with {\it dirname}. \\
-\textit{find dirname -name '*love*'} \> Finds all files whose names 
+{\it find dirname -name '*love*'} \> Finds all files whose names 
 contain the string ``love''. \\
-\textit{ls -lrt} \> Lists the files and subdirectories 
+{\it ls -lrt} \> Lists the files and subdirectories 
 in the present directory. \\
 \>The {\it -lrt} gives a long format in reverse time order.\\
-\textit{ls -lrt $|$ grep /} \> Pipes the output to {\it grep}, which \\
+{\it ls -lrt $|$ grep /} \> Pipes the output to {\it grep}, which \\
 \> selects only those names containing ``/'' (which are directories). \\
-\textit{du -h dirname} \> Tells the disk space used by everything in dirname. \\
+{\it du -h dirname} \> Tells the disk space used by everything in dirname. \\
 \>The ``h'' means in ``human units''. \\ 
 \>Also handy for giving the directory tree structure. \\
 
-\textit{df -k} \> Tells kilobytes used and available on all
+{\it df -k} \> Tells kilobytes used and available on all
 disks. (``-h'' works here too!)\\
-\textit{grep -il text file} \> Searches the \textit{file} for occurrences of
-the string \textit{text} \\
+{\it grep -il text file} \> Searches the {\it file} for occurrences of
+the string {\it text} \\
 \> The {\it -i} ignores capitalization and {\it l} lists only the filename.\\
-\textit{lp filename} \> Prints the contents of \textit{filename}. \\
-\textit{enscript filename} \> Fancier print than {\it lp}. \\
-\textit{less filename} \> Shows you the contents of the file named 
-\textit{filename} one screen at a time; \\
+{\it lp filename} \> Prints the contents of {\it filename}. \\
+{\it enscript filename} \> Fancier print than {\it lp}. \\
+{\it less filename} \> Shows you the contents of the file named 
+{\it filename} one screen at a time; \\
 \> more flexible than {\textit more}. \\
-\textit{tail -40 filename} \> Shows you the last 40 lines of the file
+{\it tail -40 filename} \> Shows you the last 40 lines of the file
 {\it filename}. \\
-\textit{lpq} \> Displays the print queue. \\
-\textit{cancel jobnum} \> Removes the \textit{jobnum} in the print
+{\it lpq} \> Displays the print queue. \\
+{\it cancel jobnum} \> Removes the {\it jobnum} in the print
 queue. You must own the job \\
 
-\textit{top} \> Shows CPU usage, etc, for jobs on your machine. \\
-\textit{ps -u username} \> List the programs that \textit{username} is
+{\it top} \> Shows CPU usage, etc, for jobs on your machine. \\
+{\it ps -u username} \> List the programs that {\it username} is
 currently \\
 \>  running on the machine you are logged onto. \\
-\textit{kill processnum} \> Kills the process listed with
-\textit{processnum}. You must own the process \\
+{\it kill processnum} \> Kills the process listed with
+{\it processnum}. You must own the process \\
 \end{tabbing}
 	
 
