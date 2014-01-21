@@ -3,18 +3,32 @@
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{hyperref}
+\usepackage{enumitem}
 
 \begin{document}
-\title{Analog Lab: Impedance, Filters, and Noise}
+\title{Analog Lab: Impedance, Filters, Amplifiers, and Noise}
 
 \maketitle
 
+The purpose of this lab is to learn some basic principles of electronic components
+and circuits, as well as some laboratory methods.  The principles of impedance,
+filtering, amplification, and noise are not only central to the operation of
+radio telescopes, they are behind almost every modern technology you can think of:
+radio, wifi, cell phones, speakers, \dots  you name it.  By the end of this lab,
+you should be moderately comfortable using a multimeter, measuring RF signals,
+building circuits, reading circuit diagrams, and poking around under the hood
+of electronic gadgets.  You should also be able to describe mathematically how
+impedances combine to make low-pass and high-pass filters, how random numbers
+add together, and how noise is produced and passed along through a signal chain.
+This lab runs for 3 weeks and covers a lot of ground.  Get ahead early.
+
 \section{Week 1}
+\label{sec:week1}
 \subsection*{Prerequisites}
 
 Reading: Horowitz \& Hill, Ch. 1
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Ohm's Law
 \item Th\'evenin Equivalent Resistance
 \item Capacitance and Inductance
@@ -24,7 +38,7 @@ Reading: Horowitz \& Hill, Ch. 1
 
 \subsection*{Materials}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item breadboard
 \item misc R, C, L components
 \item potentiometer (``pot'')
@@ -101,7 +115,7 @@ P=IV
 \end{equation}
 
 \subsubsection{Activities}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \begin{figure}[h]
 \centering
 \includegraphics[width=2in]{plots/volt_divider.png}
@@ -110,7 +124,7 @@ P=IV
 \item build voltage divider (Figure \ref{fig:volt_divider}) out of two 1k resistors, 
 connect input to +5V DC voltage source
 \item measure voltage at output
-\item measure current (think carefully about where before burning out voltimeter fuse!)
+\item measure current (think carefully about where before burning out the multimeter fuse!)
 \item apply 1 MHz sine wave, view input and output on oscilloscope
 \item append a second voltage divider to the output of the first (choose resistor values carefully)
 \item for a voltage divider, is it better to have high impedances or low?  what considerations might
@@ -140,7 +154,7 @@ Z_C = \frac1{j\omega C}
 
 \subsubsection{Activities}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item build a voltage divider out of two 1$\mu$F capacitors, connect input to 1 MHz sine wave
 \item compare input and output on oscilloscope.  is it what you expected? what is the DC level at the output?
 resistor?
@@ -151,7 +165,7 @@ expected $V_{out}/V_{in}$ versus frequency
 \subsection{RC filter}
 
 \subsubsection{Activities}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item design a high-pass filter with cutoff (-3dB) at 100 kHz
 \item design a low-pass filter with the same cutoff
 \item plot the expected responses of each.  spot-check with oscilliscope measurements.
@@ -170,7 +184,7 @@ Q = \omega_0 RC = \frac{f_0}{\Delta f_{3dB}}
 \end{equation}
 
 \subsubsection{Activities}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \begin{figure}[h]
 \centering
 \includegraphics[width=2in]{plots/lc_series_parallel.png}
@@ -185,23 +199,23 @@ with and in series with a 1 $\mu$F capacitor (Figure \ref{fig:lc_series_parallel
 \end{figure}
 \item design and build an LC band-pass filter (Figure \ref{fig:rlc_filter}) tuned to 1 MHz
 \item choose an R to select a quality factor appropriate for $\Delta f_{3dB}=200 kHz$.
-\item for a moment, swap out your C for something quite small (say, 100 pF) and measure empirically
-the frequency of peak response.  assuming your inductor value is correct, what is your inferred capacitance?
-if this doesn't agree with your C, can you explain why?
+%\item for a moment, swap out your C for something quite small (say, 100 pF) and measure empirically
+%the frequency of peak response.  assuming your inductor value is correct, what is your inferred capacitance?
+%if this doesn't agree with your C, can you explain why?
 \end{itemize}
 
 \subsection{Diodes}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item measure the voltage drop over a conducting diode (important: limit current flow with a resistor!)
 \item use different resistor values (or a pot) and measure the voltage drop as a function of current
 \item use a large ($\pm$ 1V) oscillating signal into the diode and view the original and rectified 
 signal on an oscilloscope
 \item apply a low-pass filter with time constant of order the input frequency, and view the 
 output on an oscilloscope.  generate a plot of what is going on here.
-\item suppose you have an oscillating signal whose amplitude is less than the voltage drop across your conducting
-diode.  can you come up with a circuit that re-centers your oscillating signal on the threshold 
-of diode conduction?
+%\item suppose you have an oscillating signal whose amplitude is less than the voltage drop across your conducting
+%diode.  can you come up with a circuit that re-centers your oscillating signal on the threshold 
+%of diode conduction?
 \end{itemize}
 
 \subsection{FM demodulation}
@@ -211,7 +225,7 @@ of diode conduction?
 \caption{An FM demodulation circuit}\label{fig:fm_demodulation}
 \end{figure}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item use your LC circuit to convert a frequency-modulated signal into an amplitude modulated signal
 \item use your diode circuit as an "envelope detector" that filters out the carrier frequency and extracts the
 amplitude modulation.  Use a 100 kHz low-pass filter in the envelope detection. (Humans can only hear up to 40 kHz
@@ -219,17 +233,35 @@ or so).  You should have something like Figure \ref{fig:fm_demodulation}.
 \item connect in our faked FM station at 1.045 MHz
 \item connect the output through a coupling capacitor (to remove the DC bias) to amplifying audio speakers
 \item enjoy listening to the music
-\item fun part: which components of your circuit are strictly necessary?  try removing some of them and see
-if it still works?  Draw your circuit as it worked before and after ``contracting'' it.
-\item if our station is at 1.045 MHz, why is your LC tuned to 1.0 MHz?  what was relevance of the quality factor?
+%\item fun part: which components of your circuit are strictly necessary?  try removing some of them and see
+%if it still works?  Draw your circuit as it worked before and after ``contracting'' it.
+%\item if our station is at 1.045 MHz, why is your LC tuned to 1.0 MHz?  %what was relevance of the quality factor?
+\end{itemize}
+
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Present a circuit diagram of an FM radio receiver, highlighting blocks 
+of components that act as a unit to perform some action (filtering, biasing, etc.)
+\item Describe in the text the overall design of the FM receiver, with subsections for each
+functional block, listing salient features of each (e.g. the -3dB point of a filter,
+the voltage biased to, etc.).  Present it as if you invented it, and were writing the seminal
+paper that will enable others to use this design.
+\item Using your new understanding of impedances, plot the expected output of the LC filter in
+your FM receiver as a function of frequency, $f=\omega/2\pi$.  Mark the location, in frequency, 
+of the transmission band used in the lab, and explain the rational behind its placement on the LC
+response curve (e.g. if our station is at 1.045 MHz, why is your LC tuned to 1.0 MHz?)
+\item Finally, also plot, as a function of frequency, the bandpass of the final filter that
+defines the band of the output audio signal.  Describe (and maybe plot) the rationale for
+selecting the filter that you did.
 \end{itemize}
 
 \section{Week 2}
+\label{sec:week2}
 \subsection*{Prerequisites}
 
 Reading: Horowitz \& Hill, Ch. 2
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Transmission Lines
 \item Transistors
 \item Amplifier Circuits
@@ -237,7 +269,7 @@ Reading: Horowitz \& Hill, Ch. 2
 
 \subsection*{Materials}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item rope and string of various thicknesses (pretty long)
 \item breadboard
 \item misc R, C, transistor components
@@ -280,7 +312,7 @@ practices!
 
 \subsection{Impedance Mismatches on Rope}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \begin{figure}[h]
 \centering
 \includegraphics[width=2in]{plots/rope_pulse.jpg}
@@ -302,7 +334,7 @@ wavelength of the signal), what happens at that interface?
 
 \subsection{Impedance Mismatches in a Transmission Line}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Get a function generator that can output square waves.
 Get a long stretch of cable and connect the function generator output to one
 end of the cable.  Leave a point that you can probe with an oscilloscope.
@@ -323,7 +355,7 @@ waves on a cable can be up to a factor of 2 slower than that.)
 \label{fig:emitter_follower}
 \end{figure}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Build the emitter-follower circuit shown in Figure \ref{fig:emitter_follower}, choosing approprite
 values for resistors and capacitors.  Use a 2N3904 transistor, or a similar substitute NPN BJT.  You will
 power the circuit with $V_{cc}=+5V$, and will want to amplify signals in the range 100Hz to 50kHz.  Mind
@@ -345,7 +377,7 @@ might need to make the resistors in your bias circuit large so that you don't bu
 \label{fig:amplifier}
 \end{figure}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Build the amplifier circuit shown in Figure \ref{fig:amplifier}, choosing appropriate values for
 resistors and capacitors, using the same constraints as for the follower circuit above, and choosing a
 DC gain of 2.  For the time being, omit the emitter capacitor.
@@ -362,11 +394,26 @@ input and output voltages?  If you did not achieve a gain of 10, why not?
 the sound of your success.  You'll need to pay attention to the impedance of the speaker, and plan accordingly.
 \end{itemize}
 
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Add a section describing your speaker amplifier, including a circuit diagram, and describing
+how it functions (and what the various functional parts are).  I'll be looking for a description
+of how the base and collector voltages are set, and why they needed to be set where they are.
+\item Specify the input and output impedance of your circuit at audio ($\sim$10 kHz) frequencies.
+\item Suppose your speaker amplifier connects to a speaker at the end of a long run of wire.
+Given the amplifier circuit that you built, what impedance cable to you recommend, and how would you
+terminate it (incorporating an 8-Ohm speaker) to avoid reflections?  For now, don't worry, unless you want
+to, about maximizing the current through the speaker (to make it LOUD).
+\item Define the operating band of your amplifier.  Over what frequency ranges does it operate,
+and what specifically determines the bounds on this range?
+\end{itemize}
+
 \section{Week 3}
+\label{sec:week3}
 
 \subsection*{Prerequisites}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Central Limit Theorem
 \item Johnson-Nyquist Noise
 \item Receiver Temperature
@@ -375,7 +422,7 @@ the sound of your success.  You'll need to pay attention to the impedance of the
 
 \subsection*{Materials}
 
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item 2W 50$\Omega$ resistor
 \item power supply
 \item oscilloscope w/ probes
@@ -415,21 +462,22 @@ make your circuits physically narrow.  You might also try making a Faraday cage.
 
 \subsubsection*{Writing Code for Lab}
 
-This is the first lab where a significant portion of the lab is writing code.  We are going to keep
-everyone's code in a class Git repository.  So the first thing you should do set up a github
-account and fork the class repo: \url{https://github.com/AaronParsons/astro250.git} .
+This is the first lab where a significant portion of the lab is writing code. 
+So the first thing you should do set up a github
+account and start a repository that will contain all the code you turn in for this class (and
+while you're at it, why not your \LaTeX reports too?).
 Next, clone your repo onto your computer.  (If you haven't yet, you should get Git, Python, Numpy,
-and Pylab installed on your computer).  Inside astro250, add a directory with your name, and create
-two files: central\_limit.py and radiometer\_test.py.  Commit, and push your changes back up to
-your github account.  I'll pull your fork of astro250 into
-my repo, along with everyone else's work.  From time to time, you should pull from my repo (you
-can add a shorthand for it to your working copy on your computer with {\it git remote add ...})
-so you can see what everyone else is doing, too.
+and Pylab installed).  Inside your repository, add a directory ``lab\_analog", and create
+%two files: central\_limit.py and radiometer\_test.py.  Commit, and push your changes back up to
+the file: central\_limit.py.  Commit, and push your changes back up to
+your github account.  Inside your lab report, make sure you link to your repository in
+your ``Methods" section, along with the hash tag that indicates which commit was the one used
+to produce your results.  
 
 \subsection{Calculating the Noise Figure of a Reciever}
 
 \subsubsection*{Determine Amount of Gain Needed}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Calculate how much amplification is needed to bring the Johnson noise on a $50\Omega$ resistor
 up to at least the $\sim$1mV RMS level that you can measure on a scope.  You'll have to pick an appropriate
 bandwidth, and you might want to check that you can get a filter that supplies that bandwidth. 
@@ -438,12 +486,11 @@ bandwidth, and you might want to check that you can get a filter that supplies t
 want to have the output connected first, so that the output power has some place to go.
 \end{itemize}
 
-
 \subsubsection*{Estimate and Measure the Resistor Temperature}
 \begin{equation}
 P=A\epsilon \sigma T^4
 \end{equation}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Set a power supply to the appropriate voltage to dissipate $\sim$2W in a 50$\Omega$ resistor (make
 sure it is a beefy resistor rated to 2W, and do not exceed that threshold, or meltdown will ensue).
 \item Using the Stefan-Boltzmann Law, calculate what temperature you think the resistor will hit.
@@ -451,7 +498,7 @@ sure it is a beefy resistor rated to 2W, and do not exceed that threshold, or me
 \end{itemize}
 
 \subsubsection*{Measure the Noise Figure}
-\begin{itemize}
+\begin{itemize}[noitemsep,nolistsep]
 \item Determine the power out of the receiver for the input resistor at room temperature.  Ideally, you'd do this
 with a power meter or a spectrum analyzer, but today, we'll do the poor man's method of eyeballing one
 standard deviation from the mean on an oscilloscope.  This isn't easy, and I apologize for that.  To keep your
@@ -465,15 +512,15 @@ solve for the gain and the receiver temperature (and if you want, you can calcul
 would be a good time to use your error bars to determine your confidence interval on your measurement
 of the gain and receiver temperature.  Make a plot and draw some lines!
 \item Convert your receiver temperature to a noise figure.
-\item How much is your error on the reciever temperature reduced if you have a prior on the gain (which
-you should look up from the data sheet)?
-\item How does your measured receiver temperature compare to the noise temperature you'd expect given
-your chain of amplifiers? 
+%\item How much is your error on the receiver temperature reduced if you have a prior on the gain (which
+%you should look up from the data sheet)?
+%\item How does your measured receiver temperature compare to the noise temperature you'd expect given
+%your chain of amplifiers? 
 \end{itemize}
 
 \subsection{Demonstrate the Central Limit Theorem}
-\begin{itemize}
-\item Write a program (in the central\_limit.py file that you created in the astro250 repo under your name)
+\begin{itemize}[noitemsep,nolistsep]
+\item Write a program (in the central\_limit.py file that you created earlier)
 that shows that, in the large-N limit, adding samples drawn from non-Gaussian random
 distributions converges to a Gaussian distribution.
 \item Also show that the standard deviation of the mean of $N$ Gaussian-random samples decreases as $\sqrt{N}$.
@@ -481,12 +528,26 @@ If you are trying to characterize samples of an unknown character to show that t
 is called an Allen variance test.
 \end{itemize}
 
-\subsection{Numerical Demonstration of the Radiometer Equation}
-\begin{itemize}
-\item Write a program (in the radiometer\_test.py file in the astro250 repo under your name) that simulates 
-random noise corresponding to a noise temperature, and shows that the radiometer equation works.  In particular,
-prove (numerically) that it is, in fact, $\sqrt{Bt}$ and not $\sqrt{2BT}$ in the denominator of the
-radiometer equation.
+%\subsection{Numerical Demonstration of the Radiometer Equation}
+%\begin{itemize}[noitemsep,nolistsep]
+%\item Write a program (in the radiometer\_test.py file) that simulates 
+%random noise corresponding to a noise temperature, and shows that the radiometer equation works.  In particular,
+%prove (numerically) that it is, in fact, $\sqrt{Bt}$ and not $\sqrt{2BT}$ in the denominator of the
+%radiometer equation.
+%\end{itemize}
+
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Pretend that the amplifier whose noise figure you were determining was the one you built
+in \S\ref{sec:week2}.  Describe the methodology for determining the noise figure, including
+the relevant equations used.
+\item Report the final noise figure you measured.  Give error bars.  What are your sources of error?
+\item One last charade.  Let's say that you also wanted to test how the noise output by your
+amplifier integrates down, to be sure that there are no systematics present.  Pretend you placed a
+known-good noise source in front of your amplifier and digitized the output of your amplifier, and you
+get the numbers output by your central\_limit.py program.  Perform an Allen variance test to show
+that the noise from your amplifier behaves as you'd expect.  Produce a plot of variance (or standard deviation,
+either one) versus number of samples averaged, along with the slope of the line you're shooting for.
 \end{itemize}
 
 \end{document}
