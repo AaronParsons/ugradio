@@ -1,902 +1,553 @@
-\documentclass[11pt,preprint]{aastex}
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{enumitem}
 
 \begin{document}
-\def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
-\def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
+\title{Analog Lab: Impedance, Filters, Amplifiers, and Noise}
 
-\title{ANALOG ELECTRONICS}
+\maketitle
 
-\tableofcontents
+The purpose of this lab is to learn some basic principles of electronic components
+and circuits, as well as some laboratory methods.  The principles of impedance,
+filtering, amplification, and noise are not only central to the operation of
+radio telescopes, they are behind almost every modern technology you can think of:
+radio, wifi, cell phones, speakers, \dots  you name it.  By the end of this lab,
+you should be moderately comfortable using a multimeter, measuring RF signals,
+building circuits, reading circuit diagrams, and poking around under the hood
+of electronic gadgets.  You should also be able to describe mathematically how
+impedances combine to make low-pass and high-pass filters, how random numbers
+add together, and how noise is produced and passed along through a signal chain.
+This lab runs for 3 weeks and covers a lot of ground.  Get ahead early.
 
+\section{Week 1}
+\label{sec:week1}
+\subsection*{Prerequisites}
 
-	The purpose of this lab is to % XXX 
+Reading: Horowitz \& Hill, Ch. 1
 
-In his lab, you will be performing several experiments, analyzing the
-data and generating a number of different data files. You will need to
-keep careful notes in your {\bf lab notebook}! Or, pay the penalty, and
-forget what you did, do things twice, and be completely
-disorganized. Your choice!
-
-\section*{GOALS}
-
-\begin{itemize}
-
-\item Become acquainted with the RF (that's Radio Frequency) equipment
-found in the lab (synthesizers, multimeters,
-power supplies, splitters, attenuators, amplifiers, filters,
-cables/connectors, resistors, capacitors, inductors, transistors, and mixers).
-
-\item Learn about impedance --- the extrapolation of Ohm's Law resistance
-to capacitors and inductors.
-
-\item Construct low- and high-pass frequency filters out of resistors 
-and capacitors.
-
-\item Learn about signal reflections in transmssion lines, and how to
-minimize them via termination with an impedance-matching circuit.
-
-\item Learn about noise: where it comes from, where it goes, and how
-to measure its power.
-
-\item Get started with our programming language, Python, using it for the
-  mathematical analysis, signal processing, and making nice plots.
-
-\item Learn enough \LaTeX to write up your results in a formal lab report,
-  including nice plots and graphs.
-
+\begin{itemize}[noitemsep,nolistsep]
+\item Ohm's Law
+\item Th\'evenin Equivalent Resistance
+\item Capacitance and Inductance
+\item RC Filters
+\item Diodes
 \end{itemize}
 
-\section*{SCHEDULE}
+\subsection*{Materials}
 
-There's a lot to do in this lab! If you don't understand % XXX
-by the end of the first week, you're behind. Here's how it should be:
-\begin{enumerate}
+\begin{itemize}[noitemsep,nolistsep]
+\item breadboard
+\item misc R, C, L components
+\item potentiometer (``pot'')
+\item power supply
+\item function generator w/ external FM reference
+\item oscilloscope w/ probes
+\item voltimeter
+\item speaker w/ amplifier
+\end{itemize}
 
-% XXX
-\item {\it The First Week, 19 Jan to 25 Jan:} Finish \S \ref{nyquist},
-  \S \ref{pwrspectrum}, \S \ref{leakage} below. Be prepared to show your
-  results to the class, making real-time plots in IDL.
+\subsection*{Some Thoughts}
 
-% XXX
-\item {\it The Second Week, 26 Jan to 1 Feb:} Finish \S \ref
-  {upperlowerdsb}, \S \ref{phasedetector}, and \S\ref{upperlowerssb}
-  below. Again, be prepared to show your results to the class.
+\subsubsection*{Breadboards}
 
-% XXX
-\item {\it The Third Week, 2 Feb to 8 Feb:} Write your formal report!
-  It should follow the standard format, consisting of an introduction,
-  discussion of experimental activities and results, description of the
-  analysis technique, presentation of analysis results, and
-  discussion/interpretation. With all this, you should hand in a
-  reasonable number of plots together with commentary to illustrate your
-  work, your thought processes, and your conclusions.
+Breadboards are convenient for constructing circuts for this lab.  Take some time to get to know yours
+using a ohmmeter.  In particular, figure out what is connected, and what is not.
 
-\end{enumerate}
+\subsubsection*{Grounding}
 
-\section{\ Resistor-Capacitor (RC) Filters}
-\label{sec:week1}
+Ground means different things in different contexts (e.g. earth ground, signal ground,
+chassis ground).  For our purposes in
+this lab, ground simply provides a return path for current.  We define it to be
+0V (i.e. it is the reference from which we measure voltage differences).  The
+ground of your circuit should be tied to the ground of your power supply.  It
+is good practice to consistently use a color (black, blue, and green are good
+choices) to indicate ground lines in your circuits.
 
-XXX Introduction text
-
-\subsection{Background}
-
-\subsubsection{Breadboards}
-
-Breadboards are convenient for constructing circuts for this lab.  Take some
-time to get to know yours using a ohmmeter.  In particular, figure out what is
-connected, and what is not.
-
-\subsubsection{Grounding}
-
-Ground means different things in different contexts (e.g. earth ground, signal
-ground, chassis ground).  For our purposes in this lab, ground simply provides
-a return path for current.  We define it to be 0V (i.e. it is the reference
-from which we measure voltage differences).  The ground of your circuit should
-be tied to the ground of your power supply.  It is good practice to
-consistently use a color (black, blue, and green are good choices) to indicate
-ground lines in your circuits.
-
-\subsubsection{Capacitor Orientation}
+\subsubsection*{Capacitor Orientation}
 
 Some capacitors, particularly electrolytics, care about which direction voltage
-is applied across them.  Often, one of the leads is longer, and may have a
-`+' near it on the body of the capacitor.  Always connect this lead to the
-higher voltage.  Failure to do so can, for higher voltages, cause them to
-explode.  This may sound exciting, but how exciting is electrolytic acid in
-your eye?  Too exciting.  Don't do it.
+is applied across them.  Often, one of the leads is longer, and may have a `+'
+near it on the body of the capacitor.  Always connect this lead to the higher voltage.
+Failure to do so can, for higher voltages, cause them to explode.
 
-\subsubsection{Oscilloscopes}
+\subsubsection*{Oscilloscopes}
 
-'Scopes can be intimidating.  The solution is to press buttons until they
-submit.  Seriously, don't be afraid to push buttons.  In order to show a static
-display of a repeating signal, scopes need to trigger on some edge of an input
-signal.  This is always configurable, and you'll need to figure out how.  You
-can adjust the time (X axis) and voltage (Y axis) ranges, and should do so
-regularly.  Many scopes have an ``auto'' button, which is a totally useful
-cop-out.  Probes that connect to the scope often amplify (10:1), and scopes
-have a setting to undo this for the display.  Finally, there is a difference
-between attaching a probe and attaching a cable.  This difference has to do
-with termination.  We haven't covered yet what termination is (it's next week),
-but suffice it to say that in order for your voltage scale to mean something,
-you should select 50$\Omega$ if you have connected a cable (BNC, SMA, etc.),
-and 1M$\Omega$ if you are using a probe.
+'Scopes can be intimidating.  The solution is to press buttons until they submit.  Seriously, don't be afraid
+to push buttons.  In order to show a static display of a repeating signal, scopes need to trigger on
+some edge of an input signal.  This is always configurable, and you'll need to figure out how.  You can
+adjust the time (X axis) and voltage (Y axis) ranges, and should do so regularly.  Many scopes have an ``auto''
+button, which is a totally useful cop-out.  Probes that connect to the scope often amplify
+(10:1), and scopes have a setting to undo this for the display.  Finally, there is a difference between
+attaching a probe and attaching a cable.  This difference has to do with termination.  We haven't covered yet
+what termination is (it's next week), but suffice it to say that in order for your voltage scale to mean
+something, you should select 50$\Omega$ if you have connected a cable (BNC, SMA, etc.), and 1M$\Omega$ if
+you are using a probe.
+
+\subsubsection*{FM Radio}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=3in]{plots/frequency_modulation.png}
+\caption{Frequency modulation}\label{fig:frequency_modulation}
+\end{figure}
+
+Frequency modulation (FM, see Figure \ref{fig:frequency_modulation}) is a clever scheme for 
+encoding a signal.  Amplitude modulation (AM) radio
+directly mixes a carrier tone with a signal, so that the amplitude of the signal creates an envelope inside
+of which the carrier tone oscillates.  FM instead translates the amplitude of the signal into a change
+in the frequency of the carrier tone (see above).  FM radio stations typically transmit between 88 and 108 MHz
+in the US.  However, for the purpose of this lab, owing to lack of radio reception in the lab, and the
+difficulty in using discrete components at higher frequencies, we will create our own radio station at
+1.045 MHz, instead of 104.5 MHz.  Typically, FM radio stations are spaced every 200 kHz, and have a frequency
+deviation of $\pm$75 kHz at maximum scale input.
 
 \subsection{Resistive Voltage Divider}
 
-	We want to explore sampling rate issues, so to that end
-we will begin by\dots \begin{enumerate}
-
-	\item Pick a convenient sampling frequency $\nu_{smpl}$.  
-
-	\item Set the synthesizer to frequency $\nu_{sig} = (0.1, 0.2,
-	  0.3, \dots, 0.9) \nu_{smpl}$ and take data. 
-
-\end{enumerate}
-
-\noindent Take $N$ contiguous samples with $N$ an integral power of 2, say
-$N=256$.  Throughout the datataking, you should always be
-monitoring the signal with the oscilloscope. These are sine waves, so
-it's easy to measure the period by looking at the oscilloscope; each
-time you digitally sample the signal, you should write down the period
-(maybe in your {\it lab notebook?}).  
-
-For each dataset, use IDL to plot the digitally sampled waveform versus
-time.  In particular, make the digital plot informative, meaning that
-you can clearly see the signal shape; if necessary, plot only a part of
-the data so you can clearly see the signal shape (e.g., a few cycles of
-the sine wave); compare this with the oscilloscope trace.  Also, for all
-the datasets derive and plot the Fourier power spectrum.  Make sure that
-you {\it label the axes} with proper values of time and frequency---and
-choose convenient units, such as microsec and megaHz, to avoid huge and
-tiny numbers.  In deriving the Fourier spectra, use our homegrown DFT
-procedure (see \S \ref{pwrspectrum} below).
-
-Now, {\it look at both sets of these plots} and note any funny business.
-Think about your results and draw your own conclusion: just what is the
-minimum sampling rate that you can get away with? (That's {\it Nyquist's
-  criterion}). 
-
-\subsection{Let's Go to Extremes\dots}
-
-By now you might have an idea of what's going on. Test yourself:
-try the following two experiments. But before analyzing the
-results, {\it predict} to yourself what they will look like. How? Use
-good old-fashioned paper and pencil to make some diagrams. If you can
-successfully predict the following, then you {\it really} understand
-the Nyquist criterion! So here we go: \begin{enumerate}
-
-\item Repeat the above for $\nu_{sig} = \nu_{smpl}$. 
-\item Now make $\nu_{sig} \over \nu_{smpl}$ {\it really {\Large large!}}
-	    In other words, {\it blatantly violate} Nyquist's criterion!
-	    Our oscillators won't run faster than 30 MHz, so to
-	    accomplish this you'll have to use not only a large
-	    $\nu_{sig}$ but also change $\nu_{smpl}$ to be very
-	    slow. Use as large as a ratio as you can, but make sure that
-	    the ratio is {\it not} an integral or half-integral number. Take lots of
-	    samples. Look at the sampled waveform.  What do you get?
-	    Why?
-\end{enumerate}
-
-\subsection{For your Lab Report}
-
-\noindent In your report, select a well-considered set of plots to
-illustrate what you've learned, and compose a well-written commentary
-that convinces me that you really understand what's going on. Also
-clearly state what you have concluded regarding Nyquist's criterion. 
-
-	With your plots, you can save paper by fitting multiple plots on a page
-by using IDL's \verb$!p.multi$ system variable; for example, if you
-wanted 4 plots running vertically down the page you'd set
-\verb$!p.multi=[0,1,4]$; if you wanted two columns of 4 plots down the
-page, you'd set {\tt !p.multi=[0,2,4]}.  To get back to one plot per page, set
-\verb$!p.multi=0$. 
-
-\section{ ON USING DFT AND FFT TO CALCULATE A POWER SPECTRUM (First Week)} 
-\label{pwrspectrum}
- 
-\subsection{The Analytic Fourier Transform}
-
-        The input to the Fourier transform is voltage versus time, say
-$E(t)$; the output is voltage versus frequency, say $E(\nu)$.  The Fourier
-transform is the integral
- 
-\begin{equation} \label{ift}
-E(\nu) = {1 \over T} \int_{-T/2}^{T/2} E(t) e^{2 \pi j \nu t} dt \ .
-\end{equation}
- 
-\noindent The input voltage is real; it is multiplied by the complex
-exponential and integrated, so the output is complex. Of particular
-importance is that he Fourier Transform is {\it invertible}: you can go
-from the time to the frequency domain, and from the frequency domain you can
-get back to the time domain using the inverse transform
-
+\subsubsection{Useful Equations}
 \begin{equation}
-E(t) = {1 \over F} \int_{-F/2}^{F/2} E(\nu) e^{-2 \pi j \nu t} dt \ .
+V=IR
 \end{equation}
- 
-\noindent {\it Note:} If you're paying attention, you would wonder how
-$F$ and $T$ are defined above. In the proper analytic formulation, they
-are both infinity. We emphasize their boundedness here because, in
-practice, i.e.\ when you do numerical calculations, neither can be
-infinity!
-
-\subsection{The Discrete Fourier Transform (DFT)} \label{dft}
-
-Our voltage versus time is not continuous, but rather it is discrete
-samples. With the digital transform, the integral becomes a sum. In
-this sum, you need to specify: \begin{enumerate}
-
-\item The set of sample times. I {\it strongly} suggest: \begin
- {enumerate}
-\item  Using $N$ samples, where $N$ is even (and even better: a power of 2).
-
-\item Use the center
-  channel as the zero point. With $N$ even, there is no center channel,
-  so make the times run from ${-N \over 2}/
-  \nu_{smpl}$ to $({N \over 2} -1)/ \nu_{smpl}$.
-\end{enumerate}
-
-\item The output is a function of frequency, so you have to specify the
-  frequencies for which you want the output $E(\nu)$. I {\it strongly}
-  suggest that, {\it at first}, you calculate the the output for $N$
-  frequencies running from $-{\nu_{smpl} \over 2}$ to $+{\nu_{smpl}
-  \over 2} \left( 1 - {2 \over N} \right)$. This makes the frequency
-  increment equal to  $\Delta \nu = \nu_{smpl}/N$. Thus, you
-  calculate a {\it voltage} spectrum running from $-{\nu_{smpl} \over
-  2}$ to about ${\nu_{smpl} \over 2}$ using our in-house DFT procedure. To
-  find out how to use DFT, use the {\tt doc\_library} or {\tt doc}
-  function; in IDL, type:\ \ {\tt doc, 'dft'}.
-
-Later on, if you are intellectually daring and curious, try doubling or
-tripling the frequency range, keeping the separation $\Delta \nu$ the
-same (i.e., by increasing the number of output frequencies to $2N$ or $3N$).
-
-\end{enumerate}
-
-        We are interested in the output {\it power spectrum}, say
-$P(\nu)$.  Power is voltage squared.  For complex quantities, the squaring
-operation means we want the sum of the squares of the real and imaginary
-parts.  We obtain this by multiplying the voltage by its complex
-conjugate,
- 
 \begin{equation}
-P(\nu) = E(\nu) E(\nu)^* \ .
-\end{equation}
- 
-\noindent In IDL, there are two ways to get this product.  One is to use
-the \verb$conj$ function, i.e.\ {\tt PF = EF * conj(EF)}.  Should the
-imaginary part of \verb$PF$ be zero? (answer: yes! Why is this?) Is it?
-(answer: no! Why not?) To get rid of this annoying and extraneous
-imaginary part, you can use the \verb$float$ function: 
-\verb$PF = float(PF)$. 
- 
-The other (more convenient and suggested) way is to square the length of
-the complex vector, i.e.\ \verb$PF = (abs(EF))^2$. The result is
-automatically real.
-
-\subsection{OPTIONAL: The Fast Fourier Transform (FFT)} \label{fft}
-
-Above in \S \ref{dft}, you had $N$ time samples and evaluated the DFT
-for $N$ well-chosen frequencies. These were ``well-chosen'' because for
-these particular values of frequency---and {\it only} these particular
-values---you can get back to the time domain by using the inverse
-transform (in IDL using {\tt dft}, you accomplish this by setting the
-{\tt inverse} keyword). {\it If you have the time and energy}, try this
-and make it work!
-
-It so happens that, for these particular combinations of frequency and
-time, there is a very fast algorithmic implementation called the {\it
-  Fast Fourier Transform}, the FFT. What do we mean by ``Fast''? Well,
-normally when you do a DFT, you have $N$ input numbers and $N$ output
-numbers and the number of calculations $\propto N^2$. When $N$ gets large,
-this takes a long time to calculate! For the FFT, on the contrary, the
-number of calculations $\propto N {\rm ln}_2(N)$, and this makes it
-possible to do large-$N$ transforms. 
-
-{\it If you have the time and energy}, try IDL's FFT and compare it to
-your DFT calculation above. The FFT output is ordered in what you might
-think is a funny and awkward way; however, it's really {\it not} awkward
-for most applications. See our ``DFT's with DFT's'' handout for details.
-
-\section{ LEAKAGE POWER AND FREQUENCY RESOLUTION (First Week)} \label{leakage}
-
-\subsection{Leakage Power}
-
-Above, you calculated a power spectrum for each input signal at $N$
-distinct frequencies separated by $\Delta \nu = \nu_{smpl}/N$. In each,
-you found a spike corresponding to the input signal's frequency. Here,
-focus on just one of the properly-sampled signals $\nu_{sig}$. Calculate
-the power spectrum for many more than $N$ output frequencies over the
-Nyquist range $\left[-{\nu_{smpl} \over 2} \ {\rm to}\ +{\nu_{smpl}
-\over 2} \left( 1 - {2 \over N} \right)\right]$; i.e., make the
-frequency increment much smaller than $\Delta \nu = \nu_{smpl}/N$.
-Making the output frequencies closer together gives a more nearly
-continuous frequency coverage in the plot of the output spectrum.  Turn
-up the vertical scale a lot to see if there is any nonzero power at
-frequencies other than $\nu_{sig}$.  You {\it do} see such power! This
-is {\it Spectral Leakage}. It affects all power spectra calculated using
-Fourier techniques. 
-
-Can you understand what's going on from a mathematical viewpoint?
-
-\subsection{Frequency Resolution}
-
-If you had two sharp spectral lines, how closely spaced in frequency
-could they be and still resolve them? Roughly, this is just the apparent
-width of the line when plotted against frequency. Look at the width of
-the line for your plot of \S \ref{leakage} above. Compare this width to
-$1 \over T$, where $T$ is the total time span over which the samples
-were taken. If you have the inclination, try taking other time series
-with varying number of samples (and thus, varying $T$) and confirm any
-relationship between line width (that is, frequency resolution) and
-$T$.
-
-Can you understand this from a mathematical viewpoint?
-
-\section{ BASIC DOUBLE SIDEBAND (DSB) MIXER OPERATION: UPPER AND LOWER
-  SIDEBANDS (Second Week)}
-\label{upperlowerdsb}
-
-        For this, use two SRS synthesizer oscillators as inputs to a
-mixer to explore the spectra and waveforms in the DSB mixing process.
-The SRS synthesizers work up to 30 MHz.  Assign one of the SRS
-synthesizers to be your ``local oscillator'' ({\it lo}) with frequency
-$\nu_{lo}$, and the other your ``signal'' with frequencies $\nu_{sig} =
-\nu_{lo} \pm \delta \nu$.  Here, you choose the frequency difference
-$\delta \nu$ and you set the two synthesizers, one to the lo
-frequency and the other to the signal frequency. There are two cases for
-the signal frequency, $\nu_{sig} = \nu_{lo} + \delta \nu$ and
-$\nu_{sig} = \nu_{lo} - \delta \nu$.  Make $\delta \nu$ somewhat small
-compared to $\nu_{lo}$, maybe $5\%$ of $\nu_{lo}$.  For the input power
-level, a good choice is 0 dbm\footnote{What does this ``dbm'' mean? It's
-the power relative to 1 milliwatt, expressed in decibels (db). For our
-system the cable impedance is 50 ohms; what's the rms voltage for a
-signal with power level 0 dbm?} for both synthesizers.
-
-        We will want to digitally sample the mixer output and explore
-both the sum and difference frequencies. As you learned in the Fourier
-lab, there are extremely important issues regarding sampling rate. The
-most basic is the Nyquist criterion. For this lab, we also want enough
-samples per period to give you a reasonable facsimile of the sine wave
-when you plot it; from this standpoint, it's not unreasonable to sample
-at twice Nyquist, or even faster.  Another issue is the {\it number of
-points} you sample, which must be large enough to give you at least a
-few periods of the slowest sine wave.
-
-        From what you know about mixers, what is the fastest sine wave
-in the output? This, combined with our above comment and the upper limit
-on our sampling frequency (20 MHz for single channel, 10 MHz for dual
-channel), would determine the upper limit on $\nu_{lo}$.
-
-\subsection{The Mixer}
-
-Combine the two signals, $\nu_{lo}$ and $\nu_{sig}$, in a mixer for the
-two values of $\nu_{sig}$.  For the mixer use a Mini-Circuits
-ZAD-1, which has three BNC connectors (three {\it ports}) and works well
-at these frequencies.  The ZAD-1, like nearly all mixers, has its ports
-labeled ``R'' (the ``RF'' or ``signal''); ``L'' (the ``local
-oscillator''); and ``X'' (the ``mixing product'') or ``I'' (the
-``intermediate frequency'').  However, as we explain below, these labels
-are misnomers.  They are based on the usual use for a mixer, which is to
-take two high frequency signals as the inputs to the R and L ports and
-produce a low frequency difference frequency as the output at the I
-port.
-
-        The ZAD-1 is a balanced mixer, so the ``R'' and ``L`` ports are
-identical, and in particular will not couple to DC or very low
-frequencies.  In contrast, the ``I'' port is coupled differently and
-will handle voltages all the way down to, and including, DC.  The mixing
-process functions no matter which two ports are used as inputs.  For
-example, if you are using a mixer to modulate a high frequency (say, a
-few MHz) with a low frequency (say, a few kHz), you should use the ``I''
-port for the low frequency and either of the other two for the high
-frequency; take the output from the third port.
-
-We will want to look at the output, which consists of both the sum
-and difference frequencies, so choose the ports appropriately. Digitally
-sample the mixer output for both cases ($\nu_{sig} = \nu_{lo} \pm \delta
-\nu$).
-
-\subsection{For Your Lab Report} \label{digsamp}
-
-        For the two cases, plot the power spectra versus
-frequency. Explain why the plots look the way they do. In your
-explanation include the terms ``upper sideband'' and ``lower sideband''.
-
-For one of the cases, plot the waveform.  Does it look like the
-oscilloscope trace? Also, take the Fourier transform (not the power
-spectrum) of the waveform and remove the sum frequency component by
-zeroing both the real and imaginary portions (this is ``Fourier
-filtering'').  Recreate the signal from the filtered transform by taking
-the inverse transform; see \S \ref{fourierfilter} to see how this is
-done. Plot the filtered signal versus time.  Explain what you see.
-
-\subsection {On  Fourier Filtering (OPTIONAL!!)} \label{fourierfilter}
-
-When you use DFT to go from the time to the frequency domain, you
-specify the times and the sampled voltages as input and calculate the
-output for a well-chosen set of frequencies.  These times and
-frequencies should be symmetric around zero, as we strongly suggested above in \S
-\ref{pwrspectrum}.  To filter out the high-frequency mixed signal, you
-have to zero both the real and imaginary high-frequency components,
-and you must zero both the negative and positive frequencies. In
-frequency space, these zeroed values {\it must} be symmetric.
-
-To go back from the frequency domain to the time domain, use the 
-  filtered frequency Fourier components (which are complex) and their associated frequencies
-  as {\it inputs} and calculate the output for the {\it original times}.
-  You should also set the {\tt inverse} keyword in DFT, which keeps the
-  amplitude scale correct (check the documentation for DFT using {\tt
-  doc\_library} or {\tt doc}). The output will be a time series, and because you've
-  eliminated the sum frequency component, the only thing that remains
-  should be the difference frequency component.
-
-One more thing. The output of the inverse transform had better be
-real---after all, your original input was real! You'd better check this!
-If it isn't real, then either (1) you didn't treat the negative and positive
-frequencies symmetrically when you zeroed the signal, or (2) you didn't
-use our suggested input times and output frequencies. If you're having
-trouble, check your basic technique by doing the inverse transform on
-the non-filtered Fourier components; you should recover the original
-time samples.
-
-\section{DSB MIXER AS A PHASE DETECTOR (Second Week)} \label{phasedetector}
-
-        Use a mixer as a phase detector by setting the two synthesizers
-to the same frequency, i.e.\ setting $\delta \nu = 0$.  Look at the
-mixer output on the oscilloscope.  Vary the phase of one of the
-synthesizers.  What happens to the mixer output as shown on the
-oscilloscope trace? What's going on here?
-
-Now measure the mixer output with the HP rack-mounted digital meter in
-its d.c.\ mode, reading it with the computer.  The d.c.\ mode is akin to
-a low pass filter because the sum frequency, which is a fast sine
-wave, contains no d.c.  Generate a file that contains both the phase and
-the d.c.\ voltage and plot (to hand in!) the result.  If you're clever,
-you can write an IDL script to take the data automatically.  How does
-this correspond to the interferometer fringe?
-
-        Now displace one of the synthesizer frequencies by some small
-amount---say, 1 Hz. What happens to the output? This should remind you
-of the interferometer fringe\dots
-
-        {\it For your lab report}, hand in appropriate plots and discussion.
-
-\section{ CONSTRUCT AND INVESTIGATE A TWO-OUTPUT MIXER USABLE FOR DSB OR
-  SSB (Second Week)}
-\label{upperlowerssb}
-
-From the block diagram in Figure \ref{ssbmfig}, construct a ``Computer
-Voodoo'' SSB mixer that achieves the phase delay with a cable instead of
-a quadrature hybrid. We will use it to experiment with no phase delay (a
-short cable) and a 90-degree phase delay (a long cable).
-
-\begin{figure}[ht]
-        \begin{center}
-        \leavevmode
-        \includegraphics[width=3in]{ssbmix.plt}
-        \end{center}
-        \caption{Block diagram of the all-hardware and
-                hardware/software combination SSB mixer. In the lab,
-                we'll replace the upper quadrature hybrid with a
-                $\lambda \over 4$ length of cable.}\label{ssbmfig}
-\end{figure}
-
-For experimentation with this two-output mixer, use two SRS synthesizer
-oscillators as inputs.  The SRS synthesizers work up to 30 MHz.  Assign
-one of the SRS synthesizers to be your ``local oscillator'' with
-frequency $f_{lo}$, and the other your ``signal'' with frequencies
-$f_{sig} = f_{lo} \pm |\delta f|$.  To prevent aliasing and to filter
-out the sum frequency, we will use the 5-MHz low-pass filters, one on
-each output of the two-output mixer. Thus, we will want $|\delta f| < 5$
-MHz. Moreover, remember the Nyquist criterion: we want to see mixing
-products up to at least 5 MHz, so you'll need to sample\dots at least
-how often?
-
-The computer's ADC samples the two outputs simultaneously. We use the
-two outputs as inputs to the DFT---one as the real, the other as the
-imaginary input.
-
-\subsection{The DSB Mixer} \label{dsbmixer}
-
-First see what happens when the phase delay cable is short, so that the
-two outputs have no relative phase delay. Pick a value for $|\delta f|$
-and take time series data for the two corresponding values of $f_{sig}$
-(these are the upper and lower sidebands). Calculate the power
-spectra. When taking the Fourier transform, be sure to make the inputs
-complex---you have two simultaneous samples, one real and one
-imaginary. Looking at the power spectra alone, can you distinguish
-between positive and negative $\delta f$?
-
-\subsection{The SSB Mixer}
-
-Now see what happens when the phase delay cable introduces a relative
-phase delay of $90^\circ$ between the l.o.\ signals going to the two
-mixers.  Repeat what you did above in \S \ref{dsbmixer}. Looking at the
-power spectra alone, can you distinguish between positive and negative
-$\delta f$?
-
-If you have the time and inclination, verify that the phase difference
-between the two mixer outputs behaves as shown in Figure \ref{mixerout}.
-Why does it behave this way?  (Look at equations \ref{lsb} and \ref{usb}
-in \S \ref{mathdescr}.)
-
-\section {SOME COMMENTARY}
-
-Mixers are important because they allow us to shift the
-frequency of the whole input spectrum by a uniform amount.  They do this
-by multiplying the input signal by the ``local oscillator'' (l.o.) with
-frequency $\nu_{lo}$; this shifts the frequencies by $\nu_{lo}$.  In radio
-reception, this is very important because nearly always our {\it
-detectors} work best in a fixed frequency range, but our {\it signals}
-come in at many different frequencies.  For example, for an AM station
-playing rock music, the ultimate detector is our ear, which works only
-at audio frequencies; however, the AM stations transmit at much higher
-frequency, nearly 1 MHz.  A mixer is used to shift the frequencies of
-the AM station down to the audio region.  Such receivers are called {\it
-heterodyne} receivers, and this principle is used universally not only
-in consumer radios, TV's, and cellphones but also in many other
-applications including radio astronomy.
-
-        For example, later in the course we have the 21-cm line at
-1420.4 MHz and use an l.o.\ at 1270.4 MHz, the difference frequency is
-150.0 MHz and the sum frequency is 2690.8 MHz.  We use a low-pass filter
-to obliterate the sum frequency, so we are left with a replica of the
-21-cm line that is centered at 150.0 MHz instead of 1420.4 MHz.  If the
-Doppler shift from the Earth's orbit (for example) shifts the 21-cm line
-from 1420.4 to 1420.0 MHz, we change the l.o.\ frequency to 1270.0 MHz
-so that the line remains centered at 150 MHz.  In this way, our
-spectrometer can always work at the same frequency, 150 MHz.
-
-        Mixers are crucially central to the important radioastronomical
-technique called interferometry.  In this technique, two
-widely-separated telescopes point at the same source.  Usually, the
-radio source is further from one telescope than the other, which
-produces a phase difference $\phi$ between the signals from the two
-dishes.  The two received signals from the source are combined in a
-mixer, which produces a d.c.\ voltage that is proportional to $\sin
-\phi$. The phase difference changes with time, which leads to d.c.\
-voltage proportional to $\sin 2\pi f_{fringe}t$, where $f_{fringe}$ is
-the local fringe fringe frequency and is equal to $d\phi \over dt$.  You
-can also think of of this sinusoidal phase resulting from the differing
-velocities $\Delta v$ of the two telescopes with respect to the source,
-with $f_{fringe}$ being the Doppler shift, equal to the observing
-frequency times $\Delta v \over c$.
-
-\section { SOME THEORY: THE ORDINARY DOUBLE SIDEBAND (DSB) MIXER}
-
-        We now turn to the basic theory of the ordinary DSB mixer, which
-is very straightforward.  An ideal mixer multiplies the two input
-signals together; this multiplication makes the output signal have the
-sum and difference frequencies.  Usually, one of these is eliminated by
-using a filter.
-
-        Suppose for simplicity that the mixer is ideal and that the two
-input signals are the following: {\bf (1)} the ``local oscillator'' with
-voltage equal to unity (for convenience) and frequency $\omega_0$; and
-{\bf (2)} two ``signals'' with voltage $E_s$ and frequencies
-$\omega_{s-} = (\omega_0 - |\delta \omega |)$ and $\omega_{s+} =
-(\omega_0 + |\delta \omega |)$. We handle the two signal case
-simultaneously by writing $\omega_{s \pm} = (\omega_0 \pm |\delta \omega
-|)$.\footnote{In real life, e.g.\ a radio station, the ``signal'' is
-speech or music with a broad range of $\delta f$. In astronomical life,
-e.g.\ the 21-cm line, the ``signal'' is a Doppler broadened line, which
-again has a broad range of $\delta f$. The system is linear, so signals
-add without mutual interaction, so the discussion for a single $\delta
-f$ also applies to these broad spectra.}
-
-        The mixer outputs in the two cases are $MO_-$ and $MO_+$;
-similarly, we write $MO_{\pm}$. $MO$ is the product of the signal and
-l.o.~signals, and can be expressed in terms of the sum and difference
-frequencies by the usual trig identity
-
-\begin{mathletters}
-\begin{equation}
-MO_{\pm} = E_s \underbrace{\cos [\omega_{s \pm} t] \cos [\omega_0 t]
-}_{product} =
-        {E_s \over 2} (\underbrace {\cos [(\omega_{s\pm} - \omega_0)t
-	]}_{diff} +
-        \underbrace { \cos [(\omega_{s\pm} + \omega_0)t]) }_{sum}
+P=IV
 \end{equation}
 
-\noindent Replacing $\omega_{s\pm}$ by $\omega_0 \pm |\delta \omega|$,
-we get
-
-
-\begin{equation} \label{mopm}
-MO_{\pm} = E_s \underbrace{\cos [(\omega_0 \pm |\delta \omega |)t]
-\times
-\cos [\omega_0 t]}_{product} = {E_s \over 2}
-        (\underbrace{ \cos [\pm|\delta \omega | t]}_{diff} +
-        \underbrace{ \cos[(2\omega_0 \pm |\delta \omega |) t]}_{sum} ) \
-.
-\end{equation}
-\end{mathletters}
-
-\noindent Thus, the signal frequency has been shifted to {\it two}
-frequencies by an amount equal to the l.o.\ frequency:  downward in the
-first term (to $\delta \omega $, the difference frequency) and upward
-in the second term (to $2\omega_0 \pm |\delta \omega |$, the sum
-frequency).  The output contains {\it both} the difference {\it and} the
-sum frequency terms.
-
-        Now we insert a low pass filter to eliminate the sum term. We do
-this because we are observing at some very high frequency, say the 21-cm
-line at 1.4 GHz, and need to convert to much lower frequencies where our
-backend equipment works. (In the TV case it's the same: the signals are
-at hundreds of MHz and the picture processing circuitry operates below
-10 MHz). This low-pass filter removes the second term.
-
-        So with the low-pass filter we drop the sum frequency term. This
-leaves the following, in which we add the subscript $cos$ to indicate
-that we began with the signal represented by a cosine:
-
-\begin{mathletters} \label{baseband}
-\begin{equation}
-MO_{cos,\pm} = {E_s \over 2} \cos [\pm|\delta \omega | t] = {E_s \over
-  2}
-   \cos [|\delta \omega | t] \ .
-\end{equation}
-
-\noindent If we had begun by representing the signal with a sine instead
-of a cosine (while retaining the cosine for the l.o.) we would have
-obtained
-
-\begin{equation}
-MO_{sin,\pm} = {E_s \over 2} \sin [\pm|\delta \omega | t] = \pm {E_s
-  \over 2}
-   \sin [|\delta \omega | t] \ .
-\end{equation}
-\end{mathletters}
-
-
-\begin{figure}[p!]
-%\begin{center}
-\hspace{-0.7in}
-  \includegraphics[width=7.5in, height=8.0in]{sideband.ps}
-%\end{center}
-%\hspace{-0.5in}
-\caption{Upper and lower sidebands in DSB and SSB mixers for a set of
-$\delta$-function test signals on top of broad level noise spectra. Top:
-  the RF
-spectrum. The next two show the USB and LSB {\it individually} when
-they undergo the DSB mixing process; panel 4 shows how they both add
-together. The bottom panel shows the SSB mixer, which keeps them
-separate. \label{sideband}}
-\end{figure}
-
-        Four things are important here: \begin{enumerate}
-
-        \item {\it The two sidebands---the two different} input
-frequencies ($[\omega_{s-}= \omega_0 - \delta \omega]$ and $[\omega_{s+}=
-\omega_0 + \delta \omega]$)--- produce the {\it same
-symmetric-around-zero pair of final output frequency $\pm |\delta
-\omega|$}. The DSB mixer
-cannot distinguish between the two input frequencies.
-
-        \item Consider how $|\delta \omega|$ depends on $\omega_0$: for
-the upper sideband, ${d |\delta \omega| \over d\omega_0} = 1$, while for
-the lower $d {|\delta \omega| \over d\omega_0} = -1$. We hope that
-Figure
-\ref{sideband} elucidates the
-situation.
-
-        \item A value of $E_s$ for one sideband produces a certain mixer
-output {\it power}; the same value of $E_s$ for the other sideband
-produces the same power. With regard to power, the sidebands are {\it
-identical}.
-
-        \item But the sidebands are not {\it completely} identical; we
-	  will discuss this in detail later in the course. The sine term
-	  changes changes sign for the lower sideband. Consider
-	  representing the output voltage in the complex plane. For the
-	  upper sideband, which has identical signs for the (cosine,
-	  sine) term, the vector rotates counterclockwise. For the lower
-	  sideband, it rotates clockwise. Later, this distinction will
-	  allow us to construct a {\it single-sideband} mixer, which
-	  provides {\it two} outputs, one for each sideband.
-
-\end{enumerate}
-
-Figure \ref{sideband} illustrates these mathematical results. The top
-panel shows the original RF spectrum. The second panel shows the USB
-after DSB mixing: it appears at negative and positive frequencies and
-the spectrum is symmetric, meaning that the negative frequencies give
-exactly the same result as the positive ones. The third panel shows the
-same for the LSB. You can achieve the rejection of either the LSB or the
-USB by using an appropriate {\it bandpass} filter. The fourth panel
-shows what happens without a bandpass filter: the LSB and USB are
-inextricably mixed and you get the sum of the power spectra. The bottom
-panel shows that SSB (Single Sideband) mixing retains the sideband separation and
-identity.
-
-\section{MORE THEORY: THE SSB MIXER}
-
-The SSB mixer has the capability of distinguishing whether the
-difference frequency $|\delta f|$ is positive or negative---that
-is, it distinguishes between the two sidebands.  The sidebands can, and
-usually do, contain completely independent signals.
-
-\subsection{A Preliminary: The Quadrature Hybrid}
-
-        The heart of a SSB mixer is not the mixer. Rather, it's the
-quadrature hybrid. So before considering SSB mixers, we need to
-understand hybrids and quadrature hybrids\footnote{For an excellent and
-thorough discussion of hybrids and their applications, refer to:  Hagen,
-Jon B., ``Radio-Frequency Electronics, Circuits and Applications,''
-Cambridge University Press, 1996, pg. 188-200.}.
-
-\begin{figure}[!h]
-\begin{center}
-$\begin{array}{cc}
-        \includegraphics[width=2.0in]{hybrid1.plt}
-        &
-        \includegraphics[width=2.0in]{hybrid2.plt}
-        \\
-        \parbox[t]{3.0in}{\caption{Block diagram of a four port hybrid.
-\label{hybrid1}}}\hspace{0.4in}        &
-        \parbox[t]{3.0in}{\caption{Block diagram of a quadrature hybrid.
-\label{hybrid2}}}
-\end{array}$
-\end{center}
-\end{figure}
-
-        Figure\ \ref{hybrid1} shows the block diagram of a hybrid.  The
-signal acts just like the diagram shows: a signal entering port\ 1 will
-split into equal signals (--3 dB each) and exit through ports\ 2 and 3.
-No power is transmitted across the hybrid to port\ 4.  Internally, many
-hybrids look like center-tapped transformers; see Hagen's book.
-
-        Power is split between the two adjacent ports and nothing is
-transmitted across it.  In this way we think of a hybrid as a {\it power
-splitter}.  In fact, this is just what power splitters are: a hybrid
-with the fourth port terminated in a matched load. If you are wondering
-if it can be used in reverse as a power combiner, the answer is yes.  If
-inputs are made to ports\ 1 and 4, the sum of the inputs exit through
-ports\ 2 and 3. One point: all ports must present matched loads. By
-symmetry, ports 2 and 3 each get half the power, so if one of these is
-terminated then half the power is lost\footnote{Unless the combining
-  signals are identical with a particular phase relationship, in which
-  case all of the power can go to the unterminated port.}.
-
-        Hybrids can be made so that they add a phase angle, either
-$90^\circ$ symmetrically in two legs or $180^\circ$ in one leg.
-Figure\ \ref{hybrid2} shows a block diagram.  A signal incident on port\
-1
-splits and exits through ports\ 2 and 3, but  each signal is
-\emph{shifted} by the number of degrees specified in each corner of the
-schematic:  the output of port\ 2 is shifted by $90$ degrees with
-respect to the input while the
-output of port\ 3 is not shifted at all.
-
-\subsection{The SSB mixer: block diagram and graphical description}
-
-Figure\ \ref{ssbmfig} shows a block diagram of the SSB mixer.  The RF
-input is split by a power splitter into two equal channels. The LO is
-split by a hybrid, so that the left hand side (LHS) leads the RHS by
-$90^\circ$.  These two channels are recombined with the second
-quadrature hybrid.
-
-Suppose that the signal ``RF in'' is a cosine wave in the {\it lower}
-sideband, with frequency {\it below} the l.o.\ frequency. The l.o.\ is a
-cosine wave on the RHS and a sine wave on the LHS (because of the
-$90^\circ$ shift). This makes the two mixer outputs $\propto \sin
-[\delta \omega t]$ and $\cos [\delta \omega t]$ for the LHS and RHS,
-respectively. These are shown in Figure \ref{mixerout}, with the LHS
-side [$MO(LHS)$] dashed and the RHS [$MO(RHS)$] solid. These are
-identical in amplitude: they have to be, because they come from the same
-original lower-sideband signal. But they are shifted in phase: for ``RF
-in'' being in the {\it lower} sideband, the dashed curve (the left-hand
-mixer) {\it lags} behind the solid one (the right-hand mixer).
-
-Now suppose ``RF in'' is a cosine wave in the {\it upper} sideband, with
-frequency {\it above} the l.o.\ frequency. Now the situation is
-reversed: the dashed curve (the left-hand mixer) {\it leads} the solid
-one (the right-hand mixer).
-
-
+\subsubsection{Activities}
+\begin{itemize}[noitemsep,nolistsep]
 \begin{figure}[h]
-%        \begin{center}
-\hspace{-0.5in}
-%        \leavevmode
-        \includegraphics{ssbm.ps}
-%        \end{center}
-\caption{Outputs of the first mixers for the two sideband cases. Dashed
-  curve shows the {\it left-hand} mixer, solid is the {\it right-hand}
-  mixer. Left panel shows ``RF in'' being in the {\it upper} sideband
-  (USB); right panel shows it being in the {\it lower} sideband (LSB).
-\label{mixerout}}
+\centering
+\includegraphics[width=2in]{plots/volt_divider.png}
+\caption{A voltage divider}\label{fig:volt_divider}
+\end{figure}
+\item build voltage divider (Figure \ref{fig:volt_divider}) out of two 1k resistors, 
+connect input to +5V DC voltage source
+\item measure voltage at output
+\item measure current (think carefully about where before burning out the multimeter fuse!)
+\item apply 1 MHz sine wave, view input and output on oscilloscope
+\item append a second voltage divider to the output of the first (choose resistor values carefully)
+\item for a voltage divider, is it better to have high impedances or low?  what considerations might
+drive you in either direction?
+\item from the perspective of the second voltage divider, what is the Th\`evenin equivalent resistance
+of the first divider, as seen from its output?
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1.5in]{plots/resistor_series.png}
+\caption{An infinite series of resistors}\label{fig:resistor_series}
+\end{figure}
+\item if each resistor in Figure \ref{fig:resistor_series} is the same value, what is the equivalent resistance
+between the two terminals?  (BTW, I still haven't solved http://xkcd.com/356, but don't get nerd sniped
+while doing this lab!)
+\end{itemize}
+
+\subsection{Capacitive Voltage Divider}
+
+\subsubsection{Useful Equations}
+\begin{equation}
+I=C\frac{dV}{dt}
+\end{equation}
+
+\begin{equation}
+Z_C = \frac1{j\omega C}
+\end{equation}
+
+\subsubsection{Activities}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item build a voltage divider out of two 1$\mu$F capacitors, connect input to 1 MHz sine wave
+\item compare input and output on oscilloscope.  is it what you expected? what is the DC level at the output?
+resistor?
+\item add a 1k resistor to ground at the output, and then for your modified circuit, graph the 
+expected $V_{out}/V_{in}$ versus frequency
+\end{itemize}
+
+\subsection{RC filter}
+
+\subsubsection{Activities}
+\begin{itemize}[noitemsep,nolistsep]
+\item design a high-pass filter with cutoff (-3dB) at 100 kHz
+\item design a low-pass filter with the same cutoff
+\item plot the expected responses of each.  spot-check with oscilliscope measurements.
+\item what could you do to get steeper transitions in RC filters such as these?
+\end{itemize}
+
+\subsection{LC filter}
+
+\subsubsection{Useful Equations}
+\begin{equation}
+Z_L = j\omega L
+\end{equation}
+
+\begin{equation}
+Q = \omega_0 RC = \frac{f_0}{\Delta f_{3dB}}
+\end{equation}
+
+\subsubsection{Activities}
+\begin{itemize}[noitemsep,nolistsep]
+\begin{figure}[h]
+\centering
+\includegraphics[width=2in]{plots/lc_series_parallel.png}
+\caption{An inductor in series and in parallel with a capacitor}\label{fig:lc_series_parallel}
+\end{figure}
+\item plot the theoretical impedance versus frequency of a 1 $\mu$H inductor in parallel 
+with and in series with a 1 $\mu$F capacitor (Figure \ref{fig:lc_series_parallel}).
+\begin{figure}[h]
+\centering
+\includegraphics[width=2in]{plots/rlc_filter.png}
+\caption{A bandpass RLC filter}\label{fig:rlc_filter}
+\end{figure}
+\item design and build an LC band-pass filter (Figure \ref{fig:rlc_filter}) tuned to 1 MHz
+\item choose an R to select a quality factor appropriate for $\Delta f_{3dB}=200 kHz$.
+%\item for a moment, swap out your C for something quite small (say, 100 pF) and measure empirically
+%the frequency of peak response.  assuming your inductor value is correct, what is your inferred capacitance?
+%if this doesn't agree with your C, can you explain why?
+\end{itemize}
+
+\subsection{Diodes}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item measure the voltage drop over a conducting diode (important: limit current flow with a resistor!)
+\item use different resistor values (or a pot) and measure the voltage drop as a function of current
+\item use a large ($\pm$ 1V) oscillating signal into the diode and view the original and rectified 
+signal on an oscilloscope
+\item apply a low-pass filter with time constant of order the input frequency, and view the 
+output on an oscilloscope.  generate a plot of what is going on here.
+%\item suppose you have an oscillating signal whose amplitude is less than the voltage drop across your conducting
+%diode.  can you come up with a circuit that re-centers your oscillating signal on the threshold 
+%of diode conduction?
+\end{itemize}
+
+\subsection{FM demodulation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=4in]{plots/fm_demodulation.png}
+\caption{An FM demodulation circuit}\label{fig:fm_demodulation}
 \end{figure}
 
-\subsection{The Digital ``Computer Voodoo'' Method}
+\begin{itemize}[noitemsep,nolistsep]
+\item use your LC circuit to convert a frequency-modulated signal into an amplitude modulated signal
+\item use your diode circuit as an "envelope detector" that filters out the carrier frequency and extracts the
+amplitude modulation.  Use a 100 kHz low-pass filter in the envelope detection. (Humans can only hear up to 40 kHz
+or so).  You should have something like Figure \ref{fig:fm_demodulation}.
+\item connect in our faked FM station at 1.045 MHz
+\item connect the output through a coupling capacitor (to remove the DC bias) to amplifying audio speakers
+\item enjoy listening to the music
+%\item fun part: which components of your circuit are strictly necessary?  try removing some of them and see
+%if it still works?  Draw your circuit as it worked before and after ``contracting'' it.
+%\item if our station is at 1.045 MHz, why is your LC tuned to 1.0 MHz?  %what was relevance of the quality factor?
+\end{itemize}
 
-In Figure \ref{ssbmfig}, we can regard the two independent signals
-marked ``To ADC for Computer Voodoo'', as as the real and imaginary
-components of the signal because, no matter what the input frequency,
-they differ in phase by $90^\circ$. So the signal is a complex
-number. With an ordinary DSB mixer the signal is a real number, so its
-Fourier transform must have Hermitian symmetry---meaning that the power
-spectrum is symmetric, with negative and positive frequencies being
-identical. Here, the signal is a complex number, and there is no
-symmetry. We won't delve into the math here, but the net result is that
-the Fourier transform keeps the negative and positive frequency
-components completely separate. Real geeks call this method ``QU
-sampling''.
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Present a circuit diagram of an FM radio receiver, highlighting blocks 
+of components that act as a unit to perform some action (filtering, biasing, etc.)
+\item Describe in the text the overall design of the FM receiver, with subsections for each
+functional block, listing salient features of each (e.g. the -3dB point of a filter,
+the voltage biased to, etc.).  Present it as if you invented it, and were writing the seminal
+paper that will enable others to use this design.
+\item Using your new understanding of impedances, plot the expected output of the LC filter in
+your FM receiver as a function of frequency, $f=\omega/2\pi$.  Mark the location, in frequency, 
+of the transmission band used in the lab, and explain the rational behind its placement on the LC
+response curve (e.g. if our station is at 1.045 MHz, why is your LC tuned to 1.0 MHz?)
+\item Finally, also plot, as a function of frequency, the bandpass of the final filter that
+defines the band of the output audio signal.  Describe (and maybe plot) the rationale for
+selecting the filter that you did.
+\end{itemize}
 
-\subsection{Mathematical description} \label{mathdescr}
+\section{Week 2}
+\label{sec:week2}
+\subsection*{Prerequisites}
 
-First, we mix the incoming signal with the real and imaginary (cosine
-and sine) components of the l.o. As in the DSB mixer, we use a low pass
-filter so we need consider only the difference frequencies. For the left
-hand side ($LHS$) the l.o.\ has the $90^\circ$ phase difference so it's
-a $\sin$ instead of a $\cos$ and for the Left-Hand Mixer Output
-[$MO(LHS)$] we have
+Reading: Horowitz \& Hill, Ch. 2
 
+\begin{itemize}[noitemsep,nolistsep]
+\item Transmission Lines
+\item Transistors
+\item Amplifier Circuits
+\end{itemize}
+
+\subsection*{Materials}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item rope and string of various thicknesses (pretty long)
+\item breadboard
+\item misc R, C, transistor components
+\item power supply
+\item function generator w/ external FM reference
+\item oscilloscope w/ probes
+\item voltimeter
+\item speaker w/o amplifier
+\item long cable (as long as possible, longer than 100m would be great)
+\end{itemize}
+
+\subsection*{Some Thoughts}
+
+\subsubsection*{Transistors}
+
+\begin{figure}\centering
+\includegraphics[width=2in]{plots/npn_transistor_pins.png}
+\caption{Pinout for a generic NPN transistor (e.g. 2N3904)}
+\label{fig:npn_transistor_pins}
+\end{figure}
+
+We'll be using an NPN bipolar junction transistor in this lab (see Figure \ref{fig:npn_transistor_pins}).  With
+the flat face to you, pins typically read, from left to right, emitter, base, collector.  Now you know.
+
+\subsubsection*{Speakers}
+
+Last week, we just stuck our signal into an amplifying speaker and didn't think much about it.  This weak, since we are building our own amplifier, you might be wondering what's left that makes a ``speaker.''  Speakers aren't
+that complicated.  At their simplest, they are solenoids that push/pull on a small magnet
+attached to a diaphram.  Depending on which direction current is made to flow through the solenoid by an
+alternating voltage signal, a magnetic field is set up that attracts or repels the magnet on the diaphram.  The
+diaphram translates the resulting motion into pressure waves that propagate through the air.
+
+\subsubsection*{Termination}
+
+At the end of this lab, we'll be playing with some 50$\Omega$ (and maybe some 75$\Omega$) cable, examining how
+waves are reflected and transmitted.  Of course, now you also have a better idea of why the oscilloscope
+has selectable termination, and why it might be different depending on whether you connect as scope probe
+or a BNC cable to the input.  Now that you know why and how, you have no excuse not to exercise good termination
+practices!
+
+\subsection{Impedance Mismatches on Rope}
+
+\begin{itemize}[noitemsep,nolistsep]
+\begin{figure}[h]
+\centering
+\includegraphics[width=2in]{plots/rope_pulse.jpg}
+\caption{Sending a pulse down a rope}
+\end{figure}
+\item Get several lengths of ropes of different thicknesses.  Tie them together and tie the end of the thinner
+rope to a doorknob or some other stable structure.  Hold the untied end, pull the rope relatively taut, and
+then, with a quick up-down movement of the hand, send a pulse down the rope.  Observe what happens at
+the interface between the ropes, and at the doorknob.
+\item Switch the rope around so that the thicker end is now tied to the doorknob.  Repeat the above.  Any
+difference?  
+\item What would happen, do you think, if the far end of the rope, instead of being tied to a fixed point,
+was tied to a ring that could move up and down on a pole?
+\item Any idea how to stop the wave from reflecting off the far end of the rope?
+\item If you have two thick ropes joined by a very short thin piece (small with respect to the
+wavelength of the signal), what happens at that interface?
+\item What about vice versa (thin ropes joined by a short thick piece)?
+\end{itemize}
+
+\subsection{Impedance Mismatches in a Transmission Line}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item Get a function generator that can output square waves.
+Get a long stretch of cable and connect the function generator output to one
+end of the cable.  Leave a point that you can probe with an oscilloscope.
+\item Use an oscilloscope to try to detect the reflected wave.  Draw the superposition of 
+transmitting and reflecting waveforms that produces your output.
+\item How long is your cable?  How fast did your
+pulse travel?  (BTW, it can be helpful to know that, round-about, light travels 1 ft in 1 ns, and that
+waves on a cable can be up to a factor of 2 slower than that.)
+\item Use a 10$\Omega$ resistor to terminate the far end of the cable.  Observe the change.
+\item Now properly terminate the far end, and recover your waveform!  What was the impedance of the cable?
+\end{itemize}
+
+\subsection{Building an Follower}
+
+\begin{figure}[h!]\centering
+\includegraphics[width=3in]{plots/biased_emitter_follower.png}
+\caption{An emitter follower that uses a biasing circuit.}
+\label{fig:emitter_follower}
+\end{figure}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item Build the emitter-follower circuit shown in Figure \ref{fig:emitter_follower}, choosing approprite
+values for resistors and capacitors.  Use a 2N3904 transistor, or a similar substitute NPN BJT.  You will
+power the circuit with $V_{cc}=+5V$, and will want to amplify signals in the range 100Hz to 50kHz.  Mind
+your R's and C's!
+\item Measure the bias voltage $V_{BE}$.
+\item What is the purpose of the emitter resistor (that is, the resistor most immediately connected to the
+emitter)?
+\item Input a 10 kHz sine wave with 1V amplitude.  What is the relationship between the input and output voltages?
+\item Predict first, and then measure, the maximum sine amplitude for which this circuit correctly operates.
+\item Measure the bias voltage at the base.  How small can you make the emitter resistor before it changes?  You
+might need to make the resistors in your bias circuit large so that you don't burn up the emitter resistor.
+\end{itemize}
+
+\subsection{Building an Amplifier for our FM radio}
+
+\begin{figure}[h!]\centering
+\includegraphics[width=3in]{plots/bjt_amplifier_lab2.png}
+\caption{An amplifier based on an NPN BJT.}
+\label{fig:amplifier}
+\end{figure}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item Build the amplifier circuit shown in Figure \ref{fig:amplifier}, choosing appropriate values for
+resistors and capacitors, using the same constraints as for the follower circuit above, and choosing a
+DC gain of 2.  For the time being, omit the emitter capacitor.
+\item What is the voltage at the collector?
+\item Input a 10 kHz sine wave with 100mV amplitude.  What is the relationship between the 
+input and output voltages?  If you did not achieve a gain of 2, why not?
+\item Predict first, and then measure, the maximum sine amplitude for which this circuit correctly operates.
+\item Now add in the emitter capacitor to select for a gain of 10 at 10kHz.  Again, mind your R's and C's!
+\item Input a 10 kHz sine wave with 100mV amplitude.  What is the relationship between the 
+input and output voltages?  If you did not achieve a gain of 10, why not?
+\item Predict first, and then measure, the gain at 20 kHz.
+\item Can you think of a way to make this circuit have the same gain across our whole band of interest?
+\item Finally, attach a passive speaker to the output, your passive FM demodulator to the input, and bask in
+the sound of your success.  You'll need to pay attention to the impedance of the speaker, and plan accordingly.
+\end{itemize}
+
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Add a section describing your speaker amplifier, including a circuit diagram, and describing
+how it functions (and what the various functional parts are).  I'll be looking for a description
+of how the base and collector voltages are set, and why they needed to be set where they are.
+\item Specify the input and output impedance of your circuit at audio ($\sim$10 kHz) frequencies.
+\item Suppose your speaker amplifier connects to a speaker at the end of a long run of wire.
+Given the amplifier circuit that you built, what impedance cable to you recommend, and how would you
+terminate it (incorporating an 8-Ohm speaker) to avoid reflections?  For now, don't worry, unless you want
+to, about maximizing the current through the speaker (to make it LOUD).
+\item Define the operating band of your amplifier.  Over what frequency ranges does it operate,
+and what specifically determines the bounds on this range?
+\end{itemize}
+
+\section{Week 3}
+\label{sec:week3}
+
+\subsection*{Prerequisites}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item Central Limit Theorem
+\item Johnson-Nyquist Noise
+\item Receiver Temperature
+\item Radiometer Equation
+\end{itemize}
+
+\subsection*{Materials}
+
+\begin{itemize}[noitemsep,nolistsep]
+\item 2W 50$\Omega$ resistor
+\item power supply
+\item oscilloscope w/ probes
+\item minicircuits amplifiers
+\item voltimeter
+\item infrared (remote) thermometer
+\end{itemize}
+
+\subsection*{Some Thoughts}
+
+\subsubsection*{Minicircuits Amplifiers}
+
+Now that you've built your own amplifier, you have a feel for what goes on inside an amplifier.  We're
+now going to use pre-packaged amplifiers that are commercially available (Minicircuits is a typical vendor).
+These will be SMA in, SMA out, with two leads for $V_{cc}$ (+15V, for the parts we're using) and ground.
+These amplifiers specify their gain in dB, and you do have to be a bit careful about signal levels.
+As a general rule, the output of amplifiers should be connected (to a 50$\Omega$ load) before they are
+powered on, so that they don't have to dissipate their output power internally.
+
+\subsubsection*{Infrared Thermometer}
+
+If you assume that objects radiate heat as a blackbodies (which we'll discuss in later labs), you
+can measure their temperature remotely just by their infrared radiation.  The infrared thermometer
+we will use in this lab is an infrared telescope (with a well-defined beam size) that is
+calibrated to output a voltage in mV that is the temperature in Fahrenheit.  Use it wisely.
+
+\subsubsection*{Interference}
+
+In this lab, we're going to attempt to make a relatively sensitive measurement of the Johnson
+noise on a 50$\Omega$ resistor.  It turns out that lots of things can produce signals at this 
+level that can interfere with your measurement.  For one, if you make a loop that electrons can
+flow around (which, after all, is what a circuit is), then a changing magnetic flux through that
+loop produces an EMF that drives a current that sets up a voltage across the resistor.  This may
+be the very first radio antenna we build in this class.  Unfortunately, that's not what we were
+going for, so we need ways to avoid this.  Since the area inside the loop matters, you can try to
+make your circuits physically narrow.  You might also try making a Faraday cage.
+
+\subsubsection*{Writing Code for Lab}
+
+This is the first lab where a significant portion of the lab is writing code. 
+So the first thing you should do set up a github
+account and start a repository that will contain all the code you turn in for this class (and
+while you're at it, why not your \LaTeX reports too?).
+Next, clone your repo onto your computer.  (If you haven't yet, you should get Git, Python, Numpy,
+and Pylab installed).  Inside your repository, add a directory ``lab\_analog", and create
+%two files: central\_limit.py and radiometer\_test.py.  Commit, and push your changes back up to
+the file: central\_limit.py.  Commit, and push your changes back up to
+your github account.  Inside your lab report, make sure you link to your repository in
+your ``Methods" section, along with the hash tag that indicates which commit was the one used
+to produce your results.  
+
+\subsection{Calculating the Noise Figure of a Reciever}
+
+\subsubsection*{Determine Amount of Gain Needed}
+\begin{itemize}[noitemsep,nolistsep]
+\item Calculate how much amplification is needed to bring the Johnson noise on a $50\Omega$ resistor
+up to at least the $\sim$1mV RMS level that you can measure on a scope.  You'll have to pick an appropriate
+bandwidth, and you might want to check that you can get a filter that supplies that bandwidth. 
+\item Looking at the data sheets for the minicircuits amplifiers, choose a number of gain stages.
+\item Connect the gain stages (and the filter at the end), and power them at +15V.  IMPORTANT: Most amplifiers
+want to have the output connected first, so that the output power has some place to go.
+\end{itemize}
+
+\subsubsection*{Estimate and Measure the Resistor Temperature}
 \begin{equation}
-MO(LHS)_\pm = {E_s \over 2} \sin [\pm|\delta \omega | t] \ .
+P=A\epsilon \sigma T^4
 \end{equation}
+\begin{itemize}[noitemsep,nolistsep]
+\item Set a power supply to the appropriate voltage to dissipate $\sim$2W in a 50$\Omega$ resistor (make
+sure it is a beefy resistor rated to 2W, and do not exceed that threshold, or meltdown will ensue).
+\item Using the Stefan-Boltzmann Law, calculate what temperature you think the resistor will hit.
+\item Use an infrared thermometer to measure the temperature.  Were you close?
+\end{itemize}
 
-\noindent {\it Note} the -- and + subscript on $MO(LHS)$: these refer to
-``RF in'' being in the {\it lower} and {\it upper} sidebands (LSB and
-USB), respectively.
+\subsubsection*{Measure the Noise Figure}
+\begin{itemize}[noitemsep,nolistsep]
+\item Determine the power out of the receiver for the input resistor at room temperature.  Ideally, you'd do this
+with a power meter or a spectrum analyzer, but today, we'll do the poor man's method of eyeballing one
+standard deviation from the mean on an oscilloscope.  This isn't easy, and I apologize for that.  To keep your
+sanity, you should estimate errorbars on this measurement, so you can see the effect of error on
+your bottom line.
+\item As in the previous step, set the resistor dissipating 2W, and measure the power out of the receiver.
+IMPORTANT: Use a blocking cap to prevent a large DC voltage from entering the amplifier chain.  Otherwise, you
+could damage your amplifiers.  When in doubt, ask.
+\item Since you already know the temperature the resistor hits when dissipating 2W, you should be able to
+solve for the gain and the receiver temperature (and if you want, you can calculate your Y factor).  This
+would be a good time to use your error bars to determine your confidence interval on your measurement
+of the gain and receiver temperature.  Make a plot and draw some lines!
+\item Convert your receiver temperature to a noise figure.
+%\item How much is your error on the receiver temperature reduced if you have a prior on the gain (which
+%you should look up from the data sheet)?
+%\item How does your measured receiver temperature compare to the noise temperature you'd expect given
+%your chain of amplifiers? 
+\end{itemize}
 
-For the LSB input we have
+\subsection{Demonstrate the Central Limit Theorem}
+\begin{itemize}[noitemsep,nolistsep]
+\item Write a program (in the central\_limit.py file that you created earlier)
+that shows that, in the large-N limit, adding samples drawn from non-Gaussian random
+distributions converges to a Gaussian distribution.
+\item Also show that the standard deviation of the mean of $N$ Gaussian-random samples decreases as $\sqrt{N}$.
+If you are trying to characterize samples of an unknown character to show that they are noise-like, this
+is called an Allen variance test.
+\end{itemize}
 
-\begin{mathletters} \label{lsb}
-\begin{equation}
-MO(LHS)_- = {E_s \over 2} \sin [-|\delta \omega | t] =
-   -{E_s \over 2} \sin [|\delta \omega | t]
-\end{equation}
-\begin{equation}
-MO(RHS)_- = {E_s \over 2} \cos [-|\delta \omega | t] =
-   {E_s \over 2} \cos [|\delta \omega | t]
-\end{equation}
-\end{mathletters}
+%\subsection{Numerical Demonstration of the Radiometer Equation}
+%\begin{itemize}[noitemsep,nolistsep]
+%\item Write a program (in the radiometer\_test.py file) that simulates 
+%random noise corresponding to a noise temperature, and shows that the radiometer equation works.  In particular,
+%prove (numerically) that it is, in fact, $\sqrt{Bt}$ and not $\sqrt{2BT}$ in the denominator of the
+%radiometer equation.
+%\end{itemize}
 
-\noindent Similarly, for the USB input we have
+\subsection{For Your Report}
+\begin{itemize}[noitemsep,nolistsep]
+\item Pretend that the amplifier whose noise figure you were determining was the one you built
+in \S\ref{sec:week2}.  Describe the methodology for determining the noise figure, including
+the relevant equations used.
+\item Report the final noise figure you measured.  Give error bars.  What are your sources of error?
+\item One last charade.  Let's say that you also wanted to test how the noise output by your
+amplifier integrates down, to be sure that there are no systematics present.  Pretend you placed a
+known-good noise source in front of your amplifier and digitized the output of your amplifier, and you
+get the numbers output by your central\_limit.py program.  Perform an Allen variance test to show
+that the noise from your amplifier behaves as you'd expect.  Produce a plot of variance (or standard deviation,
+either one) versus number of samples averaged, along with the slope of the line you're shooting for.
+\end{itemize}
 
-\begin{mathletters} \label{usb}
-\begin{equation}
-MO(LHS)_+ = {E_s \over 2} \sin [+|\delta \omega | t] =
-   {E_s \over 2} \sin [|\delta \omega | t]
-\end{equation}
-\begin{equation}
-MO(RHS)_+ = {E_s \over 2} \cos [+|\delta \omega | t] =
-   {E_s \over 2} \cos [|\delta \omega | t]
-\end{equation}
-\end{mathletters}
-
-\noindent The RHS and LHS outputs have identical frequencies and
-amplitudes for the LSB and USB inputs.
-
-{\it But the phase relationships differ for the two sidebands.}  For the
-{\it lower} sideband, the RHS output {\it lags} the LHS by $90^\circ$;
-for the {\it upper} sideband, the RHS output {\it leads} the LHS by
-$90^\circ$, just as in Figure \ref{mixerout}. In other words, for the
-LHS output, lower-sideband signals differ in sign from upper-sideband
-ones; this is equivalent to differing in phase by $180^\circ$.
-
-When we sample these two mixers simultaneously, and use one mixer as the
-{\it real} input to the DFT and the other as the {\it imaginary} input,
-the output frequency spectrum {\it separates the sidebands}. That's why
-this is known as a Single-Sideband Mixer, or Sideband-Separating
-Mixer---a SSB.
-
-To see this, use equation \ref{ift}, writing $\delta \omega$ instead of
-$2 \pi \nu$.  For the LSB in equations \ref{lsb}, the two mixer outputs
-are ${E_s \over 2} \sin(-|\delta \omega|t)$ and ${E_s \over 2}
-\cos(-|\delta \omega|t)$; using these as the imaginary and real inputs
-to the Fourier transform of equation \ref{ift} and applying the trig
-identities, the integrand becomes
-
-\begin{equation}
-{\rm integrand} = {E_s \over 2} \left( \cos[(\delta \omega +
-    \omega)t] + j \sin[(\delta \omega + \omega)t] \right) \ .
-\end{equation}
-
-\noindent For large $T$ in equation \ref{ift}, the integrand is nonzero
-only when $[(\delta \omega + \omega)t] =0$. For the LSB with negative
-$\delta \omega$, the integral is nonzero only for positive $\omega$.
-
-\end{document} 
-
+\end{document}
