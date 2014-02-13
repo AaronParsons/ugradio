@@ -96,6 +96,67 @@ by the end of the first week, you're behind. Here's how it should be:
 \item digitizer (either ROACH or Pulsar sampler card)
 \end{itemize}
 
+\subsection{Command and Conquer: Running the System from the Command Line}\label{software}
+
+    This lab will require lots of adjustments and measurements to be made,
+over and over and over\footnote{You get my point here...} again. This can be
+rather painful to have to do by hand, but thanks to software you don't have
+to! In particular, you are going to need to control two different types of
+devices: the SRS Function Generators (sometimes called local oscillators or
+`LOs') and the Pulsar sampler. To control either of these devices from the
+command line, you will need to import the Digital Front-End Control (DFEC)
+module into your instance of python. Within this module are two functions: 
+\verb set_srs  and \verb sampler .
+
+    The \verb set_srs  function is used to control the two LOs that exist in
+the lab, creatively labeled \emph{SRS1} and \emph{SRS2}. With these LOs, you
+can control the frequency (which must be between $0 < \nu \le 30
+\textrm{ MHz}$), the power (in either dBm or $V_{pp}$, set so that the output
+voltage does not exceed $\pm 5$ Volts) and the phase (which
+must be between $0^o \le \phi < 7200^o$.) In order to set the LOs, use the
+following:
+\begin{verbatim}
+In [1]: import DFEC
+In [2]: srsNumber = 1
+In [3]: DFEC.set_srs(srsNumber,freq=1e6,off=0,dbm=0,off=0,pha=0)
+\end{verbatim}
+The only required input for the function is the first value, which corresponds
+to the name of the LO being controlled (1 for SRS1 and 2 for SRS2 -- this
+value should be an integer!). The above command will set SRS1 to 1 MHz, 
+with the power set to 0 dBM (i.e. 1 mW), with a 0 Volt DC offset and a phase
+offset of 0 degrees. The arguments/inputs for
+for \verb freq  , \verb vpp , \verb dbm \footnote{The function will error out
+if you try to set both the power by specifying both the dBm and the $V_{pp}$,
+since they both control the same thing.}, \verb off , and \verb pha  are all
+optional, such that if you do not specify values for these things, the
+software will leave the LOs with whatever settings they last had. In practice,
+it is a good idea to specify any arguments whose setting you are not sure off,
+like when someone other than yourself had changed to settings on the LO last.
+
+    The \verb sampler  function is used to control the sampler on Pulsar (the
+small computer sitting next to the rack). Pulsar has two main modes for
+operating -- single and dual channel. When you use the sampler, you should
+make sure that your BNC cables are connected to the appropriate location: the
+single channel connector is on the far right of the row of inputs, the dual
+channel are the left and middle connectors. To get data from the sampler, use
+the following command:
+
+\begin{verbatim}
+In [4]: nSamp = 1000
+In [5]: sampFreq = 1e7
+In [5]: data = DFEC.sampler(nSamp,sampFreq,fileName='mydata.txt',dual=True)
+\end{verbatim}
+The two required inpurs for the function are the number of samples to record
+(must be between 1 and 262144) and the sampling frequency (must be less than
+20 MHz for single channel mode, 10 MHz for dual channel mode). The above
+command will sample data in dual channel mode, writing the data to disk in a
+file called \verb mydata.txt , recording 1000 values at a sampling rate of 10
+MHz, and returning (in python) the values recorded as an array of values,
+which are recorded as variable \verb data .
+\\
+\\
+\noindent\emph{Documentation for both functions exist, so when in doubt, read the manual!}
+
 \subsection{Nyquist Sampling and Aliasing: A Single Sine Wave} \label{nyquist}
 
     Here we explore the all-important realms of the Nyquist
@@ -117,7 +178,6 @@ peak-to-peak voltage appropriately so that it doesn't saturate the
 Analog-to-Digital Converter (known as the ADC).
 
 \subsubsection{Your First Digital Sampling}
-
     We want to explore sampling rate issues, so to that end
 we will begin by\dots
 \begin{enumerate}[noitemsep,nolistsep]
