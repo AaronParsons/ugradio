@@ -422,12 +422,24 @@ already running on the FPGA (FPGAs can't have multiple personalities simultaneou
 must be killed before a new one can be run.
 
 \begin{figure}\centering
-% XXX modify this diagram with actual diagram
-\includegraphics[width=6in]{plots/adc_capture.png}
+\includegraphics[width=6in]{plots/adc_snaps.png}
+\caption{
+The sampler design (in the Simulink programming language) that was compiled into the 
+``adc\_snaps'' BOF file used in Week 2.  Yellow blocks represent interfaces between
+the FPGA and the outside world.  The block ``quadc'' interfaces to the ADC card that
+is plugged into the ROACH;  ``trig'' and ``lo\_freq'' are software registers that
+appear as one-word (8 byte) files on the ROACH when the BOF file is executed, and
+``adc\_bram'', ``mix\_bram'', ``sin\_bram'', and ``cos\_bram'' are memories that
+appear as larger files holding samples.  White pentagons (pointing left and right) are
+named signals that connect to any other pentagon with the same name.  For example
+``we'' stands for ``write enable'' and connects to every BRAM, as well as feeding
+back into the same counter that generates ``we''.  Other white blocks (``Terminator'',
+``Sine Wave'', ``Constant'') are for simulation only, and do not affect the compiled circuit.
+} \label{fig:adc_snaps}
 \end{figure}
 
 Finally, if you go to a secret directory /proc/PID/hw/ioreg (where PID is the process ID), you'll find
-a bunch of files that have names that correspond to some of the blocks in the schematic diagram above.
+a bunch of files that have names that correspond to some of the blocks in the schematic diagram in Figure \ref{fig:adc_snaps}.
 The schematic above is an actual FPGA program.  It tells the FPGA to read samples from an interface to
 the quad-ADC (described below), and place them into a BRAM (block random access memory) until it is full.
 The address to which samples are written is supplied by a counter that stops itself at the final address
@@ -438,7 +450,8 @@ and the data itself that is written into the BRAM.  You can write a value to the
 read values out of the file ``data\_bram'', just as if they actually were files.  But they are not.  They
 are interfaces to the FPGA.  But Python doesn't know that.
 
-So all you need to know now is this: that ``trig'' is an unsigned 32-bit integer, and the least-significant bit
+So all you need to know now is this: that ``trig'' is an unsigned 32-bit integer (Ufix\_32\_0, in
+Figure \ref{fig:adc_snaps}), and the least-significant bit
 controls the counter reset button.  The BRAM holds signed 32-bit samples for each ADC sample.  The
 ADC is natively an 8-bit sampler, and its sample clock is controlled by a function generator feeding the
 SMA port marked ``clk''.  Happy sampling.
