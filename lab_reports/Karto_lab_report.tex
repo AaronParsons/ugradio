@@ -1,0 +1,83 @@
+\documentclass[12pt]{article}
+\usepackage{amsfonts,amsmath,verbatim}
+
+\begin{document}
+
+\title{Karto's Introduction to Lab Reports}
+\maketitle
+
+\section*{Crowd-sourced items to include in your lab report:}
+\begin{itemize}
+  \item{Title (clever)}
+  \item{Name}
+  \item{Acknowledgements (Coauthors)}
+  \item{Physics Content (Equations)}
+  \item{Introduction}
+  \item{Conclusion}
+  \item{Abstract}
+  \item{Results (troubleshooting)}
+  \item{Methods (Materials \&..., troubleshooting)}
+  \item{Discussion (troubleshooting)}
+  \item{Figures (Graphs \& Tables)}
+  \item{Date}
+\end{itemize}
+
+\section*{And in order:}
+\begin{enumerate}
+  \item{Title/Date/Name}
+  \item{Abstract} \\
+    Your abstract should be a concise summary of the work discussed in your paper. A general rule is that you should have one sentence each for introduction (motivation), methods, results, discussion and conclusion. You specifically want to include the numbers (with units and error!) for your key results.
+  \item{Introduction} \\
+    Your introduction is mostly for you, at least for the purposes of this lab. Put down what you believe is needed to be able to interpret the information presented later on in the report. If your introduction consumes more of your report than your discussion, you're doing it wrong.
+  \item{Methods}
+  \item{Results}
+  \item{Discussion} \\
+    Sometimes the discussion should be combined with the results section.
+  \item{Conclusion} \\
+    Please don't reword your introduction. Think about what you might do next (what would you use your results for, what problems still need to be solved, what changes could be made to improve later results)
+  \item{Works Cited} \\
+    The majority of the time you can just include foot notes as needed, and will only need them for your introduction.
+  \item{Acknowledgements}
+\end{enumerate}
+
+\section*{Some tips:}
+\begin{itemize}
+  \item{Read it through again. (take a break, perhaps read it outloud)}
+  \item{Spell check (In emacs: Alt+x, ispell-buffer. Enter will make the change proffered in the buffer, delete will skip making the change.)}
+  \item{You will spend a lot of time on plots, make sure you leave yourself time to make figures, and consider the following tips:}
+    \begin{itemize}
+      \item{Make labels, of a size that will be readable in your figure.}
+      \item{Include enough data to show the trends (or lack of) you are discussing.}
+      \item{Use color to show added complexities, but consider the fact that you might not always have color available and that many people in astronomy are red-green colorblind (to quote AAS).}
+      \item{In your report, make sure you include captions for each figure that explain it (but don't interpret!), and that you refer to the figure ("...in Figure X")}
+      \item{Consider whether you have enough data for it to be worth a plot versus a table}
+      \item{Consider the thickness and size of lines, symbols, and tickmarks.}
+    \end{itemize}
+  \item{If you are unfamiliar with \LaTeX, then be prepared to spend some time fighting with just compiling your document.}
+\end{itemize}
+
+\section*{Key Matplotlib (pyplot) Commands}
+\begin{itemize}
+  \item{{\tt plt.title([string])} to add a title}
+  \item{{\tt plt.xlabel([string])} to add an axis label (same with y, z...)}
+  \item{{\tt plt.plot(x,y, linewidth = [value])} to make a line of set thickness}
+  \item{{\tt plt.plot(x,y, 'bo')} to make blue circular points (please feel free to look up others)}
+  \item{{\tt plt.axis([list of: xmin, xmax, ymin, ymax])} to set the axis ranges}
+  \item{{\tt plt.show()} to see it on your screen}
+  \item{{\tt plt.savefig([string with extension])} to save your figure as an image}
+\end{itemize}
+
+
+\section*{\LaTeX utilities that you might need}
+\begin{itemize}
+  \item{The package {\tt includegraphics} and the {\tt figure} environment to make figures}
+  \item{The {\tt ref} and {\tt label} functions to refer to equations, tables and figures in your report}
+  \item{The {\tt table} and {\tt tabular} environments for making tables}
+  \item{The {\tt math} environment for writing equations}
+  \item{The \${\tt [math lines here]}\$ to do math in line with the text.}
+  \item{The {\tt caption} function for use in tables and figures.}
+  \item{The {\tt verbatim} environment for including code in your report}
+  \item{The {\tt maketitle} command after your title, author and date commands}
+  \item{The {\tt abstract} environment for your abstract}
+\end{itemize}
+\end{document}
