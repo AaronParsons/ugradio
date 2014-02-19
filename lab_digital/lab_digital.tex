@@ -53,8 +53,7 @@ disorganized. Your choice!
   frequency degeneracy.
 \item Develop proficiency in Python, using it for the
   mathematical analysis, signal processing, and making nice plots.
-\item Learn enough Latex to write up your results in a formal lab report,
-  including nice plots and graphs.
+\item Continue to improve the quality of your Latex write up and graphs.
 \end{itemize}
 
 \paragraph{Schedule:}
@@ -413,7 +412,8 @@ automatic interfaces to some of the logic you program the FPGA with.
 
 FPGAs are programmed with ``bit files'' that you load onto the chip, and tell the circuitry inside what
 wires to connect to what logic components.  To load a bit file onto the ROACH FPGA, you execute a *.bof file
-from the CPU.  The BOF file contains both a bit file, as well as some other information that allows
+from the CPU (relevant BOF files are in the \verb+lab_digital/misc+ directory of the Git repository for
+the class).  The BOF file contains both a bit file, as well as some other information that allows
 linux to interface to the FPGA.  After running a BOF file (leave it running), you need to find the 
 process ID of that program.  The linux command ``jobs'' should do the trick.
 
@@ -454,7 +454,10 @@ So all you need to know now is this: that ``trig'' is an unsigned 32-bit integer
 Figure \ref{fig:adc_snaps}), and the least-significant bit
 controls the counter reset button.  The BRAM holds signed 32-bit samples for each ADC sample.  The
 ADC is natively an 8-bit sampler, and its sample clock is controlled by a function generator feeding the
-SMA port marked ``clk''.  Happy sampling.
+SMA port marked ``clk''.  Happy sampling.  Note, the QuadADC card that is connected to the ROACH introduces
+a {\bf small DC (0 Hz) offset to the signals it samples.  You'll definitely see this when you start
+analyzing and Fourier transforming signals in this lab, and you'll need to identify and explain these features
+for your lab report}.
 
 
 \subsection{Basic Double Sideband (DSB) Mixer Operation: Upper and Lower Sidebands}
@@ -472,9 +475,9 @@ the signal frequency, $\nu_{sig} = \nu_{lo} + \delta \nu$ and
 $\nu_{sig} = \nu_{lo} - \delta \nu$.  Make $\delta \nu$ somewhat small
 compared to $\nu_{lo}$, maybe $5\%$ of $\nu_{lo}$.  For the input power
 level, a good choice is 0 dbm\footnote{What does this ``dbm'' mean? It's
-the power relative to 1 milliwatt, expressed in decibels (db). For our
+the power relative to 1 milliwatt, expressed in decibels (dB). For our
 system the cable impedance is 50 ohms; what's the rms voltage for a
-signal with power level 0 dbm?} for both synthesizers.
+signal with power level 0 dBm?} for both synthesizers.
 
         We will want to digitally sample the mixer output and explore
 both the sum and difference frequencies. As you learned in the Fourier
@@ -572,20 +575,22 @@ to digitize an analog signal and read out the digital data.  In contrast to the 
 used in Week 1, this week we will need to acquire data directly from the FPGA hosted on the ROACH.
 This entails:
 \begin{itemize}[noitemsep,nolistsep]
-\item connecting the signal to be digitized to port 1 of the ADC card (please keep signal amplitudes around -10 dBm)
-\item connecting the sample clock to the clock input of the ADC card (choose an appropriate sample rate)
-\item logging onto the ROACH board
+\item connecting the signal to be digitized to port 1 of the ADC card (SMA 1, please keep signal amplitudes around -10 dBm)
+\item connecting the sample clock to the clock port of the ADC card (SMA 3, choose an appropriate sample rate $\le200$ MHz, with
+    and amplitude of 0 dBm)
+\item logging onto the ROACH board (root@roach.ugastro.berkeley.edu)
 \item launching the BOF file for the sampler/mixer FPGA design
 \item writing the correct values to the file interface to the ``trig'' register
 \item reading the binary data out of the file interface to the ``adc\_bram'' memory onto another computer
-where you will do your analysis
+where you will do your analysis (using scp).
 %\item interpreting the binary data as numbers using the correct binary format and endian-ness
 %\item plotting/analyzing your data to make sure it makes sense
 \end{itemize}
 
 Once you have acquired some data, write a Python script that
 interpreting the binary data as numbers using the correct binary format and endian-ness
-and plots your data to make sure it makes sense.  So\dots convince yourself that your data
+and plots your data to make sure it makes sense; \verb+numpy.fromfile+ is a good place to start.  
+So\dots convince yourself that your data
 makes sense.  What is the time interval between each sample?  What is the signal amplitude
 relative to full-scale for the ADC?
 
@@ -594,14 +599,14 @@ the same ADC input and collect some more data.  Interpret the resulting waveform
 it makes sense. Optionally, you might compare the samples you collect on the FPGA to those obtained from the CPU-hosted
 ADC.  
 
-Now here's the exciting part.  Ports 2 and 3 on the ADC card are also digitized, but then are multiplied
+Now here's the exciting part.  Ports 2 and 3 (SMA 2 and 5) on the ADC card are also digitized, but then are multiplied
 post-digitization before the result is written to ``mix\_bram'' (triggering the data capture is still
 done through ``trig'').  Now you can take each of the signals
 that were mixed together in analog, connect them to Ports 2 and 3, and compare the digitally mixed output
 to the result you obtained with an analog mixer.
 
 Finally, instead of mixing two input signals digitally, we will mix a single signal with an LO that is
-derived from the sample clock.  In this case, connect the signal that we want to mix with to Port 4
+derived from the sample clock.  In this case, connect the signal that we want to mix with to Port 4 (SMA 6)
 on the ADC card.  Next, before triggering to acquire your data, write a carefully chosen value
 into the file interface to the ``lo\_freq'' register.  This register maps the 0 to $2\pi$ interval
 of an oscillator to addresses from 0 to 255.  For each ADC sample that comes in, the number stored
@@ -621,12 +626,14 @@ expect for a SSB mixer, given the frequency of the LO and the frequency of your 
 
         Plot the power spectra versus
 frequency for the digital and analog DSB mixing cases. Explain why the plots look the way they do.  Identify
-key features.  For the digital mixing case, plot the waveform.
+key features (including the DC offset signal from above).  For the digital mixing case, plot the waveform.
 
 Also plot the power spectrum of the output of the digital SSB mixer.  As before, explain why the plot
 looks as it does, and in particular, explain the difference between the SSB mixing case and the DSB mixing
-case that you explored.  Also plot the waveform (both real and imaginary components on one plot), and determine
-whether the waveform has a positive or negative frequency.
+case that you explored.  Plot the waveform (both real and imaginary components on one plot). Also, apply a
+Fourier filter to extract the single tone that you are interested, and plot that on the same plot.
+Determine
+whether the extracted waveform has a positive or negative frequency.
 
 In all cases, make sure that the frequency/time axes have appropriate physical units (Hz, $\mu$s, etc.).
 It is not acceptable to just have these axes as sample counts.
