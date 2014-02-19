@@ -122,7 +122,7 @@ In [3]: DFEC.set_srs(srsNumber,freq=1e6,off=0,dbm=0,off=0,pha=0)
 The only required input for the function is the first value, which corresponds
 to the name of the LO being controlled (1 for SRS1 and 2 for SRS2 -- this
 value should be an integer!). The above command will set SRS1 to 1 MHz, 
-with the power set to 0 dBM (i.e. 1 mW), with a 0 Volt DC offset and a phase
+with the power set to 0 dBm (i.e. 1 mW), with a 0 Volt DC offset and a phase
 offset of 0 degrees. The arguments/inputs for
 for \verb freq  , \verb vpp , \verb dbm \footnote{The function will error out
 if you try to set both the power by specifying both the dBm and the $V_{pp}$,
@@ -145,7 +145,7 @@ In [4]: nSamp = 1000
 In [5]: sampFreq = 1e7
 In [5]: data = DFEC.sampler(nSamp,sampFreq,fileName='mydata.txt',dual=True)
 \end{verbatim}
-The two required inpurs for the function are the number of samples to record
+The two required inputs for the function are the number of samples to record
 (must be between 1 and 262144) and the sampling frequency (must be less than
 20 MHz for single channel mode, 10 MHz for dual channel mode). The above
 command will sample data in dual channel mode, writing the data to disk in a
@@ -186,7 +186,7 @@ we will begin by\dots
 \end{enumerate}
 
 \noindent Take $N$ contiguous samples with $N$ an integral power of 2, say
-$N=256$.  Throughout the datataking, you should always be
+$N=256$.  Throughout the data-taking, you should always be
 monitoring the signal with the oscilloscope. These are sine waves, so
 it's easy to measure the period by looking at the oscilloscope; each
 time you digitally sample the signal, you should write down the period
@@ -508,7 +508,7 @@ take two high frequency signals as the inputs to the R and L ports and
 produce a low frequency difference frequency as the output at the I
 port.
 
-        The ZAD-1 is a balanced mixer, so the ``R'' and ``L`` ports are
+        The ZAD-1 is a balanced mixer, so the ``R'' and ``L'' ports are
 identical, and in particular will not couple to DC or very low
 frequencies.  In contrast, the ``I'' port is coupled differently and
 will handle voltages all the way down to, and including, DC.  The mixing
@@ -621,6 +621,22 @@ chosen frequency is stored in ``cos\_bram'', while the output of mixing with a s
 in ``sin\_bram''.  Use the data stored in each of BRAMs to reconstruct the {\it complex valued} sinusoid
 that this digital Single-SideBand (SSB) mixer outputs.  Compare this recorded waveform to what you
 expect for a SSB mixer, given the frequency of the LO and the frequency of your input signal.
+
+\subsubsection{OPTIONAL: Dealing with DC offsets}
+
+As you have (likely) already discovered, your FPGA sampled data doesn't just have
+a single tone (i.e. a signal at a single frequency), but also appears to have a DC signal as well.
+What's going on? Well, the problem here is that different devices have a different reference
+point for what 0 Volts means. Part of the reason for this is physical (depending on how the device
+is, among other things, grounded). Part of this is slightly arbitrary -- after all, the ADC only
+tells you a 8-bit value that happens to correspond to \emph{some} range in voltage that the
+signal is currently within. In a perfect world, one of these levels would be perfectly centered on 0 Volts. When it doesn't, this makes things a complete mess, because that DC signal will mix with \emph{all the signals you are mixing your input with}. So, for our digital DSB mixer, you will see up to 9 tones, instead of the 3 or 4 tones that you should see. We need to get rid of these spurious tones, lest they contaminate our result!
+
+There are two ways to accomplish our task at hand. First, we can call back to our experience in Section \S\ref{fourierfilter}. You should know what mixing products are going to be created, which means that it should be pretty easy to select those frequency bins and zero them out. Again, make sure that you treat your data symmetrically -- failing to do so will mean that your output voltage will be complex, and in the real world we deal with real values\footnote{This isn't entirely true, but nonetheless, your original output was in real Volts -- why shouldn't your new voltages be so as well?}!. Fourier transform your data back into a series of voltages in time, and plot your result. Does this method work? Could you see some potential limitations with this method?
+
+Sometimes, the best plan to dealing with problems is not to try and fix it in the digital/computing side, but rather in the analog side. In this case, there is a DC offset between what the ADC thinks is 0 V, and what the SRS oscillator thinks is 0 V. The easiest way to fix this is to adjust the DC voltage on the SRS device (see the documentation for the \verb set_srs  function on how to do this). You can try and make some educated guesses on what these offsets are, change the offsets and rerun the experiment over and over again. Or, if you are clever, you can use the information in the Fourier transform to help guide you to what your voltage offsets are. The whole point of using a Fourier transform is to be able to translate a series of voltage measurements in time into a series of frequencies with specified voltage (in this case, measured peak to peak). If you do your math right, the output of your DFT \emph{will be} the offset voltage that exists. You should keep in mind that the sampler can measure between $\pm1$ V, and that there are a total of 256 levels (i.e. it's an 8-bit sampler). When you finish, make a plot (logarithmic might be best) of the result -- if you close enough to perfect, you should only see power at two frequencies: your LSB and USB! Why might this be better than Fourier filtering?
+
+One additional note -- when measuring the DC output of two mixed signals (each with their own DC bias), you are going to be measuring the product of their DC bias multiplied against one another (and if the signals have the same frequency, the lower sideband of their mixing product!). If you use the DC output to help you adjust your voltage\footnote{This isn't the only way to do this...}, you should choose two different frequencies to mix together, and try adjusting only one DC offset at a time.
 
 \subsubsection{For Your Lab Report}
 
