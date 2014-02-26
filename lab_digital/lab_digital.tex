@@ -677,6 +677,68 @@ case would be more likely to have such phase errors?
 \item 1 analog filter
 \end{itemize}
 
+\subsubsection*{The ROACH, revisited}
+
+\begin{figure}\centering
+\includegraphics[width=6in]{plots/ddc_overview.png}
+\caption{
+The FPGA design that was compiled into the 
+``dig\_dwn\_conv\_2'' BOF file used in Week 3.  This design includes a mixer with a digital
+LO, which outputs complex samples to an FIR filter.  The filtered (complex) output samples
+are written to the BRAMs at the right of the figure.
+Many portions of this design
+(trig, lo\_freq) operate similarly to the ``adc\_snaps'' design (Fig. \ref{fig:adc_snaps}).
+The ``fir'' subsystem (the white block in the center-right) is expanded in
+Figure \ref{fig:fir_subsystem} to show what happens inside.  Of primary importance
+are the ``coeff\_real'' and ``coeff\_imag'' registers, which are used to input the desired
+FIR coefficients to the FIR filter.
+} \label{fig:ddc_overview}
+\end{figure}
+
+\begin{figure}\centering
+\includegraphics[width=6in]{plots/fir_subsystem.png}
+\caption{
+An expansion of the FIR subsystem in Figure \ref{fig:ddc_overview}.
+Input samples are buffered along the top, and delayed samples are tapped 
+downward into complex multiplies (green) that are also fed with coefficients.
+Note the correspondence between the ``c[0-7]'' labels used here and the 
+concatenated output of coefficient registers in Figure \ref{fig:ddc_overview}.
+The products of all of these multipliers are summed in an adder tree
+for complex values.  An example of a real-valued adder tree is shown in Figure \ref{fig:adder_tree}.
+} \label{fig:fir_subsystem}
+\end{figure}
+
+\begin{figure}\centering
+\includegraphics[height=3in]{plots/adder_tree.png}
+\caption{
+An illustration of a (real-valued) adder tree similar to the one used
+in Figure \ref{fig:fir_subsystem}.
+} \label{fig:adder_tree}
+\end{figure}
+
+From last week, you'll have a little experience running BOF files on the ROACH.  You probably
+remember that, when running the BOF file, you can go to a secret directory 
+/proc/PID/hw/ioreg (where PID is the process ID) to find
+files correspond to registers and memories that are attached to the CPU, which are highlighted
+in yellow in Figure \ref{fig:ddc_overview}.
+You'll see that ``trig'' and ``lo\_freq'' behave identically to the ADC sampler design
+in Figure \ref{fig:adc_snaps}, which is described in Week 2.
+
+This week has two major differences.  The first is the addition of registers for inputting the
+coefficients for the FIR filter circuit.  These registers are labeled 0 to 7 for the eight
+taps of the FIR filter shown in Figure \ref{fig:fir_subsystem}.  Each coefficient is a complex
+number so, for example, the 0th coefficient has two registers: ``coeff\_real0'' and ``coeff\_imag0''.
+Each ``coeff'' register technically holds 32 bits, but only the lower 18 bits are connected to
+the circuit.  The other bits don't matter---you can put anything in them.  But for those 18 bits,
+they each represent a signed 2's complement number, with 17 digits after the binary point
+(i.e. a Fixed18\_17).  In Figure \ref{fig:ddc_overview}, you'll see that these are labeled ``UFix'',
+but they are actually re-interpreted as signed in the complex multipliers in Figure \ref{fig:fir_subsystem}.
+
+In this portion of the lab, you'll need to pay attention to that binary point.  If you want your signal
+to pass through strongly, you'll have to write in values that are close to 1. (But be careful! Can you
+actually represent +1 with a Fix18\_17 number?)  Otherwise, the FIR filter will heavily attenuate
+your signal, and you might not get anything in the output BRAMs.
+
 \subsection{Coefficients for an FIR Filter} \label{fir_filter}
 
 As you should have seen in lecture videos, Finite Impulse Response (FIR) filters are
@@ -686,19 +748,23 @@ Also, now that you've had a bit of a preview of the capabilities of FPGAs, and h
 you might appreciate how their architecture makes them particularly adept at implementing
 FIR filters, which have a natural pipelined flow to them.
 
-In the first part of this lab, we will choose the coefficients for an FIR filter that is running
+In the first part of this section of the lab, we will choose the coefficients for an FIR filter that is running
 on the ROACH as part of a larger Digital Down-Converter:
 \begin{itemize}[noitemsep,nolistsep]
-\item Choose coefficients that implement a 5/8-band filter (a filter that, if you divided the band into 8 complex
-channels, would extract the 5 channels centered around 0):
-\subitem Choose the frequency-domain response you want for your filter (i.e. the function you would like to multiply
+\item Choose coefficients that implement a 5/8-band filter (a filter that, if you divided the band into 8 
+(positive/negative) frequency channels, would extract the 5 channels centered around 0):
+\begin{itemize}[noitemsep,nolistsep]
+\item Choose the frequency-domain response you want for your filter (i.e. the function you would like to multiply
 the frequency spectrum of your noise by to ``filter" it)
-\subitem Compute the real-valued, time-domain coefficients that implement that filter, keeping in mind that: 
-\subsubitem Multiplication in the frequency domain is a convolution in the time domain
-\subsubitem The Fourier transform of a real-valued signal has the property that:
+\item Compute the complex, time-domain coefficients that implement that filter, keeping in mind that: 
+\begin{itemize}[noitemsep,nolistsep]
+\item Multiplication in the frequency domain is a convolution in the time domain
+\item The Fourier transform of a real-valued signal has the property that:
 $\hat f(\omega) = \hat f^*(-\omega)$
-\subsubitem You will want to think carefully about where the 0 frequency bin is
-\subsubitem The FFT puts negative frequencies after positive frequencies in your array.  Similarly, when you take the inverse, it will put negative times after positive times.  When implementing your coefficients in an FIR, though, negative times {\it have} to operate on samples that arrive before positive times.
+\item You will want to think carefully about where the 0 frequency bin is
+\item The FFT puts negative frequencies after positive frequencies in your array.  Similarly, when you take the inverse, it will put negative times after positive times.  When implementing your coefficients in an FIR, though, negative times {\it have} to operate on samples that arrive before positive times.
+\end{itemize}
+\end{itemize}
 \item In what order are you going to write these coefficient into the software registers of your FIR filter?
 \item Plot the predicted filter response for your coefficients at a frequency resolution much finer than an 8-channel
 DFT produces.  The best way to do this will be to add more time-domain samples to your coefficients.  We don't want to introduce any new signal, though, so just add zeros to pad your coefficients out to 64 samples, and then transform the result back into the time domain.  
@@ -710,7 +776,7 @@ DFT produces.  The best way to do this will be to add more time-domain samples t
 Produce a table that indicates the (floating point) coefficients you intend to
 use.  Next, we'll need to convert these coefficients to fixed-point numbers
 that we can write to the FPGA.  Assuming that software registers will be
-interpreted on the FPGA as 32-bit signed integers with 31 bits after the binary
+interpreted on the FPGA as 18-bit signed integers with 17 bits after the binary
 point, what binary values will you use to represent these coefficients?
 
 Also, plot the desired (ideal) bandpass of your filter, along with the actual
@@ -721,27 +787,27 @@ this filter?
 \subsection{Putting it all together for a Digital Down-Converter} \label{ddc}
 
 Now you are going to use your coefficients to program the coefficients of an FIR filter running on the
-FPGA which has been chained onto the end of the digital mixer from the previous week.  You can now control
+FPGA which has been chained onto the end of the digital mixer from the previous week (Fig. \ref{fig:ddc_overview}).  
+You can control
 the LO and the shape of a filter that follows to implement a Digital Down-Converter (DDC) that mixes and filters
 an input signal according to your every whim.
 
-What we'd like to do now is to empirically characterize the shape of the filter you have implemented.  One way to
-do this is to input sine waves of a fixed amplitude and different periods and use the amplitude of the recorded
-waveform to determine the filter response at that frequency.  However, a faster way to do this is to input a noise
-source (which has noise at a range of frequencies), record the output noise, and use the output amplitude of the noise
-at each frequency to determine how much the input signal was attenuated at that frequency.
+What we'd like to do now is to empirically characterize the shape of the filter you have implemented.  
+You can input sine waves of a fixed amplitude and different periods and use the amplitude of the recorded
+waveform to determine the filter response at that frequency.  This works fine, but another (equivalent) way
+that may be easier to automate is to change the frequency of your LO, which will change where the sum/difference
+frequencies appear within your FIR filter function.  Do whichever is easier for you.  In either case, you'll
+probably want to write a Python program that automates the process.
 
-So set up a noise source input to the DDC on Port 1 of the ADC.  Program your FIR coefficients and choose an appropriate
-LO frequency.  Trigger a capture.  On the BRAM entitled ``input\_bram'' will be the input noise, recorded immediately after
-it was digitized.  On the BRAM entitled ``ddc\_bram'' will be the filtered noise.  Use the data in
-both of these files to determine the attenuation between the input and output signal as a function of frequency.  This will
+So set up signal input to the DDC on Port 1 of the ADC.  Program your FIR coefficients and choose an appropriate
+LO frequency.  Trigger a capture.  On the BRAMs entitled ``ddc\_real\_bram'' and ``ddc\_imag\_bram''
+will be the complex output signal.  Don't forget to grab data from both BRAMs and assemble the values
+into a single complex number.  As you are familiar with from last week, there will be two different tones
+in the output data.  Each characterize the FIR filter at a different frequency.  You may want to use
+Fourier filtering to isolate each one independently for characterizing your FIR filter.
+
+Now determine the attenuation between the input and output signal as a function of frequency.  This will
 give you, empirically, the shape of your FIR filter (and its placement in the band as a result of your LO).
-
-To reduce the noise in your estimate of the filter shape, it helps to average over time.  There are a lot of data-points recorded
-in the BRAM.  You don't need to do an FFT over all of them---that's more frequency resolution than you need.  Instead, compute
-the power spectrum using the first $N$ points, and average that spectrum with the power spectra you meaasure on each of the next
-$N$-point blocks of samples, until you run out of samples.  The averaged power spectrum you compute will not have as much
-frequency resolution, but it will have a lot less noise in each measurement.
 
 \subsubsection{For Your Lab Report}
 
@@ -749,8 +815,12 @@ Compare your empirically determined filter shape with the (non-ideal) filter sha
 Are they the same?  If not, you should figure out why not.  This is a digital system, so you can expect exactness, down to the
 level of the residual noise.
 
-Speaking of residual noise, what do you expect the noise in your estimate of the filter shape to be?  How many samples did you
-average in each frequency bin?  What was the standard deviation of samples prior to averaging?  Can you use those two bits
-of information to calculate the error in each measurement?
+Generate a plot that overlays the filter shape you were shooting for, the filter shape you computed would actually
+be generated by your 8 FIR coefficients, and your measurements of the filter shape.  Make sure this plot has
+a frequency axis that is in physical (Hz) units, and that the y-axis (the power) is consistent between all 3 versions
+of the plot.  To normalize the amplitude of your sine waves, it might help to know what the amplitude of
+an unfiltered sine wave is.  This can be easily generated by setting all of your FIR coefficients to 0, except
+for one of them, which you set to approximately 1.  Can you explain why this works, and how it can be used
+to normalize your plot?
 
 \end{document}
