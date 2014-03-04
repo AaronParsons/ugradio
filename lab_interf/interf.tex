@@ -116,10 +116,10 @@ point source).
 	For the first part of the lab we will concentrate on measuring
 source positions. Our telescopes are small, so there are only a few
 sources that are powerful enough for us. The strongest continuum sources
-are listed in the table below.  You'll need to precess the coordinates
-to the current equinox. If you don't, the incorrect r.a.'s will affect
-your fits. To do the precession, use the GSFC IDL procedure {\tt
-precess}.
+are listed in the table below.  
+You'll need to precess the coordinates
+to the current equinox (see \S\ref{sec:point_srcs}). If you don't, the incorrect RA's will affect
+your fits. 
 
 Three of these sources are double (they are marked with the footnote
 $a$). The two componnts are an HII region (a hot young star ionizes gas
@@ -154,90 +154,124 @@ MOON                &   varies       &   varies \cr
 }}$$
 \noindent------------(a) This source has multicomponent angular structure
 
-\subsection{Useful IDL Procedures for TIME, LST, SUN, and MOON}
+\subsection{Time and Space}
 
-\subsubsection{CIVIL TIME and LST Procedures}
-These routines are based on GSFC {\tt ct2lst.pro}. You need to know your
-latitude and longitude to calculate LST. These are provided in your
-~/.station file, which many of the procedures below use. 
+Time is complicated, and people have made matters worse.  If you want to
+make accurate astronomical observations, you need to both know where you
+are on the Earth and what time it is.  That way, you know which direction you
+are facing.  For our purposes, latitude and longitude do a decent job of encoding where on Earth
+you are (although if you ever try to accurately survey something, you'll discover
+lat/long aren't as easy as they look either --- the Earth isn't perfectly spherical).
+Time, though, is a different story.  We tune our clocks to different times depending on
+which time zone (and what time of year!) we are in.  Time zones are political constructs,
+and are of no use to us.  We also have a nasty habit of counting time in solar days.
+
+To help simplify matters, decent time systems do away with time zones and synchronize
+to the solar day at 0$^\circ$ longitude, which happens to have been defined to run
+through the British Royal Observatory.  Time and astronomers go way back, you see.
+Such systems are said to be based on Greenwich Mean Time (GMT).  The next thing is to
+count seconds.  You might think to count days instead, but days are complicated.
+Since the Earth is moving around the Sun while it is spinning, the Earth must actually
+rotate a little more than $2\pi$ radians in order to bring the Sun around to the same
+position each day.  So instead of spinning $2\pi$ radians every 24 hours (86400 s) as
+you might think, it actually takes 86164.0908 s.  That's called a {\it sidereal day},
+and you'll notice it's awfully close to $364/365$ of a solar day.
+
+For every day of the year except one, sidereal days and solar days are out of sync.
+On Jan 1., they overlap.  So if you are going to count time, you really ought
+to count from Jan. 1.  But what time on Jan. 1 (and what year) should we count from?
+If you are an astronomer, you count in (solar) days from noon, Jan. 1, 4713 BC.  You can thank
+Ptolemy and Joseph Scaliger for that one.  If you are a computer, you count seconds from
+midnight at the start of Jan. 1, 1970.  This is called ``Unix Time'', and is pretty close
+to Coordinated Universal Time (UTC), which is derived from atomic clocks.  Just to keep us
+on our toes, there have been
+a few revisions to UTC, with a several leap seconds added in here and there.  Couple that
+with the fact that the rotation of the Earth is slowly slowing down, and you see how time
+can get mind-bendingly complicated.
+
+But now it's time to simplify.  Using Network Timing Protocol (NTP) and/or the Global
+Positioning System (GPS), computers and cell phones
+routinely synchronize their clocks to atomic standards with millisecond precision.  (NTP and
+GPS, by the way, are {\it not} simple).  We all
+have UTC sitting at our fingertips these days, and that makes it relatively easy to do the rest.
+Here are the steps:
+\begin{itemize}
+\item Use UTC to figure out what sidereal time it is in England (longitude 0$^\circ$) in hours, minutes,
+seconds.  Because right
+ascension (RA) is measured in units of time, this tells you what part of the sky is overhead there.
+\item Use your longitude to figure out what time offset you should add to get your {\it local sideral time} (LST).
+This tells you what part of the sky is overhead here.
+\item Subtract your LST from the RA of your source to get the hour angle (HA) it appears at.
+\item Use your latitude, and the HA and declination of your source to figure out where to point.
+\end{itemize}
+
+Oh, and UCB is at latitude 37.8732N, longitude -122.2573 (in degrees).
+
+\subsubsection{PyEphem: a Useful Module}
+
+In this class, we'll use a helpful module called PyEphem to help us calculate ephemeris (positioning).
 \begin{verbatim}
-the .station file contains: nlat=37.8732 ; elong=-122.2573
-	(these are for Leuschner or Campbell in Berkeley, CA)
-
-ct = SYSTIME() gives current local civil time as a string
-
-ct_sec_since = SYSTIME(/sec) gives seconds elapsed since 1 January 1970 UTC
-
-cd_julian = SYSTIME(/julian, /utc) gives current julian day (which
-	contains the current time, too--it's not just an integer
-	number. the /utc is required for it to give julian date relative
-	to greenwich, which is the only one that means anything.
-
-LST -- prints LST right now on the screen
-
-lstnow = LSTNOW() -- returns the current LST
-
-lst_julian = ILST( julian=juldate) -- returns the LST for the specified 
-	Julian day
-
-
-\end{verbatim}
-
-\subsubsection{Julian Day Procedures}
-Remember: the Julian day begins at noon in Greenwich. UTC is the time in
-Greenwich, which is 8 hours ahead of (larger than) PST. The Julian day
-is a double-precision float: it contains the time as the fractional part
-of the day. It's not just an integer day number.
-
-\begin{verbatim}
-
-julian_now = SYSTIME(/julian, /utc) gives current Julian day. The /utc
-	is required for it to give julian date relative to greenwich,
-	which is the only one that means anything.
-
-local_now = SYSTIME() gives current local ltime as a string
-
-local_now_sec = SYSTIME(/sec) gives seconds elapsed since 1 January 1970
-
-CALDAT, Julian, Month [, Day [, Year [, Hour [, Minute [, Second]]]]]
-	Given the Julian day (which is defined relative to Greenwich),
-	this returns the civil time at Greenwich.
-
-julian = JULDAY(Month, Day, Year, Hour, Minute, Second) 
-	Given the civil time at Greenwich, this returns the Julian day.
-
-modified_julian_day = MJD2JD( julian_day, /reverse)
-julian_day = MJD2JD( modified_julian_day)
+>>> import ephem, time
+>>> print ephem.now()
+2014/3/4 01:39:23   # current time in England
+>>> print float(ephem.now())
+41700.5700926       # PyEphem's internal time representation is in 
+                    # solar days since 1899/12/31 12:00.  DON'T
+                    # USE IT WITH ANYTHING ELSE!
+>>> print time.time()
+1393897394.41       # This is UTC (seconds since 1970)
+>>> print ephem.julian_date()
+2456720.57226       # Good astronomers use Julian Dates
+>>> obs = ephem.Observer()
+>>> obs.lat = ephem.degrees(37.8732)    # set your latitude
+>>> obs.long = ephem.degrees(-122.2573) # set your longitude
+>>> obs.date = ephem.now()              # set the time of your observation
+>>> print obs.sidereal_time()
+1:36:37.80          # LST!
+>>> print float(obs.sidereal_time())
+0.421627770357      # radians
 \end{verbatim}
 
 \subsubsection{Sun, Moon, and Other Procedures}
 
+Now things get exciting!
+
 \begin{verbatim}
-ISUN (see the documentation). An easier versun of sunpos.
-
-SUNPOS, jd, ra, dec, longmed, oblt, RADIAN = radian
-
-IMOON (see the documentation. An easier version of moonpos, and ***most
-	importantly*** imoon corrects for parallax!
-
-MOONPOS, jd, ra, dec, dis, geolong, geolat, RADIAN = radian
-
-EQ2AZ.PRO, EQTOAZ.PRO, HD2AA.PRO, AA2HD.PRO all convert from equatorial
-	to alt//az or vice-versa. See the documentation.
-
+>>> sun = ephem.Sun()
+>>> sun.compute(obs)  # compute the Sun's position given the time stored in obs
+>>> print sun.ra, float(sun.ra)
+22:58:49.07 6.01622781701   # Sun's right ascension as a string, and radians
+>>> print sun.dec, float(sun.dec)
+-6:31:24.0 -0.113853520397  # And declination as well
+>>> print sun.az, sun.altA
+248:48:31.0 47:23:44.3      # And in topocentric coordinates!
 \end{verbatim}
 
-
-
+There's lots more in there, so poke around a bit (there's good documentation online).
+One potential gotcha: make sure you update \verb+obs.date+ to keep advancing
+to the current time when you are observing.
 
 \subsection{The Point Sources}
+\label{sec:point_srcs}
 
 	Our goal is to measure the absolute declinations as accurately
 as possible.  Declinations can be measured on an absolute basis with
 interferometry by least-squares fitting the fringe phase to the hour
 angle; see \S\ref{declinations} and equation \ref{maineqn} below.  With our
 fringe spacing of $\sim 10'$ we might be able to measure declinations to
-an accuracy $\sim 20''$---maybe better.
+an accuracy $\sim 20''$---maybe better.  We can then compare the derived
+values to those listed above.
+Note that to compare them, you'll need to precess all coordinates
+to the current equinox. If you don't, the incorrect RA's will affect
+your fits. To do the precession, use PyEphem:
+\begin{verbatim}
+>>> src = ephem.FixedBody()
+>>> src._ra, src._dec = '0:00', '45:00'
+>>> src._epoch = ephem.J2000
+>>> src.compute(obs)
+>>> print src.ra, src.dec
+0:00:43.02 45:04:47.0   # RA,DEC are now precessed from J2000 to current
+\end{verbatim}
 
 {\it Optionally}---if you've done everything else and it was so easy
 you're bored---you can try to measure the difference in right ascension
@@ -298,18 +332,14 @@ changes in fringe properties are exactly what's necessary to map the
 sources!}; this makes the determination of accurate positions a bit
 tricky, but we'll ignore that detail for now.
 
-	You can get the Sun and Moon positions from our IDL procedures
-{\tt isun} and {\tt imoon}.  For the Moon, you should be aware that it
+	You can get the Sun and Moon positions from PyEphem.
+For the Moon, you should be aware that it
 is nearby so that you have to correct for your location on the Earth's
 surface. The parallax effect is far greater for the Moon than the
 Sun---so large that unless you correct for it, the Moon will probably
-lie outside the telescope main beam! {\tt imoon} takes care of this
-automatically unless you tell it not to\footnote{If you specify the {\tt
-geocentric} option, {\tt imoon} gives the lunar position as seen from
-the center of the Earth. You {\it don't} want to use this option!}.  A
-previous lab TA, Erik Shirokoff (now a Berkeley Physics grad student),
-worked very hard to get the moon position, including parallax, really
-right; he wrote {\tt imoon}. We think it works. We {\it hope} it works!
+lie outside the telescope main beam. Fortunately, PyEphem takes care of this
+automatically, along with crazy things like the time-of-flight of photons,
+which actually matter for observing planets!
 
 	Given these difficulties, why bother with the Sun and Moon?
 Because they are {\it bright}. We include them because they provide huge
@@ -660,7 +690,7 @@ will map the Sun and Moon, which never get very far from $\delta =
 0^\circ$, so effectively we have only a 1-d sampling of the source with
 a range of baseline lengths. 
 
-	Figure 1 illustrates this 1-d concept. It presents a generic
+	Figure \ref{interf_fig} illustrates this 1-d concept. It presents a generic
 circular  source of uniform brightness in the sky, which we call the
 MUN---a bastardization of the MOON and the SUN\footnote{In truth, it
 represents neither, because neither the Sun nor the Moon has uniform
@@ -702,7 +732,7 @@ h_s = { \int I(h)h dh \over \int I(h) dh} \ .
 \end{equation}
 
 \noindent That is, on the bottom panel of
-Figure 1, $I(h - h_s)$ is the intensity of the source (vertical
+Figure \ref{interf_fig}, $I(h - h_s)$ is the intensity of the source (vertical
 direction) and $\Delta h= h -h_s$ the horizontal coordinate---the hour
 angle $h$ relative to the hour angle of the source center $h_s$. 
 
@@ -901,6 +931,8 @@ small for VLBI!
 
 
 \end{document}
+
+% BELOW IS JUST OLD STUFF, I GUESS
 
 3C144 (Crab Nebula) & $05^h31^m30^s$ & $21^\circ 58'$
                     & $05^h34^m23^s$ & $22^\circ 00'$ & $\sim 496$ \cr
