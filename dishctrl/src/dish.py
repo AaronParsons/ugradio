@@ -77,7 +77,7 @@ class Dish:
         # NOISE_ARG=STRCOMPRESS(STRING(NOISE),/REMOVE_ALL) # potentially need to strip off whitespace in noise
         state = 1 if state else 0
         self.sock.send('\r\r10%dX\r\r1IS\r' % state)
-        sock.send(data)
+        self.sock.send(data)
         oem_reply = self.sock.recv(MAXLEN)
         print [oem_reply]
         oem_reply = oem_reply.split('*')[1]
