@@ -70,7 +70,7 @@ class Dish:
         self.sock.close()
     def set_noise(self, state):
         if self.verbose:
-            if noise: print 'Turning ON noise source...'
+            if state: print 'Turning ON noise source...'
             else: print 'Turning OFF noise source...'
         #OEM_REPLY='1234567890123456789012' # don't know what line above is for
         time.sleep(1) #WAIT,1 # is waiting necessary?
@@ -83,7 +83,7 @@ class Dish:
         oem_reply = oem_reply.split('*')[1]
         oem_reply = oem_reply[:4]
         oem_reply = int(oem_reply[-1:])
-        if noise != oem_reply: raise RuntimeError('Set noise %s failed' % state)
+        if state != oem_reply: raise RuntimeError('Set noise %s failed' % state)
     def drive_on(self):
         if self.verbose: print 'Energizing Drives'
         self.sock.send('\r\rON\r')
