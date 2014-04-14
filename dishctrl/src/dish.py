@@ -70,7 +70,7 @@ class Dish:
         self.sock.close()
     def set_noise(self, state):
         if self.verbose:
-            if state: print 'Turning ON noise source...'
+            if not state: print 'Turning ON noise source...'
             else: print 'Turning OFF noise source...'
         #OEM_REPLY='1234567890123456789012' # don't know what line above is for
         time.sleep(1) #WAIT,1 # is waiting necessary?
