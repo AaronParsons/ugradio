@@ -2,7 +2,7 @@ import socket, time, math
 
 IP_ADDR = '128.32.197.194' # IP Address of the NETEON serial to ethernet adapter
 PORT = 4660 # PORT on which the NETEON serial adapter is awaiting a connection
-MAXLEN = 8192
+MAXLEN = 4096
 MAX_HM_TRIES = 120
 MAX_SET_TRIES = 3
 MAX_MV_TRIES = 120
@@ -65,7 +65,16 @@ class Dish:
         self.ip_port = (ip, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect(self.ip_port)
+        self.sock.settimeout(1)
         self.verbose = verbose
+    def rx(self):
+        rv = []
+        try:
+            while True:
+                rv.append(self.sock.recv(MAXLEN))
+                if len(rv[-1]) == 0: break
+        except(socket.timeout): pass
+        return ''.join(rv)
     def __del__(self):
         self.sock.close()
     def set_noise(self, state):
@@ -76,9 +85,8 @@ class Dish:
         time.sleep(1) #WAIT,1 # is waiting necessary?
         # NOISE_ARG=STRCOMPRESS(STRING(NOISE),/REMOVE_ALL) # potentially need to strip off whitespace in noise
         state = 1 if state else 0
-        self.sock.send('\r\r10%dX\r\r1IS\r' % state)
-        oem_reply = self.sock.recv(MAXLEN)
-        print [oem_reply]
+        self.sock.send('\r\r1O%dX\r\r1IS\r' % state)
+        oem_reply = self.rx()
         oem_reply = oem_reply.split('*')[1]
         oem_reply = oem_reply[:4]
         oem_reply = int(oem_reply[-1:])
@@ -86,31 +94,31 @@ class Dish:
     def drive_on(self):
         if self.verbose: print 'Energizing Drives'
         self.sock.send('\r\rON\r')
-        oem_reply = self.sock.recv(MAXLEN)
+        oem_reply = self.rx()
         time.sleep(.5) #WAIT,.5
     def drive_off(self):
         if self.verbose: print 'De-Energizing Drives'
         time.sleep(1) #WAIT,1
         self.sock.send('\r\rOFF\r')
-        oem_reply = self.sock.recv(MAXLEN)
+        oem_reply = self.rx()
     def go_home(self):
         if self.verbose: print 'Searching for Home Position...'
         time.sleep(1) #WAIT,1
         self.sock.send('\r\rGH-45\r')
-        oem_reply = self.sock.recv(MAXLEN)
+        oem_reply = self.rx()
     def set_dist(self, axis, distance):
         if self.verbose: print 'Setting Drive', axis, 'distance to', distance
         time.sleep(1) #WAIT,1
         self.sock.send('\r\r%sD%s\r\r%sD\r' % (axis, distance, axis))
-        oem_reply = self.sock.recv(MAXLEN).split('*D')[1]
+        oem_reply = self.rx().split('*D')[1]
         oem_reply = oem_reply.split('\r')[0]
         if oem_reply != distance:
             raise RuntimeError('Set Drive %s distance to %s FAILED' % (axis, distance))
-    def control_stat(self, axis):
+    def ctrl_stat(self, axis):
         if self.verbose: print 'Controller status requested from Drive', axis
         time.sleep(1) #WAIT,1
         self.sock.send('\r\r%sR\r' % axis)
-        oem_reply = self.sock.recv(MAXLEN).split('*')[1]
+        oem_reply = self.rx().split('*')[1]
         oem_reply = oem_reply.split('\r')[0]
         if self.verbose:
             print 'Drive', axis, 'controller reply is', oem_reply,'->',CTRL_STATUS[oem_reply]
@@ -119,7 +127,7 @@ class Dish:
         if self.verbose: print 'Absolute encoder position requested from Drive', axis
         time.sleep(1) #WAIT,1
         self.sock.send('\r\r%sPX\r' % axis)
-        oem_reply = int(self.sock.recv(MAXLEN).split('*')[1])
+        oem_reply = int(self.rx().split('*')[1])
         if self.verbose: 'Absolute encoder position received from Drive %s is %d' % (axis,oem_reply)
         return oem_reply
     def set_go(self):
