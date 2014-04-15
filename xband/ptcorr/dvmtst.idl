@@ -1,0 +1,11 @@
+nr=0l
+while 1 do begin 
+nr=nr+1l
+volts=dvm()
+timestring= systime()
+print, nr, volts, '  ',timestring
+save, volts, timestring, file='dvmtst.sav'
+endwhile
+
+end
+

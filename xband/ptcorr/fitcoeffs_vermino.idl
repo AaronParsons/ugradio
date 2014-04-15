@@ -1,0 +1,54 @@
+;DEFINE A NICE PLOTTING WINDOW...
+;window,2,xs=300,ys=225
+
+retall
+
+;DEFINE DIRNAME AS THE DIRECTORY IN WHICH THE INPUT FILES EXIST. 
+;dirname= '/home/heiles/dzd2/courses/ay121/data/tstdata/'
+dirname= '/home/goldston/interfer_point/'
+
+;DEFINE THE LIST OF FILES THAT YOU WANT TO INCLUDE IN THE FIT.  YOU
+;EXCLUDE BAD DATA BY NOT INCLUDING THE FILE... 
+file= $
+['Sat_Mar_15_12:06:42_2003_scan.sav', $
+'Sat_Mar_15_12:13:28_2003_scan.sav', $
+'Sat_Mar_15_12:19:42_2003_scan.sav', $
+'Sat_Mar_15_12:33:56_2003_scan.sav']
+
+nrfiles= n_elements( file)
+outfile= file
+
+;DEFINE THE OUTPUT FILE NAMES: ONE OUTPUT FOR EACH INPUT.  WE ONLY USE
+;	THE FIRST, SO THIS IS OVERKILL. 
+FOR NR= 0, NRFILES-1 DO BEGIN &$
+loc= strpos( file[nr], 'scan') &$
+outfile[ nr]= strmid( file[nr],0,loc+4) + 'fit' + strmid( file[nr], loc+4) &$
+ENDFOR
+
+file=outfile
+
+;DEFINE THE OUTPUT FILE NAME...SAME AS DATE ON INPUTFILENAME PLUS THE
+;MONIKER "COEFFS"
+loc= strpos( file[ 0], 'scan') &$
+coeffsfile= strmid( file[ 0], 0, loc) + 'coeffs' + strmid( file[ 0], loc+7)
+
+;DEFINE THE STRUCTURE CONTAINING THE DERIVED COEFFS; FOLLOW THE SAME
+;ORGANIZATIONAL STRUCTURE AS THE ORIGINAL DATA...
+;THIS IS AN ARRAY OF LENGTH 2: ONE FOR EACH DISH...
+COEFFS = replicate ( { $
+	azsigma:    	0.0       , $ ; azsigma of fit
+	altsigma:    	0.0       , $ ; altsigma of fit
+	azcoeffs: 	fltarr( 4), $ ; fitted coeffs for az
+	altcoeffs:	fltarr( 4), $ ; sig fitted coeffs for alt
+	sigazcoeffs: 	fltarr( 4), $ ; sig fitted coeffs for az
+	sigaltcoeffs:	fltarr( 4) $ ; sig fitted coeffs for alt
+}, 2)
+
+;DEFINE THE ARRAYS OF INPUT STRUCTURES...
+head_arr= replicate( head, nrfiles)
+dat_arr= replicate( dat[0], 2, nrfiles)
+fit_arr= replicate( fit[0], 2, nrfiles)
+
+;GENERATE THE WINDOWS, WHICH DISPLAY THE RESULTS OF THE FIT...
+@fitcoeffs_windowsetup.idl
+

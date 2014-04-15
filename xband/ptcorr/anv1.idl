@@ -1,0 +1,12 @@
+restore, dirname+ file[nr], /ver
+
+plotscan, dat
+
+stop
+
+delalt= dat.coralt - srcalt
+delaz= coraz - srcaz
+wset,0
+plot, delalt, pow
+wset,1
+plot, delaz, pow

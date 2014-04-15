@@ -1,0 +1,44 @@
+pro carlkill, pos, pwr, indxyes
+common plotcolors
+
+indx= indgen( n_elements(pos))
+indxyes= indx
+plot, pos[ indx[ indxyes]], pwr[ indx[ indxyes]], psym=-4
+
+WHILE 1 DO BEGIN
+
+;oplot, pos[indxyes], pwr[indxyes], psym=-4, color=red
+
+print, 'to kill a point, move the cursor to it and left click'
+print, 'otherwise, right cliek within the plot window'
+
+cursor, posval, pwrval
+if (!mouse.button ne 1) then break
+
+pwrscale= max( pwr[ indx[ indxyes]])-min(pwr[ indx[ indxyes]])
+posscale= max( pos[ indx[ indxyes]])-min(pos[ indx[ indxyes]])
+minsum = min( (abs((posval-pos)/posscale) + $
+	abs((pwrval-pwr)/pwrscale))[ indx[ indxyes]]  , indxmin)
+
+print, 'tossed ', indx[ indxyes[ indxmin]]
+plots, pos[ indx[ indxyes[ indxmin]]], pwr[ indx[ indxyes[ indxmin]]], $
+	color=red , psym=2
+
+stop
+print, indx[ indxyes]
+indxyes = where( indx[ indxyes] ne indx[ [indxyes[ indxmin]]])
+print, indx[ indxyes]
+
+;oplot, pos[ indx[ indxyes]], pwr[ indx[ indxyes]], psym=-4, color=red
+
+ENDWHILE
+;plot, pos[indxyes], pwr[indxyes], psym=-2, color=red
+
+
+
+;minpos= min( abs(posval-pos), indxpos)
+;
+;minpwr= min( abs(posval-pos), indxpos)
+return
+
+end

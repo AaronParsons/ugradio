@@ -1,0 +1,91 @@
+;.run fitcoeffs
+
+;+ This runs thru a bunch of files containing the gauss fits for az and
+;alt. it fits to the expected alt, az behavior of the central gaussian
+;and returns the fitted coefficients in the structure COEFFS. finally, it
+;writes these fitted coeffs out into a save file.
+
+;the totality of all input files creates a single output file. 
+;the form of the inputfilename is...
+;	Sat_Mar_15_12:13:28_2003_scanfit.sav
+;
+;the form of the outpputfilename is
+;	Sat_Mar_15_12:13:28_2003_coeffsfit.sav
+;
+;------------ TO RUN EVERYTHING -------------------------:
+;
+;enter idl with...
+;
+;	source /home/heiles/dzd2/courses/ay121/idl/start_point
+;
+;@fitcoeffs_vermino.idl
+;.run fitcoeffs.idlprc
+;
+;-------------------------------------------------------
+;-
+
+dishid= [ 'EAST', 'WEST']
+
+;LOOP THRU FILES...
+FOR NRFILE= 0,nrfiles-1 DO BEGIN
+restore, dirname+ file[ nrfile] ;;;;;;, /ver
+head_arr[ nrfile]= head
+dat_arr[ *, nrfile]= dat
+fit_arr[ *, nrfile]= fit
+ENDFOR
+
+;LOOP THRU THE DISHES...
+FOR NRDISH= 0,1 DO BEGIN
+;print, 'dish ', nrdish, ' ', dishid[ nrdish], ' ALTITUDE FIT'
+
+fitazcoeffs, nrdish, fit_arr, azcoeffs, sigazcoeffs, azsigma, cov, t, yfit
+coeffs.azcoeffs[0:1]= azcoeffs
+coeffs.sigazcoeffs[0:1]= sigazcoeffs
+coeffs.azsigma= azsigma
+
+wset,0
+plot, fit_arr[nrdish,*].dishalt[ 0], t, psym=-4, $
+        /ysty, xtit='DISHALT', ytit='AZ OFFSET'
+oplot, fit_arr[nrdish,*].dishalt[ 0], yfit, psym=-4, color=red
+
+wset,1
+plot, fit_arr[nrdish,*].dishaz[ 0], t, psym=-4, $
+        /ysty, xtit='DISHAZ', ytit='AZ OFFSET'
+oplot, fit_arr[nrdish,*].dishalt[ 0], yfit, psym=-4, color=red
+
+
+fitaltcoeffs, nrdish, fit_arr, altcoeffs, sigaltcoeffs, altsigma, cov, t, yfit
+coeffs.azcoeffs[0:3]= altcoeffs
+coeffs.sigazcoeffs[0:3]= sigaltcoeffs
+coeffs.altsigma= altsigma
+
+wset,2
+plot, fit_arr[nrdish,*].dishalt[ 1], t, /ysty, psym= -4, $
+        xtit='DISHALT', ytit='ALT OFFSET'
+oplot, fit_arr[nrdish,*].dishalt[ 1], yfit, psym= -4, color=red
+
+wset,3
+plot, fit_arr[nrdish,*].dishaz[ 1], t, /ysty, psym= -4, $
+        xtit='DISHAZ', ytit='ALT OFFSET'
+oplot, fit_arr[nrdish,*].dishaz[ 1], yfit, psym= -4, color=red
+
+wset,4
+plot, fit_arr[nrdish,*].dishaz[ 1], fit_arr[nrdish,*].dishalt[ 1], /ysty, psym= -4, $
+        xtit='DISHAZ', ytit='DISHALT'
+
+wset,5
+plot, fit_arr[nrdish,*].dishaz[ 1], /ysty, psym= -4, $
+        ytit='DISHAZ'
+
+wset,6
+plot, fit_arr[nrdish,*].dishalt[ 1], /ysty, psym= -4, $
+        ytit='DISHALT'
+
+print, 'hit any key to contineu...
+print, get_kbrd(1)
+
+ENDFOR
+
+save, head, dat, fit, coeffs, file=coeffsfile
+
+end

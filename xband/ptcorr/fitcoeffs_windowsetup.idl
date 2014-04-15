@@ -1,0 +1,3 @@
+for nr=2,6 do window,nr,xs=300,ys=225
+
+

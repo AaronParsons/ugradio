@@ -1,0 +1,10 @@
+this subdir contains stuff for the interferometer (Xband) observing.
+
+the subdir point2 contains pointing software.
+
+the subdir ptcorr contains software to determine pointing corrections.
+
+observer.pro is obsolete.
+
+relay.pro is to drive the relays on the delay lines.
+

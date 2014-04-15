@@ -1,0 +1,107 @@
+this subdir contains software for determining and analyzing telescope
+pointing data. it contains some obsolete routines and should be cleaned
+out.
+
+FOR ALL XBAND INTERFEROMETER OBSERVATIONS, ENTER IDL WITH: 
+	source /home/heiles/idlpoint
+which invokes
+	/home/heiles/dzd2/courses/ay121/idl/start_point.idl
+
+---------
+
+0. TO PERFORM REPETITIVE SCANS OVER THE SUN OR MOON:
+
+	use the file 
+
+	/home/heiles/ay121/idl/xband/ptcorr/scantest.idl
+
+as the skeleton. this is an IDL command file, invoked with
+
+	@scantest.idl
+
+
+1. TO DERIVE GAUSSIAN COEFFICINTS FROM THE SCANS. First, get into the
+subdir /home/heiles/ay121/idl/xband/ptcorr and run everything from there.
+
+	edit the file 
+
+	/home/heiles/ay121/idl/xband/ptcorr/fitscan_vermino.idl
+
+putting in the list of save files and the subdirectory you want to
+treat.  see the notes in fitscan_vermino.idl .  This is an IDL command
+file, so invoke it with 
+
+	@fitscan_vermino.idl
+
+Having done this, 
+
+	.run fitscan.idlprc
+
+	This runs thru the specified scan save files and fits az and alt
+scans for both dishes. it derives the gauss params and writes them into
+a structure called FIT. It forces you to use the cursor to eliminate bad
+points. finally, it writes them out into a file.
+
+each input file has an output file. the form of the inputfilename is...
+	Sat_Mar_15_12:13:28_2003_scan.sav
+and the outputfilename is...
+	Sat_Mar_15_12:13:28_2003_scanfit.sav
+
+
+2. TO DERIVE POINTING COEFFICIENTS FROM THE GAUSSSFITS.
+
+	edit the file 
+
+	/home/heiles/ay121/idl/xband/ptcorr/fitcoeffs_vermino.idl
+
+putting in the list of save files and the subdirectory you want to
+treat.  This is how you discard data (by not including its file in the
+list). This is an IDL command file, invoke it with 
+
+	@fitcoeffs_vermino.idl
+
+After doing this, the actual process of deriving the pointing
+coefficients is done with...
+
+	.run fitcoeffs.idlprc
+
+	This runs thru the specified gaussfit save files and fits az and
+alt pointing constants for both dishes.  it puts these constants into a
+structure called COEFFS.  finally, it writes this structure (and the
+original data) out into a save file. 
+
+each set of input files has a single output file. 
+the form of the inputfilenames is...
+	Sat_Mar_15_12:13:28_2003_scanfit.sav
+and the outputfilename is...
+	Sat_Mar__15_12:13:28_2003_coeffs.sav
+
+the time on the output file is equal to the one for the beginning scan
+file. 
+
+3.  DERIVING ACTUAL POINTING CONSTANTS, and inserting them into the
+system for actual use... 
+
+	Determining which constants to actually use is somewhat of an
+art form.  should do separately for sun, moon, and reverse.  see how
+everything compares.  See if there is any significant variation of
+pointing constants with az and za.  if the reverse numbers are
+consistent with the forward ones, the fits can be combined. 
+
+	In spring 2003 we found that the only significant terms are the
+'dial constants', meaning that the variation of pointing corrections
+with az and za are not worth including. 
+
+	The values of the pointing corrections need to be inserted into
+the file 
+
+	/home/ay120b/idl/point.config2
+
+look at the documentation for that file, which is at the beginning,
+carefully--you don't want to screw up formatwise.
+
+	The corrections are implemented by 
+
+/home/heiles/ay121/idl/xband/point2/correct.pro
+
+

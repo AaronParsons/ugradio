@@ -1,0 +1,75 @@
+;+ This runs thru a bunch of files and fits az and alt scans for 
+;both dishes. it derives the gauss params and writes them into
+;a structure called FIT. finally, it writes them out into a file.
+;
+;In the process of deriving gauss parameters, it forces you to edit the
+;data by selecting bad points with the cursor. 
+;
+;
+;each input file has an output file. the form of the inputfilename is...
+;	Sat_Mar_15_12:13:28_2003_scan.sav
+;and the outputfilename is...
+;	Sat_Mar_15_12:13:28_2003_scanfit.sav
+;
+;the files are defined in fitscan_vermino.idl
+;
+;------------ TO RUN EVERYTHING -------------------------:
+;
+;enter idl with...
+;
+;	source /home/heiles/dzd2/courses/ay121/idl/start_point
+;
+;@fitscan_vermino.idl
+;.run fitscan.idlprc
+;
+;-------------------------------------------------------
+;-
+
+dishid= [ 'EAST', 'WEST']
+
+;LOOP THRU FILES...
+FOR NRFILE= 0,nrfiles-1 DO BEGIN
+restore, dirname+ file[ nrfile], /ver
+print, nrfile, file[ nrfile]
+plotscan, dat
+
+wset,2
+
+;LOOP THRU THE DISHES...
+FOR NRDISH= 0,1 DO BEGIN
+print, 'dish ', nrdish, ' ', dishid[ nrdish], ' ALTITUDE FIT'
+
+pos=  dat[nrdish].unalt[*,0]-dat[nrdish].srcalt[*,0]
+pwr= dat[nrdish].pow[*,0]
+fitscan, pos, pwr, sigma, zro1, hgt1, cen1, wid1, $
+	sigzro1, sighgt1, sigcen1, sigwid1, $
+	problem, cov, indxy
+dishalt= mean( dat[nrdish].unalt[indxy,0])
+dishaz= mean( dat[nrdish].unaz[indxy,0])
+zron=0
+@fillfit.idl
+
+;wait, 2
+;temp = get_kbrd(1)
+
+print, 'dish ', nrdish, ' ', dishid[ nrdish], ' ALTITUDE FIT'
+pos=  dat[nrdish].unaz[*,1]-dat[nrdish].srcaz[*,1]
+pwr= dat[nrdish].pow[*,1]
+fitscan, pos, pwr, sigma, zro1, hgt1, cen1, wid1, $
+	sigzro1, sighgt1, sigcen1, sigwid1, $
+	problem, cov, indxy
+dishalt= mean( dat[nrdish].unalt[indxy,1])
+dishaz= mean( dat[nrdish].unaz[indxy,1])
+zron=1
+@fillfit.idl
+
+;wait, 2
+
+save, head, dat, fit, file=outputdir+ outfile[nrfile]
+
+ENDFOR
+ENDFOR
+
+return
+
+end

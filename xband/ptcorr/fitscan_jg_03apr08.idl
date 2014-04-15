@@ -1,0 +1,151 @@
+window,2,xs=300,ys=225
+
+.run /home/heiles/idl/gen/gfit.pro
+
+;retall
+
+;.run /home/heiles/ay121/idl/gen/gfit.pro
+
+
+;define dirname as the directory in which the files exist. 
+
+outputdir= '~heiles/'
+
+dirname= '/home/goldston/interfer_point/data/'
+
+;to change it's useful to do \ls -1rt
+
+file=$
+['Tue_Apr__8_16:33:18_2003_scan.sav',$
+'Wed_Apr__9_08:06:28_2003_scan.sav',$
+'Wed_Apr__9_08:08:12_2003_scan.sav',$
+'Wed_Apr__9_08:09:56_2003_scan.sav',$
+'Wed_Apr__9_08:13:24_2003_scan.sav',$
+'Wed_Apr__9_08:15:07_2003_scan.sav',$
+'Wed_Apr__9_08:23:47_2003_scan.sav',$
+'Wed_Apr__9_08:25:31_2003_scan.sav',$
+'Wed_Apr__9_08:27:15_2003_scan.sav',$
+'Wed_Apr__9_08:28:59_2003_scan.sav',$
+'Wed_Apr__9_08:30:43_2003_scan.sav',$
+'Wed_Apr__9_08:32:28_2003_scan.sav',$
+'Wed_Apr__9_08:34:12_2003_scan.sav',$
+'Wed_Apr__9_08:35:56_2003_scan.sav',$
+'Wed_Apr__9_08:37:40_2003_scan.sav',$
+'Wed_Apr__9_08:39:24_2003_scan.sav',$
+'Wed_Apr__9_08:41:09_2003_scan.sav',$
+'Wed_Apr__9_08:42:52_2003_scan.sav',$
+'Wed_Apr__9_08:44:36_2003_scan.sav',$
+'Wed_Apr__9_08:46:20_2003_scan.sav',$
+'Wed_Apr__9_08:48:04_2003_scan.sav',$
+'Wed_Apr__9_08:49:48_2003_scan.sav',$
+'Wed_Apr__9_08:51:32_2003_scan.sav',$
+'Wed_Apr__9_08:53:16_2003_scan.sav',$
+'Wed_Apr__9_08:55:00_2003_scan.sav',$
+'Wed_Apr__9_08:56:44_2003_scan.sav',$
+'Wed_Apr__9_08:58:28_2003_scan.sav',$
+'Wed_Apr__9_09:00:13_2003_scan.sav',$
+'Wed_Apr__9_09:01:57_2003_scan.sav',$
+'Wed_Apr__9_09:03:41_2003_scan.sav',$
+'Wed_Apr__9_09:05:25_2003_scan.sav',$
+'Wed_Apr__9_09:07:10_2003_scan.sav',$
+'Wed_Apr__9_09:08:54_2003_scan.sav',$
+'Wed_Apr__9_09:10:38_2003_scan.sav',$
+'Wed_Apr__9_09:12:21_2003_scan.sav',$
+'Wed_Apr__9_09:14:06_2003_scan.sav',$
+'Wed_Apr__9_09:15:50_2003_scan.sav',$
+'Wed_Apr__9_09:17:35_2003_scan.sav',$
+'Wed_Apr__9_09:19:20_2003_scan.sav',$
+'Wed_Apr__9_09:21:05_2003_scan.sav',$
+'Wed_Apr__9_09:22:49_2003_scan.sav',$
+'Wed_Apr__9_09:24:33_2003_scan.sav',$
+'Wed_Apr__9_09:26:19_2003_scan.sav',$
+'Wed_Apr__9_09:28:07_2003_scan.sav',$
+'Wed_Apr__9_09:29:51_2003_scan.sav',$
+'Wed_Apr__9_09:31:35_2003_scan.sav',$
+'Wed_Apr__9_09:33:21_2003_scan.sav',$
+'Wed_Apr__9_09:35:06_2003_scan.sav',$
+'Wed_Apr__9_09:36:51_2003_scan.sav',$
+'Wed_Apr__9_09:38:35_2003_scan.sav',$
+'Wed_Apr__9_09:40:20_2003_scan.sav',$
+'Wed_Apr__9_09:42:06_2003_scan.sav',$
+'Wed_Apr__9_09:43:50_2003_scan.sav',$
+'Wed_Apr__9_09:45:35_2003_scan.sav',$
+'Wed_Apr__9_09:47:19_2003_scan.sav',$
+'Wed_Apr__9_09:49:04_2003_scan.sav',$
+'Wed_Apr__9_09:50:51_2003_scan.sav',$
+'Wed_Apr__9_09:52:35_2003_scan.sav',$
+'Wed_Apr__9_09:54:19_2003_scan.sav',$
+'Wed_Apr__9_09:56:05_2003_scan.sav',$
+'Wed_Apr__9_09:57:50_2003_scan.sav',$
+'Wed_Apr__9_09:59:35_2003_scan.sav',$
+'Wed_Apr__9_10:01:23_2003_scan.sav',$
+'Wed_Apr__9_10:03:07_2003_scan.sav',$
+'Wed_Apr__9_10:04:54_2003_scan.sav',$
+'Wed_Apr__9_10:06:41_2003_scan.sav',$
+'Wed_Apr__9_10:08:28_2003_scan.sav',$
+'Wed_Apr__9_10:10:14_2003_scan.sav',$
+'Wed_Apr__9_10:12:00_2003_scan.sav',$
+'Wed_Apr__9_10:13:46_2003_scan.sav',$
+'Wed_Apr__9_10:15:33_2003_scan.sav',$
+'Wed_Apr__9_10:17:20_2003_scan.sav',$
+'Wed_Apr__9_10:19:09_2003_scan.sav',$
+'Wed_Apr__9_10:20:56_2003_scan.sav',$
+'Wed_Apr__9_10:22:43_2003_scan.sav',$
+'Wed_Apr__9_10:24:29_2003_scan.sav',$
+'Wed_Apr__9_10:26:14_2003_scan.sav',$
+'Wed_Apr__9_10:27:59_2003_scan.sav',$
+'Wed_Apr__9_10:29:46_2003_scan.sav',$
+'Wed_Apr__9_10:31:32_2003_scan.sav',$
+'Wed_Apr__9_10:33:19_2003_scan.sav',$
+'Wed_Apr__9_10:35:03_2003_scan.sav',$
+'Wed_Apr__9_10:36:49_2003_scan.sav',$
+'Wed_Apr__9_10:38:36_2003_scan.sav',$
+'Wed_Apr__9_10:40:21_2003_scan.sav',$
+'Wed_Apr__9_10:42:08_2003_scan.sav',$
+'Wed_Apr__9_10:43:55_2003_scan.sav',$
+'Wed_Apr__9_10:45:43_2003_scan.sav',$
+'Wed_Apr__9_10:47:30_2003_scan.sav',$
+'Wed_Apr__9_10:49:16_2003_scan.sav',$
+'Wed_Apr__9_10:51:01_2003_scan.sav',$
+'Wed_Apr__9_10:52:48_2003_scan.sav',$
+'Wed_Apr__9_10:54:36_2003_scan.sav',$
+'Wed_Apr__9_10:56:24_2003_scan.sav',$
+'Wed_Apr__9_10:58:12_2003_scan.sav',$
+'Wed_Apr__9_10:59:57_2003_scan.sav']
+
+
+
+				  
+nrfiles= n_elements( file)	  
+outfile= file
+
+FOR NR= 0, NRFILES-1 DO BEGIN &$
+loc= strpos( file[ nr], 'scan') &$
+outfile[ nr]= strmid( file[nr],0,loc+4) + 'fit' + strmid( file[nr], loc+4) &$
+ENDFOR
+
+;DEFINE THE STRUCTURE CONTAINING THE FIT PARAMETERS; FOLLOW THE SAME
+;ORGANIZATIONAL STRUCTURE AS THE ORIGINAL DATA...
+fit = replicate ( { $
+	sigma:   fltarr( 2), $ ;  sigma of fit
+	problem: intarr( 2), $ ;  sigma of fit
+	dishaz:  fltarr( 2), $ ;  mean dish az for fitted points
+	dishalt: fltarr( 2), $ ;  mean dish alt for fitted points
+	zro1:    fltarr( 2), $ ;  off-source sys pwr
+	hgt1:    fltarr( 2), $ ;  source deflection
+	cen1:    fltarr( 2), $ ;  cntr of Gaussian
+	wid1:    fltarr( 2), $ ;  NPBW of Gaussian
+
+	sigzro1:  fltarr( 2), $ ;  sig of off-source sys pwr
+	sighgt1:  fltarr( 2), $ ;  sig of source deflection
+	sigcen1:  fltarr( 2), $ ;  sig of cntr of Gaussian
+	sigwid1:  fltarr( 2) $ ;  sig of NPBW of Gaussian
+}, 2)
+  
+
+
+;restore, dirname+ file[0], /ver
+
+
+
+

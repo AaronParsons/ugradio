@@ -1,0 +1,224 @@
+;window,2,xs=300,ys=225
+
+retall
+
+;define dirname as the directory in which the files exist. 
+
+;dirname= '/home/heiles/dzd2/courses/ay121/data/tstdata/'
+dirname= '/home/goldston/interfer_point/'
+
+file= $
+['Tue_Apr__8_11:01:02_2003_scanfit.sav', $
+'Tue_Apr__8_11:02:53_2003_scanfit.sav', $
+'Tue_Apr__8_11:04:37_2003_scanfit.sav', $
+'Tue_Apr__8_11:06:21_2003_scanfit.sav', $
+'Tue_Apr__8_11:08:06_2003_scanfit.sav', $
+'Tue_Apr__8_11:09:50_2003_scanfit.sav', $
+'Tue_Apr__8_11:11:34_2003_scanfit.sav', $
+'Tue_Apr__8_11:13:20_2003_scanfit.sav', $
+'Tue_Apr__8_11:15:05_2003_scanfit.sav', $
+'Tue_Apr__8_11:16:50_2003_scanfit.sav', $
+'Tue_Apr__8_11:18:35_2003_scanfit.sav', $
+'Tue_Apr__8_11:20:20_2003_scanfit.sav', $
+'Tue_Apr__8_11:22:05_2003_scanfit.sav', $
+'Tue_Apr__8_11:23:49_2003_scanfit.sav', $
+'Tue_Apr__8_11:25:34_2003_scanfit.sav', $
+'Tue_Apr__8_11:27:20_2003_scanfit.sav', $
+'Tue_Apr__8_11:29:05_2003_scanfit.sav', $
+'Tue_Apr__8_11:30:51_2003_scanfit.sav', $
+'Tue_Apr__8_11:32:38_2003_scanfit.sav', $
+'Tue_Apr__8_11:34:26_2003_scanfit.sav', $
+'Tue_Apr__8_11:36:12_2003_scanfit.sav', $
+'Tue_Apr__8_11:37:56_2003_scanfit.sav', $
+'Tue_Apr__8_11:39:42_2003_scanfit.sav', $
+'Tue_Apr__8_11:41:26_2003_scanfit.sav', $
+'Tue_Apr__8_11:43:10_2003_scanfit.sav', $
+'Tue_Apr__8_11:44:58_2003_scanfit.sav', $
+'Tue_Apr__8_11:46:43_2003_scanfit.sav', $
+'Tue_Apr__8_11:48:30_2003_scanfit.sav', $
+'Tue_Apr__8_11:50:15_2003_scanfit.sav', $
+'Tue_Apr__8_11:52:01_2003_scanfit.sav', $
+'Tue_Apr__8_11:53:46_2003_scanfit.sav', $
+'Tue_Apr__8_11:55:32_2003_scanfit.sav', $
+'Tue_Apr__8_11:57:19_2003_scanfit.sav', $
+'Tue_Apr__8_11:59:06_2003_scanfit.sav', $
+'Tue_Apr__8_12:00:53_2003_scanfit.sav', $
+'Tue_Apr__8_12:02:40_2003_scanfit.sav', $
+'Tue_Apr__8_12:04:26_2003_scanfit.sav', $
+'Tue_Apr__8_12:06:12_2003_scanfit.sav', $
+'Tue_Apr__8_12:07:58_2003_scanfit.sav', $
+'Tue_Apr__8_12:09:44_2003_scanfit.sav', $
+'Tue_Apr__8_12:11:30_2003_scanfit.sav', $
+'Tue_Apr__8_12:13:16_2003_scanfit.sav', $
+'Tue_Apr__8_12:15:03_2003_scanfit.sav', $
+'Tue_Apr__8_12:16:49_2003_scanfit.sav', $
+'Tue_Apr__8_12:18:36_2003_scanfit.sav', $
+'Tue_Apr__8_12:20:27_2003_scanfit.sav', $
+'Tue_Apr__8_12:22:14_2003_scanfit.sav', $
+'Tue_Apr__8_12:24:05_2003_scanfit.sav', $
+'Tue_Apr__8_12:25:58_2003_scanfit.sav', $
+'Tue_Apr__8_12:27:46_2003_scanfit.sav', $
+'Tue_Apr__8_12:29:32_2003_scanfit.sav', $
+'Tue_Apr__8_12:31:20_2003_scanfit.sav', $
+'Tue_Apr__8_12:33:08_2003_scanfit.sav', $
+'Tue_Apr__8_12:34:56_2003_scanfit.sav', $
+'Tue_Apr__8_12:36:46_2003_scanfit.sav', $
+'Tue_Apr__8_12:38:35_2003_scanfit.sav', $
+'Tue_Apr__8_12:40:27_2003_scanfit.sav', $
+'Tue_Apr__8_12:42:17_2003_scanfit.sav', $
+'Tue_Apr__8_12:44:06_2003_scanfit.sav', $
+'Tue_Apr__8_12:45:55_2003_scanfit.sav', $
+'Tue_Apr__8_12:47:44_2003_scanfit.sav', $
+'Tue_Apr__8_12:49:37_2003_scanfit.sav', $
+'Tue_Apr__8_12:51:27_2003_scanfit.sav', $
+'Tue_Apr__8_12:53:16_2003_scanfit.sav', $
+'Tue_Apr__8_12:55:04_2003_scanfit.sav', $
+'Tue_Apr__8_12:56:53_2003_scanfit.sav', $
+'Tue_Apr__8_12:58:43_2003_scanfit.sav', $
+'Tue_Apr__8_13:00:35_2003_scanfit.sav', $
+'Tue_Apr__8_13:37:41_2003_scanfit.sav', $
+'Tue_Apr__8_13:39:32_2003_scanfit.sav', $
+;'Tue_Apr__8_13:44:06_2003_scanfit.sav', $
+;'Tue_Apr__8_13:47:43_2003_scanfit.sav', $
+;'Tue_Apr__8_13:51:14_2003_scanfit.sav', $
+;'Tue_Apr__8_13:54:54_2003_scanfit.sav', $
+;'Tue_Apr__8_13:58:30_2003_scanfit.sav', $
+'Tue_Apr__8_14:04:32_2003_scanfit.sav', $
+'Tue_Apr__8_14:06:21_2003_scanfit.sav', $
+'Tue_Apr__8_14:19:47_2003_scanfit.sav', $
+'Tue_Apr__8_14:21:37_2003_scanfit.sav', $
+'Tue_Apr__8_14:23:24_2003_scanfit.sav', $
+'Tue_Apr__8_14:25:10_2003_scanfit.sav', $
+'Tue_Apr__8_14:26:56_2003_scanfit.sav', $
+'Tue_Apr__8_14:28:44_2003_scanfit.sav', $
+'Tue_Apr__8_14:30:33_2003_scanfit.sav', $
+'Tue_Apr__8_14:32:20_2003_scanfit.sav', $
+'Tue_Apr__8_14:34:07_2003_scanfit.sav', $
+'Tue_Apr__8_14:35:54_2003_scanfit.sav', $
+'Tue_Apr__8_14:37:40_2003_scanfit.sav', $
+'Tue_Apr__8_14:39:27_2003_scanfit.sav', $
+'Tue_Apr__8_14:41:15_2003_scanfit.sav', $
+'Tue_Apr__8_14:43:02_2003_scanfit.sav', $
+'Tue_Apr__8_14:44:48_2003_scanfit.sav', $
+'Tue_Apr__8_14:46:35_2003_scanfit.sav', $
+'Tue_Apr__8_14:48:23_2003_scanfit.sav', $
+'Tue_Apr__8_14:50:09_2003_scanfit.sav', $
+'Tue_Apr__8_14:51:56_2003_scanfit.sav', $
+'Tue_Apr__8_14:53:43_2003_scanfit.sav', $
+'Tue_Apr__8_14:55:31_2003_scanfit.sav', $
+'Tue_Apr__8_14:57:20_2003_scanfit.sav', $
+'Tue_Apr__8_14:59:08_2003_scanfit.sav', $
+'Tue_Apr__8_15:00:58_2003_scanfit.sav', $
+'Tue_Apr__8_15:02:48_2003_scanfit.sav', $
+'Tue_Apr__8_15:04:36_2003_scanfit.sav', $
+'Tue_Apr__8_15:06:22_2003_scanfit.sav', $
+'Tue_Apr__8_15:08:14_2003_scanfit.sav', $
+'Tue_Apr__8_15:10:07_2003_scanfit.sav', $
+'Tue_Apr__8_15:11:57_2003_scanfit.sav', $
+'Tue_Apr__8_15:13:49_2003_scanfit.sav', $
+'Tue_Apr__8_15:15:39_2003_scanfit.sav', $
+'Tue_Apr__8_15:17:29_2003_scanfit.sav', $
+'Tue_Apr__8_15:19:16_2003_scanfit.sav', $
+'Tue_Apr__8_15:21:04_2003_scanfit.sav', $
+'Tue_Apr__8_15:22:54_2003_scanfit.sav', $
+'Tue_Apr__8_15:24:45_2003_scanfit.sav', $
+'Tue_Apr__8_15:26:36_2003_scanfit.sav', $
+'Tue_Apr__8_15:28:27_2003_scanfit.sav', $
+'Tue_Apr__8_15:30:20_2003_scanfit.sav', $
+'Tue_Apr__8_15:32:11_2003_scanfit.sav', $
+'Tue_Apr__8_15:34:02_2003_scanfit.sav', $
+'Tue_Apr__8_15:35:51_2003_scanfit.sav', $
+'Tue_Apr__8_15:37:45_2003_scanfit.sav', $
+'Tue_Apr__8_15:39:36_2003_scanfit.sav', $
+'Tue_Apr__8_15:41:28_2003_scanfit.sav', $
+'Tue_Apr__8_15:43:18_2003_scanfit.sav', $
+'Tue_Apr__8_15:45:07_2003_scanfit.sav', $
+'Tue_Apr__8_15:46:58_2003_scanfit.sav', $
+'Tue_Apr__8_15:48:48_2003_scanfit.sav', $
+'Tue_Apr__8_15:50:38_2003_scanfit.sav', $
+'Tue_Apr__8_15:52:29_2003_scanfit.sav', $
+'Tue_Apr__8_15:54:17_2003_scanfit.sav', $
+'Tue_Apr__8_15:56:08_2003_scanfit.sav', $
+'Tue_Apr__8_15:57:58_2003_scanfit.sav', $
+'Tue_Apr__8_15:59:45_2003_scanfit.sav', $
+'Tue_Apr__8_16:01:32_2003_scanfit.sav', $
+'Tue_Apr__8_16:05:05_2003_scanfit.sav', $
+'Tue_Apr__8_16:06:55_2003_scanfit.sav', $
+'Tue_Apr__8_16:08:39_2003_scanfit.sav', $
+'Tue_Apr__8_16:10:24_2003_scanfit.sav', $
+'Tue_Apr__8_16:12:08_2003_scanfit.sav', $
+'Tue_Apr__8_16:13:54_2003_scanfit.sav', $
+'Tue_Apr__8_16:15:39_2003_scanfit.sav', $
+'Tue_Apr__8_16:17:24_2003_scanfit.sav', $
+'Tue_Apr__8_16:19:09_2003_scanfit.sav', $
+'Tue_Apr__8_16:20:55_2003_scanfit.sav', $
+'Tue_Apr__8_16:22:43_2003_scanfit.sav', $
+'Tue_Apr__8_16:24:28_2003_scanfit.sav', $
+'Tue_Apr__8_16:26:16_2003_scanfit.sav', $
+'Tue_Apr__8_16:28:01_2003_scanfit.sav', $
+'Tue_Apr__8_16:29:46_2003_scanfit.sav', $
+'Tue_Apr__8_16:31:31_2003_scanfit.sav', $
+'Tue_Apr__8_16:33:18_2003_scanfit.sav', $
+'Tue_Apr__8_16:35:04_2003_scanfit.sav', $
+'Tue_Apr__8_16:36:51_2003_scanfit.sav', $
+'Tue_Apr__8_16:38:37_2003_scanfit.sav', $
+'Tue_Apr__8_16:40:22_2003_scanfit.sav', $
+'Tue_Apr__8_16:42:10_2003_scanfit.sav', $
+'Tue_Apr__8_16:43:55_2003_scanfit.sav', $
+'Tue_Apr__8_16:45:40_2003_scanfit.sav', $
+'Tue_Apr__8_16:47:25_2003_scanfit.sav', $
+'Tue_Apr__8_16:49:10_2003_scanfit.sav', $
+'Tue_Apr__8_16:50:57_2003_scanfit.sav', $
+'Tue_Apr__8_16:52:44_2003_scanfit.sav', $
+'Tue_Apr__8_16:54:31_2003_scanfit.sav', $
+'Tue_Apr__8_16:56:16_2003_scanfit.sav', $
+'Tue_Apr__8_16:58:02_2003_scanfit.sav', $
+'Tue_Apr__8_16:59:51_2003_scanfit.sav', $
+'Tue_Apr__8_17:01:39_2003_scanfit.sav', $
+'Tue_Apr__8_17:03:25_2003_scanfit.sav', $
+'Tue_Apr__8_17:05:10_2003_scanfit.sav', $
+'Tue_Apr__8_17:06:54_2003_scanfit.sav', $
+'Tue_Apr__8_17:08:40_2003_scanfit.sav', $
+'Tue_Apr__8_17:10:30_2003_scanfit.sav', $
+'Tue_Apr__8_17:12:16_2003_scanfit.sav', $
+'Tue_Apr__8_17:14:05_2003_scanfit.sav', $
+'Tue_Apr__8_17:15:55_2003_scanfit.sav']
+
+
+;'dataMon_Mar_31_15:24:26_2003_scanfit.sav', $', $
+;'dataMon_Mar_31_15:28:32_2003_scanfit.sav', $', $
+;'dataMon_Mar_31_16:08:41_2003_scanfit.sav', $']
+
+nrfiles= n_elements( file)
+outfile= file
+
+FOR NR= 0, NRFILES-1 DO BEGIN &$
+loc= strpos( file[nr], 'scan') &$
+outfile[ nr]= strmid( file[nr],0,loc+4) + strmid( file[nr], loc+4) &$
+ENDFOR
+
+file=outfile
+
+loc= strpos( file[ 0], 'scan') &$
+coeffsfile= strmid( file[ 0], 0, loc) + 'coeffs' + strmid( file[ 0], loc+7)
+
+
+;DEFINE THE STRUCTURE CONTAINING THE DERIVED COEFFS; FOLLOW THE SAME
+;ORGANIZATIONAL STRUCTURE AS THE ORIGINAL DATA...
+COEFFS = replicate ( { $
+	azsigma:    	0.0       , $ ; azsigma of fit
+	altsigma:    	0.0       , $ ; altsigma of fit
+	azcoeffs: 	fltarr( 4), $ ; fitted coeffs for az
+	altcoeffs:	fltarr( 4), $ ; sig fitted coeffs for alt
+	sigazcoeffs: 	fltarr( 4), $ ; sig fitted coeffs for az
+	sigaltcoeffs:	fltarr( 4) $ ; sig fitted coeffs for alt
+}, 2)
+
+;DEFINE THE ARRAYS OF INPUT STRUCTURES...
+
+restore, dirname+ outfile[ 0]
+
+head_arr= replicate( head, nrfiles)
+dat_arr= replicate( dat[0], 2, nrfiles)
+fit_arr= replicate( fit[0], 2, nrfiles)
+

@@ -1,0 +1,20 @@
+retall
+
+;define dirname as the directory in which the files exist. 
+
+outputfile= '~heiles/ay121/data/tstdata/analyzetest.output'
+
+dirname= '/home/heiles/ay121/data/tstdata/'
+
+.run errors
+.run analysis
+.run analyze
+.run fitgen
+.run rmscut
+.run smartname
+.run monotonic
+.run svdfit
+
+analyze, dirname, fname=outputfile
+
+;analyze calls errors and pointfit, which do the work
