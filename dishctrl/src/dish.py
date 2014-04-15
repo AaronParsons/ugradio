@@ -1,6 +1,6 @@
 '''This module provides the operational interface to the Leuschner dish used in Lab 4.'''
 import socket, time, math
-import pointing
+import dish_pointing as pointing
 
 IP_ADDR = '128.32.197.194' # IP Address of the NETEON serial to ethernet adapter
 PORT = 4660 # PORT on which the NETEON serial adapter is awaiting a connection
