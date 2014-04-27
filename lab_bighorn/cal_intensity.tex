@@ -1,11 +1,14 @@
 %\documentstyle[12pt,aasms4]{article}
-\documentstyle[11pt,aaspp4]{article}
+%\documentstyle[11pt,aaspp4]{article}
 %\documentstyle[aas2pp4]{article}
-\begin{document}
+\documentclass[preprint]{aastex}
+\usepackage{graphicx}
+\usepackage{amsmath}
  
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
+\begin{document}
 
 \title {CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL LINES}
 
@@ -25,11 +28,13 @@ to remove these artifacts.
 \section{FIGURE \ref{bumpmountain_cal}}
 
 \begin{figure}[p!]
-\begin{center}
-\leavevmode
-\epsfxsize=5in
-\epsffile{bumpmountain_cal.ps}
-\end{center}
+%\begin{center}
+%\leavevmode
+%\epsfxsize=5in
+%\epsffile{bumpmountain_cal.ps}
+\centering
+\includegraphics[width=5in]{bumpmountain_cal.pdf}
+%\end{center}
 
 \caption{ An HI line profile and its system contaminates, which must be
 removed by calibration. \label{bumpmountain_cal}}
@@ -277,11 +282,13 @@ to obtain this calibrated spectrum. One is straightforward and not so
 good; the other is less straightforward and much better.
 
 \begin{figure}[p!]
-\begin{center}
-\leavevmode
-\epsfxsize=5in
-\epsffile{bmp_cal.ps}
-\end{center}
+%\begin{center}
+%\leavevmode
+%\epsfxsize=5in
+%\epsffile{bmp_cal.ps}
+\centering
+\includegraphics[width=5in]{bmp_cal.pdf}
+%\end{center}
 
 \caption{ Top two panels: two different reduction techniques: na\"ive
 and cool. Bottom panel: the ON-LINE spectrum from the top panel of
@@ -592,11 +599,13 @@ the proof is straightforward.
 \section{FIGURE \ref{bmp_cal1}: REAL LIFE} \label{figure3}
 
 \begin{figure}[p!]
-\begin{center}
-\leavevmode
-\epsfxsize=5in
-\epsffile{bmp_cal1.ps}
-\end{center}
+%\begin{center}
+%\leavevmode
+%\epsfxsize=5in
+%\epsffile{bmp_cal1.ps}
+\centering
+\includegraphics[width=5in]{bmp_cal1.pdf}
+%\end{center}
 
 \caption{ The grim reality in spectral line measurements. Departures
 from our ideal assumptions produce curved, displaced baselines, shown in
