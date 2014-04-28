@@ -1,6 +1,6 @@
 import os
 
-def takeSpec(filename, numFiles = 1, numSpec = 78125):
+def takeSpec(filename, numFiles = 1, numSpec = 32):
     """
     NAME: 
     takeSpec
@@ -52,7 +52,7 @@ def takeSpec(filename, numFiles = 1, numSpec = 78125):
     if numFiles > 1: arg += ' -i ' + str(numFiles)
     if numSpec > 0: 
         arg += ' -n ' + str(numSpec) 
-    else: arg += ' -n 40'
+    else: arg += ' -n 32'
          
     # collecting the spectra
     os.system(cdCmd + recCall + arg)
