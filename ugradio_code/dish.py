@@ -62,12 +62,12 @@ class Dish:
         self._noise(0)
     def _noise(self, state):
         '''Lower-level interface to noise diode.'''
+        #state = 1 if state else 0
+        state = 0 if state else 1 # invert b/c noise ctrl was installed backward in 2011
         if self.verbose:
-            # Yes, this is the opposite of what you'd think.
-            if not state: print 'Turning ON noise source...'
+            if state: print 'Turning ON noise source...'
             else: print 'Turning OFF noise source...'
         time.sleep(1)
-        state = 1 if state else 0
         oem_reply = self.txrx('\r\r1O%dX\r\r1IS\r' % state)
         oem_reply = oem_reply.split('*')[1]
         oem_reply = oem_reply[:4]
