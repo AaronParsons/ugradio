@@ -53,8 +53,6 @@ class Dish:
         self._noise(0)
     def _noise(self, state):
         '''Lower-level interface to noise diode.'''
-        #state = 1 if state else 0
-        state = 0 if state else 1 # invert b/c noise ctrl was installed backward in 2011
         if self.verbose:
             if state: print 'Turning ON noise source...'
             else: print 'Turning OFF noise source...'
@@ -64,7 +62,8 @@ class Dish:
         numTries = 1
         while numTries <= MAX_SET_TRIES:
             oem_reply = self.txrx('\r\r1O%dX\r\r1IS\r' % state).split('\r')
-            if len(oem_reply) == 7: break
+            if len(oem_reply) == 7:
+                if ('1O%dX' % state) == oem_reply[2]: break
             oem_reply = ['0','0','0','0','0','0','0']
             time.sleep(1)
             numTries += 1
@@ -77,8 +76,8 @@ class Dish:
     def drive_off(self):
         '''Turn the telescope drives off.'''
         if self.verbose: print 'De-Energizing Drives'
-        time.sleep(1) #WAIT,1
         oem_reply = self.txrx('\r\rOFF\r')
+        time.sleep(1) #WAIT,1
     def _home(self):
         '''Send low-level home command to telescope.'''
         if self.verbose: print 'Searching for Home Position...'
@@ -139,11 +138,14 @@ class Dish:
         self.txrx('\r\rG\r')
     def home(self):
         '''Home the telescope (to zenith) and reset the encoder positions.'''
+        if self.verbose: print 'Prepositioning telescope for homing run...'
+        self.point(75,270)
         if self.verbose: print 'Homing (this can take a while)...'
         self.drive_off()
         time.sleep(1)
         self.drive_on()
         time.sleep(1)
+        
         self._home()
         axes = ['1','2']
         for axis in axes:
@@ -176,12 +178,14 @@ class Dish:
         raises a ValueError.'''
         # ; Changed kburns 04/11/2011, noise on and off switched during feed upgrade Spring 2011
         # Beginning of ALT-AZ move OR move checking
+        axes = ['1','2']
+        x_step,y_step = pointing.az_alt_to_xy(az, alt)
+        if validate:
+            return
         self.drive_off()
         time.sleep(1)
         self.drive_on()
         time.sleep(1)
-	x_step,y_step = pointing.az_alt_to_xy(az, alt, validate=validate)
-        axes = ['1','2']
 
         for axis,dist in zip(axes,[str(x_step),str(y_step)]):
             for set_tries in xrange(MAX_SET_TRIES):

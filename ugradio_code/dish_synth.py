@@ -29,11 +29,11 @@ class Synth:
         '''Interface to setting the dish LO.'''
         if self.verbose:
             print 'Setting frequency to %e MHz' % (freq)
-        self._tx('freq %e mhz' % freq)
+        self._tx('freq %g mhz' % freq)
     def set_amp(self, amp):
         if self.verbose:
             print 'Setting amplitude to %e dBm' % (amp)
-        self._tx('ampl %e dbm' % amp)
+        self._tx('ampl %g dbm' % amp)
     def _tx(self, arg):
         if self.verbose:
             print 'Sending:', arg
