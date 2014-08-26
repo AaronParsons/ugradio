@@ -1,6 +1,6 @@
 import os
 
-def takeSpec(filename, numFiles = 1, numSpec = 78125):
+def takeSpec(filename, numFiles = 1, numSpec = 32):
     """
     NAME: 
     takeSpec
@@ -26,33 +26,22 @@ def takeSpec(filename, numFiles = 1, numSpec = 78125):
     Updated and translated into Python April 2014
     """
 
-    #check for variable input
     if filename == "":
-        print("Default filename 'filename0.log' will be used")
+        print("Default filename 'spectra.0.log' will be used")
+        filename = "spectra."
 
-    #set call to start data stream
-    path = '/home/radiolab/spec_code/bin/'
-    cdCmd = 'cd ' + path + ';'
-    recCall = './udprec'
+    if numFiles < 1:
+        raise Exception("ERROR: Number of files cannot be less than zero!")
+    
+    if numSpec < 4:
+        raise Exception("ERROR: Number of spectra cannot be less than 4!")
 
-    # figure out (inelegantly) where to save the current files
-    # (don't worry too much about this, unless it ceases working)
-    codePath = '/home/radiolab/idl_spec_code/'
-    newPath = '/home/radiolab/spec_data/uglab' #default
+    if numSpec > 65536:
+        raise Exception("ERROR: Number of spectra cannot be more than 65536!")
 
-    os.system('pwd > ' + codePath + 'pwd.txt')
-    fil = open(codePath + 'pwd.txt','r')
-    newPath = fil.read()
-    newPath = newPath.replace('\n','')
-    fil.close()
-
-    # generate and call the command to udprec
-    arg = ''
-    arg += ' -p ' + newPath + '/' + str(filename)
-    if numFiles > 1: arg += ' -i ' + str(numFiles)
-    if numSpec > 0: 
-        arg += ' -n ' + str(numSpec) 
-    else: arg += ' -n 40'
+    #Create argument to be executed by python in the system
+    cmdCall = ('/home/radiolab/spec_code/bin/udprec -p '+ str(filename)
+            + ' -n ' + str(numSpec) + ' -i ' + str(numFiles))
          
     # collecting the spectra
-    os.system(cdCmd + recCall + arg)
+    os.system(cmdCall)
