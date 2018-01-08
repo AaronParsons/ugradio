@@ -11,16 +11,33 @@ Astronomy Laboratory}
 \affil{Version 2, \today}
 \email{nick@ugastro.berkeley.edu}
 
+{\bf Jan 2017: When logged in from within the lab, to make Emacs
+  function properly you must enter the following command (including the
+  [] ). You only need do it once---not every time you log in):}
+
+{\tt gsettings set org.freedesktop.ibus.general.hotkey triggers []}
+
+
 \section{So What Is Emacs?}
 Emacs is a text file editor in Unix environments. This includes our
 lab which runs a variant of Unix called Solaris, and other, more
-readily available operating systems such as Linux. You can use emacs
+readily available operating systems such as Linux. You can use Emacs
 to quickly edit a simple text file, as an editor for your IDL source
 code, or as a nice front end to typesetting documents in \LaTeX, the
 required typesetting utility in this class. This document will outline
-the basics of using emacs.
+the basics of using Emacs.
 
 \section{The Basics}
+
+\subsection{The {\tt -nw} Option}
+Emacs is normally run in a specially-created X-window. This can make it
+slow if you are running on a remote computer, e.g.\ as an astronomer who
+is editing a file on a distant telescope's computer system. You can get
+around this by running Emacs in the window from which you invoke it; the
+formatting is a little less fancy and mouse won't work, so you have to
+use the keyboard shortcuts, but the response time is much quicker. To
+run Emacs without generating a new window, type {\tt emacs -nw filename}
+instead of {\tt emacs filename}; the {\tt -nw} means `no window'.
 
 \subsection{Opening}
 Most of the programs that you will be using on these systems will be
@@ -29,12 +46,14 @@ navagate (via the Unix command line) to the directory where you want
 the file to be and type: 
 \begin{verbatim}
 emacs something.txt &
+or
+emacs -nw something.txt &
 \end{verbatim}
 Where {\tt something.txt} is the new file that you wish to create, or
-the old file that you wish to update. After a few moments, a new window
-will popup with a blank screen that you can type into. You can use the
-mouse to navigate the menus at the top. See table 1 for information on
-what the different menu options do.
+the old file that you wish to update. Without the {\tt -nw} option,
+after a few moments a new window will popup with a blank screen that you
+can type into. You can use the mouse to navigate the menus at the
+top. See table 1 for information on what the different menu options do.
 
 \begin{table}[h]
 \begin{center}
@@ -67,10 +86,10 @@ In Emacs, saving a document is as simple as $\pi$. You can click on
 the \verb1Files1 menu, then click on \verb1Save Buffer...1 You can
 also save by using the keyboard shortcut \verb1C-x C-s1. In the
 interest of simplifing your life, this document will concentrate on
-the usage of keyboard shortcuts in using emacs. 
+the usage of keyboard shortcuts in using Emacs. 
 
 \subsection{Keyboard Shortcuts}
-Just about every aspect of emacs can be accessed and configured with
+Just about every aspect of Emacs can be accessed and configured with
 keyboard shortcuts. This means that to work on a document, you rarely
 need to move your hands away from the keyboard and use the mouse. This
 increases productivity, and just makes things easier. All the keyboard
