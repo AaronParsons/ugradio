@@ -1,1 +1,0 @@
-../../../ay120b/2006/bench/mixer/ssbmix.plt
