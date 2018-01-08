@@ -1,4 +1,4 @@
-This is a readme file
+UC Berkeley Undergraduate Radio Lab
 =======
 
-UC Berkeley Undergraduate Radio Lab
+Lab 1: lab\_mixers/allmixers.pdf
