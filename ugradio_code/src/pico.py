@@ -61,18 +61,20 @@ def picoserver(host='', port=PORT):
         nblocks = int(cmd[5])
         data = sample_pico(sampler, volt_range, sample_interval, 
                            nsamples, nblocks, usechanA, usechanB)
+        print 'Sending', data.shape
         conn.sendall(data.tostring())
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((host, port)) # Errors if binding failed (port in use)
-    s.listen(10) # Start listening to socket
-    #now keep talking with the client
-    while True:
-        conn, addr = s.accept() #wait to accept a connection - blocking call
-        print 'Request from ' + addr[0] + ':' + str(addr[1])
-        #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-        thread.start_new_thread(handle_request,(conn,))
-    s.close()
-
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((host, port)) # Errors if binding failed (port in use)
+        s.listen(10) # Start listening to socket
+        #now keep talking with the client
+        while True:
+            conn, addr = s.accept() #wait to accept a connection - blocking call
+            print 'Request from ' + addr[0] + ':' + str(addr[1])
+            #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
+            thread.start_new_thread(handle_request,(conn,))
+    finally:
+        s.close()
 
 def sample_pico(sampler, volt_range, sample_interval, nsamples, 
           nblocks, usechanA, usechanB):
