@@ -1,4 +1,5 @@
-import socket, thread, numpy as np
+import socket, thread, time
+import numpy as np
 
 VOLT_RANGE = ['50mV', '100mV', '200mV', '500mV',
     '1V', '2V', '5V', '10V', '20V']
@@ -45,9 +46,22 @@ def read_socket(volt_range, divisor=2, dual_mode=False,
 
 # Below here is server-side code
 
-def picoserver(host='', port=PORT)
+def picoserver(host='', port=PORT):
     import picopy # Must be installed on computer hosting picosampler
     sampler = picopy.Pico2k()
+    def handle_request(conn):
+        cmd = conn.recv(1024).split()
+        if not cmd: return
+        print 'Received command:', [cmd]
+        usechanA = bool(int(cmd[0]))
+        usechanB = bool(int(cmd[1]))
+        volt_range = cmd[2]
+        sample_interval = int(cmd[3])
+        nsamples = int(cmd[4])
+        nblocks = int(cmd[5])
+        data = sample_pico(sampler, volt_range, sample_interval, 
+                           nsamples, nblocks, usechanA, usechanB)
+        conn.sendall(data.tostring())
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port)) # Errors if binding failed (port in use)
     s.listen(10) # Start listening to socket
@@ -56,47 +70,37 @@ def picoserver(host='', port=PORT)
         conn, addr = s.accept() #wait to accept a connection - blocking call
         print 'Request from ' + addr[0] + ':' + str(addr[1])
         #start new thread takes 1st argument as a function name to be run, second is the tuple of arguments to the function.
-        thread.start_new_thread(sample_pico,(conn,))
+        thread.start_new_thread(handle_request,(conn,))
     s.close()
 
-def sample_pico(conn):
-    cmd = conn.recv(1024).split()
-    if not cmd: return
-    print 'Received command:', [cmd]
-       if not cmd:
-        return
-    enableChanA = bool(int(cmd[0]))
-    enableChanB = bool(int(cmd[1]))
-    voltRange = cmd[2]
-    sampInterval = int(cmd[3])
-    nSample = int(cmd[4])
-    nBlocks = int(cmd[5])
-    #sampFreq = 
-    sampler.configure_channel('A', enable=1, channel_type='AC', voltage_range=voltRange)
+
+def sample_pico(sampler, volt_range, sample_interval, nsamples, 
+          nblocks, usechanA, usechanB):
+    sampler.configure_channel('A', enable=1, channel_type='AC', voltage_range=volt_range)
     time.sleep(0.25) # Let the configuration command make the change it needs
-    sampler.configure_channel('B', enable=1, channel_type='AC', voltage_range=voltRange)
+    sampler.configure_channel('B', enable=1, channel_type='AC', voltage_range=volt_range)
     time.sleep(0.25) # Let the configuration command make the change it needs
 
-    sampData = sampler.capture_block2(sampInterval,nSample,return_scaled_array=False)
+    sampData = sampler.capture_block2(sample_interval,nsamples,return_scaled_array=False)
 
-    for idx in range(1,nBlocks):
-        blockData = sampler.capture_block2(sampInterval,nSample,return_scaled_array=False)
+    for idx in range(1,nblocks):
+        blockData = sampler.capture_block2(sample_interval,nsamples,return_scaled_array=False)
         for channel in sampData:
             sampData[channel] = np.concatenate([sampData[channel],blockData[channel]])
     fullData = []
-    if enableChanA:
+    if usechanA:
         fullData = np.concatenate([fullData,sampData['A']])
-    if enableChanB:
+    if usechanB:
         fullData = np.concatenate([fullData,sampData['B']])
-    data = fullData.astype(np.int16).tostring()
-    conn.sendall(data)
+    data = fullData.astype(np.int16)
+    return data
     #timeStamp = calendar.timegm(time.gmtime())
-    #fileName = str(timeStamp) + '-' + voltRange + '-' + str(sampInterval) + 'sInt'  + '-' + str(nBlocks) + 'nSpec'  + '-' + str(enableChanA + enableChanB) + 'chan.int16.bin'
+    #fileName = str(timeStamp) + '-' + volt_range + '-' + str(sampInterval) + 'sInt'  + '-' + str(nBlocks) + 'nSpec'  + '-' + str(enableChanA + enableChanB) + 'chan.int16.bin'
 
     #conn.sendall('/home' + dataDir + fileName)
     #fullData.astype('int16').tofile(dataDir + fileName,sep="")
     #came out of loop
-    conn.close()
+    #conn.close()
 
  
 
