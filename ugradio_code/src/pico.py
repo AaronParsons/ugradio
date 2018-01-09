@@ -1,4 +1,4 @@
-import socket, thread, time
+import socket, thread, time, struct
 import numpy as np
 
 VOLT_RANGE = ['50mV', '100mV', '200mV', '500mV',
@@ -35,11 +35,15 @@ def read_socket(volt_range, divisor=2, dual_mode=False,
     s.connect((host, port))
     print [cmd]
     s.sendall(cmd)
+    datalen = s.recv(struct.calcsize('L'))
+    datalen = struct.unpack('L', datalen)[0]
     data = ''
-    while True:
+    while len(data) < datalen:
         d = s.recv(1024)
         if not d: break
+        #if len(d) < 1024: break
         data += d
+        #print len(data)
     s.close()
     print len(data)
     return np.fromstring(data, dtype=np.int16)
@@ -62,7 +66,8 @@ def picoserver(host='', port=PORT):
         data = sample_pico(sampler, volt_range, sample_interval, 
                            nsamples, nblocks, usechanA, usechanB)
         print 'Sending', data.shape
-        conn.sendall(data.tostring())
+        header = struct.pack('L',len(data))
+        conn.sendall(header+data.tostring())
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((host, port)) # Errors if binding failed (port in use)
