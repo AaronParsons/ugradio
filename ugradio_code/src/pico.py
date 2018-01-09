@@ -66,8 +66,9 @@ def picoserver(host='', port=PORT):
         data = sample_pico(sampler, volt_range, sample_interval, 
                            nsamples, nblocks, usechanA, usechanB)
         print 'Sending', data.shape
+        data = data.tostring()
         header = struct.pack('L',len(data))
-        conn.sendall(header+data.tostring())
+        conn.sendall(header+data)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((host, port)) # Errors if binding failed (port in use)
