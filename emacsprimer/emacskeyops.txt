@@ -122,16 +122,25 @@ ctrl-x $
 COUNT NR OF WORDS IN A MARKED REGION
 ctrl-x w
 
-DO EMACS WITHOUT IN CURRENT TERMINAL--NO NEW X WINDOW
-emacs -nw filename  ...or...  mem filename
+--------------------------------------------------------
+ 
+To use Carl's emacs setup, replace your .emacs file with his:
 
--------------------------------------------------------------------
-To use Carl's emacs setup you need to replace your .emacs file with his:
-
-1.	from the UNIX prompt in your home directory, rename your.emacs
-file so you can retrieve it again if necessary:
+1.	From the UNIX prompt in your home directory, see if you have a
+.emacs file:
+	ls .emacs
+If you do, rename it so you can retrieve it again if necessary:
 	mv .emacs .emacs_original
 
-2.	then copy Carl's file to yours:
-	cp ~heiles/.emacs . or get it from the website.
+2.  Then copy Carl's file to yours:
+	cp ~heiles/.emacs_somecolor . 
+And create a symbolic link to .emacs:
+	ln -s .emacs_somecolor .emacs
+
+----------------------------------------------------------- 
+
+In Jan 2016, it was necessary to do the following. I don't think it is
+necessary in 2017: On the UGASTRO computer network, to make Emacs
+function properly you must enter (only once---not every time you log
+in):} gsettings setorg.freedesktop.ibus.general.hotkey triggers []
 
