@@ -1,0 +1,3 @@
+#! /usr/bin/env python
+import ugradio.pico
+ugradio.pico.picoserver()
