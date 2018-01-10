@@ -29,7 +29,7 @@ disorganized. Your choice!
 \item Learn how to sample electronic signals---here, one or more sine
   waves---digitally using our computers.
 
-\item Get started with our programming language, IDL, using it for the
+\item Get started with our programming language, Python, using it for the
   mathematical analysis, signal processing, and making nice plots.
 
 \item Become acquainted with aliasing and the basic law of sampling: the
@@ -71,17 +71,17 @@ There's a lot to do in this lab! If you don't understand the Nyquist criterion
 by the end of the first week, you're behind. Here's how it should be:
 \begin{enumerate}
 
-\item {\it The First Week. For class on 24 Jan:} Finish \S
+\item {\it The First Week. For class on 23 Jan:} Finish \S
   \ref{nyquist}, which requires reading the accompanying
   material in \S \ref{pwrspectrum}. {\it Be prepared to show your work, your
   software, and your results to the class, making real-time plots in
-  IDL during your presentation.}
+  Python during your presentation.}
 
-\item {\it The Second Week. For class on 31 Jan:} Finish \S
+\item {\it The Second Week. For class on 30 Jan:} Finish \S
   \ref{mixersect} and the reading in \S \ref{hetereo}. Again, be prepared
   to strut your stuff to the class.
 
-\item {\it The Third Week. For class on 7 Feb:} Read the handouts in \S
+\item {\it The Third Week. For class on 6 Feb:} Read the handouts in \S
   \ref{report}, and then write and hand in your formal report!  Your
   report should contain relevant plots together with commentary to
   illustrate your work, your thought processes, and your conclusions.
@@ -96,8 +96,8 @@ by the end of the first week, you're behind. Here's how it should be:
 %
 \subsection{Handouts and Software}
 As you begin real work this first week, you will need to become immersed
-in the Linux operating system, the Emacs editor, and IDL. To this end,
-you'll need to become familiar with the following handouts and IDL
+in the Linux operating system, the Emacs editor, and Python. To this end,
+you'll need to become familiar with the following handouts and Python
 procedures:
 
 \subsubsection{Handouts}
@@ -114,11 +114,11 @@ procedures:
   the second handout gives keystroke commands for the most commonly
   needed editing sequences.
 
-\item Getting into IDL: {\tt idltut1\_ay121.pdf} {\it ``Quick IDL
-  Tutorial Number One for AY121''} Gives you the basics of IDL.
+\item Getting into Python: {\tt idltut1\_ay121.pdf} {\it ``Quick Python
+  Tutorial Number One for AY121''} Gives you the basics of Python.
 
-\item Plotting in IDL: {\tt bpidl.pdf} {\it ``BPIDL---BASIC PLOTTING IN
-  IDL: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Sections
+\item Plotting in Python: {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
+  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Sections
   1 and 2 are enough for now.
 
 \item {\it This handout is optional}, because for this lab you can get
@@ -129,8 +129,8 @@ procedures:
     THAT FFT OUTPUT LOOK SO sWEIRD???” ''}.
 \end{enumerate}
 %
-\subsubsection{IDL Procedures}
-The  following IDL procedures are needed or useful for this
+\subsubsection{Python Procedures}
+The  following Python procedures are needed or useful for this
 lab: \begin{enumerate}
 
 \item {\tt getpico.pro} --- runs the A/D board to digitally sample
@@ -176,14 +176,14 @@ we will begin by\dots \begin{enumerate}
 
 \noindent The sampler always gives you 16000 samples. For this part of
 the lab, it's easier to deal with fewer, so just use the first $N$ (in
-IDL, with the command {\tt firstN= samples[0:N-1]}), with $N$ being a
+Python, with the command {\tt firstN= samples[0:N-1]}), with $N$ being a
 few hundred or thousand.  Throughout the datataking, you should always
 be monitoring the signal with the oscilloscope. These are sine waves, so
 it's easy to measure the period by looking at the oscilloscope; each
 time you digitally sample the signal, you should write down the period
 (maybe in your {\it lab notebook?}).
 
-For each dataset, use IDL to plot the digitally sampled waveform versus
+For each dataset, use Python to plot the digitally sampled waveform versus
 time.  Make the plots informative, meaning that you label the
 axes (in particular, label the $x$-axis in time units) and you can
 clearly see the signal shape; if necessary, plot only a part of the data
@@ -329,10 +329,10 @@ the properties of digitally sampled noise: \begin{enumerate}
   divide by the number in the sum). What's the root-mean-square (rms)
   voltage (it's the square root of the mean square voltage)?
 
-\item Plot a histogram of the sampled voltages (see IDL's {\tt
-  histogram} function---for documentation, type {\tt ?histogram} in IDL;
+\item Plot a histogram of the sampled voltages (see Python's {\tt
+  histogram} function---for documentation, type {\tt ?histogram} in Python;
   or use our convenient home-grown `wrapper' {\tt histo\_wrap}---for
-  documentation, type {\tt doc, 'histo\_wrap'} \ \ in IDL). The histogram
+  documentation, type {\tt doc, 'histo\_wrap'} \ \ in Python). The histogram
   should look Gaussian, with a dispersion equal to the rms
   voltage. Overplot this theoretically-expected Gaussian---does it look
   like your data?
@@ -413,7 +413,7 @@ this sum, you need to specify: \begin{enumerate}
   just under $\nu_{smpl}$. Thus, you calculate a {\it voltage} spectrum
   running from $-{\nu_{smpl} \over 2}$ to not quite ${\nu_{smpl} \over
     2}$ using our in-house DFT procedure. To find out how to use DFT,
-  use the {\tt doc\_library} or {\tt doc} function; in IDL,
+  use the {\tt doc\_library} or {\tt doc} function; in Python,
   type:\ \ {\tt doc, 'dft'}.
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
@@ -429,7 +429,7 @@ conjugate,
 P(\nu) = E(\nu) E(\nu)^* \ .
 \end{equation}
 % 
-\noindent In IDL, there are two ways to get this product.  One is to use
+\noindent In Python, there are two ways to get this product.  One is to use
 the \verb$conj$ function, i.e.\ {\tt PF = EF * conj(EF)}.  Should the
 imaginary part of \verb$PF$ be zero? (answer: yes! Why is this?) Is it?
 (answer: no! Why not?) To get rid of this annoying and extraneous
@@ -527,7 +527,7 @@ Above in \S \ref{dft}, you had $N$ time samples and evaluated the DFT
 for $N$ well-chosen frequencies. These were ``well-chosen'' because for
 these particular values of frequency---and {\it only} these particular
 values---you can get back to the time domain by using the inverse
-transform (in IDL using {\tt dft}, you accomplish this by setting the
+transform (in Python using {\tt dft}, you accomplish this by setting the
 {\tt inverse} keyword).
 
 It so happens that, for these particular combinations of frequency and
@@ -539,7 +539,7 @@ large, this takes a long time!  For the FFT, on the
 contrary, the number of calculations $\propto N {\rm ln}_2(N)$, and this
 makes it possible to do large-$N$ transforms.
 
-Try IDL's FFT and compare it to your DFT calculation above. The FFT
+Try Python's FFT and compare it to your DFT calculation above. The FFT
 output is ordered in what you might think is a funny and awkward way:
 when Fourier transforming a time series to obtain N frequencies, the
 frequency array is ordered with ${N \over 2} - 1$ positive frequencies
@@ -954,8 +954,8 @@ IF frequency.
   the most commonly needed editing sequences.
 
 \item You'll need to show plots into your lab report. To do this you
-  make PostScript files of your plots. See {\tt bpidl.pdf} {\it ``BPIDL---BASIC PLOTTING IN
-  IDL: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Section 6.0.1.
+  make PostScript files of your plots. See {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
+  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Section 6.0.1.
 
 \end{enumerate}
 \end{document}
