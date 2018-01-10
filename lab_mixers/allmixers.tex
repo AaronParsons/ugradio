@@ -71,17 +71,17 @@ There's a lot to do in this lab! If you don't understand the Nyquist criterion
 by the end of the first week, you're behind. Here's how it should be:
 \begin{enumerate}
 
-\item {\it The First Week. For class on 23 Jan:} Finish \S
+\item {\it The First Week.} Finish \S
   \ref{nyquist}, which requires reading the accompanying
   material in \S \ref{pwrspectrum}. {\it Be prepared to show your work, your
   software, and your results to the class, making real-time plots in
   Python during your presentation.}
 
-\item {\it The Second Week. For class on 30 Jan:} Finish \S
+\item {\it The Second Week.} Finish \S
   \ref{mixersect} and the reading in \S \ref{hetereo}. Again, be prepared
   to strut your stuff to the class.
 
-\item {\it The Third Week. For class on 6 Feb:} Read the handouts in \S
+\item {\it The Third Week.} Read the handouts in \S
   \ref{report}, and then write and hand in your formal report!  Your
   report should contain relevant plots together with commentary to
   illustrate your work, your thought processes, and your conclusions.
@@ -95,46 +95,62 @@ by the end of the first week, you're behind. Here's how it should be:
 \label{nyquist}
 %
 \subsection{Handouts and Software}
+
 As you begin real work this first week, you will need to become immersed
-in the Linux operating system, the Emacs editor, and Python. To this end,
-you'll need to become familiar with the following handouts and Python
-procedures:
+in the Linux operating system, your (Vi/Emacs/3rd party) text editor, and Python. To this end,
+you'll need to become familiar with the resources and links posted on Astrobaki.
+% XXX link to astrobaki?
 
-\subsubsection{Handouts}
-\begin{enumerate}
-\item Learning Linux: {\tt unixprimer.pdf} ``A SHORT UNIX PRIMER'' Basic
-  commands for Linux/Unix operating systems. Eventually you'll want to
-  know all of the commands in here because they are so useful.
-
-\item Learning the EMACS editor: {\tt emacs-beg.pdf} {\it ``A Beginners
-  Guide to Emacs''} and the related {\tt emacskeyops.pdf} ``Common
-  Editing Tasks and Their EMACS Keystroke Counterparts''. Emacs is
-  excellent for everything, including editing writing computer
-  code. Efficient editing means using the keyboard instead of the mouse;
-  the second handout gives keystroke commands for the most commonly
-  needed editing sequences.
-
-\item Getting into Python: {\tt idltut1\_ay121.pdf} {\it ``Quick Python
-  Tutorial Number One for AY121''} Gives you the basics of Python.
-
-\item Plotting in Python: {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
-  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Sections
-  1 and 2 are enough for now.
-
-\item {\it This handout is optional}, because for this lab you can get
-  along with just the material below in \S \ref{pwrspectrum}. This handout
-  is more detailed, 28 pages of all you need to know about Discrete
-  Fourier transforms.  {\tt fourierc.pdf} {\it ``DISCREETLY FINE TIMES
-    with DISCRETE FOURIER TRANSFORMS (DFT’s with DFT’s) or “WHY DOES
-    THAT FFT OUTPUT LOOK SO sWEIRD???” ''}.
-\end{enumerate}
+%\subsubsection{Handouts}
+%\begin{enumerate}
+%\item Learning Linux: {\tt unixprimer.pdf} ``A SHORT UNIX PRIMER'' Basic
+%  commands for Linux/Unix operating systems. Eventually you'll want to
+%  know all of the commands in here because they are so useful.
 %
-\subsubsection{Python Procedures}
-The  following Python procedures are needed or useful for this
-lab: \begin{enumerate}
+%\item Learning the EMACS editor: {\tt emacs-beg.pdf} {\it ``A Beginners
+%  Guide to Emacs''} and the related {\tt emacskeyops.pdf} ``Common
+%  Editing Tasks and Their EMACS Keystroke Counterparts''. Emacs is
+%  excellent for everything, including editing writing computer
+%  code. Efficient editing means using the keyboard instead of the mouse;
+%  the second handout gives keystroke commands for the most commonly
+%  needed editing sequences.
+%
+%\item Getting into Python: {\tt idltut1\_ay121.pdf} {\it ``Quick Python
+%  Tutorial Number One for AY121''} Gives you the basics of Python.
+%
+%\item Plotting in Python: {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
+%  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Sections
+%  1 and 2 are enough for now.
+%
+%\item {\it This handout is optional}, because for this lab you can get
+%  along with just the material below in \S \ref{pwrspectrum}. This handout
+%  is more detailed, 28 pages of all you need to know about Discrete
+%  Fourier transforms.  {\tt fourierc.pdf} {\it ``DISCREETLY FINE TIMES
+%    with DISCRETE FOURIER TRANSFORMS (DFT’s with DFT’s) or “WHY DOES
+%    THAT FFT OUTPUT LOOK SO sWEIRD???” ''}.
+%\end{enumerate}
+%
+\subsubsection{The {\tt ugradio} Python Package}
 
-\item {\tt getpico.pro} --- runs the A/D board to digitally sample
-  signals. This is essential.
+{\it Modules} are a way to distribute and reuse Python code.  They are themselves
+just bundles code that you {\tt import} into your program, where you can
+access everything as if you'd written it yourself.  {\it Packages} are bundles
+of modules that can all be installed together.  For this class, we will be using
+the {\tt ugradio} package to provide supporting code for your labs.  This package
+is already installed on the lab computers (you can test this by opening {\tt ipython}
+and typing {\tt import ugradio}).  If you ever need to install it on another computer,
+all of the code is linked to from the course website.  
+
+You will make use of two modules inside of the {\tt ugradio} package: {\tt pico}, and {\tt dft}.
+Take a minute to browse the code in these two modules so that you understand how to use it.
+
+\begin{enumerate}
+
+\item {\tt ugradio.pico} --- runs the A/D board to digitally sample signals. This is essential.
+
+\item {\tt ugradio.dft} --- provides code for doing arbitrary Discrete Fourier Transforms.  This
+contrasts the functionality of {\tt numpy.fft}, which can only do certain kinds of
+Discrete Fourier Transforms, but can do them very fast.
 
 %\item {\tt srs1\_frq.pro} --- sets the frequency of one of the SRS
 %  function generators. If you are lazy, you can set the SRSs by hand. If
@@ -149,48 +165,56 @@ lab: \begin{enumerate}
 \subsection{Your First Digital Sampling: the Nyquist Criterion}
 
 We begin this course by exploring the all-important realms of the
-Nyquist criterion and aliasing in digital sampling.  Clearly, if you
-sample too slowly the signal won't be well-reproduced.  But if you
+Nyquist criterion and aliasing in digital sampling.  If you
+sample a signal too slowly, the signal won't be well-reproduced.  But if you
 sample really fast, then you generate large data files that take a long
 time to process.  Just how slowly can you sample the signal without
 completely losing its basic properties (such as, for example, the fact
 that it oscillates with frequency $\nu_{sig}$)?
 
 The fundamental parameter here is the ratio of sampling frequency
-$\nu_{smpl}$ to signal frequency $\nu_{sig}$. With our equipment we can
-set $\nu_{smpl}$ to only selected, quantized values. However, we can set
+$\nu_{samp}$ to signal frequency $\nu_{sig}$. With our equipment we can
+set $\nu_{samp}$ to only selected, quantized values ($62.5~{\rm MHz} / N$, where
+$N$ is a small integer). However, we can set
 $\nu_{sig}$ with almost arbitrarily high precision. So to explore these
-issues we will pick a sampling frequency $\nu_{smpl}$ and take data at
+issues we will pick a sampling frequency $\nu_{samp}$ and take data at
 several signal frequencies $\nu_{sig}$.  Be sure to use a coax T so that
 you can look at the sampled signal on the oscilloscope.  Set the
 peak-to-peak voltage appropriately so that it doesn't saturate the
-Analog-to-Digital Converter (known as the ADC). Use {\tt getpico.pro} to
-get your data.
+Analog-to-Digital Converter (known as the ADC). 
+
+Use {\tt ugradio.pico} to get your data, which will appear in the form
+of a numpy array.  In order to avoid having to re-take your data every
+time you run your program, you should save this numpy array to a file
+with either {\tt numpy.save} or {\tt numpy.savez}.  Thereafter, you can
+just load your data from this file with {\tt numpy.load}.
 
 	We want to explore sampling rate issues, so to that end 
 we will begin by\dots \begin{enumerate} 
-	\item Pick a convenient sampling frequency $\nu_{smpl}$.  
+	\item Pick a convenient sampling frequency $\nu_{samp}$.  
 	\item Set the synthesizer to frequency $\nu_{sig} = (0.1, 0.2,
-	  0.3, \dots, 0.9) \nu_{smpl}$ and take data. 
+	  0.3, \dots, 0.9) \nu_{samp}$ and take data. 
 \end{enumerate}
 
-\noindent The sampler always gives you 16000 samples. For this part of
+\noindent The sampler gives you {\tt nsamples=16000} samples, which is to
+say that you can change how many samples you request, but it defaults to 16000. 
+For this part of
 the lab, it's easier to deal with fewer, so just use the first $N$ (in
-Python, with the command {\tt firstN= samples[0:N-1]}), with $N$ being a
+Python, with the command {\tt firstN = samples[:N]}), with $N$ being a
 few hundred or thousand.  Throughout the datataking, you should always
 be monitoring the signal with the oscilloscope. These are sine waves, so
 it's easy to measure the period by looking at the oscilloscope; each
 time you digitally sample the signal, you should write down the period
 (maybe in your {\it lab notebook?}).
 
-For each dataset, use Python to plot the digitally sampled waveform versus
+For each dataset, use Python to plot (with the {\tt pylab}/{\tt matplolib.pyplot} package)
+the digitally sampled waveform versus
 time.  Make the plots informative, meaning that you label the
 axes (in particular, label the $x$-axis in time units) and you can
 clearly see the signal shape; if necessary, plot only a part of the data
 so you can clearly see the signal shape (e.g., a few cycles of the sine
-wave). Plot both the sampled points and the lines connecting the points;
-you can do this by setting {\tt psym} in the {\tt plot} command (e.g.,
-{\tt plot, times, timeseries, psym=-4}).  Compare your plot with the
+wave). Plot both the sampled points and the lines connecting the points
+(e.g., {\tt pylab.plot(times, data, 'k.-')}).  Compare your plot with the
 oscilloscope trace.  
 
 Also, for all the datasets derive and plot the Fourier power spectrum
@@ -214,9 +238,9 @@ with real and imaginary parts. Plot the real and imaginary parts
 separately. It is most informative to have them on the same panel, which
 you can do either by plotting the real part and then overplotting the
 imaginary part in a different color; or you can use two plots one below
-the other by setting {\tt !p.multi=[0,1,2]} and {\tt plot, freqs,
-  real\_part(vspct)} and then {\tt plot, freqs,
-  imaginary(vspct)}. Take a detailed Look at the plotted points with the
+the other by setting {\tt pylab.subplot(2,1,1)} and {\tt pylab.plot(freqs, spec.real)},
+  and then {\tt pylab.subplot(2,1,2)} and {\tt pylab.plot(freqs, spec.imag)}.
+ Take a detailed look at the plotted points with the
 goal of seeing if they exhibit any symmetry for negative and positive
 frequencies about 0. What do you see?
 
@@ -233,7 +257,7 @@ positive? Are negative frequencies any less real than positive ones?
 
 When you compare the plots for several independent data streams, do the
 voltage spectra repeat identically?  Why not? What is happening when
-sometimes the real portions are positive or negative? when the imaginary
+sometimes the real portions are positive or negative? When the imaginary
 portions have more amplitude than the real ones?
 
 For the power spectra, repeat this symmetry examination and the test for
@@ -241,6 +265,7 @@ repeatability. What kind of symmetry do the power spectral points
 exhibit? Apply to the power spectra the questions we posed just above
 for the voltage spectra.
 
+% XXX don't understand this paragraph
 Choose one of the power spectra and take its cosine Fourier transform
 (i.e., force the imaginary component of its Fourier transform to be zero
 by symmetrizing the power spectum). Calculate the autocorrelation function
@@ -250,12 +275,12 @@ of the power spectrum should equal the ACF. Does it?
 \subsection{Leakage Power} \label{subleakage}
 
 Above, you calculated a power spectrum for each input signal at $N$
-distinct frequencies separated by $\Delta \nu = \nu_{smpl}/N$. In each,
+distinct frequencies separated by $\Delta \nu = \nu_{samp}/N$. In each,
 you found a spike corresponding to the input signal's frequency. Here,
 focus on just one of the properly-sampled signals $\nu_{sig}$. Calculate
 the power spectrum for many more than $N$ output frequencies than
 recommended in \S \ref{dft}, i.e.\ make the
-frequency increment much smaller than $\Delta \nu = \nu_{smpl}/N$.
+frequency increment much smaller than $\Delta \nu = \nu_{samp}/N$.
 Making the output frequencies closer together gives a more nearly
 continuous frequency coverage in the plot of the output spectrum.  Turn
 up the vertical scale a lot to see if there is any nonzero power at
@@ -272,7 +297,7 @@ could they be and still resolve them? Investigate this experimentally by
 combining two SRS outputs in a power splitter, with the two SRS
 frequencies very close together, and plot the power spectrum. For this,
 you'll again want to plot points much more closely spaced in frequency
-than the $\Delta \nu = \nu_{smpl}/N$ recommended in \S \ref{dft}.  
+than the $\Delta \nu = \nu_{samp}/N$ recommended in \S \ref{dft}.  
 
 How close together can the two frequencies be for you to still be able
 distinguish them? This is called the {\it frequency resolution.} How
@@ -285,9 +310,9 @@ Can you understand this from a mathematical viewpoint?
 \subsection{Nyquist Windows}
 
 Above, we calculated Fourier spectra for frequencies in the range $\pm
-\nu_{smpl}/2$. What do we get when we increase this range? Explore by
+\nu_{samp}/2$. What do we get when we increase this range? Explore by
 taking a Nyquist-sampled time series and calculating the Fourier
-spectrum for a much larger frequency range, $\pm N \nu_{smpl}/2$, where
+spectrum for a much larger frequency range, $\pm N \nu_{samp}/2$, where
 $N$ is at least 4, retaining the original frequency interval. Each value
 of $N$ gives you a spectrum in a different {\it Nyquist window}. How do
 the spectra in different Nyquist windows compare? Note that, for $N>1$,
@@ -298,20 +323,22 @@ in Lab 4 of the course we use a digital spectrometer that samples the
 
 This shows that the strictly correct statement of the Nyquist criterion
 is that the bandwidth---i.e., the frequency {\it range} of the
-signal---must not exceed $\nu_{smpl}$. For the first Nyquist window this
+signal---must not exceed $\nu_{samp}$. For the first Nyquist window this
 is equivalent to the simpler statement of the Nyquist criterion that we
 explored at first.
 
 \subsection{FTs of Noise}
 
-A blackbody radiator with temperature $T_B$ emits electromagnetic waves
-with power per Hz given by the usual blackbody formula $I=
-2h\nu^3/c^2(e^{h\nu/kT_B}-1)$. We are radio astronomers, which means we
-operate in the regime $h\nu/kT_B \ll 1$, so the blackbody formula
+A blackbody radiator with temperature $T$ emits electromagnetic waves
+with specific intensity (power per area per Hz per solid angle) given by the 
+blackbody formula $I=
+2h\nu^3/c^2(e^{h\nu/kT}-1)$. We are radio astronomers, which means we
+operate in the regime $h\nu/kT \ll 1$, so the blackbody formula
 goes to the much simpler Rayleigh-Jeans (RJ) limit,
-$I=2kT_B/\lambda^2$. The noise power depends linearly on $T_B$, and
-for a number of good reasons radio astronomers choose to measure noise
-power in units of temperature.
+$I=2kT/\lambda^2$. The noise power depends linearly on $T$. 
+For a number of good reasons, radio astronomers choose to measure noise
+power in units of temperature and {\it define} a brightness temperature
+$T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity.
 
 When we observe, the electric field of the blackbody radiation is
 converted to voltage when it strikes the probe in the `feed' of the
@@ -330,29 +357,28 @@ the properties of digitally sampled noise: \begin{enumerate}
   voltage (it's the square root of the mean square voltage)?
 
 \item Plot a histogram of the sampled voltages (see Python's {\tt
-  histogram} function---for documentation, type {\tt ?histogram} in Python;
-  or use our convenient home-grown `wrapper' {\tt histo\_wrap}---for
-  documentation, type {\tt doc, 'histo\_wrap'} \ \ in Python). The histogram
-  should look Gaussian, with a dispersion equal to the rms
+  numpy.histogram} function---for documentation, type {\tt numpy.histogram?} in IPython).
+  The histogram
+  should look Gaussian, with a width equal to the rms
   voltage. Overplot this theoretically-expected Gaussian---does it look
   like your data?
 
 \item Take a total of 32 16000-point samples with the picosampler (let's
-  call these 32 `chunks' and derive the power spectrum for each chunk
+  call these 32 `blocks' and derive the power spectrum for each block
   using the direct FT method. Plot the average of all 32 power
   spectra. What does this look like?
 
-\item Plot the power spectrum for a single chunk and compare to the
-  above average. Do the same for the average of $N$ chunks, where $N=(2,
+\item Plot the power spectrum for a single block and compare to the
+  above average. Do the same for the average of $N$ blocks, where $N=(2,
   4, 8, 16)$ What you are doing here is looking at how integration time
   affects the signal-to-noise ratio (SNR): the `signal' is what you see
   with long integration times and the `noise' is the `grass'. How does
   SNR depend on $N$? (Hint: SNR is proportional to $N^x$; what is $x$?)
 
-\item Calculate the ACF for a single chunk, using the entire set of
+\item Calculate the ACF for a single block, using the entire set of
   16000 samples for delays of $\le 2000$ samples. Also derive the power
   spectrum from this ACF and compare with the direct FT-derived power
-  spectrum for the same chunk.  Are they identical?
+  spectrum for the same block.  Are they identical?
   Compare the width (full width half max, or FWHM) of the ACF ($\Delta
   \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta
   F_{FWHM}$). How do $\Delta \tau_{FWHM}$ and $\Delta F_{FWHM}$ compare?
@@ -401,20 +427,22 @@ this sum, you need to specify: \begin{enumerate}
 
 \item Define the time range so that the center time is the zero
   point. With $N$ even, there is no center time, so make the times
-  run from ${-N \over 2}/ \nu_{smpl}$ to $({N \over 2} -1)/ \nu_{smpl}$.
+  run from ${-N \over 2}/ \nu_{samp}$ to $({N \over 2} -1)/ \nu_{samp}$.
 \end{enumerate}
 
 \item The output is a function of frequency, so you have to specify the
   frequencies for which you want the output $E(\nu)$. I {\it strongly}
   suggest that, {\it at first}, you calculate the the output for $N$
-  frequencies running from $-{\nu_{smpl} \over 2}$ to $+{\nu_{smpl}
+  frequencies running from $-{\nu_{samp} \over 2}$ to $+{\nu_{samp}
     \over 2} \left( 1 - {2 \over N} \right)$. This makes the frequency
-  increment equal to $\Delta \nu = \nu_{smpl}/N$ over a total range of
-  just under $\nu_{smpl}$. Thus, you calculate a {\it voltage} spectrum
-  running from $-{\nu_{smpl} \over 2}$ to not quite ${\nu_{smpl} \over
-    2}$ using our in-house DFT procedure. To find out how to use DFT,
-  use the {\tt doc\_library} or {\tt doc} function; in Python,
-  type:\ \ {\tt doc, 'dft'}.
+  increment equal to $\Delta \nu = \nu_{samp}/N$ over a total range of
+  just under $\nu_{samp}$. Thus, you calculate a {\it voltage} spectrum
+  running from $-{\nu_{samp} \over 2}$ to not quite ${\nu_{samp} \over
+    2}$ using our in-house DFT procedure (see the {\tt ugradio.dft} module). 
+To find out how to use the DFT, you can type {\tt ugradio.dft.<tab>} to see an
+auto-complete of what is available in the module.  You can also type {\tt ugradio.dft??} to see
+the code, and, of course, you can type {\tt ugradio.dft.dft?} to see the docs for
+the DFT function inside the {\tt dft} module.
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
 \label{pwrspect}
@@ -430,14 +458,14 @@ P(\nu) = E(\nu) E(\nu)^* \ .
 \end{equation}
 % 
 \noindent In Python, there are two ways to get this product.  One is to use
-the \verb$conj$ function, i.e.\ {\tt PF = EF * conj(EF)}.  Should the
+the \verb$conj$ function, i.e.\ {\tt PF = EF * EF.conj()}.  Should the
 imaginary part of \verb$PF$ be zero? (answer: yes! Why is this?) Is it?
-(answer: no! Why not?) To get rid of this annoying and extraneous
+(answer: not always! Why not?) To get rid of this annoying and extraneous
 imaginary part, you can use the \verb$float$ function: 
-\verb$PF = float(PF)$. 
+\verb$PF = float(PF)$. For arrays, this becomes {\tt PF = PF.astype(numpy.float)}.
  
 The other (more convenient and suggested) way is to square the length of
-the complex vector, i.e.\ \verb$PF = (abs(EF))^2$. The result is
+the complex vector, i.e.\ \verb$PF = numpy.abs(EF)**2$. The result is
 automatically real.
 
 \end{enumerate}
@@ -527,8 +555,8 @@ Above in \S \ref{dft}, you had $N$ time samples and evaluated the DFT
 for $N$ well-chosen frequencies. These were ``well-chosen'' because for
 these particular values of frequency---and {\it only} these particular
 values---you can get back to the time domain by using the inverse
-transform (in Python using {\tt dft}, you accomplish this by setting the
-{\tt inverse} keyword).
+transform (in Python using {\tt ugradio.dft.idft}).
+% XXX make sure idft exists
 
 It so happens that, for these particular combinations of frequency and
 time, there is a very fast algorithmic implementation called the {\it
@@ -539,14 +567,14 @@ large, this takes a long time!  For the FFT, on the
 contrary, the number of calculations $\propto N {\rm ln}_2(N)$, and this
 makes it possible to do large-$N$ transforms.
 
-Try Python's FFT and compare it to your DFT calculation above. The FFT
+Try Python's FFT (in the {\tt numpy.fft} module) and compare it to your DFT calculation above. The FFT
 output is ordered in what you might think is a funny and awkward way:
 when Fourier transforming a time series to obtain N frequencies, the
 frequency array is ordered with ${N \over 2} - 1$ positive frequencies
 first, then $N \over 2$ negative frequencies 
 %(i.e., $0 \rightarrow
-%{\nu_{smpl} {N-1 \over N}, -\nu_{smpl} \over 2} \rightarros
-%    -\nu_{smpl}/N$.  
+%{\nu_{samp} {N-1 \over N}, -\nu_{samp} \over 2} \rightarros
+%    -\nu_{samp}/N$.  
 However, it's really {\it not} awkward for most
     applications. See our ``DFT's with DFT's'' handout for details.
 
@@ -592,7 +620,7 @@ the third port.
 
 For this, use two SRS synthesizer oscillators as inputs to a mixer to
 explore the spectra and waveforms in the DSB mixing process.  The SRS
-synthesizers work up to 30 MHz.  Assign one of the SRS synthesizers to
+synthesizers work up to 15 MHz.  Assign one of the SRS synthesizers to
 be your ``local oscillator'' ({\it lo}) with frequency $\nu_{lo}$, and
 the other your ``signal'' with frequencies $\nu_{sig} = \nu_{lo} \pm
 \delta \nu$.  Here, you choose the frequency difference $\delta \nu$ and
@@ -601,10 +629,10 @@ the signal frequency. There are two cases for the signal frequency,
 $\nu_{sig} = \nu_{lo} + \delta \nu$ and $\nu_{sig} = \nu_{lo} - \delta
 \nu$.  Make $\delta \nu$ somewhat small compared to $\nu_{lo}$, maybe
 $5\%$ of $\nu_{lo}$.  For the input power level, a good choice is 0
-dbm\footnote{What does this ``dbm'' mean? It's the power relative to 1
+dBm\footnote{What does this ``dBm'' mean? It's the power relative to 1
   milliwatt, expressed in decibels (dB). For our system the cable
   impedance is 50 ohms; what's the rms voltage for a signal with power
-  level 0 dbm?} for both synthesizers. The output consists of both the
+  level 0 dBm?} for both synthesizers. The output consists of both the
 sum and difference frequencies, so choose the ports appropriately.
 
 We will want to digitally sample the mixer output and explore both the
