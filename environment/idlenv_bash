@@ -1,0 +1,47 @@
+
+#----------- from bill's idlenv-global file ------------------
+#bill sets IDL_DIR and LM_LICENSE_FILE
+# Global UGAstro IDL Environment file
+# FOR /bin/bash
+# Set path to the IDL installation
+export IDL_DIR=/home/apps/exelis/idl82
+# Set the location of the license file
+export LM_LICENSE_FILE=/home/apps/exelis/license/license.dat
+
+
+
+# Set the IDL_PATH
+#export IDL_PATH=¨+$IDL_DIR/lib¨ (this has been done in .idlenv-global)
+#export IDL_PATH=:+$IDL_DIR/lib:+$IDL_DIR/examples
+export IDL_PATH=:+$IDL_DIR/lib:+$IDL_DIR/examples:+$IDL_DIR/help
+
+# Add other locations to the path.  Example:
+# setenv IDL_PATH $IDL_PATH{:}+/additional/path
+#export IDL_PATH="$IDL_PATH{:}+/home/global/idl/"
+
+# Set the device
+export IDL_DEVICE=X
+
+# Set an alias for the idl execuatble
+# legacy 32 bit doesn't work well on new machines w/o all 32 bit libs
+alias   idl='${IDL_DIR}/bin/idl'
+
+export IDL_STARTUP=/home/global/ay121/idl/gen/idlstartup_ay121.pro
+
+# set default browser for 'idlhelp'
+export IDL_HELP_BROWSER=/usr/bin/firefox
+
+# add IDL bin dir to general PATH
+export PATH=${PATH}:$IDL_DIR/bin
+
+#alias idl=$IDL_DIR/bin/idl
+
+#-----------------------------------------------------------
+#the following is old stuff, probably junk
+
+# Some IDL aliases...
+#alias idl='($IDL_DIR/bin/idl \!*)'
+#alias idlbat='(/bin/nice -10 $IDL_DIR/bin/idl < \!*) >& \!:1.log &'
+
+#;make sure the license mgr runs (used for vermino)
+#source /home/heiles/idl_license_mgr_command

@@ -1,0 +1,221 @@
+;; General stuff.
+;; This takes about 2-5 seconds to find! Instead, set it in .Xdefaults!!!
+(set-default-font "-Misc-Fixed-Medium-R-Normal--15-140-75-75-C-90-ISO8859-1")
+(setq-default fill-column 72)
+(setq auto-save-list-file-name nil)
+(setq default-frame-alist (append (list
+  '(width  . 80)
+  '(height . 60))
+ default-frame-alist))
+
+;; Get rid of that annoying prompt that requires one to type
+;; in YES and then press the enter key to confirm.
+(defun yes-or-no-p (PROMPT)
+  (beep)
+  (y-or-n-p PROMPT))
+
+;; Make sure the goddamn scroll-bar is on the left...
+(setq scroll-bar-mode-explicit t)
+(set-scroll-bar-mode 'left) 
+
+;; Remap backspace to be sane in non-window setting...
+(cond (window-system)
+      (t (keyboard-translate ?\C-h ?\C-?)
+	 (define-key global-map "\C-x?" 'help-command)
+	 ))
+
+;; These were originally in carl's dot-emacs...
+(setq default-major-mode `text-mode)
+(add-hook `text-mode-hook `turn-on-auto-fill)
+(add-hook `text-mode-hook `line-number)
+(setq-default transient-mark-mode t)
+(global-unset-key "\e\e")
+(global-unset-key "\C-x\C-x")
+;; this breaks emacs...
+;;(global-set-key (kbd "C-down") 'ignore)
+
+;; Calendar info
+(setq calendar-standard-time-zone-name "PST")
+(setq calendar-daylight-time-zone-name "PDT")
+(setq calendar-latitude 37.8)
+(setq calendar-longitude -122.3)
+(setq calendar-location-name "Berkeley, CA")
+
+;; No emacs start-up message 
+(setq inhibit-startup-message t) 
+
+;; Bind F9 : query replace
+(global-set-key [f9] 'query-replace)
+
+;; Bind Goto line
+(global-set-key "\C-xg" 'goto-line)
+;;(global-set-key [f9]    'goto-line)
+
+;; Bind HOME/END keys to goto HOME/END of buffer...
+(global-set-key [home]    'beginning-of-buffer)
+(global-set-key [end]     'end-of-buffer)
+
+;; Bind Sun_Diamond-s to be equivalent to C-s...
+(define-key global-map 	"\M-s" 	        'save-some-buffers)
+
+;; Bind key to kill to start of line
+(defun kill-line-backwards ()
+  "Delete the current line from here to the start."
+  (interactive)
+  (kill-line -0))
+(global-set-key "\C-xc" 'kill-line-backwards)
+
+;; Bind key to touch a file... think of as a forceful C-x C-s!
+(defun touch ()
+  "Save the file whether or not changes have been made."
+  (interactive)
+  (write-file (buffer-file-name)))
+(global-set-key  "\C-xt" 	'touch)
+(global-set-key  "\C-x\C-d" 	'touch)
+
+;; Macro to count words in region...
+(defun count-words-region (beginning end)  
+  "Print number of words in the region.
+Words are defined as at least one word-constituent
+character followed by at least one character that
+is not a word-constituent.  The buffer's syntax
+table determines which characters these are."
+  (interactive "r")
+  (message "Counting words in region ... ")
+
+;;; 1. Set up appropriate conditions.
+  (save-excursion
+    (goto-char beginning)
+    (let ((count 0))
+
+;;; 2. Run the while loop.
+      (while (< (point) end)
+        (re-search-forward "\\w+\\W*")
+        (setq count (1+ count)))
+
+;;; 3. Send a message to the user.
+      (cond ((zerop count)
+             (message 
+              "The region does NOT have any words."))
+            ((= 1 count) 
+             (message 
+              "The region has 1 word."))
+            (t 
+             (message 
+              "The region has %d words." count))))))
+; Rebind C-x e from "call last keyboard macro"...
+(global-set-key "\C-xw" 'count-words-region)
+
+;;!!!!!!!!!!!!!!!!! BIND THIS TO SOMETHING !!!!!!!!!!!!!!
+;; Macro that outputs $$ and moves cursor backward...
+(defun make-latex-inline-equation ()
+   "Delete the current line from here to the start."
+   (interactive)
+   ;; insert latex equation...
+   (insert (car (cdr (list nil "$$"))))
+   ;; move backward one character...
+   (backward-char 1))
+(global-set-key "" 'make-latex-inline-equation)
+;;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+;; The following specify the colors for the status bars, selection region,
+;; scroll bars, cursor, and mouse.
+;; To find a list of color names, find the file rgb.txt on your system:
+;; > find /usr -name rgb.txt | xargs less
+(cond (window-system     ; set variables only in windowing systems.
+       ;; Text region colors...
+       (set-face-background 'default "darkslategray")
+       ;;(set-face-background 'default "slategray")
+       (set-face-foreground 'default "white")
+       ;; Modeline region colors...
+;;       (set-face-background 'modeline "darkblue")
+;;       (set-face-foreground 'modeline "gold")
+       ;; Highlight region colors...
+       (set-face-background 'region "black")
+       (set-face-foreground 'region "magenta")
+       ;; Color of the mouse cursor...
+       (set-mouse-color "gold")
+       ;; Color of the text cursor...
+       (set-cursor-color "red")
+       ))
+
+;; Allow upcase and downcase of region
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; Wheel scrolling...
+(defun up-one () (interactive) (scroll-up 1))
+(defun down-one () (interactive) (scroll-down 1))
+(global-set-key [mouse-4] 'down-one)
+(global-set-key [mouse-5] 'up-one)
+(defun up-slightly () (interactive) (scroll-up 5))
+(defun down-slightly () (interactive) (scroll-down 5))
+(global-set-key [S-mouse-4] 'down-slightly)
+(global-set-key [S-mouse-5] 'up-slightly)
+(defun up-a-lot () (interactive) (scroll-up))
+(defun down-a-lot () (interactive) (scroll-down))
+(global-set-key [C-mouse-4] 'down-a-lot)
+(global-set-key [C-mouse-5] 'up-a-lot)
+
+
+;; IDLWAVE
+;; Path to IDLWAVE help files... 
+(autoload 'idlwave-mode "idlwave" "IDLWAVE Mode" t)
+(autoload 'idlwave-shell "idlw-shell" "IDLWAVE Shell" t)
+(setq auto-mode-alist
+ (cons '("\\.pro\\'" . idlwave-mode) auto-mode-alist))
+(setq auto-mode-alist
+ (cons '("\\.idl\\'" . idlwave-mode) auto-mode-alist))
+(setq auto-mode-alist
+ (cons '("\\.idlprc\\'" . idlwave-mode) auto-mode-alist))
+;; Syntax highlighting
+(add-hook 'IDLWAVE-mode-hook 'turn-on-font-lock)
+(setq font-lock-maximum-decoration t)
+
+;; Turn on Font Lock mode automatically in all modes which support it
+;;PARAGRAPH STUFF HERE...
+(global-font-lock-mode t)
+(setq font-lock-maximum-decoration t)
+(setq default-major-mode 'text-mode)
+;;(setq default-major-mode `paragraph-indent-text-mode)
+(setq text-mode-hook '(lambda () (auto-fill-mode 1) (line-number-mode 1)))
+(setq fortran-mode-hook '(lambda () (abbrev-mode 1) (line-number-mode 1)))
+
+;; Change some ugly colors...
+(custom-set-variables)
+(custom-set-faces
+ '(firebrick-italic ((t (:foreground "OrangeRed"))) t)
+ '(purple ((t (:foreground "red"))) t))
+
+;; If you encounter a file with ^M or ... at the end of every line,
+;; Get rid of them by pressing [F10]
+(global-set-key [f10]      'cut-ctrlM) ; cut all ^M.
+(defun cut-ctrlM ()  
+   "Cut all visible ^M."
+   (interactive)
+   (beginning-of-buffer)
+   (while (search-forward "\r" nil t)
+    (replace-match "" nil t))
+)
+
+;; Align your BIBTeX entries all fancy-like...
+;; Set the indentation of the field name...
+(setq-default bibtex-field-indentation 3)
+;; Set the indentation of the text...
+(setq-default bibtex-text-indentation 15)
+(setq-default bibtex-contline-indentation 16)
+;; Align the equal signs...
+(setq-default bibtex-align-at-equal-sign 1)
+;;(setq-default bibtex-entry-format nil)
+;; Sort my BIBTeX entries, brother...
+(setq-default bibtex-maintain-sorted-entries t)
+(setq-default bibtex-autokey-names nil)
+(setq-default bibtex-autokey-name-length 1)
+(setq-default bibtex-autokey-titleword-length 0)
+(setq-default bibtex-autokey-titlewords 0)
+(setq-default bibtex-autokey-titleword-separator nil)
+(setq-default bibtex-autokey-year-title-separator nil)
+;; Set this to nil when you're happy with what autokey is doing!
+(setq-default bibtex-autokey-edit-before-use t)
+
+

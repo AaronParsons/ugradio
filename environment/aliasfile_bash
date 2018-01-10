@@ -1,0 +1,94 @@
+# THESE ARE MY GENERAL ALIASES... THEY CAN BE COPIED TO ANY UNIX/LINUX
+# SYSTEM LIKE ARECIBO OR THE GBT OR MY LAPTOP AND SHOULD BEHAVE AS
+# EXPECTED.
+# I'LL KEEP ALL MY SYSTEM-DEPENDENT ALIASES IN ~/.aliasfile.local
+# THESE FILES WILL ALL BE DIFFERENT ON THE DIFFERENT SYSTEMS.
+# IF THE FILE EXISTS, IT WILL BE SOURCED AT THE END OF THIS FILE.
+
+########################################################################
+####### THESE ALIASES ARE GENERAL AND SHOULD WORK ON ANY SYSTEM ########
+########################################################################
+
+alias rm="rm -i"
+alias mv="mv -i"
+alias cp="cp -ip"
+alias cp_p="\cp -p"
+alias scp="scp -p"
+alias ls="\ls -F "
+alias ll="\ls -Fl "
+alias lld="\ls -Fld "
+alias lla="\ls -FlA "
+alias du="du -hsc"
+alias df="\df -hl"
+alias du1='\du --max-depth=1 -hc'
+alias du2='\du --max-depth=2 -hc'
+alias du3='\du --max-depth=3 -hc'
+alias du4='\du --max-depth=4 -hc'
+alias diffside='diff --side-by-side -W160'
+#alias dvipsland='\dvips -t landscape'
+alias enscript='\enscript -fCourier7'
+#alias gv='\gv -antialias -center -scale -1' 
+#alias findll= 'find \!:1 -name \!:2 -exec ls -l {} \;'
+alias ssh='\ssh -X '
+alias rsync='\rsync -a'
+alias rsynclocal='\rsync -avzl --progress --stats'
+alias rsynclocal_del='\rsync -avzl --progress --delete --stats'
+alias rsyncremote='\rsync -e ssh -avzl --progress --stats'
+alias rsyncremote_del='\rsync -e ssh -avzl --progress --delete --stats'
+alias swapcaps='xmodmap /home/global/ay121/bash_dotfiles/.Xmodmap.swapcaps'
+alias sshl='ssh -XY radiolab@leuschner.berkeley.edu -p 31'
+alias mem='emacs -nw '
+# alias findll='find !:1 -name !:2 -exec ls -l {} \;'
+# To list the biggest files in the current directory...
+#alias lsbig 'ls -aoF | sort -nr +3.0 | head'
+alias lsbig='ll -S'
+# To list recently modified files in the current directory...
+alias new="ls -aotF \!* | more"
+
+# To kill all processes of a given user on current machine (use with care!)...
+#alias nuke 'set temp = \!*; if ("$temp" == "") set temp = $user;'\
+#	'echo "Enter password to confirm nuke of ALL $temp processes...";'\
+#	'su $temp -c "kill -9 -1"'
+
+alias convert_tr='convert -verbose -antialias -density 600 -geometry 25% -quality 95' 
+#convert_tr image.ps image.png. also useful for pdf -- much btr to pdf-->png than pdf-->ps-->png
+
+########################## PERMISSIONS ################################
+alias exe='chmod ugo+x'
+alias norw='chmod ugo-rwx,u+rw'
+alias norwx='chmod go-rwx,u+rwx'
+alias hide='chmod go-rwx'
+alias closed='chmod ugo-rwx'
+alias opend='chmod u+rwx,go+rx'
+
+########################### REMINDERS #################################
+#alias ?ens='echo "enscript -rBj -fCourier8 -pfile.ps file";'\
+#           'echo "r: landscape\nB: no hdr\nj: add borders\n2: 2 cols";'\
+#           'echo "--columns=#: # cols per page\n--word-wrap: wrap lines"'
+#alias ?tar='echo "tar cvf fname.tar file1 file2 file3 => (c)reate";'\
+#	   'echo "tar --dereference -cvf fname.tar file1 file2 file3 => (c)reate AND FOLLOW SLINKS";'\
+#           'echo "tar xvf fname.tar [untar]           => (x)-tract (untar)";'\
+#           'echo "tar tvf fname.tar [just list files] => (t)able of contents"'
+###alias ?ln='echo "ln -s real_file_or_dir new_symbolic_link"'
+###alias ?rsync="source ~/.rsync.info"
+#alias ?grep="echo grep -r --include='*.pro' pangle *"
+###alias ?grep="source ~/.grep.info"
+
+####################### pushd ###########################
+alias pd='pushd'
+
+####################### find ############################
+
+alias findsize="find . -name"
+alias findtime="find . -mtime -2"
+alias fp="find ${cwd}"
+#to a max depth: alias fp="find ${cwd}" -maxdepth 2
+
+#findlist
+#dot files need the explicit dot!!!
+#alias findll="find \!:1 -name \!:2 -exec ls -l {} \;"
+
+##################### SOURCE LOCAL ALIASES ############################
+#if (-e $HOME/.aliasfile.local) source $HOME/.aliasfile.local
+
+
