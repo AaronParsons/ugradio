@@ -8,8 +8,8 @@ VOLT_RANGE = ['50mV', '100mV', '200mV', '500mV',
     '1V', '2V', '5V', '10V', '20V']
 HOST, PORT = '10.32.92.95', 1340
 
-def read_socket(volt_range, divisor=2, dual_mode=False, 
-        nsamples=16000, nblocks=5, host=HOST, port=PORT, verbose=False):
+def capture_data(volt_range, divisor=2, dual_mode=False, 
+        nsamples=16000, nblocks=1, host=HOST, port=PORT, verbose=False):
     '''
     Read data from picosampler via socket interface provided
     by picoserver.py in the PicoPy repository.
