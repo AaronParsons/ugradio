@@ -127,3 +127,5 @@ def sample_pico(sampler, volt_range, sample_interval, nsamples,
         fullData = np.concatenate([fullData,sampData['B']])
     data = fullData.astype(np.int16)
     return data
+
+read_socket = capture_data
