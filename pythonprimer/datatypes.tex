@@ -16,12 +16,12 @@ organizational structures} we mean tuples, arrays and
 dictionaries.  We cover these in the following sections.  All
 available datatypes can be arranged in all available organizational
 structures.  For example, we can have arrays of integers, dictionaries of
-complex numbers.
+complex numbers etc\dots
 
 \section {DATATYPES}
-
-	Here we cover only the basic Python datatypes.  There are others,
-including unsigned integers and complex numbers. 
+	Here we cover only the basic Python datatypes in brief here. 
+There are others types like bytearrays, strings, unicode etc that we do 
+not cover here.
 
 \subsection{DIGITS, BITS, BYTES, AND WORDS}
 
@@ -53,8 +53,8 @@ Consider, then, the binary number 11111111; it's the maximum-sized
 number that can be stored in a byte. What is this number? 
 
 	Finally, computers group the bytes into {\bf words}.  The oldest
-PC's dealt with 8-bit words---one byte.  Many present-day PCs use 32-bit
-words---four bytes.  Macs and the more capable PCs deal with 64-bit
+computers dealt with 8-bit words---one byte.  Many present-day computers use 32-bit
+words---four bytes.  Macs and the more capable computers deal with 64-bit
 words---8 bytes. What's the largest number you can store in a 4-byte
 word? And how about negative numbers?
 
@@ -67,24 +67,28 @@ up if you are interested.
 
 \section{NUMERIC DATATYPES IN PYTHON AND NUMPY}
 \subsection{Native Numbers in Python}
-	The datatypes {\it Python 2.7} natively supports are limited to int, 
-long, float and complex. The datatypes are automatically fixed during 
+	The datatypes {\it Python 2.7} natively supports are limited to 
+long integer, float and complex. The datatypes are automatically fixed during 
 variable assignment and need not be specified during declaration. However, 
 remember that they do not change! The numeric datatypes are immutable, 
-meaning that $1/2 = 0$ and not $0.5$.
+meaning that $1/2 = 0$ and not $0.5$. 
 
-	Integer numbers that can be represented by up to 32 bits are 
-represented by the {\it int} datatype. They can be both signed and unsigned.
-Integer numbers that are larger, are represented by {\it long}. Unlike lower level 
-languages (IDL, C), Python does not have a cap on the size of the number. It 
+%Integer numbers that can be represented by up to 32 bits are 
+%represented by the {\it int} datatype. They can be both signed and unsigned.
+Integer numbers are represented by {\it long}. Unlike lower level 
+languages (IDL, C), Python does not have a cap on the size of the integer. It 
 is capable of allocating as many bits are required to represent the number. 
-{\it Float} is used to represent fractions up to 64 bits. We will see how 
-fractions are stored later\dots  
+{\it Float} is used to represent fractions up to 64 bits. Check out the appendix to 
+learn how fractions are stored.
 
 	For most scientific computations you will proably use NumPy 
 which has a lot more flexibility on the number of bits allocated to a number. 
 This is more useful for programmers who deal with large sets of data (like radio 
 astronomers!), and want to control the amount of memory used and optimise performance.
+
+Note: The native datatypes in {\it Python 3} are a little different from 
+{\it Python 2.7}. For example, division of integers is automatically 
+cast to a float, which is accurate upto 15 decimal places.
 
 \subsection {Integer Datatypes in NumPy}
 	NumPy supports a much wider range of numeric datatypes than 
@@ -106,20 +110,26 @@ for signed integer. The first bit is reserved to store the sign of the number
 and the rest 7 bits are used to represent the integer. Therefore, its value 
 runs from $-127 \rightarrow 127$.
 
-The byte data is not used as frequently anymore since computers have become faster. 
-In the past, computers used to store colors of pixels in bytes (1 bytes each for 
-red, blue and green) and encode characters (like the string variable `a') in bytes. 
-Python being a higher level language than Fortran, IDL or C stores both colors and 
-characters in custom formats. These are still numbers under the hood, but the user 
-never sees these representations. The place where byte data is still frequently used 
-is in analog to digital convertors; most ADCs quantise the analog signal into 8 bits. 
-The one we have in the lab is more sophisticated and uses 16 bits.
+You would think the byte datatype is not all that useful, but it is still used 
+in computing! Computers store colors of pixels in bytes (1 bytes each for red, 
+blue and green) and encode characters (like the string variable `a') in a byte.
+Look up ASCII tables online if you want to learn more about character encoding.
+Fun fact: Encryption algorithms often use a 1 byte key to scramble content 
+before transmission on the internet. That is what makes https a ``secure" line.
+
+%The byte data is not used as frequently anymore since computers have become faster. (cryptography)
+%Python being a higher level language than Fortran, IDL or C stores both colors and 
+%characters in custom formats. 
+%These are still numbers under the hood, but the user 
+%never sees these representations. The place where byte data is still frequently used 
+%is in analog to digital convertors; most ADCs quantise the analog signal into 8 bits. 
+%The one we have in the lab is more sophisticated and uses 16 bits.
 
 If you ever need to generate a byte array, you can use
 
 {\tt np.linspace(startvalue,stopvalue,dtype=np.uint8)}
 
-Remember that if, during a calculation, a byte number exceeds 255, then it will ``wrap around''; for example, 256 wraps to 0, 257 to 1, etc.
+Remember that if, during a calculation, a byte number exceeds 255, then it will {\bf wrap around}; for example, 256 wraps to 0, 257 to 1, etc.
 
 \subsubsection{Multiple bytes}
 
@@ -135,12 +145,12 @@ One possible value is, of course, zero.  So the number of negative and positive 
 differ by one.  The choice is to favor negative numbers, so Integers cover the range 
 $-2^{B/2} \rightarrow 2^{B/2}-1$. 
 
-	In general, you can generate arrays of various sizes (8,16,32,64 bits) using 
+	In general, you can generate arrays of various sizes (8/16/32/64 bits) using 
 {\tt dtype=np.uint<bits>} for unsigned integers and {\tt dtype=np.int<bits>} for 
 signed integers. What are the limits on these numbers? See Python help 
 under ``NumPy DataTypes'' for more information.  
 
-\subsection {FLOATING DATATYPES IN IDL} \label{floats}
+\subsection {FLOATING DATATYPES IN Python} \label{floats}
 
 	The problem with integer datatypes is that you can't represent
 anything other than integral numbers---no fractions! Moreover, if you
@@ -194,10 +204,15 @@ A complex number $C$ consists of a pair of real numbers, one the real and
 one the imaginary part [in NumPy: {\tt np.real(C)} and {\tt np.imag(C)}].
 The two numbers are always floats and can be either single- or
 double-precision. You generate a single-precision complex number $(2.2 +
-i3.9)$ with: {\tt C = np.complex64(2.2, 3.9)} and a double-precision one with
-{\tt np.complex128}. The arguments can be arrays, giving you a complex-number
+i3.9)$ with: {\tt C = np.complex64(2.2, 3.9)} and a double-precision 
+one with {\tt np.complex128}. The arguments can be arrays, giving you a complex-number
 array. There are also the complex analogues {\tt dtype= np.complex64} and {\tt
   dtype=np.complex128} that you can use in linspace to generate arrays.
+
+Note: You can also create the native Python complex number using 
+{\tt C = 2+3j}. Python has methods that you can call on complex numbers to access 
+the real, imaginary parts, compute the conjugate etc. Try {\tt C.real}, 
+{\tt C.imag} and {\tt C.conjugate()} on your computer.
 
 For a more detailed discussion on numeric datatypes in NumPy see \url{https://docs.scipy.org/doc/numpy-1.13.0/user/basics.types.html}.
 
@@ -208,16 +223,6 @@ structures Python offers. These are only briefly described here to
 introduce you to the basics. You are encouraged to look up the Python 
 documentation online which describes these in more detail and provides 
 examples and tutorials.
-
-\subsection{TUPLES}
-Tuples consist of a number of values, seperated by commas. They are a 
-little like lists but not quite the same. Tuples are non-mutable, they 
-cannot be changed like lists. You can identify tuples by the parentheses 
-they are enclosed by `( )', unlike lists which are enclosed in square 
-brackets `[ ]'. Even if you never use them, you will often encounter tuples 
-as outputs of functions of the packages and modules you may use. For example, 
-the color of a pixel in matplotlib is stored as a tuple of (r,g,b,a) where `a' 
-quantifies the transperancy of the pixel.
 
 \subsection{LISTS AND ARRAYS}
 Lists in Python are a group of values enclosed in square brackets `[ ]'. They 
@@ -232,13 +237,34 @@ such purposes, you can either write a loop that iterates over all the
 elements in the list or you can use NumPy arrays. You can convert a native 
 Python list to a NumPy array by using {\tt np.asarray(list)}. NumPy arrays are even 
 more flexible and allow you to compute log, cosine, sin, mean and standard 
-deviation of arrays. You can of course multiply the array by a scalar, but you can also multiply an array with another array! Is multiplying two arrays returning a matrix multiplication or an element-wise multiplication?
+deviation of arrays. You can of course multiply the array by a scalar, but you 
+can also multiply an array with another array! Is multiplying two arrays 
+returning a matrix multiplication or an element-wise multiplication? NumPy arrays 
+are about an order of magnitude more efficient than Python lists 
+when it comes to array manipulation and computation.
+
+If you ever forget whether the list of numbers you have is a Python list or 
+a NumPy array, you can check by using {\tt type(list\_variable)}. Python lists 
+show up as {\tt list} type and NumPy arrays as {\tt numpy.ndarray}. In fact, 
+you can use the {\tt type} function on any variable in Python.
+
+\subsection{TUPLES}
+Tuples consist of a number of values, seperated by commas. They are a 
+little like lists but not quite the same. Tuples are non-mutable, they 
+cannot be changed like lists. You can identify tuples by the parentheses 
+they are enclosed by `( )', unlike lists which are enclosed in square 
+brackets `[ ]'. Even if you never use them, you will often encounter tuples 
+as outputs of functions of the packages and modules you may use. For example, 
+the color of a pixel in matplotlib is stored as a tuple of (r,g,b,a) where `a' 
+quantifies the transperancy of the pixel.
 
 \subsection{DICTIONARIES}
 One of the most useful organizational structures Python offers is a dictionary. 
 A dictionary is a key to value mapping. Instead of indexing by numbers 
 (like lists), dictionaries index by keys. If you are familiar with C or IDL, 
-these are best thought of as structures but more versatile. Dictionaries are enclosed by curly brackets `\{ \}' and the key:value pair are seperated by a colon. An example of a dictionary is given below:
+these are best thought of as structures but more versatile. Dictionaries are 
+enclosed by curly brackets `\{ \}' and the key:value pair are seperated by 
+a colon. An example of a dictionary is given below:
 
 \begin{lstlisting}
 data = {}
