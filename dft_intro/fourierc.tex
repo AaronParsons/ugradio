@@ -1,4 +1,4 @@
-\documentclass[psfig,preprint]{aastex}
+\documentclass[preprint]{aastex}
 
 \makeatletter
 \renewcommand\theequation{\thesection.\arabic{equation}}
@@ -9,6 +9,8 @@
         \@addtoreset{table}{section}
 \makeatother
 
+\usepackage{float}
+\usepackage{graphicx}
 
 \begin{document}
 
@@ -18,7 +20,7 @@
 (DFT's with DFT's) \\ or \\ ``WHY DOES THAT FFT OUTPUT LOOK SO
 WEIRD???''}
 
-\author{\copyright Carl Heiles \today }
+\author{\copyright Carl Heiles \& Kara Kundert \\ \today }
 
           ``Spectral analysis'' means describing a time-varying signal
 by its power spectrum, otherwise known as its Fourier spectrum or its
@@ -48,8 +50,8 @@ There are some intricacies with this process\dots
 voltage $E(t)$ from the time to the frequency domain $E(\nu)$, and {\it
 vice versa}.  The formally correct equations are
 
-\begin{mathletters} \label{eqone}
-\begin{equation}
+\begin{mathletters} \begin{equation}
+\label{eqone}
 E(\nu) = \int_{-\infty}^{\infty} E(t) e^{[2 \pi i]\nu t}  dt \; 
 \end{equation}
 
@@ -237,18 +239,18 @@ a real-world example of aliasing: the movie frames discretely sample the
 scene at too slow a rate to faithfully reproduce the wheel's rotation. 
 You can understand aliasing by looking at Figure \ref{figone}. 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
 \leavevmode
 %\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
-\includegraphics{fig1.ps}
+ \includegraphics[width=6.0in, clip=true]{fig1}
 \end{center}
-
+\label{figone}
 \caption{Aliasing at its worst. The sample interval is $t_{smpl}= 0.01$
 s, so the sample frequency is $\nu_{smpl} = 100$ Hz. The Nyquist
 frequency is $f_N=50$ Hz. The stars are the datapoints. The two signals
 shown are at frequencies 37.5 and 62.5, i.e.\ $f_N \pm 12.5$ Hz. Which
-signal do the datapoints represent? \label{figone} }
+signal do the datapoints represent?  }
 \end{figure}
 
 	To put it another way: When we sample at rate $\nu_{smpl}$, the
@@ -463,7 +465,7 @@ J-1$.  But in the real world of numerical computing, we don't use
 negative indices.  You might think that the reasonable way to handle
 this would be to displace the whole set of $2J$ values of $E(j)$ and
 $E(k)$ upwards by $J$ so that the indices run from $0 \rightarrow 2J-1$
-(this would be perfectly compatible with IDL's indexing scheme).  But
+(this would be perfectly compatible with Python's indexing scheme).  But
 this would put the $t=0$ or $f=0$ point out in the middle, at $j$ or
 $k=J$, and this isn't very convenient for lots of reasons. 
 
@@ -473,7 +475,7 @@ $j = -J \to J-1$, from $j = 0 \to 2J-1$, or even (god forbid!) from $j =
 -3J + 7 \to -J + 6$.  So we might as well just sum from $j = 0 \to 2J-1$
 and not displace anything at all.  {\it This is the standard convention,
 and it leads to the standard way in which FT arrays are stored in
-memory}---not just in IDL but in just about {\it every} software
+memory}---not just in Python but in just about {\it every} software
 package.  It has the great advantage that the $t=0$ or $f=0$ point is
 the first one in the array. 
 
@@ -485,7 +487,20 @@ array is time or frequency.  {\it All FT arrays, whether input or output
 and no matter what the independent variable, are arranged {\it
 identically} with respect to the negative and positive values}. 
 
-\subsection{ Enough Preaching! Let's Try an Example in IDL}
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+%\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
+\includegraphics[width=6.0in]{fourierbfig.pdf}
+\end{center}
+\label{figtwo}
+\caption{Upper plots in Figs A and B show a 64-point time series and
+power spectrum. Lower plots show a portion of an infinitely-long
+periodic time series and power spectrum from which the 64-point ones are
+extracted.  }
+\end{figure}
+
+\subsection{ Enough Preaching! Let's Try an Example in Python}
 
 	Here we take an example with $J=32$, with the discretely-sampled
 input signal being the sum of three cosine waves: $E(j) = \cos(\pi {8j
@@ -495,28 +510,14 @@ much voltage, thus four times the power at $k=8$ than there is at $k=7,
 9$.  The power spectrum consists of these three nonzero points, plus a
 bunch of zeros at all other frequencies.
 
-\begin{figure}[p!]
-\begin{center}
-\leavevmode
-%\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
-\includegraphics[width=6.0in]{fourierbfig.ps}
-\end{center}
-\caption{Upper plots in Figs A and B show a 64-point time series and
-power spectrum. Lower plots show a portion of an infinitely-long
-periodic time series and power spectrum from which the 64-point ones are
-extracted. \label{figtwo} }
-\end{figure}
-
-	In IDL, we denote $E(j)$ by {\bf EJ} and generate this
+ In Python, we denote $E(j)$ by {\bf EJ} and generate this
 64-element array with the statements\dots
 
-\begin{mathletters} 
-\begin{equation} 
-\bf{ EJ = cos( !pi * 8 * findgen(64)/32) }
-\end{equation} 
-\begin{equation} 
-\bf{ EJ = EJ + 0.5*cos( !pi * 7
-* findgen(64)/32) + cos( !pi * 9 * findgen(64)/32) ) }
+\begin{mathletters} \begin{equation} \bf{ import~numpy~as~np} \end{equation}
+ \begin{equation}
+ \bf{ EJ = np.cos(np.pi * 8 * np.arange(64.)/32) }
+\end{equation} \begin{equation} \bf{ EJ~+= 0.5[np.cos(np.pi * 7
+* np.arange(64.)/32) + np.cos(np.pi * 9 * np.arange(64.)/32) ] }
 \end{equation}
 \end{mathletters}
 
@@ -529,43 +530,43 @@ $k=8$, attenuated at the middle of the time interval where $j \sim 32$.
 	The signal $E(j)$ must be periodic with period $2J = 64$ and it
 must go on forever.  Figure \ref{figtwo} (bottom) shows this for a
 larger slice of time in which $j = -128 \rightarrow 128$.  Our points
-are computed for IDL indices $0 \rightarrow 63$; this window is shown by
+are computed for indices $0 \rightarrow 63$; this window is shown by
 the dotted lines on Figure \ref{figtwo} (bottom). 
 
-	We take the Fourier transform [$E(k) = FT( E(j))$].  In IDL, we
-denote $E(k)$ by {\bf EK} and use IDL's Fast Fourier Transform (FFT)
+ We take the Fourier transform [$E(k) = FT( E(j))$].  In Python, we
+denote $E(k)$ by {\bf EK} and use the NumPy Fast Fourier Transform (FFT)
 procedure\dots
 
 \begin{mathletters}
 \begin{equation}
-{\bf EK = fft(EJ)}
+{\bf EK = np.fft.fft(EJ)}
 \end{equation}
 
-\noindent and get then the power spectrum $P(k)$ ({\bf PK} in IDL)\dots
+\noindent and get then the power spectrum $P(k)$ ({\bf PK} in Python)\dots
 
 \begin{equation}
-{\bf PK = float(EK * conj(EK))}
+{\bf PK = (EK * np.conj(EK)).real}
 \end{equation}
 \end{mathletters}
 
-\noindent For convenience, we use the {\bf float} to discard the
+\noindent For convenience, we use the {\bf .real} to discard the
 imaginary portion of the product, which is zero---this makes {\bf PK}
 real, so that in later operations we don't have to deal with a complex
-array (e.g., to plot the power spectrum we can type {\bf plot, PK}
-instead of {\bf plot, float(PK)}). 
+array (e.g., to plot the power spectrum we can type {\bf pl.plot(PK)} without 
+Python complaining about discarding the imaginary component.
 
 	Figure \ref{figthree} (top) shows the plot of the 64-element
 array {\bf PK}, with the 64 crosses marking the computed points returned
-by IDL.  The {\it positive} frequencies lie in the IDL index range $1
+by Python.  The {\it positive} frequencies lie in the index range $1
 \rightarrow 32$ and the {\it negative} ones in the range $32 \rightarrow
 63$.  As expected, there is nonzero power at only three positive
-frequencies, the ones with IDL indices 7, 8, 9.  There is also power at
-the three corresponding negative frequencies, the ones with IDL indices
+frequencies, the ones with array indices 7, 8, 9.  There is also power at
+the three corresponding negative frequencies, the ones with array indices
 55, 56, 57. 
 
 	The power spectrum must be periodic with period $2J = 64$ and it
 must go on forever.  Figure \ref{figthree} (bottom) shows this for a
-larger slice of frequency in which $k = -128 \rightarrow 128$.  IDL
+larger slice of frequency in which $k = -128 \rightarrow 128$.  Python
 indices for {\bf PK} are $0 \rightarrow 63$; this window is shown by the
 dotted lines on Figure \ref{figthree} (bottom). 
 
@@ -631,7 +632,7 @@ would be redundant.
 
           Consider a simple case with $J=4$; you've taken 8 time
 samples.  Then the proper way to arrange the input to the FT is the
-following, where the {\it left-hand matrix contains the IDL indices} and
+following, where the {\it left-hand matrix contains the Python indices} and
 the {\it right hand the times or frequencies}:
 
 \begin{mathletters} \label{eqeg}
@@ -674,11 +675,11 @@ the {\it right hand the times or frequencies}:
 \end{eqnarray}
 \end{mathletters}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \begin{center}
 \leavevmode
 %\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
-\includegraphics[width=4.0in]{ftfig1.ps}
+\includegraphics[width=6.0in]{ftfig1.pdf}
 \end{center}
 \caption{Envisioning the window as a circle makes the relationship
 between negative and positive frequencies or times. The numbers are the
@@ -703,10 +704,10 @@ around the circle more than once, or in the opposite direction.
 	Above we said---and we meant it---that in our verbal description
 we focused on {\it frequency}, but we could just as well have focused
 on {\it time}. And in equation \ref{eqeg} above, where we explicitly listed
-the time versus the IDL index, the time {\it begins} at $0$ for IDL
-index 0, runs up to $3 \times {T \over J}$ for IDL index $3$,
-and then ``wraps around'' to {\it negative} times for IDL index $\ge 4$.
-So it seems that time versus IDL index is discontinuous---just like
+the time versus the array index, the time {\it begins} at $0$ for index 0, runs 
+up to $3 \times {T \over J}$ for index $3$,
+and then ``wraps around'' to {\it negative} times for index $\ge 4$.
+So it seems that time versus array index is discontinuous---just like
 frequency. 
 
 	{\it Yes it's true!!} If you take a bunch of time samples and
@@ -799,20 +800,20 @@ equations \ref{bw} and \ref{srk} are written correctly.
 	We consider two examples. Both have 64 datapoints; note that $64
 = 2^6$.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \begin{center}
 \leavevmode
 %\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
-\includegraphics{fig3.ps}
+ \includegraphics[width=7.0in]{fig3.pdf}
 \end{center}
-
+\label{figthree}
 \caption{Monochromatic signals with frequency 12.5 Hz (top) and 10.0 Hz
 (bottom). The sample interval is $t_{smpl}= 0.01$ s, so the sample
 frequency is $\nu_{smpl} = 100$ Hz and the Nyquist frequency is $f_N=50$
 Hz. Stars are from the FFT, located at frequencies $(-f_N + k \Delta
 \nu)$ [$\Delta \nu= {1 \over 2T}$]; the solid curve joins much more
-closely spaced points calculated using equation \ref{eqfiveb}. 
-\label{figthree}} \end{figure}
+closely spaced points calculated using equation \ref{eqfiveb}. } 
+\end{figure}
 
 \subsubsection{The first example: a spike centered on integral $k$}
 
@@ -897,7 +898,7 @@ advantages:  The obvious one is computing time. The less obvious one is
 numerical accuracy: fewer operations means smaller roundoff errors in
 the final result.
 
-	Suppose you have an arbitrary number $M$ of datapoints. IDL's
+ Suppose you have an arbitrary number $M$ of datapoints. Python's
 FFT routine factors $M$ into as many chunks as possible. It's most
 efficient for chunks that are powers of 2, 3, or 5. The more factors,
 the faster the runtime. People tend to think of and always use powers of
@@ -908,7 +909,7 @@ factors can be quite acceptable.
 have $M$ equal to some large integral power of 2. If then you add just
 one more point, $M$ might be a prime number! (An easy, but not
 interesting, example is $M=16$). The difference in computing time can be
-enormous. IDL's FFT doesn't warn you about these matters, so you have to
+enormous. Python's FFT doesn't warn you about these matters, so you have to
 think of them yourself---beforehand!
 
 	If you have an awkward value of $M$, then you can create a nice
@@ -1083,7 +1084,7 @@ effects''.  What to do?
         Now's the time to go back and review \S \ref{four} and figure
 \ref{figtwo}. There we stressed that the summation form of the FT
 implicitly, and necessarily, assumes that both the input and output
-arrays are {\it periodic} outside the fundamental window of  length
+arrays are {\it periodic} outside the fundamental window of length
 $2N$---and the period is just $2N$.  So it's obvious what to do: when
 $n+j > 2N-1$, you use $E(n+j-2N)$.
 
@@ -1105,51 +1106,38 @@ happen because the beginning and end are distinct and totally unrelated!
 the data stream do not interact. And make sure you use enough!! See NM
 discussion \S 13.1. 
 
-\subsection{Calculating correlation functions in IDL}
+\subsection{Calculating correlation functions in Python}
 
-	IDL provides several native routines for calculating correlation
-functions. You have to be very careful, though. {\it Read their
-documentation} before blindly forging ahead. Here we summarize.
+ Python provides several routines for calculating correlation
+functions, in NumPy, SciPy, matplotlib, and more. You have to be very careful, 
+though.  {\it Read their documentation} before blindly forging ahead. Here we 
+summarize what we believe to be some of the best options in the context of this 
+course.
 
-	You might be tempted to use the routines {\bf a\_correlate} and
-{\bf c\_correlate} for auto- and crosscorrelation. Be aware that these
-don't do what you think. First, they subtract the mean before doing the
-calculation---something you don't want, if for no other reason that the
-zeros you so carefully padded with become {\it nonzero} when the mean is
-subtracted! Second, they have sliding limits on the sums, meaning that
-different numbers of terms are included for different delays. I'd stay
-away from these procedures if I were you. Frankly, I can't imagine any
-circumstance for which they would be useful.
-
-	What you want is IDL's {\bf convol} routine, which convolves two
-arrays and allows you to ``edge\_wrap'', which is the equivalent of
-wrapping around as you need to do to account properly for the edge
-effects in correlation as discussed above in \S \ref{elevenpone}. {\bf
-convol} works on all types of arrays, but uses {\it only} the clunky
-non-FFT technique. You call this function as {\bf result = convol(
-array1, array2, /center /edge\_wrap)}. {\it Catch number 1}: {\bf
-array2} needs to be smaller than {\bf array1}. If your arrays have the
-same size, you need to expand {\bf array1} (padding) or condense {\bf
-array2}. When padding, be aware of the edge effects of convolution: if
-the edges of the datastream are nonzero and you pad with zeros,
+In the case that you want a pure, classic convolution, then what you want is 
+NumPy's {\bf convolve} function, which convolves two arrays. Be aware of the 
+edge effects of convolution: if the edges of the datastream are nonzero and 
+you pad with zeros,
 convolution will give you a large meaningless contribution at the edges!
-{\it Catch number 2:} The center keyword is {\it set by default}, in
-which case {\bf convol} does a {\it correlation} instead of a {\it
-convolution}! To force a convolution, explicitly set {\bf center=0} in
-the call to {\bf convol}; in this case, for a symmetric kernal {\bf
-array2} the output is shifted from the input by $M \over 2$, where $M$
-is the size of {\bf array2}.
+To avoid this, set the {\it mode} option to ``valid" rather than the default 
+value of ``full". This will return only the convolved points where the signals 
+overlap completely, based on number of indices in the array (i.e. buyer beware: 
+don't pad your signals with zeros in this case! NumPy will take those zeros as 
+valid signal contributions and convolve them just the same, returning the 
+results as though they are meaningful when they aren't!).
 
-	Or, to make it quicker, use the FFT technique! For one
-dimensional arrays this is easy (but you'd better experiment with some
-known simple functions to make sure you understand the details). For two
-dimensional arrays, you can use the Goddard library's {\bf convolve}
-function, which gives you the choice of using either the FFT or the
-standard (clunky time consuming) technique. Unfortunately,  {\bf
-convolve} uses FFT {\it only} on 2-d images; for 1-d arrays it uses {\bf
-convol}, which has ramifications for padding. {\it Important: with the
-FFT technique, both the signal {\bf array1} and the kernal {\bf array2}
-must be the same size, so you need to pad both.}
+To perform a one-dimensional correlation, you'll likely want to use NumPy's 
+{\bf correlate}, which computes the cross-correlation of two 1-dimensional 
+input arrays. Note that unlike the {\bf convolve} function, {\bf correlate} has 
+a default mode of ``valid". If you'd like to compute the auto-correlation of a 
+signal, you can simply list the same array twice in your {\bf correlate} 
+function call!
+
+Finally, if you are working with two-dimensional arrays (e.g. image data), you 
+can use either {\bf scipy.signal.correlate2d} or {\bf 
+scipy.stsci.convolve.correlate2d}. These are basically two different 
+implementations of the same thing, you are encouraged to read their 
+documentation to see which method you prefer in any given scenario.
 
 \subsection{Calculating the Fourier Transform of the Autocorrelation
 Function}
@@ -1196,12 +1184,9 @@ equivalent to the {\it detected} voltage; the ``squaring'' has already
 taken place, so the weighting function does {\it not} get ``squared''. 
 Figure \ref{figfour} illustrates the difference.
 
-\begin{figure}[p!] 
-\begin{center} 
-\leavevmode
+\begin{figure}[H] \begin{center} \leavevmode
 %\includegraphics[scale=.55, angle=90]{lsfitfig.ps}
-\includegraphics[height=7in]{fig4.ps} 
-\end{center} 
+\includegraphics[height=7in]{fig4.pdf} \end{center} 
 
 \caption{Comparison of FX and XF methods for a monochromatic signal.
 $\nu_{smpl}=100$ Hz and $2T= 0.64$ sec. Solid line is XF method, which

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+name=fourierc
+# run latex
+pdflatex $name.tex 
+
+# if latex terminated with errors, exit this script
+[ $? -ne 0 ] && exit
+
+# run latex again so that it gets all the cross-references right.
+pdflatex $name.tex
+
+# view pdf file
+evince $name.pdf
