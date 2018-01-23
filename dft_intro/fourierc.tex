@@ -58,6 +58,7 @@ E(\nu) = \int_{-\infty}^{\infty} E(t) e^{[2 \pi i]\nu t}  dt \;
 \noindent and, to go the other way, 
 
 \begin{equation}
+ \label{eqoneb}
 E(t) = \int_{-\infty}^{\infty} E(\nu) e^{-[2 \pi i]\nu t}  d\nu \; 
 \end{equation}
 \end{mathletters}
@@ -1261,7 +1262,7 @@ is the average of the two values at $j = \pm (2J-1)$.
 
 	Similar comments apply to doing a sin transform using the FFT,
 except that you need to antisymmetrize the signal. NM \S 12.3 discusses
-specific routines for cosine and sin transforms, but IDL does not have
+specific routines for cosine and sin transforms, but Python does not have
 these implemented as native procedures.
 
 \section{SOME FINAL POINTS}
@@ -1316,26 +1317,20 @@ of $P(k)$ ($k =1 \rightarrow 4$).
 
 \subsection{A Detail on Normalization and ``Going Back and Forth''}
 
-	In IDL, the FFT is normalized by multiplying the sum by ${1
-\over 2J}$, exactly as we've done in equation \ref{eqfivea}.  Not all
-FFT routines do the normalization in this way.  This way has the
-advantage that the scaling of the output is the same as that of the
-input---in other words, it's sort of like taking an average, because we
-divide by the number of points that contribute to the sum. 
+ In Python unlike in IDL, the FFT is not normalized by multiplying the sum by 
+ ${1\over 2J}$, as we've done in equation \ref{eqfivea}.  Instead, the default 
+ normalization setting leaves the direct transforms unscaled, and scales the 
+ inverse transforms by $1/2J$.  However, by setting the keyword {\it norm = 
+ ortho}, you can obtain unitary transforms such that both the direct and 
+ inverse transforms are scaled by $1/\sqrt{2J}$. 
 
 	As we've mentioned in \S1, you should know that {\it apart from
 normalization constants}, you can convert willy-nilly back and forth
 from frequency to time by applying FT's in succession.  That is, $E(k) =
 FT(E(j))$ and $E(j) = FT^-(E(k))$.  Here the superscript minus sign
 indicates using the negative complex exponential in the transform, as in
-equation \ref{eqone}b; this is called the {\it inverse Fourier
+equation \ref{eqoneb}; this is called the {\it inverse Fourier
 transform}.  More graphically, $E(j) = FT^-[ FT (E(j))]$. 
-
-	With the normalization used by IDL, the inverse transform must
-{\it not} multiply the sum by ${1 \over 2J}$.  Of course, IDL's inverse
-transform does all this correctly.  In IDL, you invoke the inverse
-transform by using the {\bf inverse} keyword---see IDL's help on the
-{\bf fft} procedure. 
 
 \enddocument
 \end
