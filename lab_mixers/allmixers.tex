@@ -265,11 +265,12 @@ repeatability. What kind of symmetry do the power spectral points
 exhibit? Apply to the power spectra the questions we posed just above
 for the voltage spectra.
 
-% XXX don't understand this paragraph
-Choose one of the power spectra and take its cosine Fourier transform
-(i.e., force the imaginary component of its Fourier transform to be zero
-by symmetrizing the power spectum). Calculate the autocorrelation function
-(ACF) of its voltage time series. According to the correlation theorem, the FT
+Choose one of the power spectra and take its inverse Fourier transform.
+For this to work, you need to make sure your DFT correctly infers
+which array bins in your power spectrum correspond to which frequencies.
+Separately, calculate the autocorrelation function (ACF) directly from 
+the voltage time series, either manually or with \verb$numpy.correlate$.
+According to the correlation theorem, the FT
 of the power spectrum should equal the ACF. Does it? 
 
 \subsection{Leakage Power} \label{subleakage}
