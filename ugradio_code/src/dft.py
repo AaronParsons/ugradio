@@ -36,7 +36,7 @@ def dft(xt,t=[],f=[],vsamp=1):
         t = np.linspace(-N/(2.0*vsamp),N/(2.0*vsamp),num=N,endpoint=False)
 
     if not (len(f)):
-        vsamp = N/float(np.ceil(t.max() - t.min()))
+        #vsamp = N/float(np.ceil(t.max() - t.min()))
         f = np.linspace(-vsamp/2.,vsamp/2.,num=N,endpoint=False)
     
     Fx = _compute_dft(t,xt,f)
@@ -63,8 +63,8 @@ def idft(Fx,f=[],t=[],vsamp=1):
         f = np.linspace(-vsamp/2.,vsamp/2.,num=N,endpoint=False)
 
     if not (len(t)):
-        T = N/float(np.ceil(f.max()) - f.min())
-        t = np.linspace(-T/2.0,T/2.0,num=N,endpoint=False)
+        #T = N/float(np.ceil(f.max()) - f.min())
+        t = np.linspace(-N/(2.0*vsamp),N/(2.0*vsamp),num=N,endpoint=False)
     
     xt = _compute_dft(f,Fx,t,inverse=True)
 
