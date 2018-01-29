@@ -610,14 +610,16 @@ like nearly all mixers, has its ports labeled ``R'' (the ``RF'' or
 ``signal''); ``L'' (the ``local oscillator''); and ``X'' (the ``mixing
 product'') or ``I'' (the ``intermediate frequency'').  The ZAD-1 is a
 balanced mixer, so the ``R'' and ``L`` ports are identical, and in
-particular will not couple to DC or very low frequencies.  In contrast,
+particular will not couple to DC or very low frequencies.  To find out
+the frequency ranges a ZAD-1 supports on each input, I encourage
+you to look up its datasheet online.  In contrast,
 the ``I'' port is coupled differently and will handle voltages all the
 way down to, and including, DC.  The mixing process functions no matter
 which two ports are used as inputs.  For example, if you are using a
 mixer to modulate a high frequency (say, a few MHz) with a low frequency
 (say, a few kHz), you should use the ``I'' port for the low frequency
 and either of the other two for the high frequency; take the output from
-the third port.
+the third port.  
 
 For this, use two SRS synthesizer oscillators as inputs to a mixer to
 explore the spectra and waveforms in the DSB mixing process.  One SRS
