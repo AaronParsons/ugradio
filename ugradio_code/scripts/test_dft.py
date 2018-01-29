@@ -1,107 +1,89 @@
 import numpy as np
-import dft
+import ugradio.dft as dft
 import matplotlib.pyplot as plt
+import argparse
+import unittest
 
-## Testing the dft procedure
+class TestDFTModule(unittest.TestCase):
+    
+    def setUp(self):
+        self.vsamp = 8e3; self.vsig = 2e3
+        self.N = 1024
+        self.t = np.linspace(-self.N/(2*self.vsamp),self.N/(2*self.vsamp),num=self.N,endpoint=False)
+        self.xn = np.sin(2*np.pi*self.vsig*self.t) + np.cos(2*np.pi*self.vsig*self.t)
+        self.f_fft = np.fft.fftshift(np.fft.fftfreq(self.N,1.0/self.vsamp))
+        self.Xk_fft = np.fft.fftshift(np.fft.fft(self.xn))
 
-vsamp = 8
-vsig = 2
-N = 1024
-tol = 7 
+    def test_dft_signal_input(self):
+        f,Xk = dft.dft(self.xn,vsamp=self.vsamp)
+        self.assertTrue(np.all(np.isclose(f, self.f_fft)), msg='Case 1: Frequency array mismatch between numpy fft and dft')
+        self.assertTrue(np.all(np.isclose(Xk, self.Xk_fft)), msg='Case 1: Output mismatch')
 
-t = np.linspace(-N/(2*vsamp),N/(2*vsamp),num=N,endpoint=False)
-#xn = np.sin(t)
-#xn = np.sin(2*np.pi*vsig*t) + np.cos(2*np.pi*vsig*t)
-xn = np.random.random(N)
-#xn = t>1
+    def test_dft_xn_t_input(self): 
+        f,Xk = dft.dft(self.xn,t=self.t,vsamp=self.vsamp)
+        self.assertTrue(np.all(np.isclose(f, self.f_fft)), msg='Case 2: Frequencies mismatch!')
+        self.assertTrue(np.all(np.isclose(Xk, self.Xk_fft)),msg='Case 2: Output mismatch')
 
-f_fft = np.fft.fftshift(np.fft.fftfreq(N,1.0/vsamp))
-Xk_fft = np.fft.fftshift(np.fft.fft(xn))
+    def test_dft_xn_t_f_input(self): 
+        f = np.linspace(-self.vsamp/2.,self.vsamp/2.,num=self.N,endpoint=False)
+        f,Xk = dft.dft(self.xn,t=self.t,f=f)
+        self.assertTrue(np.all(np.isclose(f, self.f_fft)), msg='Case 3: Frequencies mismatch!')
+        self.assertTrue(np.all(np.isclose(Xk,self.Xk_fft)),msg='Case 3: Output mismatch')
 
-print "Testing case 1: Just xn input."
-f,Xk = dft.dft(xn,vsamp=vsamp)
-if not np.all(f == f_fft):
-    print "Case 1: Frequencies mismatch!"
-if not np.all(np.round(Xk,decimals=tol)==np.round(Xk_fft,decimals=tol)):
-    print "Case 1: Output mismatch at tolerance %d"%tol
+    def test_dft_longer_f_input(self): 
+        f = np.linspace(-self.vsamp/2.,self.vsamp/2.,num=2*self.N,endpoint=False)
+        f,Xk = dft.dft(self.xn,t=self.t,f=f)
+        
+        f_fft = np.fft.fftshift(np.fft.fftfreq(2*self.N,1.0/self.vsamp))
+        Xk_fft = np.fft.fftshift(np.fft.fft(self.xn,n=2*self.N))
 
+        self.assertTrue(np.all(np.isclose(f, f_fft)), msg='Case 4: Frequencies mismatch!')
+        #self.assertTrue(np.all(np.isclose(Xk,Xk_fft)),msg='Case 4: Output mismatch')
 
-print "Testing case 2: Input xn,t"
-f,Xk = dft.dft(xn,t=t)
-if not np.all(f == f_fft):
-    print "Case 2: Frequencies mismatch!"
-if not np.all(np.round(Xk,decimals=tol)==np.round(Xk_fft,decimals=tol)):
-    print "Case 2: Output mismatch at tolerance %d"%tol
+    def test_dft_shorter_f_input(self): 
+        f = np.linspace(-self.vsamp/2.,self.vsamp/2.,num=self.N/2.,endpoint=False)
+        f,Xk = dft.dft(self.xn,t=self.t,f=f)
+        Xk = Xk/Xk.max()
 
+        f_fft = np.fft.fftshift(np.fft.fftfreq(self.N/2,1.0/self.vsamp))
+        Xk_fft = np.fft.fftshift(np.fft.fft(self.xn,n=self.N/2))
+        Xk_fft = Xk_fft/Xk_fft.max()
 
-print "Testing case 3: Input xn,t,f"
-f = np.linspace(-vsamp/2.,vsamp/2.,num=N,endpoint=False)
-f,Xk = dft.dft(xn,t=t,f=f)
-if not np.all(f == f_fft):
-    print "Case 3: Frequencies mismatch!"
-if not np.all(np.round(Xk,decimals=tol)==np.round(Xk_fft,decimals=tol)):
-    print "Case 3: Output mismatch at tolerance %d"%tol
+        self.assertTrue(np.all(np.isclose(f, f_fft)), msg='Case 5: Frequencies mismatch!')
+        self.assertTrue(np.all(np.isclose(Xk,Xk_fft)),msg='Case 5: Output mismatch')
+        
+class TestiDFTModule(unittest.TestCase):
 
+    def setUp(self):
+        self.vsamp = 8e3; self.vsig = 2e3
+        self.N = 1024
+        self.f = np.linspace(-self.vsamp/2.0, self.vsamp/2.0, num=self.N, endpoint=False)
+        
+        self.t = np.linspace(-self.N/(2.0*self.vsamp),self.N/(2.0*self.vsamp),num=self.N,endpoint=False)
+        self.xn = np.sin(2*np.pi*self.vsig*self.t)
+        f, self.Xk = dft.dft(self.xn, t=self.t, f=self.f)
 
-print "Testing case 4: len(f) > len(t)"
-f = np.linspace(-vsamp/2.,vsamp/2.,num=2*N,endpoint=False)
-f,Xk = dft.dft(xn,t=t,f=f)
-f_fft = np.fft.fftshift(np.fft.fftfreq(2*N,1.0/vsamp))
-Xk_fft = np.fft.fftshift(np.fft.fft(xn,n=2*N))
-if not np.all(f == f_fft):
-    print "Case 4: Frequencies mismatch!"
-if not np.all(np.round(Xk,decimals=tol)==np.round(Xk_fft,decimals=tol)):
-    print "Case 4: Output mismatch at tolerance %d"%tol
-    print "Expected because the dft does not zero-pad"
+        self.t_fft = np.fft.ifftshift(np.fft.fftfreq(self.N,1.0*self.vsamp/self.N))
+        self.xt_fft = np.fft.ifftshift(np.fft.ifft(np.fft.fftshift(self.Xk)))
 
+    def test_idft_Xk_input(self):
+        t,xt = dft.idft(self.Xk,vsamp=self.vsamp)
+        self.assertTrue(np.all(np.isclose(t, self.t_fft)),msg="Case 6: Time through numpy fft and dft do not match!!")
+        self.assertTrue(np.all(np.isclose(xt,self.xt_fft)),msg="Case 6: Output of numpy and dft mismatch")
+        self.assertTrue(np.all(np.isclose(xt,self.xn)),msg="Case 6: dft output does not match input")         
 
-print "Testing case 5: len(f) < len(t)"
-f = np.linspace(-vsamp/2.,vsamp/2.,num=N/2.,endpoint=False)
-f,Xk = dft.dft(xn,t=t,f=f)
-Xk = Xk/Xk.max()
-f_fft = np.fft.fftshift(np.fft.fftfreq(N/2,1.0/vsamp))
-Xk_fft = np.fft.fftshift(np.fft.fft(xn,n=N/2))
-Xk_fft = Xk_fft/Xk_fft.max()
-if not np.all(f == f_fft):
-    print "Case 5: Frequencies mismatch!"
-if not np.all(np.round(Xk,decimals=tol)==np.round(Xk_fft,decimals=tol)):
-    print "Case 5: Output mismatch at tolerance %d"%tol
-    print "Expected due to difference in interpretation of numpy algo"
+    def test_idft_Xk_f_input(self):
+        t,xt = dft.idft(self.Xk,f=self.f,vsamp=self.vsamp)
+        self.assertTrue(np.all(np.isclose(t,self.t_fft)),msg="Case 7: Time through numpy fft and dft do not match!!")
+        self.assertTrue(np.all(np.isclose(xt,self.xt_fft)),msg="Case 7: Output of numpy and dft mismatch")
+        self.assertTrue(np.all(np.isclose(xt,self.xn)),msg="Case 7: dft output does not match input")
 
+    def test_idft_Xk_f_t_input(self):
+        t,xt = dft.idft(self.Xk,f=self.f,t=self.t)
+        self.assertTrue(np.all(np.isclose(t,self.t_fft)),msg="Case 8: Time through numpy fft and dft do not match!!")
+        self.assertTrue(np.all(np.isclose(xt,self.xt_fft)),msg="Case 8: Output of numpy and dft mismatch")
+        self.assertTrue(np.all(np.isclose(xt,self.xn)),msg="Case 8: dft output does not match input")
 
-print "Testing case 6: idft Xf,t,f"
-f = np.linspace(-vsamp/2.0,vsamp/2.0,num=N,endpoint=False)
-t = np.linspace(-N/(2.0*vsamp),N/(2.0*vsamp),num=N,endpoint=False)
-xn = np.sin(2*np.pi*vsig*t)
-f,Xk = dft.dft(xn,t=t,f=f)
+if __name__ == '__main__':
+    unittest.main()
 
-t,xt = dft.idft(Xk,f=f,t=t)
-
-t_fft = np.fft.ifftshift(np.fft.fftfreq(1024,1.0*vsamp/N))
-xt_fft = np.fft.ifftshift(np.fft.ifft(np.fft.fftshift(Xk)))
-if not np.all(t == t_fft):
-    print "Case 6: Time through numpy fft and dft do not match!!"
-if not np.all(np.round(xt,decimals=tol)==np.round(xt_fft,decimals=tol)):
-    print "Case 6: Output of numpy and dft mismatch at tolerance %d"%tol
-if not np.all(np.round(xt,decimals=tol)==np.round(xn,decimals=tol)):
-    print "Case 6: dft output does not match input at tolerance %d!"%tol
-
-
-print "Testing case 7: idft Xf,f"
-t,xt = dft.idft(Xk,f=f)
-if not np.all(t == t_fft):
-    print "Case 7: Time through numpy fft and dft do not match!!"
-if not np.all(np.round(xt,decimals=tol)==np.round(xt_fft,decimals=tol)):
-    print "Case 7: Output of numpy and dft mismatch at tolerance %d"%tol
-if not np.all(np.round(xt,decimals=tol)==np.round(xn,decimals=tol)):
-    print "Case 7: dft output does not match input at tolerance %d!"%tol
-
-
-print "Testing case 8: idft Xf"
-t,xt = dft.idft(Xk,vsamp=vsamp)
-if not np.all(t == t_fft):
-    print "Case 8: Time through numpy fft and dft do not match!!"
-if not np.all(np.round(xt,decimals=tol)==np.round(xt_fft,decimals=tol)):
-    print "Case 8: Output of numpy and dft mismatch at tolerance %d"%tol
-if not np.all(np.round(xt,decimals=tol)==np.round(xn,decimals=tol)):
-    print "Case 8: dft output does not match input at tolerance %d!"%tol
