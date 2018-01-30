@@ -1,4 +1,4 @@
-from setuptools import setup
+from distutils.core import setup
 import glob
 import os
 import sys
@@ -32,5 +32,4 @@ setup_args = {
 
 
 if __name__ == '__main__':
-    apply(setup, (), setup_args)
-
+    setup(**setup_args)
