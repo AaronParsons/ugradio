@@ -1,7 +1,9 @@
-\documentclass[11pt,preprint]{aastex}
+\documentclass[12pt,preprint]{aastex}
  \begin{document}
 
 \title{SUGGESTIONS FOR LAB REPORTS---\today}
+
+\tableofcontents
 
 \section{A Typical Outline for a Scientific Paper}
 
@@ -9,13 +11,20 @@ A typical scientific paper is divided into sections, subsections, and
 subsubsections. The global outline for a typical scientific paper looks
 like the following. Note, however, that there are wide variations from
 this, which depend on content, subject matter, and individual
-style. \begin{enumerate}
+style. 
+
+In the typical organization shown below, the most important sections are
+numbers 4, 5, and 6 below. This course emphasizes datataking, data
+analysis, and data intepretation. 
+
+
+\begin{enumerate}
 
 \item Title. Should encapsulate the contents and meaning.
 
 \item Abstract. A short summary of the paper including the most important
   results.  Purpose is to tell a prospective reader whether it is worth
-  spending more time on article.
+  spending time and effort on the article.
   
 \item Introduction. Sets the context: summary of the current state of
   knowledge, how that state can be improved, what this work does to
@@ -36,8 +45,30 @@ style. \begin{enumerate}
   your previous state of knowledge. How your results relate to specific
   issues that were mentioned in the introduction.
 
+\item Because this is a class, and because you are working in groups, we
+  need a section that summarizes who did what. The idea is that each
+  individual will participate in enough data-gathering activities to
+  learn and understand how and what's being measured, and make a useful
+  contribution to the group's efforts. In addition, each individual
+  should write appropriate portions of the reduction and display
+  software. In order for me to understand your progress and
+  contributions, you should have a section of your report {\bf (1)}
+  describing your contributions; {\bf (2)} listing what software you
+  wrote and which plots you yourself made; {\bf (3)} stating who wrote
+  other sortware and other plots that you used; {\bf (4)} listing your
+  contributions to other software written by the group; {\bf (5)}
+  providing me with the subdirectories where the various pieces of
+  software reside so I can take a look at it if necessary. The
+  permissions on these files should allow me to read them.
+
+I would also like you to describe problems or difficulties, and aspects
+that remain confusing or unclear. Also, your descriptions about who did
+what should be accurate and not exaggerated. Making these explicit can
+help us address the issues so that we achieve the overall course goals
+of making you very well-versed in experimental and laboratory work.
+ 
 \item Conclusion. A summary of important results and points made in the
-  paper, including pointing to the particlar sections so that the reader
+  paper, including pointing to the particular sections so that the reader
   can easily learn more detail. What aspects are lacking? How would
   you have done things better? Prospects for future work.
   
@@ -80,11 +111,12 @@ questions, or whatever, but {\it resolve these discrepancies!}
 
 \end{enumerate}
 
-	\item When you plot some data, {\it look at the plot and
-think about what you see}.  For example, when you observed the Sun
-with the interferometer, the Campanile shadowed the dishes and the
-signal went away for some time.  Ask yourself: what happened to the data
-during that time? In your lab report, such things are worth comments!
+	\item When you plot some data, {\it look at the plot and think
+          about what you see}.  For example, when observing the Sun with
+          the interferometer on old Campbell Hall's roof, the Campanile
+          shadowed the dishes and the signal went away for some time.
+          Ask yourself: what happened to the data during that time? In
+          your lab report, such things are worth comments!
 
 \item Abstracts should contain essential information---{\it including the
 important numbers that you derive}. 
@@ -145,10 +177,10 @@ size and line thicknesses. See Figure \ref{simple}.
 
 \begin{figure}[b!]
 \begin{center} \leavevmode
-%\includegraphics[scale=.7]{simple.ps}
-%\includegraphics[scale=.8]{nicer.ps}
-\includegraphics[scale=.55]{simple.ps}
-\includegraphics[scale=.6]{nicer.ps}
+%\includegraphics[scale=.7]{simple.pdf}
+%\includegraphics[scale=.8]{nicer.pdf}
+\includegraphics[scale=.55]{simple.pdf}
+\includegraphics[scale=.6]{nicer.pdf}
 \end{center}
 \caption{Left: Titles are too small, lines too thin, font doesn't look
 good. Right: Nicer! (But it could be even nicer!!) See \S
@@ -156,14 +188,20 @@ good. Right: Nicer! (But it could be even nicer!!) See \S
 \end{figure}
                                                                         
 
-	\item When plotting datapoints, it's usually a good idea to plot
-the points themselves, which you'd do with the keyword \verb$psym=4$,
-for example \footnote{Or some other number---the number gives the plot
-symbol shape.}.  Sometimes you also want to connect the datapoints with
-lines, which you do with \verb$psym=-4$.  Or---especially when you do
-least squares fits---you want to overplot the datapoints with a fitted
-curve; to do this, plot the datapoints and then use \verb$oplot$ to
-overplot the curve. 
+\item When plotting datapoints, it's usually a good idea to plot the
+  points themselves, which you'd do with the keyword \verb$psym=4$, for
+  example \footnote{Or some other number---the number gives the plot
+    symbol shape.}.  Sometimes you also want to connect the datapoints
+  with lines, which you do with \verb$psym=-4$.
+
+\item When you do a least squares fit, you want to overplot the
+  datapoints with a fitted curve; to do this, plot the datapoints
+  (e.g.\ {\tt plot, x, data, psym=-4}) and then use
+  \verb$oplot$. Overplots are often done in color (e.g.\ {\tt oplot, x,
+    fit, color=!red}), but almost 20\% of humaan males are red/green
+  colorblind, so out of consideration you should overplot with a
+  different line style (e.g.\ {\tt oplot, x, fit, linestyle=3)} or both
+  ({\tt oplot, x, fit, color=!red, lines=3}).
 
 \item If you want to evaluate fancy mathematical functions you don't
 need to use Mathematica.  IDL has all those functions too.  For example,
@@ -181,7 +219,7 @@ have to.
 
 	\item Mathematical convention says: usually, write
 $(R^2-x^2)^{1/2}$ instead of $\sqrt{R^2-x^2}$.  In TEX, the scripts are
-\verb$(R^2-x^2)^{1/2}$ and \verb$\sqrt{R^2-x^2}$. 
+\verb&$(R^2-x^2)^{1/2}$& and \verb&$\sqrt{R^2-x^2}$&. 
 
 	\item When you're doing complicated parenthetical expressions,
 it's nice to use embedded sizing. TEX does this automatically for you:
@@ -263,11 +301,47 @@ Now we are in the verbatim environment
 Here is a multiple line situation
 \end{verbatim}
 \verb$\end{verbatim}$
-
 \end{enumerate}
+
+\section{A+ vs.\ A vs.\ A--\dots}
+
+As I explained in the first class, most of the grades given in this
+ course will be the three levels of `A'. What distinguishes, say, an A+?
+ Your primary job in the report is to convince me that you understand
+ what you're doing and have incorporated the lab's goals into your
+ psyche.  So look at the list of goals in the lab handout. The ideal
+ report would address each goal. Then look at the above sections in this
+ handout and incorporate them in your report.
+
+When covering a given topic, include supporting data with figures,
+ tables, and discussion to the extent that they are illustrative and
+ educational for the reader. Don't include material simply because `it's
+ there' or to make your report longer. What matters is clarity. And
+ being concise is a virtue. For example, instead of including every
+single plot you made, a well-considered and
+ well-selected set of plots---annotated, labelled, presented neatly, and
+discussed in the text---shows that you understand what's important.
+
+Sometimes your lab activities are relevant to aspects in world outside
+ the undergrad lab. For example, in discussing Fourier transforms, you
+ might think about their usefulness in other science areas, for example
+ seismology or the characterization of music. Or when we cover
+ waveguides, does this resonate with other courses in Physics,
+ e.g.\ Physics 110?
+
+If your results seem discrepant with expectation, how do you resolve
+this? You might think that  you have to `get the right answer'. But in
+research, particularly experimental research, the `right answer' may
+differ depending on the experimental conditions, such as signal levels
+or interfering signals. Should you hide or minimize your puzzlements or
+mistakes so that I'll think you're really smart? Or should you emphasize
+your problems or difficulties  by showing them explicitly, sometimes
+even to the extent of having a separate section that discusses them?
+Which way will you learn more? Which way will I appreciate?
+
+If you can make your report interesting to me as a reader, then that in
+ itself is a marker of your good understanding. Moreover, I'm more
+ likely to pay attention to what you're saying!
+
 \end{document}
 
-if ps then psopen, 'outputifile.ps', /times, /bold, /isolatin1
-plot, x, y, xtitle='This is X', ytitle='This is Y', title="Carl's plot", $
-        font=ps-1, charsize=1.5, thick=3, xthick=5, ythick=5
-if ps then psclose
