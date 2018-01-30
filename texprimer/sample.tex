@@ -1,4 +1,4 @@
-\documentclass[preprint]{aastex} 
+\documentclass[12pt,preprint]{aastex} 
 \usepackage{amsmath, amsfonts, amssymb}
 
 %Remember that in a tex file, a percent sign means 'comment' and the
@@ -8,7 +8,7 @@
 %\documentclass[preprint2]{aastex} 
 
 %Note: If you're doing work for some other class and don't want to use
-%aastex formatting, you can use some varient of the following commands,
+%aastex formatting, you can use some variant of the following commands,
 %which are intrinsic to LATEX. However, some commands below, such as
 %\altaffiltext and \deluxetable, are peculiar to aastex.
 
@@ -21,14 +21,14 @@
 
 %\author{Nathan Lundblad \altaffilmark{1} \\ \today}
 \author{Nathan Lundblad \footnote{Originally written Aug 31 1999. New 
-\LaTeXe updates and additional commentary by Erik
-Shirokoff (2004) and Carl Heiles.} \\ \today}
+\LaTeX\ updates and additional commentary by Erik
+Shirokoff (2004) and Carl Heiles (2015).} \\ \today}
 %NOTE THE \\ WHICH SKIPS A LINE
 
 \begin{abstract} We present a paper on useful \LaTeX\ stuff.  Make sure
 to look at the source code for this document, as that is where the real
-story is.  For more fun, look at Leslie Lamport's book in the 705
-Campbell bookshelf.  \end{abstract}
+story is.  For more fun, look at Leslie Lamport's book in the lab
+bookshelf.  \end{abstract}
 
 \tableofcontents
 
@@ -48,6 +48,49 @@ be used to can be a little intimidating at first, a few basic facts and
 a couple of good sample documents\footnote{Available all over the place.
 You'll get a sample lab report done in \LaTeX\, for example.  } will
 take you a long way.
+
+\section{READ THIS!! The Simple way to run \LaTeX\ }
+
+Create three windows on your desktop: \begin{enumerate}
+
+\item The editing window for the \LaTeX\ document. If you're using Emacs
+  and invoked it by typing {\tt emacs whatever.tex},
+  then this is the editing window created by Emacs; if you invoked it by
+  typing {\tt emacs -nw whatever.tex}, this is the original window from
+  which you invoked Emacs.
+
+\item A second smaller window that you use to run latex on your
+  file. That is, after editing your file and creating a new version on
+  disk, you use this window to run latex by typing {\tt latex
+    whatever}. This creates a compiled latex file called {\tt
+    whatever.dvi} .
+
+\item A third window that you use to display the compiled latex file
+  (called a {\tt dvi} file) using {\tt evince}. After {\tt whatever.dvi}
+  exists, in this third window type {\tt evince whatever.dvi}. A new
+  window will pop up with the formatted version of {\tt whatever}. You
+  don't have to touch this third window again, because the {\tt evince}
+  display will update automatically when you {\tt latex whatever} in the
+  second window. Use the uparrow key to repeatedly invoke this command!
+
+\item (alternate for (2) and (3) above) If you have complicated figure
+  display commands in your {\tt includegraphics} command, then the {\tt
+    dvi} files may not produce proper output. In this case, bypass using
+  the {\tt dvi} file as follows: \begin{enumerate}
+
+\item In your second window, after typing {\tt latex
+    whatever}, type {\tt dvipdf whatever}
+
+\item In the third window type {\tt evince whatever.pdf}. A new window
+  will pop up with the formatted version of {\tt whatever}. You don't
+  have to touch this third window again, because the {\tt evince}
+  display will update automatically when you type the combination \\ 
+  \hspace*{3ex} {\tt latex whatever} \\ 
+  \hspace*{3ex} {\tt dvipdf whatever} \\ 
+in the second window.
+
+\end{enumerate}
+\end{enumerate}
 
 \section{How To Use \LaTeX: The Most General Possible Summary}
 \label{howtosec}
@@ -73,39 +116,34 @@ text is to go to that line number in your editor. {\it NOTE} that many
 times the error occurs {\it before} the line number given by the \LaTeX\
 output.
 
-        To view the \verb&whatever.dvi& file on your terminal screen,
-type {\tt dvi whatever \&} at your shell prompt (you can, but don't need
-to, include the {\tt .dvi} suffix). The nicely-formatted output appears
-on the {\tt dvi} output window. You can edit the {\tt tex} file and left
-click on your {\tt dvi} output window; the updated text appears.
-
-Look thingsg over carefully and make any changes {\it before printing it
+Look things over carefully and make any changes {\it before printing it
 on paper}---support environmentalism!  Finally, to print the output when
-you're all done, it's a three-step process\footnote{On some systems, you
-can print the {\tt dvi} file directly using {\tt dvips whatever.dvi
-$\vert$ lp} . This command creates a temporary PostScript file from {\tt
-whatever.dvi}. The {\tt $\vert$ lp} ``pipes'' this file to the printer;
-omitting this part would print the PostScript file onto your
-screen---something you don't want because it is uninterpretable.}  :
+you're all done, it's a three-step process:
 \begin{enumerate}
 
-\item \verb$dvips whatever$ (creates the PostScript file {\tt
-  whatever.ps})
+\item \verb$dvipdf whatever$ (creates the PDF file {\tt whatever.pdf}).
 
 \item Before printing, you should make one final check by looking
-at the PostScript file on your screen: {\tt gv whatever.ps} .
+at the PDF file on your screen: {\tt evince whatever.pdf} .
 
-\item \verb$lp whatever.ps$ (prints the file).
+\item Print the file from within {\tt evince}. {\it !!!!! DO NOT, UNDER
+  ANY CIRCUMSTANCES,} try to print any {\tt pdf} file directly using
+  {\tt lp whatever.pdf}: you'll get millions of pages, each of which has
+  one line of unintelligible gibberish.
 \end{enumerate}
+
+NOTE that, as we do here, one can break the page by using {\tt
+  \verb&\&clearpage} \dots
+\clearpage
 
 \section{Some Basic Syntax}\label{basicsec}
 
-        Every \LaTeX\ document must be enclosed by a
-\verb&\begin{document}& tag and an {\tt \verb$\$end\{document\}} tag.
-Nothing goes after the latter\footnote{Except for comments which you
-don't want to be interpreted.}, but some very important stuff goes
-before the former, such as documentclass declarations and suchlike,
-which you'll learn about in Section~\ref{stylesec}.
+Every \LaTeX\ document must begin with a \verb&\begin{document}& tag and
+finish with an {\tt end\{document\}} tag.  Nothing goes after the
+latter\footnote{Except for comments which you don't want to be
+  interpreted.}, but some very important stuff goes before the former,
+such as documentclass declarations and suchlike, which you'll learn
+about in Section~\ref{stylesec}.
 %NOTE THE REFERENCE TO THE SECTION'S LABEL!!  
 %THE TILDE (~) PREVENTS LATEX FROM BREAKING THE LINE AT THAT POINT.  
 As you may have noticed, \LaTeX\ reserves more than a few characters for
@@ -116,11 +154,11 @@ special characters: \{ \# \} \%\footnote{The percent sign \% is used for
 commenting your code, which is very important in, say, C programming but
 not too important in \LaTeX.}.  
 
-        There are three kinds of hyphens in \LaTeX: -,--, and ---.  The
-first is used for intra-word dashes, the second for number ranges
-(41--42), and the third for the standard intra-sentence dash---it's my
-personal favorite.  In other situations, just use whatever looks the
-best. 
+There are three kinds of hyphens in \LaTeX: -,--, and ---.  The first is
+used for intra-word dashes and number ranges, the second as a minus sign
+outside of equations (3=42--39), and the third for the standard
+intra-sentence dash---it's my personal favorite.  In other situations,
+just use whatever looks the best.
 
         Grouping letters and words is accomplished with the \{ and \}
 characters.  Most commands only work on one group at a time, so surround
@@ -188,17 +226,17 @@ peculiarity that it skips and starts a new line.
 \section{Labels/Referencing}\label{labelsec}
 
 When you're preparing a \LaTeX\ document, it's {\it smart, labor-saving,
-sophisticated, and good practice}---but not necessary---to use the
+  sophisticated, and good practice}---but not necessary---to use the
 ``\verb&\label&'' command.  The use of labels ensures that you can refer
 to sections, equations, figures, and tables by a name---i.e., by {\it
-reference}---and not a number.  So what's the difference? When you're
+  reference}---and not a number.  So what's the difference? When you're
 inserting, cutting, and pasting, you {\it will} lose count of what
 section you're in or what equation is what, which will make referring to
 such objects in the text.  Because I labeled the beginning of this
 section, I can always refer to it using the label, regardless of whether
 I go back and make changes in section order.  For example: in the {\tt
-tex} file it says, ``{\tt The current section is
-Section~\verb$\$ref{labelsec}}'', while in the \LaTeX\ {\it output} it
+  tex} file it says, ``{\tt The current section is
+  Section~\verb&\&ref{labelsec}}'', while in the \LaTeX\ {\it output} it
 says ``The current section is Section~\ref{labelsec}''.
 %NOTE THE REFERENCE 
 There are several examples of how labels work in this primer; some are
@@ -207,19 +245,21 @@ pointed out with comments.
 \section{Style files, packages, and user defined commands}\label{stylesec}
 
         You may have noticed the following line at the beginning of the
-source code: \begin{center} {\verb&\documentclass[preprint]{aastex}&}
+source code: \begin{center} {\verb&\documentclass[12pt,preprint]{aastex}&}
 \end{center} \noindent This line sets a template for the document as a
-whole; it tells \LaTeX\ that you want to write an article-type document
-using the American Astronomical Society's preprint class \footnote{The
-American Mathematical Society and the American Physical Society also
-have their own formats.  We like AAS\TeX, and recommend you stick with
-it.} package.  Specifically, this command instructs \LaTeX \ to read the
-file called \verb$aastex.sty$, which is known as a ``style file''; if
-you want to use AAS\TeX \ on your own computer, you need to have this file
+whole; it tells \LaTeX\ that you want an article-type document in
+12-point type\footnote{You can specify only 11- or 12-point type here;
+  if you specify neither, the default is 11-point type.} using the
+American Astronomical Society's preprint class\footnote{The American
+  Mathematical Society and the American Physical Society also have their
+  own formats.  We like AAS\TeX, and recommend you stick with it.}
+package.  Specifically, this command instructs \LaTeX \ to read the file
+called \verb$aastex.sty$, which is known as a ``style file''; if you
+want to use AAS\TeX \ on your own computer, you need to have this file
 available on your path. The AAS\TeX\ class sets the font and layout for
 the entire document and it automatically loads some useful packages,
 which are collections of new commands that allow you to customize your
-document and do nifty things with images and layouts.  
+document and do nifty things with images and layouts.
 
 
 \section{Mathematics}\label{mathsec}
@@ -245,10 +285,14 @@ Laplace would have loved \LaTeX.  You can also do Greek letters easily:
 mode, which is commonly delimited by dollar signs; thus,
 \verb&$\alpha=\beta=\int_0^2 x^{-2.4} dx$& will look like
 $\alpha=\beta=\int_0^2 x^{-2.4} dx$.  For an example of how labels work
-with equations, look at the code for Equation~\ref{gammaeq}. 
+with equations, look at the code for Equation~\ref{gammaeq}. If you want
+an un-numbered equation, use double dollar signs instead of \{equation\}
+mode:
 
-If you want to show a matrix math equation, you use the {\tt eqnarray}
-environment:
+$$     4 = 2 + 2  $$
+
+\noindent If you want to show a matrix math equation, you use the {\tt
+  eqnarray} environment:
 
 \begin{eqnarray} \label{smeqn}
 \left[
@@ -281,19 +325,18 @@ D \\
 
 If you want an equation, such as $\alpha = \beta \times \Lambda \cdot
 4$, to be in bold---including those Greek letters---surround the whole
-equation by \verb${\${boldmath} \dots \ \verb$}$; the result is {\boldmath
-$\alpha = \beta \times \Lambda \cdot 4$}.
-
+equation by {\tt \verb&\&boldmath \dots }; the result is 
+{\boldmath $\alpha = \beta \times \Lambda \cdot 4$}.
 
 \section{Figures}\label{figsec}
 
-        If you want to bring in plots from IDL or, for that matter, an
-arbitrary graphic, you must first make sure that the file in question is
-an Encapsulated PostScript File or a PostScript file\footnote{If you
-  have a non-PostScript figure, you can make a PostScript copy with the
-  Linux/Unix command {\tt convert}.}.  Once you have the
-file in the same directory as your \verb&.tex& file, you can insert it
-into the document like so:
+If you want to bring in plots from IDL or, for that matter, an arbitrary
+graphic, you must first make sure that the file in question is an
+Encapsulated PostScript File or a PostScript file\footnote{If you have a
+  non-PostScript figure, you can make a PostScript copy with the
+  Linux/Unix command {\tt convert}. Example: {\tt convert 2dgaussian.jpg
+    2dgaussian.ps} .}.  Once you have the file in the same directory as
+your \verb&.tex& file, you can insert it into the document like so:
 
 \begin{figure}[h!]
 %the [h!] tells latex you want the figure inserted here.
@@ -311,7 +354,7 @@ If you specify both, you can stretch the image.  Angle rotates the image
 by some number of degree in the positive direction. Scale multiplies the
 picture's original size by the number you specify.
 When specifying width or height, you must include units.  Some options
-are: \verb$\$textwidth, in, cm, pt, em, ex. See the Not So Short Guide for more
+are: {\tt \verb&\&textwidth, in, cm, pt, em, ex.} See the Not So Short Guide for more
 info.
 
 If you want to display several pictures together or have size scaling or
@@ -337,21 +380,23 @@ placement commands, which work for tables and figures. They are: {\tt
 Figure \ref{gaussfig} and {\tt [p!]} for Figure \ref{silly}. Sometimes
 they are frustratingly inattentive to your desires; this occurs because
 \LaTeX\ is smarter than you think it is---there's not enough space to
-put the figure exactly where you want it. .Judicious use of sizing (for
-images) and using smaller fonts (for tables\footnote{To temporarily use
+put the figure exactly where you want it. Judicious use of sizing (for
+images) and using smaller fonts (for tables\footnote{To temporarily (or,
+  if you want, for the whole document!,) use
 a smaller font: {\tt {\small [small text\dots]}}or even {\tt {\tiny
-[tiny text\dots]}}}), or relocating, are your only options.
+[tiny text\dots]}}.}), or relocating, are your only options\footnote{You
+  want larger type? Try {\large large}, {\Large Large}, {\Huge Huge}...}.
 
 \section{Tables}\label{tablesec}
 
-        Tables are useful for displaying a large number of results.
-There are two environments provided for tables; \verb&{table}&, which is
-a \LaTeX\ resident environment, and \verb&{deluxetable}&, which is an
-AAS\TeX\ custom environment.   Table \ref{normtable} is the {\tt \{table\}}, a simpler
-version for which the placement commands work; Table \ref{2abs} is the {\tt
-deluxetable}, a more elaborate version for which the placement commands
-do not work---it always puts the table at the very end, so it's not very
-nice for lab reports.
+Tables are useful for displaying a large number of results.  There are
+two environments provided for tables; \verb&{table}&, which is a
+\LaTeX\ resident environment, and \verb&{deluxetable}&, which is an
+AAS\TeX\ custom environment.  Table \ref{normtable} is the {\tt
+  \{table\}}, a simpler version for which the placement commands work;
+Table \ref{2abs} is the {\tt deluxetable}, a more elaborate version for
+which the placement commands do not work---it always puts the table onn
+its very own page, even if the table is short.
 
 \noindent Let's begin with the ordinary table, which is more flexible
 because you the placement commands work; here we use {\tt [b!]},
@@ -380,19 +425,15 @@ Temperature & Voltage Drop \\
 \end{center}
 \end{table}
 
-\clearpage
-%NOTE THAT ONE CAN BREAK THE PAGE BY USING \clearpage....
-
-\noindent And now, we end with the deluxetable; it's always at the end, on
-its very own page. Because we're ending with it, this is one of the few
-instances where it's properly placed---but because it's on its own page,
-it's placement definitely not elegant!
+\noindent And now, we end with the deluxetable. Because we're ending
+ with it, and because it's on its own page, here it will be the last
+page. But it doesn't need to be.
 
 \begin{deluxetable}{crrcrrl} %the crrrl's set text alignment
-%[AOWING TO VARIOUS PECULIARITIES, YOU SHOULD HAVE NO BLANK LINES INSIDE
+%OWING TO VARIOUS PECULIARITIES, YOU SHOULD HAVE NO BLANK LINES INSIDE
 %THE DELUXETABLE ENVIRONMENT--IN CONTRAST TO ALL OTHER PLACES IN TEX.
 \footnotesize
-\tablecaption{Sample table \label{2abs}}
+\tablecaption{Sample Deluxetable \label{2abs}}
 \tablewidth{0pt}
 \tablehead{
 \colhead{Source} & \colhead{$\ell$} & \colhead{$b$} &
