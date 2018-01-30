@@ -53,43 +53,23 @@ take you a long way.
 
 Create three windows on your desktop: \begin{enumerate}
 
-\item The editing window for the \LaTeX\ document. If you're using Emacs
-  and invoked it by typing {\tt emacs whatever.tex},
-  then this is the editing window created by Emacs; if you invoked it by
-  typing {\tt emacs -nw whatever.tex}, this is the original window from
-  which you invoked Emacs.
+\item The editing window for the \LaTeX\ document. If you're using Vi/Emacs
+  and invoked it by typing {\tt vi whaterver.tex} or {\tt emacs -nw whatever.tex},
+  then this is the original (terminal) window. 
 
 \item A second smaller window that you use to run latex on your
   file. That is, after editing your file and creating a new version on
-  disk, you use this window to run latex by typing {\tt latex
+  disk, you use this window to run latex by typing {\tt pdflatex
     whatever}. This creates a compiled latex file called {\tt
-    whatever.dvi} .
+    whatever.pdf} .
 
-\item A third window that you use to display the compiled latex file
-  (called a {\tt dvi} file) using {\tt evince}. After {\tt whatever.dvi}
-  exists, in this third window type {\tt evince whatever.dvi}. A new
+\item A third window that you use to display the compiled PDF file.
+  For example, you can type {\tt evince whatever.pdf}. A new
   window will pop up with the formatted version of {\tt whatever}. You
   don't have to touch this third window again, because the {\tt evince}
-  display will update automatically when you {\tt latex whatever} in the
+  display will update automatically when you {\tt pdflatex whatever} in the
   second window. Use the uparrow key to repeatedly invoke this command!
 
-\item (alternate for (2) and (3) above) If you have complicated figure
-  display commands in your {\tt includegraphics} command, then the {\tt
-    dvi} files may not produce proper output. In this case, bypass using
-  the {\tt dvi} file as follows: \begin{enumerate}
-
-\item In your second window, after typing {\tt latex
-    whatever}, type {\tt dvipdf whatever}
-
-\item In the third window type {\tt evince whatever.pdf}. A new window
-  will pop up with the formatted version of {\tt whatever}. You don't
-  have to touch this third window again, because the {\tt evince}
-  display will update automatically when you type the combination \\ 
-  \hspace*{3ex} {\tt latex whatever} \\ 
-  \hspace*{3ex} {\tt dvipdf whatever} \\ 
-in the second window.
-
-\end{enumerate}
 \end{enumerate}
 
 \section{How To Use \LaTeX: The Most General Possible Summary}
@@ -102,13 +82,13 @@ output.  You'll type up these codes in your favorite text editor and
 name the file something appropriate with a \verb&.tex& suffix.
 
         Then you must compile that file at your shell prompt by typing
-\verb&latex whatever& (you can include the suffix {\tt .tex} if you
+\verb&pdflatex whatever& (you can include the suffix {\tt .tex} if you
 want).  \LaTeX\ will spit out some random files (provided you haven't
-made any errors), including \verb&whatever.dvi&, which is your printable
+made any errors), including \verb&whatever.pdf&, which is your printable
 output.  \LaTeX\ will also print some messages on your screen.  {\it Be
-sure to look at these messages!!!!!!!}  If your compilation failed, they
+sure to look at these messages!!!!!!!}  If your compilation failed or is incomplete, they
 will attempt to tell you what error you may have committed.  Once you
-figure it out, you edit the {\tt tex} file and try running {\tt latex
+figure it out, you edit the {\tt tex} file and try running {\tt pdflatex
 whatever} again.  The most common error is to forget the \$ sign on each
 side of an equation, or to have unmatched curly brackets.  The error
 message gives the line number; the easiest way to find the offending
@@ -179,45 +159,45 @@ pair of any normal characters as the delimiter. The \verb$\verb$
 environment has an unfortunate peculiarity: you have to put all of its
 argument on a single typed line in the \verb$tex$ file. If you want to
 do a lot of verbatim stuff---really useful when you want to provide a
-list of IDL programming commands, for example---use
+list of Python programming commands, for example---use
 \verb$\begin{verbatim}$ and \verb$\end{verbatim}$; these don't require
-delimiters. For example, to list some well-documented IDL code:
+delimiters. For example, to list some well-documented Python code:
 
 \begin{verbatim}
-function wopen
-;+
-;NAME:
-;WOPEN -- return list of all open windows
-;
-; PURPOSE:
-;       Quick way to find all open windows
-;
-; CALLING SEQUENCE:
-;       result= wopen()
-;
-; INPUTS:
-;       NONE
-;
-; RETURNS: VECTOR OF OPEN WINDOWS
-;
-; RESTRICTIONS:
-;       The current device must be X Windows.
-;
-; MODIFICATION HISTORY:
-;       Written CARL, who finally got fed up
-;-
-; ARE YOU USING X WINDOWS DEVICE...
-if (!d.name ne 'X') then begin
-  message, 'DEVICE not set to X Windows.', /INFO
-  return, -1
-endif
+np.fft.fft(a, n=None, axis=-1, norm=None)
+Docstring:
+Compute the one-dimensional discrete Fourier Transform.
 
-; FIND THE OPEN WINDOWS...
-device, window_state=openwindows
-openwindows = where(openwindows,Nopen)
+This function computes the one-dimensional *n*-point discrete Fourier
+Transform (DFT) with the efficient Fast Fourier Transform (FFT)
+algorithm [CT].
 
-return, openwindows
-end
+Parameters
+----------
+a : array_like
+    Input array, can be complex.
+n : int, optional
+    Length of the transformed axis of the output.
+    If `n` is smaller than the length of the input, the input is cropped.
+    If it is larger, the input is padded with zeros.  If `n` is not given,
+    the length of the input along the axis specified by `axis` is used.
+axis : int, optional
+    Axis over which to compute the FFT.  If not given, the last axis is
+    used.
+norm : {None, "ortho"}, optional
+    .. versionadded:: 1.10.0
+
+    Normalization mode (see `numpy.fft`). Default is None.
+
+Returns
+-------
+out : complex ndarray
+    The truncated or zero-padded input, transformed along the axis
+    indicated by `axis`, or the last one if `axis` is not specified.
+
+Raises
+------
+IndexError
 \end{verbatim}
 
 \noindent \verb$\begin{verbatim}$ has the perhaps unfortunate
@@ -330,18 +310,43 @@ equation by {\tt \verb&\&boldmath \dots }; the result is
 
 \section{Figures}\label{figsec}
 
-If you want to bring in plots from IDL or, for that matter, an arbitrary
-graphic, you must first make sure that the file in question is an
+If you want to bring in plots from Python or, for that matter, an
+arbitrary graphic, you 
+should put the following line in your {\tt tex}
+document, before the \verb$\begin{document}$ part. Common
+formats are {\tt png} (good for lines), {\tt jpg} (good for images), and {\tt pdf}
+(best for plots/line figures).  Each of these formats has a different way of representing
+graphics.  In particular, {\tt pdf} (and {\tt ps}) can represent plots and figures 
+in {\it vector graphic} form --- as instructions for drawing each line of the figure.  This 
+form, which contrasts {\it bitmap} image formats like {\tt png} and {\tt jpg}, is
+infinitely scalable and never has pixelization issues, making it ideal for representing
+figures in a paper. Once you have your graphics file the
+file in the same directory as your {\tt *.tex} file, you can insert it
+into the document like so:
+
+
 Encapsulated PostScript File or a PostScript file\footnote{If you have a
   non-PostScript figure, you can make a PostScript copy with the
   Linux/Unix command {\tt convert}. Example: {\tt convert 2dgaussian.jpg
-    2dgaussian.ps} .}.  Once you have the file in the same directory as
+    2dgaussian.pdf} .}.  Once you have the file in the same directory as
 your \verb&.tex& file, you can insert it into the document like so:
+
+\begin{verbatim}
+\begin{figure}[h!]
+%the [h!] tells latex you want the figure inserted here.
+\begin{center}
+\includegraphics[width=.6\textwidth]{2dgaussian.pdf}
+\caption{A Gaussian. \label{gaussfig}}
+%NOTE THAT LABELS WORK ON FIGURES, TOO!!!
+%****NOTE ALSO**** THAT THE LABEL MUST BE ****WITHIN**** THE CAPTION!!!
+\end{center}
+\end{figure}
+\end{verbatim}
 
 \begin{figure}[h!]
 %the [h!] tells latex you want the figure inserted here.
 \begin{center}
-\includegraphics[width=.6\textwidth]{2dgaussian.ps}
+\includegraphics[width=.6\textwidth]{2dgaussian.pdf}
 \caption{A Gaussian. \label{gaussfig}}
 %NOTE THAT LABELS WORK ON FIGURES, TOO!!!
 %****NOTE ALSO**** THAT THE LABEL MUST BE ****WITHIN**** THE CAPTION!!!
@@ -360,12 +365,24 @@ info.
 If you want to display several pictures together or have size scaling or
 stretching or rotation, as in Figure \ref{silly}, you can do this.
 
+\begin{verbatim}
 \begin{figure} [!p]
 %the [p!] tells latex you want the figure on a new page 
 \begin{center}
-\includegraphics[width=1in,height=5in]{2dgaussian.ps}
-\includegraphics[width=5in,height=1in,angle=180]{2dgaussian.ps}
-\includegraphics[scale=0.1,angle=45]{2dgaussian.ps}
+\includegraphics[width=1in,height=5in]{2dgaussian.pdf}
+\includegraphics[width=5in,height=1in,angle=180]{2dgaussian.pdf}
+\includegraphics[scale=0.1,angle=45]{2dgaussian.pdf}
+\end{center}
+\caption{This is a very silly figure! \label{silly}}
+\end{figure}
+\end{verbatim}
+
+\begin{figure} [!p]
+%the [p!] tells latex you want the figure on a new page 
+\begin{center}
+\includegraphics[width=1in,height=5in]{2dgaussian.pdf}
+\includegraphics[width=5in,height=1in,angle=180]{2dgaussian.pdf}
+\includegraphics[scale=0.1,angle=45]{2dgaussian.pdf}
 \end{center}
 \caption{This is a very silly figure! \label{silly}}
 \end{figure}
@@ -402,6 +419,31 @@ its very own page, even if the table is short.
 because you the placement commands work; here we use {\tt [b!]},
 specifying its location to be the bottom of the page\dots
 
+\begin{verbatim}
+\begin{table}[!b]
+%THE [!b] TELLS IT TO PUT THE TABLE AT THE BOTTOM OF THE PAGE. 
+%IF YOU USED [!t] IT WOULD PUT IT AT THE TOP.
+\begin{center}
+\caption{Sample table \label{normtable}}
+%TABULAR FORMAT IS THE WORD HERE; the c's represent centered
+%columns, and the vertical bars represent vertical lines. 
+%Lines are broken by \\, and columns are separated by the
+%ampersand.
+\begin{tabular}{|c|c|} \hline
+Temperature & Voltage Drop \\
+\hline
+\hline
+310K & 0.6761V$\pm$0.0004V\\
+\hline
+300K & 0.7064V$\pm$0.0005V\\
+\hline
+77K & 1.5318V$\pm$0.001V\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{verbatim}
+
 \begin{table}[!b]
 %THE [!b] TELLS IT TO PUT THE TABLE AT THE BOTTOM OF THE PAGE. 
 %IF YOU USED [!t] IT WOULD PUT IT AT THE TOP.
@@ -428,6 +470,47 @@ Temperature & Voltage Drop \\
 \noindent And now, we end with the deluxetable. Because we're ending
  with it, and because it's on its own page, here it will be the last
 page. But it doesn't need to be.
+
+\begin{verbatim}
+\begin{deluxetable}{crrcrrl} %the crrrl's set text alignment
+%OWING TO VARIOUS PECULIARITIES, YOU SHOULD HAVE NO BLANK LINES INSIDE
+%THE DELUXETABLE ENVIRONMENT--IN CONTRAST TO ALL OTHER PLACES IN TEX.
+\footnotesize
+\tablecaption{Sample Deluxetable \label{2abs}}
+\tablewidth{0pt}
+\tablehead{
+\colhead{Source} & \colhead{$\ell$} & \colhead{$b$} &
+\colhead{$\tau_{max}$} &
+\colhead{$v_{LSR}$} & \colhead{FWHM} & \colhead{ref, note}
+}
+\startdata
+0624-058 (3C161) & 215.4 & --8.0  &    0.67      &  12.0 &   4.5 &   1,a
+\\
+3C161            & 215.4 & --8.0  &   0.88       &   7.6 &   2.5 &   1,a
+\\
+3C161(OH)        & 215.4 & --8.0  &  0.013       &   8.6 &   1.2 &   3
+\\
+PKS0605-08       & 215.7 & --13.5 &
+0.80$^b$         &  7.3  &   8.9 &   2
+\\
+0530+04 (4C04.18)& 200.0 & --15.3 & 0.8:         &  4.3: &   6.7:&   2
+\\
+3C135            & 200.5 & --21.0 & $\lesssim 0.11$&\nodata &\nodata & 2
+\\
+PKS0533-12       & 215.4 & --22.2 & 0.36         &  3.9  &   8.0 &    2
+\\
+\enddata
+\tablerefs{(1) Mebold {\it et al.} (1981), Mebold
+{\it et al.} (1982); (2) Crovisier, Kaz\`es, and Aubrey (1978);
+(3) Dickey, Crovisier, and Kaz\`es (1981).}
+\tablenotetext{a}{Mebold {\it et al.} (1982) list 3 components in
+addition to the 4 listed here.}
+\tablenotetext{b}{We have not listed a second, weaker Gaussian component
+because of poor signal/noise.}
+\tablecomments{This comment applies to the whole table and you can
+put it either in front or behind the other comments.}
+\end{deluxetable}
+\end{verbatim}
 
 \begin{deluxetable}{crrcrrl} %the crrrl's set text alignment
 %OWING TO VARIOUS PECULIARITIES, YOU SHOULD HAVE NO BLANK LINES INSIDE
