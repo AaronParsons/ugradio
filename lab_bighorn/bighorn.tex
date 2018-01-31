@@ -46,14 +46,14 @@
 
 \section{SCHEDULE}
 \begin{enumerate}
-\item {\it The First Week. For class JD=2457799.583:} Finish \S
-  \ref{radioastro} and \S \ref{analysis}, and understand \S
+\item {\it The First Week. For class JD=2458163:} % XXX change this each year
+Finish \S\ref{radioastro} and \S \ref{analysis}, and understand \S
   \ref{jultime}. Be prepared for `show and tell'.
 
-\item {\it The Second Week. For class JD=24577806.583:} Finish \S
-  \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}. 
+\item {\it The Second Week. For class JD=2458170:} % XXX change this each year
+Finish \S \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}. 
 
-\item {\it The Third Week. For class JD=2457813.583:} Write up your formal
+\item {\it The Third Week. For class JD=2458177:} Write up your formal
   report. And finish what you couldn't get done during the first two
   weeks!
 \end{enumerate}
@@ -65,23 +65,27 @@ The lab reports, as always, are written by {\it individuals}.
 The microwave and other electronics is such an important part of this
 lab that you should include a block diagram of the telescope electronics
 in your lab report. You can prepare this either by either hand or
-computer. If by hand, you'll have to make a PostScript file so you can
+computer. If by hand, you'll have to scan your drawing to get a file you can
 insert into your report's tex file. If by computer, you can use your
-favorite software for making line drawings or, if you want to become a
-Linux guru, use {\tt xfig}, a menu-driven program with ancient written
-documentation in {\tt /home/global/ay121/handouts/xfigbookps} (or, of
-course, google {\tt xfig} on the web). Tex requires PostScript images
-({\tt *.ps}) for its figures. and you can convert among file types using
-the Linux {\tt convert} facility (e.g.\ {\tt convert myfile.jpg
-  myfile.ps}) or, better for {\tt *.pdf} to {\tt *.ps} or vice-versa,
-use {\tt pdf2ps myfile.pdf} or {\tt ps2pdf myfile.ps}.
+favorite software for making line drawings.  Although it is dated, {\tt xfig}
+comes installed on Linux, so that's another option.  In \LaTeX, the line
+{\tt \textbackslash usepackage\{graphicx\}} will give you the {\tt \textbackslash includegraphics} command,
+which you can use to put images of various file types into your document.  Common
+formats are {\tt png} (good for lines), {\tt jpg} (good for images), and {\tt pdf}
+(best for plots/line figures).  Each of these formats has a different way of representing
+graphics.  In particular, {\tt pdf} (and {\tt ps}) can represent plots and figures 
+in {\it vector graphic} form --- as instructions for drawing each line of the figure.  This 
+form, which contrasts {\it bitmap} image formats like {\tt png} and {\tt jpg}, is
+infinitely scalable and never has pixelization issues, making it ideal for representing
+figures in a paper.
 
 The real work in this lab is the analysis, so it provides the ideal
 opportunity for you to flex your programming muscles. Accordingly, {\it
   each individual} needs to write her/his own software. And this
-software needs to be documented, preferably using the IDL standard
-format (see, for example, the documentation for our procedure that gives
-LST (by typing {\tt doc, 'ilst'} at the IDL prompt). {\it Include this
+software needs to be documented, preferably using Python docstrings
+(see, for example, the documentation in the code of {\tt ugradio.pico}, which
+shows up if you type, e.g., {\tt ugradio.pico.capture\_data?} at the Python prompt.)
+{\it Include this
   documentation} (but not the rest of the software) {\it as part of your lab
 report}. Also include a brief description of how to run your software;
 tell me the subdirectory where your software can be found; and make sure
@@ -100,10 +104,13 @@ PST to PDT; PST=UTC - 8 hr, while PDT=UTC - 7 hr). Think of Civil time
 as Solar time, because the 24-hour period is the same as that of the
 Sun.
 
-Think of Local Sidereal Time as ``star time''; it tells when a
-particular star (not the Sun) is visible. The 24-hour LST period is a
+Think of Sidereal Time as ``star time''; it tells when a
+particular star (not the Sun) is visible. The 24-hour sidereal time period is a
 bit shorter than the 24-hour Solar time period---$1 \over 356$ less, to
-be almost exact. This is a little less than 4 minutes per day.
+be almost exact. This is a little less than 4 minutes per day.  Local Sidereal Time
+depends on your location on Earth (in particular, your longitude), and tells you
+what right ascension (the ``longitude" coordinate for stars) is directly overhead
+at a particular moment.
 
 The Julian Day is a sequential numbering of Solar days. As such, it
 uniquely specifies the date without the need for any complications such
@@ -114,15 +121,20 @@ international date line is 12 hours away from UT, so the JD is in sync
 with humankind's definition of `when the day begins'. JD=0 begins at
 Greenwich noon on 1 Jan --4713.  The Julian day is a double-precision
 float: it contains the time as the fractional part of the day. It's not
-just an integer day number. The current JD is about 2457793.
+just an integer day number. The current JD is about 
+2458163. % XXX change this each year
 
 The Modified Julian Day is a shorter version of Julian Day. MJD is 12
 hours out of sync with JD, so it is in sync with local time at
 Greenwich. MJD=0 occurs at 0 hr UT on 17 Nov 1858.  The current MJD is
-about 57792.
+about 58162. % XXX change this each year
 
-\subsection{ Software---Some Useful IDL Procedures for Time Conversion}
+\subsection{ Software---Some Useful Python Procedures for Time Conversion}
 
+Python has several built-in modules for dealing with time, including {\tt time}, {\tt datetime}.
+Astronomers, however, have historically been the best time-keepers on the planet.  For
+astronomy-quality time routines, {\tt astropy.time}, part of the {\tt astropy} package, is
+the industry standard.
 These routines are based on GSFC {\tt ct2lst.pro}. LST tells when a star
 is overhead, so its rate of passage depends on the Earth's spin. The
 Earth is constantly slowing owing to tidal friction produced by the
@@ -132,44 +144,32 @@ this, the conversion will be off by a few seconds.
 
 You need to know your
 longitude to calculate LST. NCH has \\
-{\tt nlat=37.8732, elong=-122.2573 = (360.-122.2573) (same as wlong=+122.2573)}. For all
-procedures mentioned here, these are the defaults.
+{\tt (lat,lon) = (37.8732, -122.2573)},  Note that {\tt lon = -122.2573 = (360 - 122.2573) = 237.7427}. 
+For all procedures mentioned here, these are the defaults.
 
 \begin{verbatim}
-local_now = SYSTIME() gives current local time as a string
+local_now = ugradio.timing.local_time() # current local time as a string
 
-ut_now = SYSTIME(/ut) gives current UTC as a string
+ut_now = ugradio.timing.utc() # current UTC as a string
 
-ut_sec_since = SYSTIME(/sec) gives seconds elapsed since 1 January 1970
-UTC
+ut_now = ugradio.timing.unix_time() # seconds since 1 January 1970
 
-julian_now = SYSTIME(/julian, /utc) gives current julian day (which             
-        contains the current time, too--it's not just an integer               
-        number. the /utc is required for it to give julian date relative       
-        to Greenwich, which is the only one that means anything.               
+julian_now = ugradio.timing.julian_date() # current julian day (which \
+        contains the current time, too--it's not just an integer \
+        number. 
                                                                                
-LST -- prints LST right now on the screen                                      
+lst_now = ugradio.timing.lst() # current LST at NCH
                                                                                
-lst_now = LSTNOW() -- returns the current LST                                   
+lst_julian = ugradio.timing.lst(jd) # LST for the specified Julian day                                                             
                                                                                
-lst_julian = ILST( julian=juldate) -- returns the LST for the specified        
-        Julian day                                                             
+ut_julian = ugradio.timing.unix_time(jd) # seconds since 1/1/1970 for given JD
                                                                                
-CALDAT, Julian, Month [, Day [, Year [, Hour [, Minute [, Second]]]]]          
-        Given the Julian day (which is defined relative to Greenwich),         
-        this returns the civil time at Greenwich.                              
-                                                                               
-julian = JULDAY(Month, Day, Year, Hour, Minute, Second)                        
-        Given the civil time at Greenwich, this returns the Julian day.
-
-modified_julian_day = MJD2JD( julian_day, /reverse)                            
-
-julian_day = MJD2JD( modified_julian_day)                                      
+julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
 \end{verbatim}
 
 \section{HANDOUTS} \label{handouts}
 \begin{enumerate}
-\item A second-level IDL tutorial. {\tt idldatatypes.pdf} ``QUICK IDL
+\item A second-level IDL tutorial. {\tt idldatatypes.pdf} ``QUICK IDL % XXX update for python
   TUTORIAL NUMBER TWO: IDL DATATYPES AND ORGANIZATIONAL STRUCTURES'' For
   this lab you use complex numbers, matrices and matrix
   math, and structures. This handout describes the complete set and, in
@@ -190,7 +190,7 @@ julian_day = MJD2JD( modified_julian_day)
   to understand these topics to interpret your measurements.
 
 \item Astronomical coordinate transformations with Rotation Matrices:
-  {\tt ay120coord.pdf} ``AY120A,B CHEAT-SHEET FOR SPHERICAL COORDINATE
+  {\tt ay120coord.pdf} ``AY121 CHEAT-SHEET FOR SPHERICAL COORDINATE % XXX check pdf name
   TRANSFORMATION''. converting among Az/El, Ha/Dec, Ra/Dec, L/B. {\it
     You need to know all of this stuff!}
 
@@ -215,7 +215,7 @@ This week we will use the techniques we explored in Lab 1 to measure the
 shape, velocity, and intensity using the big horn on Campbell's roof.
 Most of the measured power comes from our own electronics, not the HI
 line.  It's often called ``noise'', and we need to get rid of this
-instrumental contribution. We also need obtain the correct line shape
+instrumental contribution. We also need to obtain the correct line shape
 and intensity.
 
 We'll measure the 21-cm line twice. For the first, the goal is to master
@@ -264,17 +264,13 @@ determine which way frequency increases on your power spectra.
 data.  How fast must you sample? 
 
 \item Look at the range of sample values by plotting a bunch of
-  them. Best is to make a histogram, which you can do using IDL's {\tt
-    histogram} function.  We have a convenient `wrapper' called {\tt
-    histo\_wrap}, which you may find easier to use\footnote{{\tt
-      histogram} is a native IDL function, so to get its documentation
-    type {\tt ?histogram}. In contrast, {\tt histo\_wrap} is our own,
-    in-house creation; for documentation of such non-native IDL
-    functions, type \\ {\tt doc,'histo\_wrap'}. (There's another wrapper
-    for plotting called {\tt hist}, but we find it too
-    complicated.)}. The sampled numbers should cover plenty of bits;
+  them. Best is to make a histogram, which you can do using Python's {\tt
+    numpy.histogram} function.  
+      To get its documentation,
+    type {\tt numpy.histogram?}.
+    The sampled numbers should cover plenty of bits;
   quantization should be only barely, or not at all, visibly evident in
-  the histogram. Adjust {\tt voltrange} in the call to {\tt getpico}
+  the histogram. Adjust {\tt volt\_range} in the call to {\tt pico.capture\_data}
   accordingly.
 
 The
@@ -303,7 +299,7 @@ that we measure. Accordingly, the power that we measure is called the
 `System Temperature' $T_{sys}$. It's a function of frequency and has two
 kinds of behavior: the `continuum', which is devoid of spectral features
 and changes very slowly with frequency; and the `line', which in this
-case is the 21-cm line and it changes rapidly with frequency---hence our
+case is the 21-cm line and it changes relatively rapidly with frequency---hence our
 desire to obtain the line shape.
 
 The System Temperature has two contributions: (1) the dominant contribution
@@ -315,7 +311,7 @@ The System Temperature has two contributions: (1) the dominant contribution
 Our horn is equipped with an old, noisy first amplifier so $T_R \sim
 300$ K; in contrast, our Leuschner telescope is much better, with $T_R
 \sim 50$ K. The antenna temperature comes from the Cosmic Background,
-with brightness temperature ($T_{B,CBR} = 2.8$ K); from
+with brightness temperature ($T_{B,CMB} = 2.7$ K); from
 interstellar/intergalactic space with brightness temperature
 $T_{B,astron}$ (usually no more than a few K in the continuum and up to
 about 100 K in the HI line); and the Earth's atmosphere with brightness
@@ -345,7 +341,7 @@ We could obtain the online
   outside the band (this is called `frequency switching'), or partway
   over but is still in the band (called 'in-band frequency
   switching'). The latter is better because you are always looking at
-  the line, thus getting better sig/noise.
+  the line; you end up with more measurements of it and thus get better sig/noise.
 
 To accomplish this, take a spectrum with the line roughly in the upper
 half of the baseband spectrum, and another with it centered roughly in
@@ -354,15 +350,15 @@ the lower half. Use the first as the `online' and the second as the
 use the second as the `online' and the first for the `offline'.  (The HI
 line frequency is 1420.4058 MHz).
 
-You can change the l.o.\ frequency in software: use {\tt set\_hp}.
+You can change the l.o.\ frequency in software: use {\tt set\_hp}. % XXX track down this function
 
 The line is weak, and you'll need to take lots of spectra. Recall that
-{\tt getpico} obtains a specified number of spectra ({\tt nSpectra})
-each of which has 32000 datapoints and writes them all out into a single
+{\tt pico.capture\_data} obtains a specified number of blocks ({\tt nblocks}),
+each of which has 16000 datapoints and writes them all out into a single
 file. Suppose you decide to obtain 10000 spectra. You might be tempted
-to do it in one fell swoop by setting {\tt nSpectra=10000}. That
+to do it in one fell swoop by setting {\tt nblocks=10000}. That
 will work, but be aware that it will take about 5 minutes or more. You
-might want to instead take ten sets with nSpectra=1000 so you can do a
+might want to instead take ten sets with {\tt nblocks=1000} so you can do a
 sanity check on your data without waiting for what seems like forever. 
 
 \item Intensity calibration requires a second pair of measurements,
@@ -383,18 +379,18 @@ Consider, first, the $s_{online}$ and $s_{offline}$ spectra, from which
 you can find the line shape. There are many individual spectra, 10000 in
 our above example. You need to combine these to make a single spectrum
 for each measurement. You can do this by averaging the power spectra
-(use IDL's {\tt total} function) or by taking the medians (use IDL's
+(use {\tt numpy}'s {\tt mean} function) or by taking the medians (use {\tt numpy}'s
 {\tt median} function). The former gives a less noisy result, but the
 latter handles time-variable interference better; use both and compare
-the results. Even after combining the 10000 spectra, the resultant
+the results. Even after combining the 10000 spectra, the resulting
 spectrum will still look noisy.  You can reduce the noise by averaging
 over channels---by `smoothing' the spectrum. This reduces the noise, but
 degrades the spectral resolution, so you have to make a compromise on
 how many channels to smooth over. To decide, realize that the HI line is
 never narrower than about 1 km/s, so it's OK to degrade the frequency
 resolution to, say, 1 or 2 kHz. Again, you do the smoothing by averaging
-(by using IDL's {\tt smooth} function) or medianing (by using IDL's {\tt
-  median}), and again try both to see what happens.
+(by using {\tt numpy.mean} ) or medianing (by using {\tt
+  numpy.median}), and again try both to see what happens.
 
 In the smoothed $s_{online}$ spectrum you might not be able to see the
 HI line, because the instrumental bandpass dominates the spectrum
@@ -463,9 +459,8 @@ and also the Earth's spin. And when observing the Galaxy, it is
 customary to express velocities with respect to the `Local Standard of
 Rest' (LSR), so that's yet another correction.
 
-Calculate the Doppler correction using {\tt ugdoppler.pro} (for
-documentation from the IDL prompt, use {\tt doc} or {\tt
-  doc\_library}). Correct the velocities and plot the spectrum for two
+Calculate the Doppler correction using {\tt ugdoppler.pro}  % XXX need this
+Correct the velocities and plot the spectrum for two
 reference frames: (1), the barycentric reference frame, which gives
 velocity with respect to the center of mass of the Solar
 system\footnote{There's a third system, the Sun system, which gives
@@ -500,7 +495,7 @@ Galaxy in a circular orbit.
 Obtain a fully-calibrated spectrum for the horn pointing at Galactic
 coordinates $(l,b)=(120^\circ, 0^\circ)$. How do you know where to point
 the horn? You definitely do need to use rotation matrices!  See the
-handout ``Ay120a,b Cheat-Sheet for Spherical Coordinate Transformation''
+handout ``Ay121 Cheat-Sheet for Spherical Coordinate Transformation''
 (\S \ref{handouts}). Plot your spectrum versus both the Barycentric and
 the LSR velocity. 
 
@@ -538,14 +533,11 @@ MHz, and [0.01, 0.03, 0.07] MHz.
 
 The procedures you need for these least-squares fits
 are: \begin{enumerate}
-\item For the polynomial fit, use either IDL's {\tt poly\_fit} or our
-  home-grown {\tt polyfit}.\footnote{Remember that documentation for
-    native IDL procedure is invoked from IDL by typing {\tt ?poly\_fit},
-    and for non-native ones {\tt doc, 'polyfit'.}}
+\item For the polynomial fit, use {\tt numpy.polyfit}
 
-\item For fitting multiple Gaussians, use our home-grown {\tt gfit}; for
-  evaluating the Gaussians from the parameters produced by {\tt gfit},
-  use {\tt gcurv}.
+\item For fitting multiple Gaussians, use our home-grown {\tt gaussfit}; for
+  evaluating the Gaussians from the parameters produced by {\tt gaussval}, % XXX write this
+  use {\tt gaussval}.
 \end{enumerate}
 
 In class we'll compare the results from all groups. In this class, we
@@ -567,7 +559,7 @@ be done by groups.  The analysis in \S \ref{secondweek} should be done
 by individuals. The analysis is nontrivial, so don't delay with the
 measurements!
 
-{\boldmath
+{\boldmath % XXX figure out the procedure for these sections
 \subsection {The coax slotted line at C-band ($\sim 3$ GHz)} \label{slotted}
 } Set up the slotted coaxial line with the wide-range HP 83712B
 synthesizer.  With the far end of the slotted line open, find the
@@ -640,8 +632,7 @@ x_m = A + m {\lambda_{sl} \over 2} \ ,
 \noindent You know $x_m$ and $m$ from measurement and you would like to
 derive $A$ and $\lambda_{sl}$. This is a classic least squares problem;
 you're fitting a first-degree polynomial, where the unknowns are $A$ and
-$\lambda_{sl}$. You can use our home-grown {\tt polyfit} or the native IDL
-{\tt poly\_fit}. 
+$\lambda_{sl}$. You can use {\tt numpy.polyfit}.
 
 \subsection{The X-band waveguide}
 
@@ -747,17 +738,17 @@ universally the one used.
 
 \end{document}
 
-You can smooth over channels and reduce the noise. For example, suppose you
-want to reduce the the NSAMP channels in the power spectrum $pspect$ to 512
-channels. In IDL there are two
-easy ways to do this: \begin{enumerate}
-
-\item Use IDL's {\tt smooth} function: {\tt newspect = smooth(pspect,
-    NSAMP/512)}. This degrades the resolution, but you will still have
-  NSAMP channels in the output spectrum.
-
-\item Use IDL's {\tt rebin} function: {\tt newspect = rebin(pspect, 512)}.
-  This degrades the resolution and gives you 512 channels channels in the
-  output spectrum.
-\end{enumerate}
+%You can smooth over channels and reduce the noise. For example, suppose you
+%want to reduce the the NSAMP channels in the power spectrum $pspect$ to 512
+%channels. In IDL there are two
+%easy ways to do this: \begin{enumerate}
+%
+%\item Use IDL's {\tt smooth} function: {\tt newspect = smooth(pspect,
+%    NSAMP/512)}. This degrades the resolution, but you will still have
+%  NSAMP channels in the output spectrum.
+%
+%\item Use IDL's {\tt rebin} function: {\tt newspect = rebin(pspect, 512)}.
+%  This degrades the resolution and gives you 512 channels channels in the
+%  output spectrum.
+%\end{enumerate}
 
