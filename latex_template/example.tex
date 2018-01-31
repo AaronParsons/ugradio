@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[preprint]{aastex}
 \newcommand{\thetitle}{Title of Report}
 \newcommand{\theauthor}{Your Name}
 \newcommand{\theauthorsemail}{yourname@berkeley.edu}
@@ -25,6 +25,9 @@
 % import library of technical symbols
 \usepackage{amsmath,amssymb,latexsym}
 
+% import bibliography tools
+\usepackage{natbib}
+
 \begin{document}
 % print the title in san-serif font, in bold, in huge characters
 \title{
@@ -36,7 +39,7 @@
     \sffamily\theauthor \\
     \sffamily\theauthorsemail
 }
-\date{\thedate}
+%\date{\thedate}
 \maketitle
 \sloppy
 
@@ -118,7 +121,7 @@ and potential future work to follow-up on the results I have found.
  % believe is the fattest single digit number, though any digit other than 1
  % would probably work as well.
 \begin{thebibliography}{0}
- \bibitem{name-year}
+ \bibitem[Name (Year)]{name-year}
   Author Name. \emph{Title of Paper.} Journal Name, volume no., page numbers, 
   publication year.
 \end{thebibliography}
