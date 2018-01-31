@@ -1,8 +1,9 @@
 \documentclass[preprint]{aastex}
+
 \newcommand{\thetitle}{Title of Report}
 \newcommand{\theauthor}{Your Name}
 \newcommand{\theauthorsemail}{yourname@berkeley.edu}
-\newcommand{\thedate}{Month XX, 2018}
+\newcommand{\thedate}{\today}
 % the following controls some aspects of how the text is displayed on the page
 \setlength{\textwidth}{6.5in}
 \setlength{\textheight}{8.25in}
@@ -15,18 +16,14 @@
     \rhead{\sffamily\small\theauthor}
     \cfoot{\sffamily\slshape\small\thepage}
 
-% support display of graphics
-\usepackage{graphicx}
+\usepackage{graphicx} % support display of graphics
+\usepackage{amsmath,amssymb,latexsym} % import library of technical symbols
+\usepackage{natbib} % import bibliography tools
 
 % the following control some aspects of how paragraphs are displayed
 \parindent=0pt
 \parskip=2ex
 
-% import library of technical symbols
-\usepackage{amsmath,amssymb,latexsym}
-
-% import bibliography tools
-\usepackage{natbib}
 
 \begin{document}
 % print the title in san-serif font, in bold, in huge characters
@@ -39,12 +36,7 @@
     \sffamily\theauthor \\
     \sffamily\theauthorsemail
 }
-%\date{\thedate}
-\maketitle
-\sloppy
-
-\section{Abstract}
-
+\begin{abstract}
 The abstract is where I give the reader the highlights and spoilers for what is 
 contained in this report, including a brief description of what I was seeking 
 to explore and what my results were, so that they will know whether or not they 
@@ -52,17 +44,18 @@ want to keep reading to get all of the details. The abstract should end with a
 statement of what the conclusions are.  Anyone who has read the abstract of a 
 paper should be able to give a quick and accurate summary of what is contained 
 within it.
+\end{abstract}
 
 \section{Introduction}
 
-In the introduction, I give the context for why this report exists. This 
+In the introduction, we give the context for why this report exists. This 
 section generally includes an overview about the current understanding of the 
 given topic, what the open questions are, and what this report does to push on 
 those boundaries. This is a good place to provide background knowledge to the 
 reader, such as important mathematics and fundamental theory that are relevant 
 to the report.
 
-For example, if I was giving a report on interferometry, I might want to remind 
+For example, if we were giving a report on interferometry, we might want to remind 
 my reader what the equation for a visibility is. To include an equation, I 
 would do something like this.
 
@@ -118,7 +111,7 @@ and potential future work to follow-up on the results I have found.
  % thebibliography) is the longest citation (latex uses it to figure out the
  % spacing in the bibliography). In this case, we are using a number for our
  % citation, and there are less than 10 references, so we just give what I
- % believe is the fattest single digit number, though any digit other than 1
+ % believe is the fastest single digit number, though any digit other than 1
  % would probably work as well.
 \begin{thebibliography}{0}
  \bibitem[Name (Year)]{name-year}
