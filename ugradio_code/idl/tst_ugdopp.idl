@@ -1,0 +1,42 @@
+
+;assume we are in greenwich...
+nlat=0.
+wlong=0.
+
+;midnite in greenwich...
+julday0=julday(3, 22, 2011, 12. + .12)
+isun, ra, dec, juldate=julday0  ;, getlst=getlst
+print, ugdoppler( ra, dec, julday0, nlat=nlat, wlong=wlong, $
+                  obspos_deg=obspos_deg, lst_mean=lst_mean)
+print, 'ra, dec = ', ra, dec
+print, 'ha = ', lst_mean- ra, lst_mean-ra-24.
+
+print
+print
+print, '============================='
+print
+print
+
+julday0=julday(3, 22, 2011, 12. + .12 + 0*6.)
+isun, ra, dec, juldate=julday0  ;, getlst=getlst
+print, ugdoppler( ra+6, dec, julday0, nlat=nlat, wlong=wlong, $
+                  obspos_deg=obspos_deg, lst_mean=lst_mean)
+
+print, 'ra, dec = ', ra, dec
+print, 'ha = ', lst_mean- ra, lst_mean-ra-24.
+
+;stop
+print
+print
+print, '============================='
+print
+print
+
+wlong=120.
+julday0=julday(3, 22, 2011, 12. + .12 + 8)
+isun, ra, dec, juldate=julday0  ;, getlst=getlst
+print, ugdoppler( ra, dec, julday0, nlat=nlat, wlong=wlong, $
+                  obspos_deg=obspos_deg, lst_mean=lst_mean)
+
+print, 'ra, dec = ', ra, dec
+print, 'ha = ', lst_mean- ra, lst_mean-ra-24.

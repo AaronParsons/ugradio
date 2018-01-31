@@ -1,0 +1,69 @@
+;we have three dopp programs:
+
+;ugdoppler
+;chdoppler in a number of places--slightly different versions
+;chdoppler in gbtidl
+
+;chdoppler in gbtidl was extracted from an original non-gbt version.
+
+;chdoppler, needs some of phil's
+;programs, in particular toget the LST. the LST needs to be continually
+;updated to take care of leap seconds. i never get around to doing this,
+;so...
+;various viable versions of chdoppler that are NOT in gbgtidl include:
+;-rwxr-xr-x 1 heiles heiles 5249 2015-02-08 07:39 /home/heiles/dzd2/heiles/idl/gen/astro/chdoppler.pro
+;-rwxr-xr-x 1 heiles heiles 5095 2007-06-01 13:49 /home/heiles/dzd2/heiles/o/public_html/handouts/idlhead/astro/chdoppler.pro
+;-rwxrwxr-x 1 heiles heiles 5095 2007-06-01 13:49 /home/heiles/dzd4/heiles/gbt/procs/gen/astro/chdoppler.pro
+;-rwxrwxr-x 1 heiles heiles 4096 2007-10-29 11:12 /home/heiles/dzd4/heiles/arecibo/galfa/gsr3.0/procs/init/hdr/chdoppler.pro
+;these need to be checked for which is best, if  you are going to use them.
+
+
+;ugdoppler needs no nonlocal supportint procs. i checked itagainst
+;chdoppler for gbtidl, and it is close, within a few 10's of
+;meters/sec for a trial case.
+;see check below.
+
+;the following compare chdoppler from gbtidl and ugdoppler. the paths 
+;ARE SET UP FOR THE LAPTOP VERMO (path to chdoppler_gbtidl is not right):
+
+;get into gbtidl
+
+addpath, '/home/heiles/mygbtidl/gbtidl/pro/toolbox'
+.run ugdoppler
+.run chdoppler_gbtidl
+
+ra0= 13.7d0
+dec0= 18.d0
+julday0= systime( /juliAn,/utc)
+
+;test array inputs...
+ra= dindgen(24)
+dec= dblarr(24) + dec0
+julday= fltarr( 24) + julday0
+
+;ra= [18.0, 6.0]
+;dec=[30.0,-30.0]
+;julday= dblarr( 2) + julday0
+
+;test single value inputs...
+;ra=ra0
+;dec=dec0
+;julday=julday0
+
+;CAMPBELL HALL COORDS...
+nlat= 37.8732
+wlong= 122.2573
+
+ugd= ugdoppler( ra, dec, julday, nlat=nlat, wlong=wlong, $
+                pvlsr=pvlsr, obspos_deg=obspos_deg)
+print, obspos_deg
+print, 'ugd  ', ugd
+print, 'pvlsr = ', pvlsr
+;stop
+
+obspos= [-wlong, nlat]
+gbd= chdoppler( ra, dec, julday, obspos=obspos)
+print, obspos
+print, 'gbd  ', gbd
+
+ 

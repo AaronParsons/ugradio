@@ -1,0 +1,41 @@
+;.run chdoppler
+;.run ugdoppler
+;.run chdoppler_gbtidl
+
+;.run /home/heiles/mygbtidl/gbtidl/pro/toolbox/juldaytolmst.pro
+;.run /home/heiles/mygbtidl/gbtidl/pro/toolbox/utcinfoinp
+
+ra0= 13.7d0
+dec0= 18.d0
+julday0= systime( /juliAn,/utc)
+
+ra= dindgen(24)
+dec= dblarr(24) + dec0
+julday= fltarr( 24) + julday0
+
+ra=ra0
+dec=dec0
+julday=julday0
+
+;CAMPBELL HALL COORDS...
+nlat= 37.8732
+wlong= 122.2573
+
+;stop
+
+;chd = chdoppler( ra, dec, julday, nlat=nlat, wlong=wlong, obspos_deg=obspos_deg)
+;print, obspos_deg
+
+;stop
+
+;ugd= ugdoppler( ra, dec, julday, nlat=nlat, wlong=wlong, obspos_deg=obspos_deg)
+;print, obspos_deg
+
+;stop
+
+obspos= [-wlong, nlat]
+;gbd= chdoppler_gbtidl( ra, dec, julday, obspos=obspos)
+gbd= chdoppler( ra, dec, julday, obspos=obspos)
+print, obspos
+print, 360.-obspos
+ 
