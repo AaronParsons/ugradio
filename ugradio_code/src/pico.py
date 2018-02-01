@@ -1,6 +1,7 @@
 '''This is a module for interacting with the picosampler in the UC Berkeley
 Undergraduate Radio Lab.'''
 
+from __future__ import print_function
 import socket, thread, time, struct
 import numpy as np
 
@@ -36,7 +37,6 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
     cmd = '1 %d %s %d %d %d' % (dual_mode, volt_range, divisor, nsamples, nblocks)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
-    #print [cmd]
     s.sendall(cmd)
     datalen = s.recv(struct.calcsize('L'))
     datalen = struct.unpack('L', datalen)[0]
@@ -46,7 +46,7 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
         if not d: break
         data += d
     s.close()
-    if verbose: print 'Received %d bytes (%d samples)' % (len(data), len(data)/2)
+    if verbose: print('Received %d bytes (%d samples)' % (len(data), len(data)/2))
     return np.fromstring(data, dtype=np.int16)
 
 # Below here is server-side code
@@ -60,7 +60,7 @@ def picoserver(host='', port=PORT, verbose=False):
     def handle_request(conn):
         cmd = conn.recv(1024).split()
         if not cmd: return
-        if verbose: print 'Received command:', [cmd]
+        if verbose: print('Received command:', [cmd])
         usechanA = bool(int(cmd[0]))
         usechanB = bool(int(cmd[1]))
         volt_range = cmd[2]
@@ -69,7 +69,7 @@ def picoserver(host='', port=PORT, verbose=False):
         nblocks = int(cmd[5])
         data = sample_pico(sampler, volt_range, sample_interval, 
                            nsamples, nblocks, usechanA, usechanB)
-        if verbose: print 'Sending', data.shape
+        if verbose: print('Sending', data.shape)
         data = data.tostring()
         header = struct.pack('L',len(data))
         conn.sendall(header+data)
@@ -80,7 +80,7 @@ def picoserver(host='', port=PORT, verbose=False):
         # now keep talking with the client
         while True:
             conn, addr = s.accept() #wait to accept a connection - blocking call
-            if verbose: print 'Request from ' + addr[0] + ':' + str(addr[1])
+            if verbose: print('Request from ' + addr[0] + ':' + str(addr[1]))
             # start new thread takes 1st argument as a function name to be run, 
             # second is the tuple of arguments to the function.
             thread.start_new_thread(handle_request,(conn,))
