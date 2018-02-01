@@ -22,7 +22,7 @@ def gaussfit(x, y, amp=1., avg=0., sig=1., return_cov=False):
     ans : dictionary with amp/avg/sig keys and fit solutions as values.
     prm_covariance : the [amp, avg, sig] covariance matrix'''
     prms0 = (amp, avg, sig)
-    (amp,avg,sig), prm_covariance = curve_fit(gauss, x, y, p0=prms0)
+    (amp,avg,sig), prm_covariance = curve_fit(_gauss, x, y, p0=prms0)
     ans = {'amp':amp, 'avg':avg, 'sig':sig}
     if return_cov:
         return ans, prm_covariance
@@ -41,5 +41,5 @@ def gaussval(x, amp, avg, sig):
     Returns
     -------
     y : the evaluated Gaussian [y = amp * e^(-(x-avg)^2/(2*sig^2)]'''
-    return _gauss(x, (amp,avg,sig))
+    return _gauss(x, amp, avg, sig)
     
