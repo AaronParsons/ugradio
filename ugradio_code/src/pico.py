@@ -2,7 +2,9 @@
 Undergraduate Radio Lab.'''
 
 from __future__ import print_function
-import socket, thread, time, struct
+try: import thread
+except(ImportError): import _thread as thread
+import socket, time, struct
 import numpy as np
 
 VOLT_RANGE = ['50mV', '100mV', '200mV', '500mV',
