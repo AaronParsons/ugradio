@@ -1,9 +1,7 @@
 import astropy.time
 import time
 import datetime
-
-NCH_LAT = 37.8732
-NCH_LON = -122.2573
+import nch
 
 def unix_time(jd=None):
     '''Return (current) time, in seconds since the Epoch (00:00:00 
@@ -60,12 +58,12 @@ def julian_date(unix_t=None):
     t = astropy.time.Time(unix_t, format='unix')
     return t.jd
 
-def lst(jd=None, lon=NCH_LON):
+def lst(jd=None, lon=nch.lon):
     '''Return (current) LST.
     Parameters
     ----------
     jd : float, julian date, default=now
-    lon : float, degrees longitude, default=NCH_LON
+    lon : float, degrees longitude, default=nch.lon
 
     Returns
     -------
