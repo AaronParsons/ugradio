@@ -25,6 +25,7 @@ setup_args = {
     'packages': ['ugradio'],
     'include_package_data': True,
     'scripts': glob.glob('scripts/*'),
+    'install_requires': ['astropy>2','numpy','barycorrpy'],
     'version': '0.0.1',
     #'package_data': {'ugradio': data_files},
     'zip_safe': False,
