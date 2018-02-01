@@ -1,3 +1,4 @@
 '''Coordinates of New Campbell Hall.'''
-lat = 37.8732
-lon = -122.2573
+lat = 37.873199
+lon = -122.257063
+alt = 120. # m
