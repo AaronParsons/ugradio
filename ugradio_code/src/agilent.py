@@ -48,15 +48,16 @@ class SynthDirect(SynthBase):
 class SynthClient(SynthBase):
     def __init__(self, host=HOST, port=PORT):
         #SynthBase.__init__(self)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((host, port))
-    def __exit__(self):
-        print 'exit'
-        self.sock.close()
+        self.hostport = (host,port)
     def _write(self, cmd):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(self.hostport)
         self.sock.sendall(cmd)
+        if not cmd.endswith('?'): self.sock.close()
     def _read(self):
-        return self.sock.recv(1024)
+        resp = self.sock.recv(1024)
+        self.sock.close()
+        return resp
 
 class SynthServer(SynthDirect):
     def __init__(self):
