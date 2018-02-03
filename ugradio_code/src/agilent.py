@@ -41,7 +41,6 @@ class SynthBase:
         Returns
         -------
         None'''
-        self._write(':FREQuency:CW?')
         assert(unit in FREQ_UNIT)
         cmd = ':FREQuency:CW %f %s' % (val, unit)
         self._write(cmd)
