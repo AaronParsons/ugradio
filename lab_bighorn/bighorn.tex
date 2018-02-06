@@ -135,7 +135,7 @@ Python has several built-in modules for dealing with time, including {\tt time},
 Astronomers, however, have historically been the best time-keepers on the planet.  For
 astronomy-quality time routines, {\tt astropy.time}, part of the {\tt astropy} package, is
 the industry standard.
-These routines are based on GSFC {\tt ct2lst.pro}. LST tells when a star
+LST tells when a star
 is overhead, so its rate of passage depends on the Earth's spin. The
 Earth is constantly slowing owing to tidal friction produced by the
 Moon. The conversion between Civil Time and LST has to be adjusted
@@ -169,12 +169,12 @@ julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
 
 \section{HANDOUTS} \label{handouts}
 \begin{enumerate}
-\item A second-level IDL tutorial. {\tt idldatatypes.pdf} ``QUICK IDL % XXX update for python
-  TUTORIAL NUMBER TWO: IDL DATATYPES AND ORGANIZATIONAL STRUCTURES'' For
-  this lab you use complex numbers, matrices and matrix
-  math, and structures. This handout describes the complete set and, in
-  addition, how numbers are stored and represented, and how accurate
-  they are. {\it You need to know all of this stuff!}
+%\item A second-level IDL tutorial. {\tt idldatatypes.pdf} ``QUICK IDL % XXX update for python
+%  TUTORIAL NUMBER TWO: IDL DATATYPES AND ORGANIZATIONAL STRUCTURES'' For
+%  this lab you use complex numbers, matrices and matrix
+%  math, and structures. This handout describes the complete set and, in
+%  addition, how numbers are stored and represented, and how accurate
+%  they are. {\it You need to know all of this stuff!}
 
 \item The complete story of producing calibrated spectral line shapes
   and intensities:``CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL
@@ -190,7 +190,7 @@ julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
   to understand these topics to interpret your measurements.
 
 \item Astronomical coordinate transformations with Rotation Matrices:
-  {\tt ay120coord.pdf} ``AY121 CHEAT-SHEET FOR SPHERICAL COORDINATE % XXX check pdf name
+  {\tt coord.pdf} ``SPHERICAL/ASTRONOMICAL COORDINATE
   TRANSFORMATION''. converting among Az/El, Ha/Dec, Ra/Dec, L/B. {\it
     You need to know all of this stuff!}
 
@@ -350,7 +350,7 @@ the lower half. Use the first as the `online' and the second as the
 use the second as the `online' and the first for the `offline'.  (The HI
 line frequency is 1420.4058 MHz).
 
-You can change the l.o.\ frequency in software: use {\tt set\_hp}. % XXX track down this function
+You can change the l.o.\ frequency in software: use {\tt ugradio.agilent.SynthClient}. 
 
 The line is weak, and you'll need to take lots of spectra. Recall that
 {\tt pico.capture\_data} obtains a specified number of blocks ({\tt nblocks}),
@@ -459,18 +459,19 @@ and also the Earth's spin. And when observing the Galaxy, it is
 customary to express velocities with respect to the `Local Standard of
 Rest' (LSR), so that's yet another correction.
 
-Calculate the Doppler correction using {\tt ugdoppler.pro}  % XXX need this
-Correct the velocities and plot the spectrum for two
-reference frames: (1), the barycentric reference frame, which gives
-velocity with respect to the center of mass of the Solar
-system\footnote{There's a third system, the Sun system, which gives
-  velocity with respect to the center of the Sun. The barycenter lies
-  inside the Sun, but not quite at the center, and the barycentric and
-  Sun systems are almost the same.}; and (2) the Local Standard of Rest
-(LSR), which is approximately the frame that would rotate around the
-Galaxy in a circular orbit.
+Calculate the Doppler correction using {\tt ugradio.doppler.get\_projected\_velocity} 
+Correct the velocities and compare the spectrum for the observing frame
+and the Local Standard of Rest (LSR), which is approximately the frame that would rotate
+around the Galaxy in a circular orbit.  Correcting to the LSR involves many components,
+including primarily: the rotation of the observatory around the center of the Earth, the
+orbit of the Earth around the barycenter of the solar system, and the peculiar velocity
+of our Sun with respect to other stars in the neighborhood.  There are higher-order
+corrections (which are in the {\tt barycorrpy} package we are using in {\tt ugradio.doppler},
+see (Wright \& Eastman, 2014), including 1) special relativistic treatment of velocity,
+2) general relativistic effects from the influence of the gravitational fields of all bodies
+in the solar system, and 3) the proper motion of the target source.
 
-{\it Notes on \verb$ugdoppler$}: \begin{enumerate}
+{\it Notes on \verb$ugradio.doppler$}: \begin{enumerate}
 
 \item You need the celestial coordinates of the source, $(ra, dec)$. How
   to find these for the horn pointing straight up? You could use
@@ -482,9 +483,9 @@ Galaxy in a circular orbit.
 
 \item You need the observatory coordinates (north latitude and west
   longitude) in degrees; you could enter them with the pair of optional
-  input parameters {\tt (nlat, wlong)}, but you don't have to because
-  the default values are Campbell Hall's values (which are {\tt nlat=
-  37.8732, wlong= 122.2573} degrees).
+  input parameters {\tt (obs\_lat, obs\_lon)}, but you don't have to because
+  the default values are Campbell Hall's values (which are {\tt lat$=37.873199$
+  lon$=-122.2573$} degrees).
 
 \end{enumerate}
 
@@ -496,7 +497,7 @@ Obtain a fully-calibrated spectrum for the horn pointing at Galactic
 coordinates $(l,b)=(120^\circ, 0^\circ)$. How do you know where to point
 the horn? You definitely do need to use rotation matrices!  See the
 handout ``Ay121 Cheat-Sheet for Spherical Coordinate Transformation''
-(\S \ref{handouts}). Plot your spectrum versus both the Barycentric and
+(\S \ref{handouts}). Plot your spectrum versus both the observed and
 the LSR velocity. 
 
 \begin{figure}[h!]
@@ -536,7 +537,7 @@ are: \begin{enumerate}
 \item For the polynomial fit, use {\tt numpy.polyfit}
 
 \item For fitting multiple Gaussians, use our home-grown {\tt gaussfit}; for
-  evaluating the Gaussians from the parameters produced by {\tt gaussval}, % XXX write this
+  evaluating the Gaussians from the parameters produced by {\tt gaussval}, 
   use {\tt gaussval}.
 \end{enumerate}
 
