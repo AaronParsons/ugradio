@@ -16,14 +16,14 @@
 \title{LEAST-SQUARES LITE FOR THE BUDDING AFICIONADO: \\ 
 ART AND PRACTICE } 
 
-\author{\copyright Carl Heiles \today }
+\author{\copyright Carl Heiles and Deepthi Gorthi\footnote{Translation from IDL to Python}\\ \today }
 
 	In our never-ending attempt to make your life easier, we present
 you with this highly instructive, time-saving, and labor-saving
 informative document! Here we give heuristic derivations, discussions,
 examples, and the prescription for doing least-squares the easy way
-using matrix techniques generally, and specifically in IDL.  This
-prescription is given as an example in \S\ref{numexample},  and the {\it
+using matrix techniques generally, and specifically in Python.  This
+prescription is given as an example in \S\ref{numexample}, and the {\it
 power-user} can skip the details and go directly there.  
 
 	This document contains selected sections from the more complete
@@ -38,7 +38,9 @@ the books Bevington and Robinson (1992; BR), Cowan (1998), Press et al.\
 notation to partially conform with NR. 
 
 	We begin with least-squares in the classic sense, meaning we
-minimize the sum of squares instead of minimizing $\chi^2$.   In
+minimize the sum of squares instead of minimizing $\chi^2$\footnote{The $\chi^2$
+is the sum of squares down-weighted by uncertainity in the measurement. Roughly 
+because, poor measurements should influence the outcome to a smaller extent}. In
 astronomy,  more often than not you don't have an independent assessment
 of the intrinsic uncertainty in the data, which means you cannot
 evaluate $\chi^2$, and the least squares  approach is the only option.
@@ -56,17 +58,17 @@ LINE.} \label{sectionone}
 
 	First consider the least-squares fit to a straight line.  Let
 $y_m$ be the $m^{th}$ measurement of the observed quantity (in this
-example, $y_m$ is zenith distance; $t_m$ be the time of the
+example, $y_m$ is distance; $t_m$ be the time of the
 $m^{th}$ measurement; $M$ = the total number of observations, i.e.\ $m$
 runs from 0 to $M-1$.  Remember that in the least-squares technique,
 quantities such as $t_m$ are regarded to be known with high accuracy
 while the quantity $y_m$ has uncertainties in its measurement. 
 
-	We expect the zenith distance $y_m$ to change linearly with
+	We expect distance $y_m$ to change linearly with
 time as follows:
 
 \begin{equation} \label{one}
-A + B t_m = y_m \; .
+A + B t_m = y_m
 \end{equation}
 
 \noindent Given this, one does the maximum likelihood (ML) estimate assuming
@@ -272,7 +274,7 @@ D \\
 them with subscripts $\sigma$ to emphasize that they are calculated
 without dividing by $\sigma_{meas}$, i.e.\ that we are doing least
 squares instead of chi-square fitting. For chi-square fitting, see \S
-\ref{chisqsection} and \ref{chicoeffs}.
+\ref{chisqsection} and \ref{chicoeffsnoco}.
 
 	Our matrix $\mathbf{X}$ corresponds to NR's ``design
 matrix'' $\bf A$ of Figure 15.4.1, except that our elements are not
@@ -319,7 +321,7 @@ $[\alpha]^{-1})$, which gives
 {\bf a} = [\alpha]^{-1} \mathbf{ \cdot [\beta]} \; .
 \end{equation}
 
-\noindent All of these matrix operations are trivially easy in IDL (\S
+\noindent All of these matrix operations are trivially easy in Python (\S
 \ref{numexample}). 
 
 \section{UNCERTAINTIES IN THE DERIVED COEFFICIENTS} \label{sigmas}
@@ -435,9 +437,9 @@ diagonal element of $[\alpha]^{-1}$.
 
 	Although the above equation for ${\bf s_a}^2$ is correct, there
 is more to the story because of covariances, which are the off-diagonal
-elements. We return to this topic in \S \ref{ncov} and \S \ref{chicoeffs}. 
+elements. We return to this topic in \S \ref{ncov} and \S \ref{chicoeffsnoco}. 
 
-\section{A NUMERICAL EXAMPLE AND ITS SOLUTION IN IDL} \label{numexample}
+\section{A NUMERICAL EXAMPLE AND ITS SOLUTION IN Python} \label{numexample}
 
 	If the following sounds like Greek to you, take a look at \S
 \ref{matrixmethod} and \ref{sigmas}.
@@ -465,15 +467,15 @@ dashed line. The two fits give the same line but the coefficients and
 their errors differ greatly.\label{lsfitfig}}
 \end{figure}
 
-	First we create the matrix {\bf X} in IDL
+	First we create the matrix {\bf X} in Python
 
 \begin{equation}
-{\bf X = fltarr(N,M) = fltarr(3,4)}
+{\bf X = np.linspace(0,N,M) = np.linspace(0,3,4)}
 \end{equation}
 	
 \noindent and then we populate it with numbers.  In your own work, you
 would normally do this by reading a data file and transferring the
-numbers to the matrix using IDL commands; to work through this example,
+numbers to the matrix using Python commands; to work through this example,
 you might manually type them in.  After populating the matrix, in direct
 correspondence with equation \ref{matrixdefinition}a we have $s_m = 1$,
 $t_m = time_m$, $u_m = time_m^2$:
@@ -508,80 +510,82 @@ $t_m = time_m$, $u_m = time_m^2$:
 \noindent Figure \ref{lsfitfig} shows the datapoints, together with the
 fitted curve.
 
-	One word of caution here: in IDL, to get these into a column
+	One word of caution here: in Python, to get these into a column
 matrix, which is how we've treated $\bf Y$ above, you have to define
 ${\bf Y}$ as a two-dimensional array because the second dimension
-represents the column. When working in IDL it's more convenient to 
-define a row vector, which has only one dimension; in IDL you do this 
-by defining ${\bf Y} = [142,168,211,251]$; you can make it into the
-necessary column vector by taking its transpose, i.e.\ ${\bf Y =
-transpose(Y)}$. 
+represents the column. 
+
+%When working in Python it's more convenient to 
+%define a row vector, which has only one dimension; in IDL you do this 
+%by defining ${\bf Y} = [142,168,211,251]$; you can make it into the
+%necessary column vector by taking its transpose, i.e.\ ${\bf Y =
+%transpose(Y)}$. 
 
 	
-\subsection{Solution of the Numerical Example in IDL} \label{idlsolution}
+\subsection{Solution of the Numerical Example in Python} \label{idlsolution}
 
-	In IDL we calculate the normal equation matrices and denote the
-$[\alpha]$ in equation \ref{ssdef}a by ${\bf XX}$:
+	In Python we calculate the normal equation matrices and denote the
+$[\alpha]$ in equation \ref{ssdef}a by ${\bf xx}$:
 
 \begin{mathletters} \label{eqn24}
 \begin{equation}
-{\bf XX} = {\bf transpose(X) \# \# X} \; ,
+{\bf xx} = {\bf np.dot(X.T,X)} \; ,
 \end{equation}
 
 \noindent and we denote the $[\beta]$ in equation \ref{ssdef}b by {\bf
-XY}:
+xy}:
 
 \begin{equation}
-{\bf XY} = {\bf transpose(X) \# \# Y} \; .
+{\bf xy} = {\bf np.dot(X.T, Y)} \; .
 \end{equation}
 \end{mathletters}
 
-\noindent In IDL we take the inverse of $[\alpha]$ (same as $\bf XX$) by
+\noindent In Python we take the inverse of $[\alpha]$ (same as $\bf xx$) by
 
 \begin{equation}
-{\bf XXI} = {\bf invert(XX)} \; .
+{\bf xxi} = {\bf np.linalg.inv(xx)} \; .
 \end{equation}
 
 	The least-squares fitted quantities are in the matrix {\bf a}
-(equation \ref{adef}), which we obtain in IDL with
+(equation \ref{adef}), which we obtain in Python with
 
 \begin{equation}
-{\bf a} = {\bf XXI \ \#\# \ XY} \; .
+{\bf a} = {\bf np.dot(xxi, xy)} \; .
 \end{equation}
 
-	In IDL we denote the matrix of predicted values $\overline{
-y_m}$ by ${\bf YBAR}$, which is 
+	In Python we denote the matrix of predicted values $\overline{
+y_m}$ by ${\bf ybar}$, which is 
 
 \begin{equation}
 \label{bteqn}
-{\bf YBAR} = {\bf X \ \#\# \ a} \; ,
+{\bf ybar} = {\bf np.dot(X,a)} \; ,
 \end{equation}
 
 \noindent and we can also define the residuals in $\bf Y$ as
 
 \begin{equation}
-{\bf DELY} = {\bf Y - YBAR} \ .
+{\bf dely} = {\bf Y - ybar} \ .
 \end{equation}
 
-\noindent In IDL we denote $s^2$ in equations \ref{samplevarianceone}
+\noindent In Python we denote $s^2$ in equations \ref{samplevarianceone}
 and \ref{samplevariancetwo} by $s\_sq$ and write 
 
 \begin{mathletters}
 \label{sigsq}
 \begin{equation}
-s\_sq = {\bf transpose(DELY) \#\# DELY}/(M-N) \; ,
+s\_sq = {\bf np.dot(dely.T, dely)}/(M-N) \; ,
 \end{equation}
 
 \noindent or
 
 \begin{equation}
-s\_sq = total({ \bf DELY} \wedge 2)/(M-N) \; . 
+s\_sq = np.sum({ \bf dely}**2)/(M-N) \; . 
 \end{equation}
 \end{mathletters}
 
 \noindent It is {\it always} a good idea to plot all three quantities
-(the measured values {\bf Y}, the fitted values {\bf YBAR}, and the
-residuals ${\bf DELY}$) to make sure your fit looks reasonable and to
+(the measured values {\bf Y}, the fitted values {\bf ybar}, and the
+residuals ${\bf dely}$) to make sure your fit looks reasonable and to
 check for bad datapoints. 
 
 	To get the error in the derived coefficients we need a way to
@@ -589,18 +593,18 @@ select the diagonal elements of a matrix. Obviously, any $N \times N$
 matrix has $N$ diagonal elements; a convenient way to get them is
 
 \begin{equation}
-diag \ elements \ of \ {\bf XXI}= {\bf XXI[(N+1) * indgen(N)]} \ .
+diag \ elements \ of \ {\bf xxi}= {\bf np.diag(xxi)} \ .
 \end{equation}
 
-\noindent In IDL, we define the variances of
+\noindent In Python, we define the variances of
 the $N$ derived coefficients by {\bf vardc} (think of ``{\bf var}iances of
 {\bf d}erived {\bf c}oefficients''). You can get this as in equation
 \ref{coeffvarianceone} from\footnote{If you used equation \ref{sigsq}a
-instead of \ref{sigsq}b, then IDL considers $s\_ sq$ an array and you
-need to use a $\#$ instead of a $*$ in this equation.}
+instead of \ref{sigsq}b, then Python considers $s\_ sq$ an array and you
+need to use {\tt np.dot} instead of a $*$ in this equation.}
 
 \begin{equation} \label{lscoefferrorone}
-{\bf vardc} = s\_sq * {\bf XXI[(N+1)*indgen(N)]} \; .
+{\bf vardc} = s\_sq * {\bf np.diag(xxi)} \; .
 \end{equation}
 
 \subsection {Discussion of the numerical example}
@@ -621,7 +625,7 @@ coefficients) is
 
 \noindent and the errors in the derived coefficients [the square root of
 the $\sigma^2$'s of the derived coefficients, i.e.  $[\sigma_n^2]^{1/2}$
-or, in IDL, $sqrt({\bf vardc})$ in equations \ref{lscoefferrorone}] are:
+or, in Python, $sqrt({\bf vardc})$ in equations \ref{lscoefferrorone}] are:
 
 \begin{eqnarray}
 {\bf \sigma_A} = \left[
@@ -649,7 +653,7 @@ above numerical example.
 \subsection{ Definition of the normalized covariance (or correlation) matrix}
 
 	The variances in the derived coefficients are obtained from the
-diagonal elements of ${\bf XXI}$. The off-diagonal elements represent
+diagonal elements of ${\bf xxi}$. The off-diagonal elements represent
 the {\it covariances} between the derived coefficients. Covariance
 means, specifically, the degree to which the {\it uncertainty} in {\it
 one} derived coefficient affects the uncertainty in {\it another}
@@ -664,7 +668,7 @@ counterpart.
 
 	The normalized covariance
 matrix\footnote{It is a pleasure to thank Doug Finkbeiner for
-introducing me to this concept.} {\bf ncov} is derived from ${\bf XXI}$
+introducing me to this concept.} {\bf ncov} is derived from ${\bf xxi}$
 by dividing each element by the square root of the product of the
 corresponding diagonal elements. Let ${\bf ncov}$ be the normalized
 covariance matrix; then
@@ -677,29 +681,29 @@ ncov_{ik} = {XXI_{ik} \over \sqrt {XXI_{ii} \ XXI_{kk}}} \ .
 linear correlation coefficient of two variables.  In fact, the elements
 of the normalized covariance matrix {\it are} the correlation
 coefficients.  So it makes sense to call this matrix the {\it
-correlation matrix}, and many people do. In IDL, you do the following:
+correlation matrix}, and many people do. In Python, you do the following:
  
 \begin{mathletters} \label{idlcovariance}
 \begin{equation}
-{\bf dc = XXI[(N+1)*indgen(N)]}
+{\bf dc = np.diag(xxi)}
 \end{equation}
 \begin{equation}
-{\bf ncov = XXI/{\it sqrt}(dc \# \#dc)} \ .
+{\bf ncov = xxi/np.sqrt(np.outer(dc,dc))} \ .
 \end{equation}
 \end{mathletters}
 
-\noindent In the above, ${\bf dc \# \# dc}$ is an $N \times N$ matrix
-consisting of products of the diagonals of ${\bf XXI}$, so dividing
-${\bf XXI}$ by $sqrt({\bf dc \# \# dc})$ generates the normalized version. 
+\noindent In the above, ${\bf np.outer(dc, dc)}$ is an $N \times N$ matrix
+consisting of products of the diagonals of ${\bf xxi}$, so dividing
+${\bf xxi}$ by ${\bf np.sqrt(np.dot(dc,dc))}$ generates the normalized version. 
 
 	Because {\bf ncov} is a {\it normalized} covariance matrix, you
-might think that its non-normalized parent is {\bf XXI}---and you'd be
+might think that its non-normalized parent is {\bf xxi}---and you'd be
 {\it almost} right.  For the least-squares case we are discussing, the
 true covariance matrix ${\bf C}$ is\footnote{For chi-square, you use
 $\sigma_{meas}^2$ instead of $s^2$; see \S \ref{chisqsection}.}
 
 \begin{equation}
-{\bf C} = s^2 \ {\bf XXI} \ .
+{\bf C} = s^2 \ {\bf xxi} \ .
 \end{equation}
 
 	In ${\bf ncov}$, the diagonal elements are all unity and the
@@ -727,7 +731,7 @@ quantities would be correlated.
 	A high covariance is bad because the derived variables depend on
 each other.  For one, this means that with noisy data power can be
 shared or passed from one parameter to/from its covariant
-counterpart(s). As we shall see in \S \ref{chicoeffs}, it also
+counterpart(s). As we shall see in \S \ref{chicoeffsnoco}, it also
 significantly  influences the uncertainties in derived coefficients.
 Often a high covariance results from a poor choice of functions that you
 are fitting or even a bad choice of the zero point of the independent
@@ -774,7 +778,7 @@ completely different---and amazingly better! We get
 
 \begin{mathletters}
 \begin{eqnarray}
-{\bf A} = \left[
+{\bf a} = \left[
 \begin{array}{c}
 188.625 \\
 18.500 \\
@@ -818,7 +822,7 @@ technique of orthogonalizing the functions in least-squares fitting. The
 general case is a royal pain, analytically speaking, so much so that we
 won't even carry it through for our example. But for numerical work you
 accomplish the orthogonalization using Singular Value Decomposition
-(SVD), which is of course trivial in IDL (\S \ref{SVD}).
+(SVD), which is of course trivial in Python {\tt np.linalg.svd}.
 
 	For some particular cases, standard pre-defined functions are
 orthogonal. For example, if $t_m$ is a set of uniformly spaced points
@@ -841,7 +845,7 @@ functions are indistinguishable and have a large covariance; you should
 eliminate one from the fit. If the range of $t$ is large, there is no
 problem.
 
-	For further discussion of covariance, see \S \ref {chicoeffs}.
+	For further discussion of covariance, see \S \ref {chicoeffsnoco}.
 Also, you might also want to try out another example in Taylor's \S 8.5.
 
 \section{REJECTING BAD DATAPOINTS I.: CHAUVENET'S CRITERION}
@@ -940,7 +944,7 @@ disproportionately evil effect on the result.
 	On the other hand, if your data don't follow Gaussian statistics
 as their {\it intrinsic} pdf, then you should think twice before using
 least squares! (Like, maybe you should try the median fitting discussed in
-\S \ref{medianfitting}.)
+the more complete version of this document.)
 
 	\item You may wish to relax Chauvenet's criterion by {\it
 increasing} the $\Delta x$ beyond which you discard points. This is
@@ -979,11 +983,10 @@ datapoints. Very often $M$ exceeds this, often by a lot.
 
 	\item To apply Chauvenet's criterion it's most convenient to
 calculate the inverse error function. For this, you have two choices.
-One (for sissies like myself), you can use {\bf inverf.pro} from my area
-$\sim$heiles/idl/gen . But the real he-man will want to learn about
+One (for sissies like myself), you can use {\bf scipy.special.erfinv} 
+from the Scipy package. But the real he-man will want to learn about
 using a root-finding algorithm such as Newton's method (NR \S 9.4 and
-9.6) together with the error function; both procedures exist in IDL as
-{\bf newton} and {\bf errorf}. You at least ought to skim lightly some
+9.6) together with the error function. You at least ought to skim lightly some
 of NR's chapter 9 about root finding, because some day you'll need it.
 
 \end{itemize}
@@ -1090,19 +1093,20 @@ evaluating numerical derivatives.
 
 	{\bf (6) Canned nonlinear least squares (particularly
 Levenberg-Marquardt, and various Gaussian fit routines):} Packages like
-IDL offer canned nonlinear least squares routines.  They are designed to
+Scipy offer canned nonlinear least squares routines.  They are designed to
 work well for a wide range of different problems.  However, for the
 specific problem at hand you can often do better by tailoring things
-(such as the factor ${\cal F}$ and convergence criteria above).  A good
-example is Gaussian fitting: IDL's fitting program doesn't converge for
-multiple overlapping Gaussians, while for many of these cases the
-program that I wrote myself works fine; and converseley, my program
-doesn't work well for single Gaussians with a small number of
-datapoints, in which case IDL's \verb$GAUSSFIT$ is much better..
+(such as the factor ${\cal F}$ and convergence criteria above).  
+
+%A good example is Gaussian fitting: Scipy's fitting program doesn't converge for
+%multiple overlapping Gaussians, while for many of these cases the
+%program that I wrote myself works fine; and converseley, my program
+%doesn't work well for single Gaussians with a small number of
+%datapoints, in which case IDL's \verb$GAUSSFIT$ is much better..
 
 	When convergence is slow or doesn't occur because your functions
 are complicated, you might wish to try the Levenberg-Marquardt method
-(NR \S 15.5); IDL function {\bf LMFIT}.  This technique involves
+(NR \S 15.5).  This technique involves
 increasing the diagonal elements of the curvature matrix by a set of
 suitably chosen factors; when you get close to the minimum, it resets
 these factors to unity.  LM is the gold standard for nonlinear
@@ -1209,7 +1213,7 @@ don't depend on the residuals of the datapoints from the fit (!).
 
 \item The errors in the derived parameters can depend on their mutual
 covariances. This discussion requires a separate section, which we
-provide below in \S \ref{chicoeffs}. 
+provide below in \S \ref{chicoeffsnoco}. 
 
 \end{enumerate}
 
@@ -1592,7 +1596,7 @@ covariance matrix (equations \ref{coeffvariancegood} and
 \ref{coeffvarianceawful}, which are identical in this case) or by
 finding what departure from $x_0$ is necessary to make $\Delta \chi^2 =
 1$.\footnote{To understand this comment about $\Delta \chi^2 = 1$, see
-\S \ref {chicoeffs}.} This redoing the fit may seem like unnecessary
+\S \ref {chicoeffsnoco}.} This redoing the fit may seem like unnecessary
 work, but when we deal with multiparameter error estimation it's the
 best way to go to keep yourself from getting confused. 
 
@@ -1706,7 +1710,7 @@ more parameters is straightforward.
 $\chi^2$ as a function of the guessed values of $a$. As usual, define
 $\Delta \chi^2$ as $\chi^2$ minus its minimum value; the minimum value
 gives the best estimate of $a$. The uncertainty in $a$ is that offset
-where $\Delta \chi^2 = 1$. See \S \ref{chicoeffs}.
+where $\Delta \chi^2 = 1$. See \S \ref{chicoeffsnoco}.
 
 	For a least-squares fit, it's exactly the same idea. A
 least-squares fit implies that the measurement uncertainties $\sigma_m$
