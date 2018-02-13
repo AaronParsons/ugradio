@@ -145,10 +145,10 @@ class SynthServer(SynthDirect):
             while True:
                 conn, addr = s.accept()
                 if self.verbose: print 'Request from ' + addr[0] + ':' + str(addr[1])
-                thread.start_new_thread(self._handle_request, (conn,))
                 if self._device_failure:
                     self._open_device()
                     self._device_failure = False
+                thread.start_new_thread(self._handle_request, (conn,))
         finally:
             s.close()
     def _handle_request(self, conn):
