@@ -80,7 +80,14 @@ class SynthDirect(SynthBase):
         ----------
         device : string, the file-like object representing the USB connection.
                  default="/dev/usbtmc0"'''
-        self.dev = open(device, 'r+')
+        self._device = device
+        self._open_device()
+    def _open_device(self):
+        '''Open low-level device interface.  Not intended direct use.'''
+        try:
+            self.dev.close()
+        except(AttributeError): pass
+        self.dev = open(self._device, 'r+')
         self.validate()
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
@@ -105,6 +112,7 @@ class SynthClient(SynthBase):
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(10) # seconds
         self.sock.connect(self.hostport)
         self.sock.sendall(cmd)
         if not cmd.endswith('?'): self.sock.close()
@@ -119,6 +127,7 @@ class SynthServer(SynthDirect):
     SynthClients can connect to it.'''
     def __init__(self):
         SynthDirect.__init__(self)
+        self._device_failure = False
     def run(self, host='', port=PORT, verbose=True):
         '''Start hosting the synthesier at the specified port.
         Parameters
@@ -137,6 +146,9 @@ class SynthServer(SynthDirect):
                 conn, addr = s.accept()
                 if self.verbose: print 'Request from ' + addr[0] + ':' + str(addr[1])
                 thread.start_new_thread(self._handle_request, (conn,))
+                if self._device_failure:
+                    self._open_device()
+                    self._device_failure = False
         finally:
             s.close()
     def _handle_request(self, conn):
@@ -145,7 +157,11 @@ class SynthServer(SynthDirect):
         cmd = conn.recv(1024)
         if not cmd: return
         if self.verbose: print 'Received:', [cmd]
-        self._write(cmd)
+        try: 
+            self._write(cmd)
+        except(IOError):
+            self._device_failure = True
+            return
         if cmd.endswith('?'):
             resp = self._read()
             conn.sendall(resp)
