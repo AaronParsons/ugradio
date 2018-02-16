@@ -1,0 +1,7 @@
+#! /bin/bash
+
+pkill python
+sleep 1
+python dishserver.py < /dev/null >& dishlog.txt &
+
+exit 0
