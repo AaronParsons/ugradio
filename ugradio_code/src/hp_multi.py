@@ -1,4 +1,8 @@
+'''Module for interacting with the HP 3478A Multimeter used to record
+integrated voltages at the output of the UGRadio interferometer.'''
+
 import socket, time, threading
+import numpy as np
 
 HOST = '10.32.92.86' # IP address of HP 3478A Multimeter GPIB microcontroller
 PORT = 1234 # XXX check this
@@ -19,13 +23,27 @@ class HP_Multimeter:
     bus on the back of the multimeter.'''
     def __init__(self, host=HOST, port=PORT):
         self.hostport = (host,port)
-        self.clear_buffers()
-    def clear_buffers(self):
+        self._clear_buffers()
+    def _clear_buffers(self):
+        '''Re-initialize recording buffers.  Not for outside use.'''
         self._volts = []
         self._times = []
         self._running = False
         self._thread = None
+        self._start_time = None
     def read_voltage(self, bufsize=1024, return_time=False):
+        '''Take a one-time reading from the multimeter.
+
+        Parameters
+        ----------
+        bufsize     : integer, size of receiving buffer in bytes, default 1024
+        return_time : bool, return unix time when read occurs, default False
+
+        Returns
+        -------
+        volts[, time]
+        volts       : float, voltage reading from multimeter
+        time        : float, unix time when read occurs, if return_time=True'''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(self.hostport)
         s.sendall(CMD_TELNET + CMD_ADDR + CMD_TRIGGER)
@@ -37,25 +55,66 @@ class HP_Multimeter:
         else:
             return float(resp)
     def start_recording(self, dt=10.):
-        self.clear_buffers()
+        '''Initiate continuous reading from multimeter every dt seconds.
+
+        Parameters
+        ----------
+        dt : float seconds, time between voltage readings, default 10.
+
+        Returns
+        -------
+        None'''
+        self._clear_buffers()
         self._running = True
         def read_thread():
             while self._running:
                 v,t = self.read_voltage(return_time=True)
                 self._volts.append(v)
-                self._time.append(t)
-                time.sleep(dt - (time.time() - t)) # sleep remainder of time 
+                self._times.append(t)
+                time.sleep(dt - ((time.time() - self._start_time) % dt)) # sleep remainder of time 
         self._thread = threading.Thread(target=read_thread)
         self._thread.daemon = True
-        self.thread.start()
+        self._start_time = time.time()
+        self._thread.start()
     def end_recording(self):
+        '''Terminate continuous reading from multimeter and return recording.
+        May take up to dt seconds (as set in start_recording call) to complete
+        final read.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        volts : numpy array, voltages read during recording.
+        times : numpy array, times corresponding to each voltage reading.'''
         assert(self._thread != None) # Can't end a recording that was never started
         self._running = False # initiate shutdown
         self._thread.join() # wait for thread to exit
         return self.get_recording_data()
     def get_recording_data(self):
+        '''Return all data that has been recorded so far.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        volts : numpy array, voltages read during recording.
+        times : numpy array, times corresponding to each voltage reading.'''
         return np.array(self._volts), np.array(self._times)
     def get_recording_status(self):
+        '''Query current status of recording.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        d : dict, status report on recording progress.'''
         d = {'still recording':False, 'start time':None, 'last reading':None, 'last time':None}
         d['recording initiated'] = (self._thread != None)
         try:
@@ -63,7 +122,7 @@ class HP_Multimeter:
         except(AttributeError): pass
         d['number of records'] = len(self._times)
         try:
-            d['start time'] = self._times[0]
+            d['start time'] = self._start_time
             d['last reading'] = self._volts[-1]
             d['last time'] = self._times[-1]
         except(IndexError): pass
