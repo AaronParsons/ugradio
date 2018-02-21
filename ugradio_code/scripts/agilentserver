@@ -1,3 +1,7 @@
 #! /usr/bin/env python
+
+# This script runs on pulsar, which has a USB serial connection to the
+# Agilent synthesizer.
+
 import ugradio.agilent
 ugradio.agilent.SynthServer()
