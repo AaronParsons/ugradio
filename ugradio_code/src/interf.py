@@ -60,7 +60,7 @@ class Telescope:
         assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
         if verbose: print 'Pointing Initiated'
         if wait: self.wait(verbose=verbose)
-   def wait(self, verbose=False):
+    def wait(self, verbose=False):
         '''Wait until telescope slewing is complete
 
         Parameters
@@ -148,7 +148,7 @@ class Interferometer:
         self.ant_w.point(alt, az, wait=False, verbose=verbose)
         self.ant_e.point(alt, az, wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
-   def wait(self, verbose=False):
+    def wait(self, verbose=False):
         '''Wait until both telescopes' slewing is complete
 
         Parameters
