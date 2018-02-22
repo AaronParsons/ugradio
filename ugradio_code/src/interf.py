@@ -214,19 +214,22 @@ class TelescopeDirect:
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
         self.el_enc_scale = el_enc_scale
-    def _write(self, cmd, bufsize=1024):
-        self._serial.write(cmd) #Receiving from client
-        time.sleep(0.1) # Let the configuration command make the change it needs
+        self.init_dish()
+    def _read(self, flush=False, bufsize=1024):
         resp = []
         while len(resp) < bufsize:
             c = self._serial.read(1)
             c = c.decode('ascii')
-            if c == '': break
-            #if c == '\r' or c == '':
-            #    break
+            if len(c) == 0: break
+            if c == '\r' and not flush: break
             resp.append(c)
         return ''.join(resp)
+    def _write(self, cmd, bufsize=1024):
+        self._serial.write(cmd) #Receiving from client
+        time.sleep(0.1) # Let the configuration command make the change it needs
+        return self._read(bufsize=bufsize)
     def init_dish(self):
+        self._read(flush=True)
         self._write(b'.a s r0xc8 257\r')
         self._write(b'.a s r0xcb 15000\r')
         self._write(b'.a s r0xcc 25\r')
@@ -237,9 +240,9 @@ class TelescopeDirect:
         self._write(b'.b s r0xcc 25\r')
         self._write(b'.b s r0xcd 25\r')
         self._write(b'.b s r0x24 21\r')
-    def reset_dish(self):
+    def reset_dish(self, sleep=10):
         self._write(b'r\r')
-        time.sleep(10)
+        time.sleep(sleep)
         self.init_dish()
     def wait_az(self, max_wait=120):
         azStatus = '-1'
@@ -270,6 +273,7 @@ class TelescopeDirect:
         if azResponse != '0':
             return 'e 1'
         dishAz = (dishAz + 360.0 % 360)
+        # XXX check bounds?
         curAz = int(float(self.get_az()) * (2.0**14) / 360)
         azMoveCmd =  '.a s r0xca ' + str(int((((dishAz * (2.0**14) / (360.))) - curAz) * self.az_enc_scale)) + '\r'
         self._write(azMoveCmd.encode('ascii'))
@@ -279,7 +283,7 @@ class TelescopeDirect:
         elResponse = self.wait_el()
         if elResponse != '0':
             return 'e 1'
-        if (dishEl < 0) or (dishEl > 175):
+        if (dishEl < 0) or (dishEl > 175): # XXX Use bounds defined above
             return 'e 1'
         curEl = int(float(self.get_el()) * (2.0**14) / 360)
         elMoveCmd =  '.b s r0xca ' + str(int((((dishEl * (2.0**14) / (360.0))) - curEl) * self.el_enc_scale)) + '\r'
