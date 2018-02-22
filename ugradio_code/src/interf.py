@@ -208,10 +208,11 @@ DRIVE_ENCODER_STATES = float(2**14)
 DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
 
 class TelescopeDirect:
-    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1,
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1, verbose=True,
             az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
             el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
+        self.verbose = verbose
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
@@ -225,8 +226,11 @@ class TelescopeDirect:
             if len(c) == 0: break
             if c == '\r' and not flush: break
             resp.append(c)
-        return ''.join(resp)
+        resp = ''.join(resp)
+        if self.verbose: print('Read:', [resp])
+        return resp
     def _write(self, cmd, bufsize=1024):
+        if self.verbose: print('Writing', [cmd])
         self._serial.write(cmd) #Receiving from client
         time.sleep(0.1) # Let the configuration command make the change it needs
         return self._read(bufsize=bufsize)
