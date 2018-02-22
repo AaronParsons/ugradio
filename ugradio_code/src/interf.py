@@ -206,10 +206,10 @@ EL_ENC_OFFSET = 4096
 EL_ENC_SCALE = 11.566584697
 
 class TelescopeDirect:
-    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeoutLim=1,
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1,
             az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
             el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
-        self._serial = serial.Serial(serialPort, baudRate, timeout=timeoutLim)
+        self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
@@ -221,8 +221,9 @@ class TelescopeDirect:
         while len(resp) < bufsize:
             c = self._serial.read(1)
             c = c.decode('ascii')
-            if c == '\r' or c == '':
-                break
+            if c == '': break
+            #if c == '\r' or c == '':
+            #    break
             resp.append(c)
         return ''.join(resp)
     def init_dish(self):
