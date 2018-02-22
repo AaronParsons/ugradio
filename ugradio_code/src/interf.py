@@ -2,6 +2,7 @@
 
 # XXX tracking mode?
 
+from __future__ import print_function
 import socket, serial, time, thread
 
 MAX_SLEW_TIME = 60 # seconds
@@ -36,10 +37,11 @@ class TelescopeClient:
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
-            if not r: break
             response.append(r)
+            if len(r) < bufsize: break
+        response = ''.join(response)
         if verbose: print('Got Response:', [response])
-        return ''.join(response)
+        return response
     def point(self, alt, az, wait=True, verbose=False):
         '''Point to the specified alt/az.
 
@@ -58,7 +60,7 @@ class TelescopeClient:
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
         assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
-        if verbose: print 'Pointing Initiated'
+        if verbose: print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
     def wait(self, verbose=False):
         '''Wait until telescope slewing is complete
@@ -73,7 +75,7 @@ class TelescopeClient:
         resp1 = self._command(CMD_WAIT_AZ,  timeout=MAX_SLEW_TIME, verbose=verbose)
         resp2 = self._command(CMD_WAIT_EL, timeout=MAX_SLEW_TIME, verbose=verbose)
         assert((resp1 == '0') and (resp2 == '0')) # fails if server is down or rejects command
-        if verbose: print 'Pointing Complete'
+        if verbose: print('Pointing Complete')
     def get_pointing(self, verbose=False):
         '''Return the current telescope pointing
 
@@ -305,7 +307,7 @@ CMD_GET_AZ = 'get_az'
 CMD_GET_EL = 'get_el'
 
 class TelescopeServer(TelescopeDirect):
-    def run(self, host='', port=PORT, verbose=True):
+    def run(self, host='', port=PORT, verbose=True, timeout=135): # XXX check if default timeout could be shorter
         self.verbose = verbose
         if self.verbose:
             print('Initializing dish...')
@@ -316,7 +318,7 @@ class TelescopeServer(TelescopeDirect):
             s.listen(10)
             while True:
                 conn, addr = s.accept()
-                conn.settimeout(135)
+                conn.settimeout(timeout)
                 if self.verbose: print('Request from', (conn,addr))
                 thread.start_new_thread(self._handle_request, (conn,))
         finally:
