@@ -4,13 +4,14 @@ whose serial port is connected to the drive encoders for the
 UGRadio Interferometer.'''
 
 from __future__ import print_function
-import ugradio, time
+from ugradio.interf import TelescopeServer
+import time
 import traceback
 
 while True:
     try:
         print('Starting server...')
-        ts = ugradio.interf.TelescopeServer()
+        ts = TelescopeServer()
         ts.run(verbose=True)
     except Exception as e:
         print('Dish server crashed with the following message:')
