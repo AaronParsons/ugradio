@@ -283,7 +283,9 @@ class TelescopeDirect:
         if azResponse != '0':
             return 'e 1'
         dishAz = (dishAz + 360.) % 360
-        # XXX check bounds?
+        # Enforce absolute bounds.  Comment out to override.
+        if (dishAz < AZ_MIN) or (dishAz > AZ_MAX): 
+            return 'e 1'
         az_cnts = int(self.get_az() / DRIVE_DEG_PER_CNT)
         azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
         self._write(azMoveCmd.encode('ascii'))
@@ -293,7 +295,8 @@ class TelescopeDirect:
         elResponse = self.wait_el()
         if elResponse != '0':
             return 'e 1'
-        if (dishEl < 0) or (dishEl > 175): # XXX Use bounds defined above
+        # Enforce absolute bounds.  Comment out to override.
+        if (dishEl < ALT_MIN) or (dishEl > ALT_MAX): 
             return 'e 1'
         el_cnts = int(self.get_el() / DRIVE_DEG_PER_CNT)
         elMoveCmd =  '.b s r0xca ' + str(int((dishEl / DRIVE_DEG_PER_CNT - el_cnts) * self.el_enc_scale)) + '\r'
