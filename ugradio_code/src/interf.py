@@ -301,12 +301,12 @@ class TelescopeDirect:
         dishResponse = self._write(b'.b t 1\r')
         return dishResponse
 
-CMD_MOVE_AZ = 'move_az'
-CMD_MOVE_EL = 'move_el'
-CMD_WAIT_AZ = 'wait_az'
-CMD_WAIT_EL = 'wait_el'
-CMD_GET_AZ = 'get_az'
-CMD_GET_EL = 'get_el'
+CMD_MOVE_AZ = 'moveAz'
+CMD_MOVE_EL = 'moveEl'
+CMD_WAIT_AZ = 'waitAz'
+CMD_WAIT_EL = 'waitEl'
+CMD_GET_AZ = 'getAz'
+CMD_GET_EL = 'getEl'
 
 class TelescopeServer(TelescopeDirect):
     def run(self, host='', port=PORT, verbose=True, timeout=10):
