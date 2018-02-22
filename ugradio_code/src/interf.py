@@ -204,6 +204,8 @@ AZ_ENC_OFFSET = 0
 AZ_ENC_SCALE = 11.5807213
 EL_ENC_OFFSET = 4096
 EL_ENC_SCALE = 11.566584697
+DRIVE_ENCODER_STATES = float(2**14)
+DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
 
 class TelescopeDirect:
     def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1,
@@ -245,37 +247,37 @@ class TelescopeDirect:
         time.sleep(sleep)
         self.init_dish()
     def wait_az(self, max_wait=120):
-        azStatus = '-1'
+        status = '-1'
         for i in range(max_wait):
-            azStatus = self._write(b'.a g r0xc9\r').split()[1]
-            if azStatus == '0': break
+            status = self._write(b'.a g r0xc9\r').split()[1]
+            if status == '0': break
             time.sleep(1)
-        return azStatus
+        return status
     def wait_el(self, max_wait=120):
-        elStatus = '-1'
+        status = '-1'
         for i in range(max_wait):
-            elStatus = self._write(b'.b g r0xc9\r').split()[1]
-            if elStatus == '0': break
+            status = self._write(b'.b g r0xc9\r').split()[1]
+            if status == '0': break
             time.sleep(1)
-        return elStatus
+        return status
     def get_az(self):
-        curAz = self._write(b'.a g r0x112\r').split()
-        curAz = float(int(curAz[1])) % (2.0**14)
-        curAz = str(((curAz-self.az_enc_offset) * (360.) / (2.0**14)) % 360)
-        return curAz
+        az_cnts = float(self._write(b'.a g r0x112\r').split()[1])
+        az_cnts %= DRIVE_ENCODER_STATES
+        az = ((az_cnts - self.az_enc_offset) * DRIVE_DEG_PER_CNT) % 360
+        return az
     def get_el(self):
-        curEl = self._write(b'.b g r0x112\r').split()
-        curEl = float(int(curEl[1])) % (2.0**14)
-        curEl = str((curEl-self.el_enc_offset) * (360.0) / (2.0**14))
-        return curEl
+        el_cnts = float(self._write(b'.b g r0x112\r').split()[1])
+        el_cnts %= DRIVE_ENCODER_STATES
+        el = (el_cnts - self.el_enc_offset) * DRIVE_DEG_PER_CNT
+        return el
     def move_az(self, dishAz):
         azResponse = self.wait_az()
         if azResponse != '0':
             return 'e 1'
-        dishAz = (dishAz + 360.0 % 360)
+        dishAz = (dishAz + 360.) % 360
         # XXX check bounds?
-        curAz = int(float(self.get_az()) * (2.0**14) / 360)
-        azMoveCmd =  '.a s r0xca ' + str(int((((dishAz * (2.0**14) / (360.))) - curAz) * self.az_enc_scale)) + '\r'
+        az_cnts = int(self.get_az() / DRIVE_DEG_PER_CNT)
+        azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
         self._write(azMoveCmd.encode('ascii'))
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
@@ -285,8 +287,8 @@ class TelescopeDirect:
             return 'e 1'
         if (dishEl < 0) or (dishEl > 175): # XXX Use bounds defined above
             return 'e 1'
-        curEl = int(float(self.get_el()) * (2.0**14) / 360)
-        elMoveCmd =  '.b s r0xca ' + str(int((((dishEl * (2.0**14) / (360.0))) - curEl) * self.el_enc_scale)) + '\r'
+        el_cnts = int(self.get_el() / DRIVE_DEG_PER_CNT)
+        elMoveCmd =  '.b s r0xca ' + str(int((dishEl / DRIVE_DEG_PER_CNT - el_cnts) * self.el_enc_scale)) + '\r'
         self._write(elMoveCmd.encode('ascii'))
         dishResponse = self._write(b'.b t 1\r')
         return dishResponse
@@ -334,9 +336,9 @@ class TelescopeServer(TelescopeDirect):
         elif cmd[0] == CMD_WAIT_EL:
             resp = self.wait_el()
         elif cmd[0] == CMD_GET_AZ:
-            resp = self.get_az()
+            resp = str(self.get_az())
         elif cmd[0] == CMD_GET_EL:
-            resp = self.get_el()
+            resp = str(self.get_el())
         elif cmd[0] == 'reset':
             resp = self.reset_dish()
         else:
