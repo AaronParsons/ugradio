@@ -1,0 +1,20 @@
+#! /usr/bin/env python
+'''This script is started by start_dishserver and runs on a RPI
+whose serial port is connected to the drive encoders for the
+UGRadio Interferometer.'''
+
+from __future__ import print_function
+import ugradio, time
+import traceback
+
+while True:
+    try:
+        print('Starting server...')
+        ts = ugradio.interf.TelescopeServer()
+        ts.run(verbose=True)
+    except Exception as e:
+        print('Dish server crashed with the following message:')
+        print(traceback.format_exc())
+        print('Restarting...')
+        time.sleep(1)
+
