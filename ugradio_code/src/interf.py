@@ -2,7 +2,7 @@
 
 # XXX tracking mode?
 
-import socket
+import socket, serial, time
 
 MAX_SLEW_TIME = 60 # seconds
 
@@ -221,7 +221,7 @@ class TelescopeDirect:
         while len(resp) < bufsize:
             c = self._serial.read(1)
             c = c.decode('ascii')
-            if c == '\r' or responseChar == '':
+            if c == '\r' or c == '':
                 break
             resp.append(c)
         return ''.join(resp)
