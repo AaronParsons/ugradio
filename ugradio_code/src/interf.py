@@ -186,8 +186,9 @@ class Interferometer:
         Returns
         -------
         None'''
-        self.ant_w.stow(wait=wait, verbose=verbose)
-        self.ant_e.stow(wait=wait, verbose=verbose)
+        self.ant_w.stow(wait=False, verbose=verbose)
+        self.ant_e.stow(wait=False, verbose=verbose)
+        if wait: self.wait(verbose=verbose)
     def maintenance(self, wait=True, verbose=False):
         '''Point both antennas to the maintenance position
 
@@ -199,8 +200,9 @@ class Interferometer:
         Returns
         -------
         None'''
-        self.ant_w.maintenance(wait=wait, verbose=verbose)
-        self.ant_e.maintenance(wait=wait, verbose=verbose)
+        self.ant_w.maintenance(wait=False, verbose=verbose)
+        self.ant_e.maintenance(wait=False, verbose=verbose)
+        if wait: self.wait(verbose=verbose)
 
 AZ_ENC_OFFSET = 0
 AZ_ENC_SCALE = 11.5807213
