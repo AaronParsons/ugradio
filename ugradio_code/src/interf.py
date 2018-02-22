@@ -307,7 +307,7 @@ CMD_GET_AZ = 'get_az'
 CMD_GET_EL = 'get_el'
 
 class TelescopeServer(TelescopeDirect):
-    def run(self, host='', port=PORT, verbose=True, timeout=135): # XXX check if default timeout could be shorter
+    def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
         if self.verbose:
             print('Initializing dish...')
