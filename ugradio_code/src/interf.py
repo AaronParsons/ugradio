@@ -26,13 +26,13 @@ class TelescopeClient:
         '''Ensure pointing is within bounds.  Raises AssertionError if not.'''
         assert(ALT_MIN < alt < ALT_MAX) # range is nominally 5 to 175 degrees
         assert(AZ_MIN < az < AZ_MAX)    # range is nominally 90 to 300 degrees
-    def _command(self, s, bufsize=1024, timeout=10, verbose=False):
+    def _command(self, cmd, bufsize=1024, timeout=10, verbose=False):
         '''Communicate with host server and return response as string.'''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(timeout) # seconds
         s.connect(self.hostport)
-        if verbose: print([s])
-        s.sendall(s)
+        if verbose: print('Sending', [cmd])
+        s.sendall(cmd)
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
