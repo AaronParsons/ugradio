@@ -38,7 +38,7 @@ class TelescopeClient:
             r = s.recv(bufsize)
             if not r: break
             response.append(r)
-        if verbose: print(response)
+        if verbose: print('Got Response:', [response])
         return ''.join(response)
     def point(self, alt, az, wait=True, verbose=False):
         '''Point to the specified alt/az.
@@ -347,5 +347,6 @@ class TelescopeServer(TelescopeDirect):
             resp = self.reset_dish()
         else:
             resp = ''
+        if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
         conn.settimeout(None) # XXX is this necessary?
