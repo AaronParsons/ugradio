@@ -2,7 +2,7 @@
 
 # XXX tracking mode?
 
-import socket, serial, time
+import socket, serial, time, thread
 
 MAX_SLEW_TIME = 60 # seconds
 
