@@ -349,4 +349,3 @@ class TelescopeServer(TelescopeDirect):
             resp = ''
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
-        conn.settimeout(None) # XXX is this necessary?
