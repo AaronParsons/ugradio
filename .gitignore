@@ -1,0 +1,7 @@
+*.aux
+*.toc
+*.log
+*.swp
+*.out
+*ipynb_checkpoints*
+.DS_Store
