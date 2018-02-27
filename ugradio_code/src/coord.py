@@ -45,7 +45,7 @@ def sunpos(jd=None):
     sun = astropy.coordinates.get_sun(time=t)
     return sun.ra.deg, sun.dec.deg
 
-def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt):
+def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt,equinox='J2000'):
     """
     Return the altitude and azimuth of an object whose right ascension 
     and declination are known.
@@ -58,6 +58,7 @@ def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt):
     lat: float, latitude in degrees, default=nch
     lon: float, longitude in degrees, default=nch
     alt: float, altitude in m, default=nch
+    equinox : string, equinox of ra/dec coordinates.  default=J2000
 
     Returns
     -------
@@ -70,7 +71,7 @@ def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt):
     l = astropy.coordinates.EarthLocation(lat=lat*u.deg,
                         lon=lon*u.deg,height=alt*u.m)
     f = astropy.coordinates.AltAz(obstime=t,location=l)
-    c = astropy.coordinates.SkyCoord(ra, dec, frame='icrs',unit='deg',equinox='J2000')
+    c = astropy.coordinates.SkyCoord(ra, dec, frame='icrs',unit='deg',equinox=equinox)
     altaz = c.transform_to(f)
     return altaz.alt.deg, altaz.az.deg
 
@@ -79,6 +80,17 @@ def precess_to_current(ra,dec,equinox='J2000'):
     Precess the given right ascension and declination to 
     the current equinox.
 
+    Parameters
+    ----------
+    ra : float, right ascension in degrees at specified equinox
+    dec: float, declination in degrees at specified equinox
+    equinox : string, equinox of ra/dec coordinates.  default=J2000
+
+    Returns
+    -------
+    ra : float, right ascension in degrees
+    dec : float, declination in degrees
+        
     """
     c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',
         frame=astropy.coordinates.FK5,equinox='J2000')
