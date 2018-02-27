@@ -54,12 +54,12 @@ class HP_Multimeter:
             return float(resp), t
         else:
             return float(resp)
-    def start_recording(self, dt=10.):
+    def start_recording(self, dt):
         '''Initiate continuous reading from multimeter every dt seconds.
 
         Parameters
         ----------
-        dt : float seconds, time between voltage readings, default 10.
+        dt : float seconds, time between voltage readings.
 
         Returns
         -------
