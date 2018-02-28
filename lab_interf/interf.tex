@@ -12,38 +12,37 @@
 \tableofcontents
 
 The purpose of this lab is, broadly speaking, to learn radio
-interferometry---the basis for much of modern radio astronomy. We'll
-cover the basic principles, the interferometric fringe, the response to
-a point source, and the response to an extended source (which is the
-basis of high-angular resolution mapping with interferometry). We will
-employ least-squares fitting and Fourier transforms to measure accurate
+interferometry---the basis for most of modern radio astronomy and, we
+predict, forefront future IR and optical astronomy. We'll cover the
+basic principles, the interferometric fringe, the response to a point
+source, and the response to an extended source (which is the basis of
+high-angular resolution mapping with interferometry). We will employ
+least-squares fitting and Fourier transforms to measure accurate
 positions for a few sources and also accurate angular diameters for the
-Sun and Moon. And because this is your first foray into observations,
-you need to learn about astronomical coordinate systems, topocentric
-coordinate systems, converting coordinates with rotation matrices,
-systems of civil time, sidereal time. This lab runs for four weeks and
-clearly there's a lot of new material!
+Sun and Moon. This lab runs for four weeks and clearly there's a lot of new
+material!
 
 \section{GOALS}
 
 \begin{itemize}
 
 \item Learn how diffraction theory applies to a real radio
-  interferometer. Fringes, their amplitudes and phases. The Fourier
-  transform relationship between interferometer response and sky
-  brightness. 
+  interferometer. Fringes, their amplitudes and phases. The fringe as a
+  `giant sine wave in the sky; the fringe as a `giant DSB mixer in
+  the sky'; and the fringe as the autocorrelation function of the
+  interferometer pair.
 
-\item Learn about all those things observers need to know: time,
-  coordinates, conversions.
+\item Fourier transforming the fringe; Fourier filtering the fringe.
 
 \item Obtain horizon-to-horizon data on our various astronomical
   sources---point sources, and the Sun and Moon.
 
-\item Learn about linear and nonlinear least-squares fitting and use it
-  to tease out accurate source positions.
+\item VLBI nonlinear least-squares fringe fitting to determine the most
+  accurate source declination and/or baseline projected lengths.
 
-\item Use least-squares fitting to obtain accurate diameters for the Sun
-  and Moon.
+\item Use nonlinear least-squares fitting to obtain accurate diameters
+  for the Sun and Moon. This illustrates the general Fourier transform
+  relationship between interferometer response and sky brightness.
 
 \end{itemize}
 
@@ -51,34 +50,90 @@ clearly there's a lot of new material!
 
 \begin{enumerate}
 
-\item {\it Week 1}: Each {\it person} uses rotation matrices to
-calculate when objects of interest are up. Each {\it group} observes the
-Sun for a short time to confirm that you see fringes. Each {\it group}
-does a horizon-to-horizon observation of a point source, which requires
-writing an observing script to run automatically.
+\item {\it Week 1:} Each {\it group} uses rotation
+  matrices to calculate when objects of interest are up. It observes the
+  Sun for a short time to confirm that it sees fringes. Each {\it group}
+  does a horizon-to-horizon observation of a point source, which
+  requires writing an observing script to run automatically.
 
 Each {\it person} calculates Fourier power spectra of the Sun data and
 also the point-source data. She/He calculates the range of expected
 local fringe frequencies (equation \ref{fringefreq}) and compares the
 observed spectra with these expectations. Be ready for show and tell!
 
-\item {\it Week 2}: Each {\it group} observes horizon-to-horizon the Sun
-  and, if possible, the Moon with the interferometer.  Each {\it person}
-  derives accurate declinations for the point-source data using
-  least-squares fitting as outlined in \S \ref{declinations}.
+\item {\it Week 2:} Each {\it group} observes
+  horizon-to-horizon the Sun and, if possible, the Moon with the
+  interferometer.  Each {\it person} derives accurate declinations for
+  the point-source data using least-squares fitting as outlined in \S
+  \ref{declinations}.
 
-\item {\it Week 3}: Finish the Moon observations. Each {\it person}
-  derives accurate angular diameters for the Sun and Moon using
-  least-squares fitting as outlined in \S \ref{mun}. 
+\item {\it Week 3:} Finish the Moon observations. Spring
+  break. Each {\it person} derives accurate angular diameters for the
+  Sun and Moon using least-squares fitting as outlined in \S \ref{mun}.
 
-\item {\it Week 4}: Each {\it person} finishes all calculations and
-writes (and hands in!) the lab report.
+\item {\it Week 4:} Each {\it person} finishes all
+  calculations and writes (and hands in!) the lab report.
 
 \end{enumerate}
 
+\section{USEFUL PYTHON FUNCTIONS FOR PRECESSION, FINDING SUN AND MOON, AND
+RUNNING THE INTERFEROMETER}
+
+\begin{verbatim}
+ifm = ugradio.interf.Interferometer() provides an interface for controlling 
+the pointing of the two telescopes that constitute the interferometer.
+
+ifm.stow() points the telescopes to the zenith. This minimizes 
+wind drag to help keep the telescope from being destroyed by strong winds. 
+When no-one is using the telescope, it should be stowed.  Please stow the
+ telescope when you are not using it!
+
+ifm.maintenance() points the telescope to 'maintenance position' to 
+facilitate working on the feed. alt=20, az=180.
+
+ifm.get_pointing() returns both telescopes' current alt, az.
+
+ifm.point(alt,az) points telescopes to specified alt, az.
+It can take bit for the telescopes to move, so be patient until this
+command returns.
+
+hpm = ugradio.hp_multi.HP_Multimeter() provides an interface for reading
+the voltage output of the interferometer.
+
+hpm.read_voltage() reads once from the HP Multimeter.
+
+hpm.start_recording(dt) reads from the voltage every dt seconds, indefinitely.
+Data are stored in a buffer inside of hpm.
+
+hpm.get_recording_data() reads out all the voltages (and timestamps) that
+have been acquired since start_recording was called.  NOTE: to avoid losing
+your data for a long observation, you should periodically call this function
+and save the data to disk, just in case your observing script errors out.
+
+hpm.end_recording() terminates the recording.  
+
+ugradio.coord.sunpos(jd) returns the ra/dec of the Sun at the specified jd.
+
+ugradio.coord.moonpos(jd,lat,lon,alt) returns the ra/dec of the Moon at
+the specified jd relative to the specified observing lat, lon, and alt.
+Note that because the Moon is close to the Earth, it has a noticeable
+parallax that makes its ra/dec depend on where you are.  This takes that
+into account.
+
+ugradio.coord.get_altaz(ra, dec, jd, lat, lon, alt) returns the alt/az
+of the specified ra/dec coordinate for the specified lat/lon/alt and
+observing time.  Use the 'equinox' variable to specify the coordinate
+system on the input ra/dec parameters.
+
+ugradio.coord.precess(ra, dec, jd, equinox) returns the precessed ra/dec
+for the ra/dec catalog coordinate with given 'equinox' specifing the coordinate
+system on the input ra/dec parameters.
+
+\end{verbatim}
+
 \section{OUR INTERFEROMETER}
 
-	With our interferometer, which operates at about 11 GHz, our
+	With our interferometer, which operates at about 12 GHz, our
 attention focuses on small sources.  Our interferometer has a relatively
 short baseline and the fringe spacing is larger than the size of all
 sources (except the Sun and Moon).  So for our interferometer all of
@@ -89,12 +144,13 @@ called the ``fringe''. All of the information resides in the frequency,
 amplitude and phase of the fringe.
 
  If you know the baseline, the fringe properties are direct indicators
-of the point-source declination.  With our 10-m baseline $B$ we can get
-a fringe spacing ${\lambda \over B}\sim 10'$, and with a
-horizon-to-horizon measurement we can measure the declination 100 times
-more accurately.  In addition, we can achieve partial angular resolution
-on the Sun and Moon and measure their diameters to a fraction of a
-percent---this turns out to be more interesting than it sounds!
+ of the point-source declination.  With our $\sim 20$-m baseline $B$ we
+ can get a fringe spacing ${\lambda \over B}\sim 5'$, and with a
+ horizon-to-horizon measurement we can measure the declination 100 times
+ more accurately (depending...).  In addition, we can achieve partial
+ angular resolution on the Sun and Moon and measure their diameters to a
+ fraction of a percent---this turns out to be more interesting than it
+ sounds!
 
 We have a {\it multiplying} interferometer: the signals from the two
 telescopes (that's $E_1$ and $E_2$) are multiplied together, using one
@@ -111,215 +167,71 @@ the amplitude is directly proportional to the source flux (if it's a
 point source).
 
 
-\section {CONTINUUM SOURCES}
+\section {CONTINUUM `POINT' SOURCES}
 
-	For the first part of the lab we will concentrate on measuring
-source positions. Our telescopes are small, so there are only a few
-sources that are powerful enough for us. The strongest continuum sources
-are listed in the table below.  
-You'll need to precess the coordinates
-to the current equinox (see \S\ref{sec:point_srcs}). If you don't, the incorrect RA's will affect
-your fits. 
-
-Three of these sources are double (they are marked with the footnote
-$a$). The two componnts are an HII region (a hot young star ionizes gas
-in its vicinity; the ionized gas produces radio continuum) and (2) a
-supernova remnant (a hot young star lived fast and died young); both
-stars were formed coincidentally in a cluster). The position you derive
-is a weighted average of the two sources. 
-
-Not all of these sources are suitable for accurate declination
-measurement. To understand why, look at equation \ref {maineqn} and
-think about it!
+For the first part of the lab we will concentrate on 'point' sources
+that lie outside the Solar system. Our telescopes are small, so there
+are only a few sources that are powerful enough for us; they are listed
+below.  You'll need to precess the coordinates to the current
+equinox. If you don't, the incorrect r.a.'s will affect your fits. To do
+the precession, use {\tt ugradio.coord.precess}.
 
 %$$\vbox{\halign{ \hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ &    
 %\hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ \cr
-$$\vbox{\halign{ \hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ &    
-\hfil#\hfil\ \ \ \cr
+$$\vbox{\halign{ \hfil#\hfil\ \ & #\hfil\ \ & #\hfil\ \ &    
+\hfil#\ \ \ \cr
 
 {\bf name} & {\bf r.a.(2000)} & {\bf dec(2000)} & {\bf S$_{Jy}$} \cr
 
-W3$^a$              & $02^h 27^m 04.10s$ &$+61^\circ 52' 27.1'$ & $\sim 105$ \cr
+%W3$^a$              & $02^h 27^m 04.10s$ &$+61^\circ 52' 27.1'$ & $\sim 105$ \cr
 3C144 (Crab Nebula) & $05^h 34^m 31.95s$ &$+22^\circ 00' 52.1''$ & $\sim 496$ \cr
 Orion Nebula        & $05^h 35^m 17.3s$ & $-05^\circ 23' 28''$ & $\sim 340$ \cr
-3C274 (Virgo A)     & $12^h 30^m 49.423s$ & $+12^\circ 23' 28.04''$ & $\sim 34$ \cr
+%3C274 (Virgo A)     & $12^h 30^m 49.423s$ & $+12^\circ 23' 28.04''$ & $\sim 34$ \cr
 M17                 & $18^h 20^m 26s$ & $-16^\circ 10.6'$ & $\sim 500$ \cr
-W43                 & $18^h 47^m 58.0s$ & $-01^\circ 56' 43''$ & $\sim 200$ \cr
-W49$^a$             & $19^h 10^m 17s$ & $+09^\circ 06.0'$ & $\sim 80$ \cr
-W51$^a$             & $19^h 23^m 42.0s$ & $14^\circ 30' 33''$ & $\sim 116$ \cr
+%W43                 & $18^h 47^m 58.0s$ & $-01^\circ 56' 43''$ & $\sim 200$ \cr
+%W49$^a$             & $19^h 10^m 17s$ & $+09^\circ 06.0'$ & $\sim 80$ \cr
+%W51$^a$             & $19^h 23^m 42.0s$ & $14^\circ 30' 33''$ & $\sim 116$ \cr
 3C405 (Cygnus A)    & $19^h 59^m 28.357s$ & $+40^\circ 44' 02.10''$ & $\sim 120$ \cr  
 3C461 (Cas A)       & $23^h 23^m 24s$ & $+58^\circ 48.9'$ & $\sim 320$ \cr 
 SUN                 &   varies       &   varies \cr
 MOON                &   varies       &   varies \cr
 }}$$
-\noindent------------(a) This source has multicomponent angular structure
 
-\subsection{Time and Space}
-
-Time is complicated, and people have made matters worse.  If you want to
-make accurate astronomical observations, you need to both know where you
-are on the Earth and what time it is.  That way, you know which direction you
-are facing.  For our purposes, latitude and longitude do a decent job of encoding where on Earth
-you are (although if you ever try to accurately survey something, you'll discover
-lat/long aren't as easy as they look either --- the Earth isn't perfectly spherical).
-Time, though, is a different story.  We tune our clocks to different times depending on
-which time zone (and what time of year!) we are in.  Time zones are political constructs,
-and are of no use to us.  We also have a nasty habit of counting time in solar days.
-
-To help simplify matters, decent time systems do away with time zones and synchronize
-to the solar day at 0$^\circ$ longitude, which happens to have been defined to run
-through the British Royal Observatory.  Time and astronomers go way back, you see.
-Such systems are said to be based on Greenwich Mean Time (GMT).  The next thing is to
-count seconds.  You might think to count days instead, but days are complicated.
-Since the Earth is moving around the Sun while it is spinning, the Earth must actually
-rotate a little more than $2\pi$ radians in order to bring the Sun around to the same
-position each day.  So instead of spinning $2\pi$ radians every 24 hours (86400 s) as
-you might think, it actually takes 86164.0908 s.  That's called a {\it sidereal day},
-and you'll notice it's awfully close to $364/365$ of a solar day.
-
-For every day of the year except one, sidereal days and solar days are out of sync.
-On Jan 1., they overlap.  So if you are going to count time, you really ought
-to count from Jan. 1.  But what time on Jan. 1 (and what year) should we count from?
-If you are an astronomer, you count in (solar) days from noon, Jan. 1, 4713 BC.  You can thank
-Ptolemy and Joseph Scaliger for that one.  If you are a computer, you count seconds from
-midnight at the start of Jan. 1, 1970.  This is called ``Unix Time'', and is pretty close
-to Coordinated Universal Time (UTC), which is derived from atomic clocks.  Just to keep us
-on our toes, there have been
-a few revisions to UTC, with a several leap seconds added in here and there.  Couple that
-with the fact that the rotation of the Earth is slowly slowing down, and you see how time
-can get mind-bendingly complicated.
-
-But now it's time to simplify.  Using Network Timing Protocol (NTP) and/or the Global
-Positioning System (GPS), computers and cell phones
-routinely synchronize their clocks to atomic standards with millisecond precision.  (NTP and
-GPS, by the way, are {\it not} simple).  We all
-have UTC sitting at our fingertips these days, and that makes it relatively easy to do the rest.
-Here are the steps:
-\begin{itemize}
-\item Use UTC to figure out what sidereal time it is in England (longitude 0$^\circ$) in hours, minutes,
-seconds.  Because right
-ascension (RA) is measured in units of time, this tells you what part of the sky is overhead there.
-\item Use your longitude to figure out what time offset you should add to get your {\it local sideral time} (LST).
-This tells you what part of the sky is overhead here.
-\item Subtract your LST from the RA of your source to get the hour angle (HA) it appears at.
-\item Use your latitude, and the HA and declination of your source to figure out where to point.
-\end{itemize}
-
-Oh, and UCB is at latitude 37.8732N, longitude -122.2573 (in degrees).
-
-\subsubsection{PyEphem: a Useful Module}
-
-In this class, we'll use a helpful module called PyEphem to help us calculate ephemeris (positioning).
-\begin{verbatim}
->>> import ephem, time
->>> print ephem.now()
-2014/3/4 01:39:23   # current time in England
->>> print float(ephem.now())
-41700.5700926       # PyEphem's internal time representation is in 
-                    # solar days since 1899/12/31 12:00.  DON'T
-                    # USE IT WITH ANYTHING ELSE!
->>> print time.time()
-1393897394.41       # This is UTC (seconds since 1970)
->>> print ephem.julian_date()
-2456720.57226       # Good astronomers use Julian Dates
->>> obs = ephem.Observer()
->>> obs.lat = ephem.degrees(37.8732)    # set your latitude
->>> obs.long = ephem.degrees(-122.2573) # set your longitude
->>> obs.date = ephem.now()              # set the time of your observation
->>> print obs.sidereal_time()
-1:36:37.80          # LST!
->>> print float(obs.sidereal_time())
-0.421627770357      # radians
-\end{verbatim}
-
-\subsubsection{Sun, Moon, and Other Procedures}
-
-Now things get exciting!
-
-\begin{verbatim}
->>> sun = ephem.Sun()
->>> sun.compute(obs)  # compute the Sun's position given the time stored in obs
->>> print sun.ra, float(sun.ra)
-22:58:49.07 6.01622781701   # Sun's right ascension as a string, and radians
->>> print sun.dec, float(sun.dec)
--6:31:24.0 -0.113853520397  # And declination as well
->>> print sun.az, sun.altA
-248:48:31.0 47:23:44.3      # And in topocentric coordinates!
-\end{verbatim}
-
-There's lots more in there, so poke around a bit (there's good documentation online).
-One potential gotcha: make sure you update \verb+obs.date+ to keep advancing
-to the current time when you are observing.
-
-\subsection{The Point Sources}
-\label{sec:point_srcs}
-
-	Our goal is to measure the absolute declinations as accurately
-as possible.  Declinations can be measured on an absolute basis with
+As astronomers, our goal is to measure the absolute declinations as
+accurately as possible. As geologists, our goal is to measure the
+interferometer baseline as accurately as possible (to see, for example,
+the displacement of tectonic plates by earthquake activity). If you look
+at equations \ref{nutau} and \ref{maineqn}, you see that we don't
+measure these quantities separabely, but rather the products $B_{ew}
+\cos(\delta)$ and $B_{ns} \cos(\delta)$, where $B_{ew}$ and $B_{ns}$ are
+the east-west and north-south components of the interferometer
+baseline. These products can be measured on an absolute basis with
 interferometry by least-squares fitting the fringe phase to the hour
-angle; see \S\ref{declinations} and equation \ref{maineqn} below.  With our
-fringe spacing of $\sim 10'$ we might be able to measure declinations to
-an accuracy $\sim 20''$---maybe better.  We can then compare the derived
-values to those listed above.
-Note that to compare them, you'll need to precess all coordinates
-to the current equinox. If you don't, the incorrect RA's will affect
-your fits. To do the precession, use PyEphem:
-\begin{verbatim}
->>> src = ephem.FixedBody()
->>> src._ra, src._dec = '0:00', '45:00'
->>> src._epoch = ephem.J2000
->>> src.compute(obs)
->>> print src.ra, src.dec
-0:00:43.02 45:04:47.0   # RA,DEC are now precessed from J2000 to current
-\end{verbatim}
+angle; see \S\ref{declinations} and equation \ref{maineqn} below.  We
+already know the source positions accurately, from previous
+intererometrric meaasurements; that's where the positions in the above
+table come from. So, for this lab, we'll emphasize the geologic aspect
+and measure baselines. We should be able to measure baseline components
+to better than $1\%$.
 
-{\it Optionally}---if you've done everything else and it was so easy
-you're bored---you can try to measure the difference in right ascension
-between two sources.  We can't measure the {\it absolute} right
-ascensions because the right ascension coordinate has no
-naturally-determined zero point; rather, its zero point is defined
-arbitrarily by convention\footnote{What's the convention? The zero point
-is defined to be the position of the Sun when it crosses the equator on
-March 22. This moves by about 1 arcmin per year.} (and it changes with
-time, too).  In contrast, declination has a naturally-determined zero
-point: the equator.  But we can measure the {\it relative} right
-ascension of one source with respect to another with high accuracy.  At
-least we can do this in principle; in practice it's harder than
-measuring only the declinations.
+Coverage for soouthern sources may be interrupted by the
+Campanile---check (by going up to the roof periodically and looking)!
+And coverage for nortern sources, especially Cas A, is interrupted by
+Evans Hall.
 
-	We'll want {\it each group} to pick a source and obtain a
-horizon-to-horizon observation of the fringes. If you have time, groups
-can compare results to see if you can get the differences in right
-ascensions (we've never successfully done this before!). And we'll want
-{\it each person} to measure the source's declination by least-squares
-fitting the horizon-to-horizon track of fringe phase and amplitude.
-Compare your results with other members of your group.  Help each other
-out, but {\it each person should write her/his own software}.
+We'll want {\it each group} to pick a source and obtain a
+horizon-to-horizon observation of the fringes. Each group should pick a
+different source. Observing a source takes at least half a day. With
+four groups and less than a week to do the measuremets, you need to
+cooperate in scheduling the interferometer. Organize yourselves!
 
-	There are some considerations in picking sources, and we will
-save you some frustration by telling you about them beforehand:
-\begin{enumerate}
+We'll want {\it each person} to measure the source's
+declination by least-squares fitting the horizon-to-horizon track of
+fringe phase and amplitude.  Compare your results with other members of
+your group.  Help each other out, but {\it each person should write
+  her/his own software}.
 
-
-	\item The fringe frequency depends on $\cos \delta$. This means
-that you don't measure $\delta$ directly, but rather $\cos \delta$. Note
-our discussion in \S\ref{details} about the desireability of solving for
-$\left[{B_y \over \lambda}\cos \delta \right]$ instead of $[\cos{\delta}]$.
-
-	\item Southern sources present a minor problem for
-horizon-to-horizon tracks because of the presence of the Campanile---you
-have to discard some data..
-
-	\item Our telescope pointing for Northern sources may be
-inaccurate, leading to loss of signal/noise. 
-
-	\item Our observing frequency is in the TV satellite band. 
-Geostationary TV satellites sit in the southerly skies and generate
-strong signals that can enter the dish sidelobes and produce fringes. 
-
-\end{enumerate}
-
-\subsection{The Sun and Moon}
+\section{THE SUN AND MOON}
 
 	The Sun and Moon are special cases, for two reasons. First, 
 their positions change from day to day---and for the Moon, the change in
@@ -332,27 +244,17 @@ changes in fringe properties are exactly what's necessary to map the
 sources!}; this makes the determination of accurate positions a bit
 tricky, but we'll ignore that detail for now.
 
-	You can get the Sun and Moon positions from PyEphem.
-For the Moon, you should be aware that it
-is nearby so that you have to correct for your location on the Earth's
-surface. The parallax effect is far greater for the Moon than the
-Sun---so large that unless you correct for it, the Moon will probably
-lie outside the telescope main beam. Fortunately, PyEphem takes care of this
-automatically, along with crazy things like the time-of-flight of photons,
-which actually matter for observing planets!
+	You can get the Sun and Moon positions from 
+        {\tt ugradio.coord.sunpos} and {\tt moonpos}.  For the Moon, you should be aware
+        that it is nearby so that you have to correct for your location
+        on the Earth's surface. The parallax effect is far greater for
+        the Moon than the Sun---so large that unless you correct for it,
+        the Moon will probably lie outside the telescope main beam! {\tt
+          moonpos} takes care of this automatically.
 
-	Given these difficulties, why bother with the Sun and Moon?
-Because they are {\it bright}. We include them because they provide huge
-signals, which is ideal for testing your observing setup and your
-reduction software.  In particular, the Sun is so bright that you'll get
-a huge signal/noise and you should be able to estimate an accurate
-declination in the first few minutes. And if you don't see the Sun, you
-{\it know} you're doing something wrong!
+\section{SOME ASTROPHYSICS}
 
-\subsection{Some Astrophysics}
-
-Here's a bit of physical information.  M17 (``M'' for Messier), W3
-(``W'' for Westerhout), W43, W49, W51, and Orion
+Here's a bit of physical information.  M17 (``M'' for Messier) and Orion
 are HII regions---places where hot stars have produced warm ($T \sim
 10^4$ K) ionized gas, where the electrons flying past the protons get
 deflected and produce {\it free-free (bremsstrahlung)} radiation.  The
@@ -374,12 +276,11 @@ are expanding rapidly, as befits their young ages, and Cas A (in which a
 pulsar does not constantly replenish the electrons) is gradually getting
 dimmer.
 
-In the external galaxies, the ultimate source of the
+In external galaxies, the ultimate source of the
 electrons involves acceleration of electrons near the black hole at the
 center; the electrons are then spewed out to extragalactic space in
 narrow collimated jets, and produce large ``emission lobes'' at the end
-of the jets.  Virgo A is a ``peculiar''
-elliptical galaxy about 11 Mpc distant, while Cygnus A is a giant
+of the jets.  Cygnus A is a giant
 elliptical galaxy 220 Mpc distant.  Cyg A is a powerful radio
 source---it's $10^5$ times further than Cas A and just as bright! The
 study of the mechanism by which this enormous power is generated, which
@@ -400,16 +301,20 @@ about its surface properties from the polarization of the radiation and
 also from its time variability as the surface heats up from sunlight and
 cools off from darkness---just like the Sahara.
 
-\section {MEASURING ACCURATE DECLINATIONS} \label{declinations}
+\section {MEASURING $B \cos \delta$} \label{declinations}
 
-\subsection{General Description}
+We measure the product $B \cos \delta$ from the fringe frequency, which
+depends on the baseline orientation, baseline length, declination, and
+hour angle (all these go into the {\it projected baseline}). If we
+observe a source horizon-to-horizon, the projected baseline changes a
+lot, and so does the fringe frequency. We first do a `sanity check',
+taking the Fourier transform of the data to see if we see the fringe and
+measure its range of frequencies. If it all looks good, we take those
+data, together with the known declination, and do a least-squares fit to
+derive the most accurate baseline components
+from our data.
 
-	We measure declinations from the fringe frequency, which depends
-on the baseline orientation, baseline length, declination, and hour
-angle (all these go into the {\it projected baseline}). If we observe a
-source horizon-to-horizon, the projected baseline changes a lot, and so
-does the fringe frequency. We take those data and do a least-squares
-fit to derive the most accurate declination from our data.
+\subsection{Getting the Data}
 
 	{\it FIRST WEEK:} Before doing the weak sources in the Table, do
 the Sun for a much shorter time, say an hour. This will give you
@@ -420,14 +325,7 @@ you can write software to do the same, and make sure you get the right
 answer.  Also, during this first week, do the horizon-to-horizon track
 of one of the sources from the Table.
 
-	Below we'll distill the formulae given in the appendix of the
-recommended reference to the nice, straightforward case of an east-west
-baseline of length $B$, for which the only nonzero baseline component is
-$B_y$. Our interferometer has an east-west baseline (approximately), so
-our distilled formulae will be applicable (approximately) to your
-measurements.
-
-\subsection{The Details} \label{details}
+\subsection{The Fringe} \label{details}
 
 	The two interferometer telescopes have different distances from
 the source. The difference can range from zero (if the source is
@@ -455,13 +353,36 @@ independent of time (unless somebody changes the cable setup\dots).
 	We don't know $\tau_c$ (but the least-squares process can tell
 us what it is).  However, we do know $\tau_g$ because it's just
 geometry---the geometry discussed in the reading.  For the east-west
-baseline, we have
-
+baseline component with length $B_{ew}$, we have
+%
 \begin{equation}
- \tau_g(h_s) = \left[{B_y \over c} \cos \delta \right] \sin h_s \; . 
+ \tau_{g, ew}(h_s) = \left[{B_{ew} \over c} \cos \delta \right] \sin h_s \; . 
 \end{equation}
-
-
+%
+and for the north-south component
+%
+\begin{equation}
+ \tau_{g,ns}(h_s) = \left[{B_{ns} \over c} \sin L \cos \delta \right] \cos h_s
+ - \left[{B_{ns} \over c} \cos L \sin \delta \right]  \; , 
+\end{equation}
+%
+where $L$ is the terrestrial latitude. This  has two terms. The first is
+the delay perpendicular to the Earth's axis, which changes as $\cos h$.
+The second is the delay parallel to the Earth's axis, which has no $h$
+dependence; since it is independent of $h$, we'll lump it into the cable
+delay $\tau_c$. Accordingly, we define
+%
+\begin{equation}
+\tau_g'(h_s) = \left[{B_{ew} \over c} \cos \delta \right] \sin h_s 
+  + \left[{B_{ns} \over c} \sin L \cos \delta \right] \cos h_s
+\end{equation}
+%
+and the $B_{ns}$-modified cable delay as
+%
+\begin{equation}
+\tau_c' = \tau_c  - \left[{B_{ns} \over c} \cos L \sin \delta \right]  \; . 
+\end{equation}
+%
 	The output of the interferometer is the product of what the two
 telescopes see. If they are looking at a monochromatic source then the
 voltages for the two telescopes are
@@ -491,7 +412,7 @@ it's the difference term we want, so if we exclude the sum term (and
 forget about the factor $1 \over 2$) we get
 
 \begin{equation}
- F(h_s) = \cos (2 \pi \nu [\tau_{g}(h_s) + \tau_c]) \; . 
+ F(h_s) = \cos (2 \pi \nu [\tau'_{g}(h_s) + \tau_c']) \; . 
 \end{equation}
 
 
@@ -499,161 +420,157 @@ forget about the factor $1 \over 2$) we get
 quantities that comprise the argument of the cosine.  If you have done
 least-squares fitting before (and if you remember anything about it!)
 you'll realize that the straightforward least-squares fitting technique
-won't work on this type of problem.  We can simplify things for the
+won't work on this type of problem, because the unknown quantities
+appear inside nonlinear functions.  We can simplify things for the
 fitting process by using another trig identity\footnote{$\cos(A+B) =
 \cos(A)\cos(B) - \sin(A)\sin(B)$} and writing this as the
 sum of two trig functions
 
 \begin{equation}
- F(h_s) = \cos(2 \pi \nu \tau_c) \cos \left[2 \pi \nu \left({B_y \over c}
-	\cos\delta \right) \sin h_s\right] - \sin(2 \pi \nu \tau_c) 
-	\sin \left[ 2 \pi \nu \left({B_y \over c}\cos\delta \right) \sin h_s\right] \; .  
+ F(h_s) = \cos(2 \pi \nu \tau_c) \cos \left(2 \pi \nu \tau_g' \right) - 
+          \sin(2 \pi \nu \tau_c) \sin \left(2 \pi \nu \tau_g' \right) \; .  
 \end{equation}
 
-
 \noindent This may not look simpler! But it is, because for the purposes
-of least-squares it involves only a {\it single} variable in the trig
-function arguments---the combination of variables $\left({B_y \over c}
-\cos\delta \right)$ (we are assuming that we know the right ascension
-well enough to get a good value for $h_s$). 
+of least-squares it involves only the {\it single} variable $\tau_g'$ in
+the trig function arguments (we are assuming that we know the right
+ascension well enough to get a good value for $h_s$, which appears in
+$\tau_g'$).
 
 	To proceed with least-squares, replace $\cos (2 \pi \nu \tau_c)$
-and $\sin (2 \pi \nu \tau_c)$ by two ``unknown constants'' $A$ and $B$,
+and $-\sin (2 \pi \nu \tau_c)$ by two ``unknown constants'' $A$ and $B$,
 respectively; assume that they are unrelated and solve for them using
 the standard least-squares process. Also, it's convenient and intuitive
 to make the substitution 
-
-\begin{equation}
-\nu \left( {B_y \over c} \cos \delta \right) = \left( {B_y \over \lambda}
-\cos \delta \right)
+%
+\begin{equation} \label{nutau}
+\nu \tau_g'(B_{ew}, B_{ns}, \delta, h_s) = \left[{B_{ew} \over \lambda} \cos \delta \right] \sin h_s 
+  + \left[{B_{ns} \over \lambda} \sin L \cos \delta \right] \cos h_s
 \end{equation}
-
+%
 \noindent which expresses the delay in units of wavelength, and thus the
 ``number of turns'' or phase. These substitutions give the {\it Fringe
   Amplitude for a point source}
-
+%
 \begin{equation} \label{maineqn} \fbox{$
 \label{fringeresponse}
- F(h_s) = A \cos \left[2 \pi \left( {B_y \over \lambda} \cos\delta \right) \sin h_s\right] 
- - B \sin \left[2 \pi \left( {B_y \over \lambda} \cos\delta \right) \sin h_s\right] \; . 
+ F(h_s) = A \cos \left(2 \pi \nu \tau_g' \right) 
+         +B \sin \left(2 \pi \nu \tau_g' \right) \; . 
 $}
 \end{equation}
 
-	Let's take a moment and reflect on this complicated-looking
-equation, focusing on just the first term (because the second is
-identical except it's a sine instead of a cosine). We want to develop
-the concept of a {\it local fringe frequency} $f_f$. The argument of the
-cosine is a constant $C=\left[2 \pi \left( {B_y \over \lambda}
-\cos\delta \right)\right]$ multiplied by $\sin( h_s)$. Now $h_s$ is the hour
-angle and increases monotonically with time, so we can regard it as
-time\footnote{Except that its units are radians. This is no problem: 24
-hours is $2\pi$ radians.}. Now $C$ is multiplied not by $h_s$ itself, but
-rather by $\sin( h_s)$, which is a nonlinear function of time. The product
-$C \sin(h_s)$ is the argument of the cosine term and makes it oscillate
-back and forth, but at a frequency that depends on time as $h_s$ changes. 
+\subsection{The Local Fringe Frequency}
+We want to develop the concept of a {\it local fringe frequency}
+$f_f$. In equation \ref{maineqn}, the argument of the trig functions
+depends on $h_s$, which is the hour angle and increases monotonically
+with time, so we can regard it as time\footnote{Except that its units
+  are radians. This is no problem: 24 hours is $2\pi$ radians.}. Now
+it's not $h_s$ itself in the equation, but rather $\sin( h_s)$ and
+$\cos(h_s)$, which are nonlinear functions of time. They multiply the
+baseline in units of wavelength, which is large, so the product rapidly
+oscillates back and forth, but at a frequency that depends on time as
+$h_s$ changes.  This is the local fringe frequency.
 
-	This leads to the concept of the local fringe frequency. To see
-this, expand the hour angle term $\sin (h_s)$ into a Taylor series
-centered on the current hour angle of the source $h_s$:
+To see this, expand the hour angle terms $\sin (h_s)$ and $\cos (h_s)$
+each into its own Taylor series, centered on the current hour angle of the
+source $h_{s,0}$. For example, for the $\sin(h_s)$ term we have
 
 \begin{equation} \label{taylorexpansion}
-\sin h = \sin( h_s) + 
-  \Delta h \left. {d \sin(h) \over dh}\right|_{h_s} = 
-\sin( h_s) + \Delta h \cos( h_s) 
+\sin (h_s) = \sin( h_{s,0}) + 
+  \Delta h_s \left. {d \sin(h_s) \over dh}\right|_{h_{s,0}} = 
+\sin( h_{s,0}) + \Delta h_s \cos( h_{s,0}) 
 \end{equation}
 
 \noindent The local fringe frequency is contained in the second term
-because, for a small region around $h_s$ in equation
-\ref{fringeresponse}, $F(h)$ varies as $f_f \ \Delta h$, where  the
+because, for a small region around $h_{s,0}$ in equation
+\ref{fringeresponse}, $F(h_s)$ varies as $f_f \ \Delta h_s$, where  the
 local fringe frequency $f_f$ is
 
-\begin{equation} \label{fringefreq}
-f_f = {C \over 2\pi}  \cos(h_s) = \left( {B_y \over \lambda} \cos\delta
-\right) \cos( h_s) \ .
+\begin{equation} \label{fringefreq} \fbox{$
+f_f = \left[{B_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
+- \left[{B_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
+$}
 \end{equation}
 
 \noindent This is the local fringe frequency in cycles per radian on the
 sky. If you want to turn it into cycles per hour coming out of the
 interferometer's multiplier, multiply by ${dh_s \over dt} = {2\pi \over
-24}$; or cycles per minute, multiply by $2\pi \over 60 \times 24$;
-etc. At the meridian ($h_s=0$), the fringe frequency is $[f_f =
-\left({B_y \over \lambda} \cos{\delta} \right) \approx 0.029 \cos
-\delta]$ cycles per second and the period is ${1 \over f_f} = {35 \over
-\cos \delta}$ seconds. (This assumes $B_y=$10 m and $\lambda=2.5$ cm;
-{\it check these numbers} to make sure you understand this calculation!)
+  24}$; or cycles per minute, multiply by $2\pi \over 60 \times 24$;
+etc. Our interferometer is almost (but not quite) east-west
+with $B_{ew}\approx 20$ m, $B_{ns} \sim 0$, and $\lambda \approx 2.5$
+cm. At the meridian ($h_{s,0}=0$), the fringe frequency is $[f_f \approx
+  \left({B_{ew} \over \lambda} \cos{\delta} \right) \approx 0.015 \cos
+  \delta]$ cycles per second and the period is ${1 \over f_f} \approx
+{18 \over \cos \delta}$ seconds. ; {\it check these numbers} to make sure you understand this
+calculation!)
 
+Use the above to calculate the range of local fringe frequencies that
+you should see in your data. Does it work? Look at the Fourier transform
+of your data to check! And try Fourier filtering!
 
-	Now let's return to the least-squares solution of equation
-\ref{fringeresponse}. Make a guess at the proper value of $\left[{B_y
-\over \lambda }\cos \delta \right]$ and, also, {\it adopt} a value for
-the right ascension $\alpha$ (required so that you can compute $h$ from
-the local sidereal time LST).  With this, you know the arguments of the
-trig functions and this means that you can solve for $A$ and $B$ using
-the standard least-squares process; be sure and {\it save the sum of the
-squares of the residuals}.  Then change the guessed-at value of
-$\left[{B_y \over \lambda}\cos \delta \right]$ and do it again.  Do this
-a number of times and plot the sum-of-squares versus the guessed-at
-value of $\left[{B_y \over \lambda}\cos \delta \right]$.  The best value
-of $\delta$ is where the sum-of-squares is a minimum.  What is this?
-{\it It's [brute-force] least-squares!} You might try doing the same
-kind of iteration with the right ascension, but my guess is that it
-won't make much difference.  Then use $A$ and $B$ to calculate the cable
-length difference $\tau_c$. 
+\subsection{Least-Squares Fitting the Fringe to the baselines and/or the
+  Declination}
 
-	{\it Notice!!!} The parameter of interest is the declination
-$\delta$.  In contrast, {\it we suggest solving for the combination
-$\left[{B_y \over \lambda}\cos \delta \right]$}. Why is this? When you do
-the least-squares fitting you need to know the baseline length, the
-distance between the telescopes.  You have to measure this! And if you
-do it wrong, then... well, suppose your measurement of the baseline is
-too small---by a factor of 100 (because you measured the length in cm
-instead of m!).  Look at the function you fit: it has the baseline
-multiplied by $\cos(\delta)$.  $cos(\delta)$ can never be larger than
-one.  So if you use a baseline that is too small in your solution, the
-best value for $\cos(\delta)$ might be larger than unity---meaning that {\it
-no} declination will give a satisfactory solution! The most
-straightforward way around this is to fit not for the declination, but
-for $\left[{B_y \over \lambda}\cos \delta \right]$, and then after
-deriving this parameter divide by the baseline $B_y$ to find the best
-value of $\cos(\delta)$.  This allows $\cos(\delta)$ to be greater than 1 in
-your trial fits---which might be especially important for sources near
-the equator.
+Now let's return to the least-squares solution of equation
+\ref{fringeresponse} for the unknown quantities $Q_{ew} = \left[{B_{ew}
+    \over \lambda} \cos \delta \right]$ and $Q_{ns}= \left[{B_{ns} \over
+    \lambda} \sin L \cos \delta \right]$.
+This is a nonlinear least-squares problem because these quantities sit
+inside nonlinear functions. There are two ways to attack this: the
+conventional way and the `brute-force' way. We'll do the latter first.
 
-	If you do this least-squares reduction for a bunch of sources,
-you will get all of their declinations.  However, you will find
-different cable lengths for each source.  Clearly, this is a problem
-because nobody has changed the setup during your measurements (you
-hope).  The different cable lengths mean that the {\it adopted} right
-ascensions are not all mutually consistent.  You need to change the
-relative right ascensions in such a way that the fits all give the same
-cable delay.  This will require comparing results among groups and doing
-some iteration.  This is a challenge: never before in this lab have the
-relative right ascensions been reliably determined.  Have fun!
+\subsubsection{The Brute-Force Technique}
+We'll first assume that $B_{ns}=0$, which is not unreasonable because
+our interferometer baseline is close to east-west, and solve for
+$Q_{ew}$. Make a guess at the proper value of $Q_{ew}$ and, if you don't
+know the right ascension $\alpha$ accurately, adopt a reasonably
+accurate value for it (required so that you can compute $h_s$ from the
+local sidereal time LST).  With this, you know the arguments of the trig
+functions and this means that you can solve for $A$ and $B$ using the
+standard least-squares process; be sure and {\it save the sum of the
+  squares of the residuals}, which we will call $\cal S$.  Then change
+the guessed-at value of $Q_{ew}$ and do it again.  Do this a number of
+times and plot the sum-of-squares $\cal S$ versus the guessed-at value
+of $Q_{ew}$.  The best value of
+$Q_{ew}$ is where the sum-of-squares is a minimum.  What is this?  {\it
+It's brute-force least-squares!}
 
-\subsection {Least-squares fitting: Commentary} 
+Now do the same for $Q_{ns}$. The best value of $Q_{ew}$ depends on the
+value of $Q_{ns}$, so you'll need to develop a 2-d array for $\cal S$
+versus the assumed values of $Q_{ew}$ and $Q_{ns}$ so that you can find
+the true global minimum. 
 
-	Above, we discussed the technique least-squares fitting for the
-declination.  This is not a straightforward problem because ${dF(h_s)
-\over d\delta}$ is not equal to a constant---rather, it depends on time
-(i.e., hour angle $h$).  This means you have to do what's called a {\it
-nonlinear least-squares fit}.  The general technique for this---which is
-not what we recommended---is: you guess a value for the declination,
-expand the equation for $F(h)$ in a one-term Taylor series about this
-guess, and solve for the correction.  If you're lucky the process
-converges rapidly.  If you have time, you might try this!
+How about the uncertainties? You can get these from the curvature
+matrix $[\alpha]$, which is easily derived from the behavior of $\cal
+S$ around the minimum. The covariance matrix $\alpha^{-1}$ is the
+inverse of the curvature matrix. See \S 2 and \S 3 of
+the `Lite' version of the {\it Aficionado's} handout.
 
-	We suggested a different technique above, one I call the ``brute
-force technique''.  It simply does the least-squares fitting process by
-iteration and inspection: you minimize the sum-of-squares of the
-residuals yourself instead of by a mathematical procedure.  This
-minimization is exactly what the least-squares fit does! If there's only
-a {\it single} variable involved, then it's straightforward to use the
-brute-force technique.  But if there's more than one, then things get
-complicated rapidly.  This is why we rewrote the equations above so that
-there was only a single variable involved in the nonlinear fit. 
+\subsubsection{The Proper Nonlinear Least-Squares Technique}
+
+The usual technique for nonlinear least-square fitting is this: you
+guess values for unknowns $Q_{ew}$ and $Q_{ns}$, expand the equation for
+$F(h_s)$ in a one-term Taylor series about these guesses, and solve for
+the corrections.  The procedure is discussed in detail in \S 7 of
+the `Lite' version of the {\it Aficionado's} handout.
+
+Our particular problem is not well-suited to the `proper' technique
+because the initial guessed values need to be quite accurate. If they
+are not accurate enough, then the proper technique converges to a local,
+non-global minimum. 
+
+The advantage of using the proper technique is that it provides the
+uncertainties, and in particular the covariance matrix. If you have
+time, try both methods--the `brute-force' and `proper' methods, using
+the `brute-force' result as input to the `proper' method, and compare
+the results, in particular the uncertainties. 
 
 \section{MEASURING 1-D BRIGHTNESS DISTRIBUTIONS: THE FIRST STEP OF
 MAKING MAPS} \label{mun}
+
+{\bf Disclaimer} {\it This section assumes an east-west
+interferometer. Generalizing to the case of $B_{ns} \ne 0$ can be
+regarded either as an `exercise for the student' or as an unnecessary complication.}
 
 	When we think of a time-variable signal, we think of frequency
 as being cycles per second---and its inverse, the period, is in seconds,
@@ -712,11 +629,11 @@ $h$.
 \includegraphics[width=3.0in] {plots/interf_fig.pdf}
 \end{center}
                                                                                 
-\caption{The 2-d and 1-d MUN. At the top, we see the situation in the
-sky as it really is: the fringes cover the 2-d object.
-At the bottom, we integrate along vertical strips to get the 1-d
-brightness distribution and, also, the fringe amplitude (which goes from
---1 to +1). 
+\caption{\footnotesize The 2-d and 1-d MUN. At the top, we see the
+  situation in the sky as it really is: the fringes cover the 2-d
+  object.  At the bottom, we integrate along vertical strips to get the
+  1-d brightness distribution and, also, the fringe amplitude (which
+  goes from --1 to +1).
 \label{interf_fig} } \end{figure}
 
 As the Earth rotates, the source moves through the fringe pattern to
@@ -802,11 +719,12 @@ the sky, so it's a double integral instead of a single one.
 \includegraphics[width=4.0in] {plots/cosfringe.pdf}
 \end{center}
                                                                                 
-\caption{Examples of 1-d brightness distributions and their Fourier
-  transforms. Top panel: the brightness distributions. Bottom: the Fourier
-  transforms (Fringe Amplitude vs.\ ${Source\ Diameter \over Fringe
-    Period}$). In both, panels, the solid line is for a flat brightness
-  distribution and the dashed one for a cosine distribution.
+\caption{ \footnotesize Examples of 1-d brightness distributions and
+  their Fourier transforms. Top panel: the brightness
+  distributions. Bottom: the Fourier transforms (Fringe Amplitude
+  vs.\ ${Source\ Diameter \over Fringe Period}$). In both, panels, the
+  solid line is for a flat brightness distribution and the dashed one
+  for a cosine distribution.
 \label{cosfringe} } \end{figure}
 
 
@@ -931,8 +849,6 @@ small for VLBI!
 
 
 \end{document}
-
-% BELOW IS JUST OLD STUFF, I GUESS
 
 3C144 (Crab Nebula) & $05^h31^m30^s$ & $21^\circ 58'$
                     & $05^h34^m23^s$ & $22^\circ 00'$ & $\sim 496$ \cr

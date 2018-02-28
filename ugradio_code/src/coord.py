@@ -58,7 +58,7 @@ def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt,equinox='J2000'
     lat: float, latitude in degrees, default=nch
     lon: float, longitude in degrees, default=nch
     alt: float, altitude in m, default=nch
-    equinox: string, equinox of coordinates, default= 'J2000'
+    equinox : string, equinox of ra/dec coordinates.  default='J2000'
 
     Returns
     -------
@@ -71,33 +71,30 @@ def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt,equinox='J2000'
     l = astropy.coordinates.EarthLocation(lat=lat*u.deg,
                         lon=lon*u.deg,height=alt*u.m)
     f = astropy.coordinates.AltAz(obstime=t,location=l)
-    c = astropy.coordinates.SkyCoord(ra, dec, frame='fk5',unit='deg',equinox=equinox)
+    c = astropy.coordinates.SkyCoord(ra, dec, frame='icrs',unit='deg',equinox=equinox)
     altaz = c.transform_to(f)
     return altaz.alt.deg, altaz.az.deg
 
-def precess_to_current(ra,dec,equinox='J2000'):
+def precess(ra,dec,jd=None,equinox='J2000'):
     """
     Precess the given right ascension and declination to 
     the current equinox.
 
     Parameters
     ----------
-    ra: float, right ascension in degrees
-    dec: float, declination in degrees
-    equinox: string, equinox the coordinates were defined at, default='J2000'
+    ra : float, right ascension in degrees at specified equinox
+    dec: float, declination in degrees at specified equinox
+    equinox : string, equinox of ra/dec coordinates.  default='J2000'
 
     Returns
     -------
-    ra : float, right ascension precessed to current year
-    dec: float, declination precessed to current year
-
+    ra : float, right ascension in degrees
+    dec : float, declination in degrees
+        
     """
-    c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',
-        frame=astropy.coordinates.FK5,equinox='J2000')
-    # Get current year
-    now = astropy.time.Time(time.time(),format='unix')
-    fk5_now = astropy.coordinates.FK5(equinox='J%d'%now.datetime.year)
-    c_now = c.transform_to(fk5_now)
+    c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',frame='icrs',equinox='J2000')
+    if jd: t = astropy.time.Time(jd,format='jd')
+    else: t = astropy.time.Time(time.time(),format='unix')
+    gcrs_now = astropy.coordinates.GCRS(obstime=t)
+    c_now = c.transform_to(gcrs_now)
     return c_now.ra.deg, c_now.dec.deg
-    
-
