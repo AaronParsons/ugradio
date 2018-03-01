@@ -1,6 +1,7 @@
 try:
     import timing # ImportError if astropy not installed
     import doppler # ImportError if astropy,barycorrpy not installed
+    import coord # ImportError if astropy,barycorrpy not installed
 except(ImportError): pass
 
 try:
