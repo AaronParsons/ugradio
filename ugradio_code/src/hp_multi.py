@@ -50,11 +50,15 @@ class HP_Multimeter:
         t = time.time()
         resp = s.recv(bufsize)
         s.close()
+        try: 
+            resp = float(resp)
+        except(ValueError):
+            raise ValueError('Error reading multimeter: float("%d") failed.' % resp)
         if return_time:
-            return float(resp), t
+            return resp, t
         else:
-            return float(resp)
-    def start_recording(self, dt):
+            return resp
+    def start_recording(self, dt, tries=10):
         '''Initiate continuous reading from multimeter every dt seconds.
 
         Parameters
@@ -68,7 +72,14 @@ class HP_Multimeter:
         self._running = True
         def read_thread():
             while self._running:
-                v,t = self.read_voltage(return_time=True)
+                for i in xrange(tries):
+                    try:
+                        v,t = self.read_voltage(return_time=True)
+                        break
+                    except(ValueError): # this happens when read_voltage gets an invalid response
+                        if i == tries - 1: # we've exhausted our last try
+                            raise RuntimeError('HP Multimeter recording failed after %d tries.' % tries)
+                        time.sleep(.75*float(dt)/tries) # sleep as long we can before reading again
                 self._volts.append(v)
                 self._times.append(t)
                 time.sleep(dt - ((time.time() - self._start_time) % dt)) # sleep remainder of time 
