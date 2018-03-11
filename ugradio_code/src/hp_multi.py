@@ -31,6 +31,7 @@ class HP_Multimeter:
         self._running = False
         self._thread = None
         self._start_time = None
+        self._errors = 0
     def read_voltage(self, bufsize=1024, return_time=False):
         '''Take a one-time reading from the multimeter.
 
@@ -77,6 +78,7 @@ class HP_Multimeter:
                         v,t = self.read_voltage(return_time=True)
                         break
                     except(ValueError): # this happens when read_voltage gets an invalid response
+                        self._errors += 1
                         if i == tries - 1: # we've exhausted our last try
                             raise RuntimeError('HP Multimeter recording failed after %d tries.' % tries)
                         time.sleep(.75*float(dt)/tries) # sleep as long we can before reading again
@@ -132,6 +134,7 @@ class HP_Multimeter:
             d['still recording'] = self._thread.is_alive()
         except(AttributeError): pass
         d['number of records'] = len(self._times)
+        d['number of errors'] = self._errors
         try:
             d['start time'] = self._start_time
             d['last reading'] = self._volts[-1]
