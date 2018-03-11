@@ -53,7 +53,7 @@ class HP_Multimeter:
         try: 
             resp = float(resp)
         except(ValueError):
-            raise ValueError('Error reading multimeter: float("%d") failed.' % resp)
+            raise ValueError('Error reading multimeter: float("%s") failed.' % resp)
         if return_time:
             return resp, t
         else:
