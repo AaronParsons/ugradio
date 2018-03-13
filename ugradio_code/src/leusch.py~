@@ -167,7 +167,7 @@ class leuschTelescope:
 
         Returns
         -------
-        pointing: dict with {'ant':(alt,az)for  antenna'''
+        pointing: dict with {'ant_w':(alt,az), 'ant_e':(alt,az)} for the two antennas'''
         pnt = self.ant.get_pointing(verbose=verbose)
         return {'ant': pnt}
     def stow(self, wait=True, verbose=False):
