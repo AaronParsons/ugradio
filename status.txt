@@ -1,6 +1,8 @@
 
 jan2017: 
 
+*
+
 couldn't make the SRS synthesizers work on computer control. when they
 are both hooked up, it doen't work; when one of them is hooked up, it
 doeswn't work; when the other is hooked up, it works for some
