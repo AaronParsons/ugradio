@@ -1,17 +1,14 @@
-# New leuschner class definitions
-
 """Module for controlling the X-band antennas in the interferometer."""
 
 # XXX tracking mode?
 
 from __future__ import print_function
-import socket, serial, time, thread, math
-
+import socket, serial, time, thread
 
 MAX_SLEW_TIME = 60 # seconds
 
-ALT_MIN, ALT_MAX = 13., 85. # Pointing bounds, degrees
-AZ_MIN, AZ_MAX  = 5., 355. # Pointing bounds, degrees
+ALT_MIN, ALT_MAX = 5., 175. # Pointing bounds, degrees
+AZ_MIN, AZ_MAX  = 90., 300. # Pointing bounds, degrees
 
 ALT_STOW = 90. # Position for stowing antenna
 AZ_STOW = 180. # Position for stowing antenna
@@ -19,8 +16,8 @@ AZ_STOW = 180. # Position for stowing antenna
 ALT_MAINT = 20. # Position for antenna maintenance
 AZ_MAINT = 180. # Position for antenna maintenance
 
-class leuschTelescopeClient:
-    '''Interface for controlling a single antenna.  Use Interferometer to
+class TelescopeClient:
+    '''Interface for controlling a single antenna.  Use Interferometer to 
     control the pair with default settings.'''
     def __init__(self, host, port, delta_alt, delta_az):
         self._delta_alt = delta_alt
@@ -59,7 +56,7 @@ class leuschTelescopeClient:
         -------
         None'''
         self._check_pointing(alt, az) # AssertionError if out of bounds
-        # Request encoded alt/az with calibrated offset
+        # Request encoded alt/az with calibrated offset 
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
         assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
@@ -88,7 +85,7 @@ class leuschTelescopeClient:
 
         Returns
         -------
-        alt     : float degrees, altitude angle
+        alt     : float degrees, altitude angle 
         az      : float degrees, azimuthal angle'''
         az = float(self._command(CMD_GET_AZ, verbose=verbose))
         alt = float(self._command(CMD_GET_EL, verbose=verbose))
@@ -119,19 +116,24 @@ class leuschTelescopeClient:
         None'''
         self.point(ALT_MAINT, AZ_MAINT, wait=wait, verbose=verbose)
 
-HOST_ANT = '192.168.1.156' # RPI host for antenna
+HOST_ANT_W = '10.32.92.117' # RPI host for western interferometer antenna
+HOST_ANT_E = '10.32.92.118' # RPI host for eastern interferometer antenna
 PORT = 1420
 
 # Offsets to subtract from crd to get encoder value to write
-DELTA_ALT_ANT = 0  # (true - encoder) offset
-DELTA_AZ_ANT = 0  # (true - encoder) offset
+DELTA_ALT_ANT_W = -0.5  # (true - encoder) offset
+DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset
+DELTA_ALT_ANT_E =  0.   # (true - encoder) offset
+DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
 
-
-class leuschTelescope:
-    '''Interface for controlling the UGRadio Leuschner telescopes.'''
-    def __init__(self, host_ant=HOST_ANT, port=PORT,
-            delta_alt_ant=DELTA_ALT_ANT, delta_az_ant=DELTA_AZ_ANT):
-        self.ant = leuschTelescopeClient(host_ant, port, delta_alt=delta_alt_ant, delta_az=delta_az_ant)
+    
+class Interferometer:
+    '''Interface for controlling the two UGRadio interferometer telescopes together.'''
+    def __init__(self, host_ant_w=HOST_ANT_W, host_ant_e=HOST_ANT_E, port=PORT, 
+            delta_alt_ant_w=DELTA_ALT_ANT_W, delta_az_ant_w=DELTA_AZ_ANT_W,
+            delta_alt_ant_e=DELTA_ALT_ANT_E, delta_az_ant_e=DELTA_AZ_ANT_E):
+        self.ant_w = TelescopeClient(host_ant_w, port, delta_alt=delta_alt_ant_w, delta_az=delta_az_ant_w)
+        self.ant_e = TelescopeClient(host_ant_e, port, delta_alt=delta_alt_ant_e, delta_az=delta_az_ant_e)
     def point(self, alt, az, wait=True, verbose=False):
         '''Point both antennas to the specified alt/az.
 
@@ -145,7 +147,8 @@ class leuschTelescope:
         Returns
         -------
         None'''
-        self.ant.point(alt, az, wait=False, verbose=verbose)
+        self.ant_w.point(alt, az, wait=False, verbose=verbose)
+        self.ant_e.point(alt, az, wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
     def wait(self, verbose=False):
         '''Wait until both telescopes' slewing is complete
@@ -157,7 +160,8 @@ class leuschTelescope:
         Returns
         -------
         None'''
-        self.ant.wait(verbose=verbose)
+        self.ant_w.wait(verbose=verbose)
+        self.ant_e.wait(verbose=verbose)
     def get_pointing(self, verbose=False):
         '''Return the current telescope pointing
 
@@ -167,9 +171,10 @@ class leuschTelescope:
 
         Returns
         -------
-        pointing: dict with {'ant':(alt,az)for  antenna'''
-        pnt = self.ant.get_pointing(verbose=verbose)
-        return {'ant': pnt}
+        pointing: dict with {'ant_w':(alt,az), 'ant_e':(alt,az)} for the two antennas'''
+        pnt_w = self.ant_w.get_pointing(verbose=verbose)
+        pnt_e = self.ant_e.get_pointing(verbose=verbose)
+        return {'ant_w': pnt_w, 'ant_e': pnt_e}
     def stow(self, wait=True, verbose=False):
         '''Point both antennas to the stow position
 
@@ -181,7 +186,8 @@ class leuschTelescope:
         Returns
         -------
         None'''
-        self.ant.stow(wait=False, verbose=verbose)
+        self.ant_w.stow(wait=False, verbose=verbose)
+        self.ant_e.stow(wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
     def maintenance(self, wait=True, verbose=False):
         '''Point both antennas to the maintenance position
@@ -194,27 +200,27 @@ class leuschTelescope:
         Returns
         -------
         None'''
-        self.ant.maintenance(wait=False, verbose=verbose)
+        self.ant_w.maintenance(wait=False, verbose=verbose)
+        self.ant_e.maintenance(wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
 
-AZ_ENC_OFFSET = -3035.0 # -4901
-AZ_ENC_SCALE = 1800.342065
-EL_ENC_OFFSET = -0.02181661564#-0.3774466558186913
-DISH_EL_OFFSET = -3.556300401687622E-01
+AZ_ENC_OFFSET = 0
+AZ_ENC_SCALE = 11.5807213
+EL_ENC_OFFSET = 4096
+EL_ENC_SCALE = 11.566584697
 DRIVE_ENCODER_STATES = float(2**14)
 DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
 
 class TelescopeDirect:
     def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1, verbose=True,
             az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
-            el_enc_offset=EL_ENC_OFFSET, dish_el_offset=DISH_EL_OFFSET):
-        # el_enc_scale=EL_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
         self.verbose = verbose
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
-        self.dish_el_offset = dish_el_offset
+        self.el_enc_scale = el_enc_scale
         self.init_dish()
     def _read(self, flush=False, bufsize=1024):
         resp = []
@@ -270,7 +276,7 @@ class TelescopeDirect:
     def get_el(self):
         el_cnts = float(self._write(b'.b g r0x112\r').split()[1])
         el_cnts %= DRIVE_ENCODER_STATES
-        el = str(90-((float(el_cnts)*DRIVE_DEG_PER_CNT)+(self.el_enc_offset*180.0/math.pi)))
+        el = (el_cnts - self.el_enc_offset) * DRIVE_DEG_PER_CNT
         return el
     def move_az(self, dishAz):
         azResponse = self.wait_az()
@@ -278,7 +284,7 @@ class TelescopeDirect:
             return 'e 1'
         dishAz = (dishAz + 360.) % 360
         # Enforce absolute bounds.  Comment out to override.
-        if (dishAz < AZ_MIN) or (dishAz > AZ_MAX):
+        if (dishAz < AZ_MIN) or (dishAz > AZ_MAX): 
             return 'e 1'
         az_cnts = int(self.get_az() / DRIVE_DEG_PER_CNT)
         azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
@@ -286,28 +292,15 @@ class TelescopeDirect:
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
     def move_el(self, dishEl):
-        print ("checkpoint 1")
         elResponse = self.wait_el()
         if elResponse != '0':
             return 'e 1'
         # Enforce absolute bounds.  Comment out to override.
-        if (dishEl < ALT_MIN) or (dishEl > ALT_MAX):
+        if (dishEl < ALT_MIN) or (dishEl > ALT_MAX): 
             return 'e 1'
-        stubLength = 1.487911343574524
-        encScale = 6.173610955784170E-08
-        cLength = 9.587619900703430E-01
-        dishEl = dishEl * math.pi / 180.0
-        print ("checkpoint 2")
-        curEl = self.get_el()
-        curEl = ((float(curEl)-(self.dish_el_offset*(2.0**14)/(2.0*math.pi))+2.0**14) % 2.0**14)*(2.0*math.pi)/(2.0**14)
-        curElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos(curEl)))-stubLength)/encScale
-        print ("checkpoint 3")
-        nextElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos((0.5*math.pi-dishEl)-self.el_enc_offset-self.dish_el_offset)))-stubLength)/encScale
-        print ("checkpoint 4")
-        elMoveCmd =  '.b s r0xca ' + str(int(nextElVal-curElVal)) + '\r'
-        print ("checkpoint 5")
+        el_cnts = int(self.get_el() / DRIVE_DEG_PER_CNT)
+        elMoveCmd =  '.b s r0xca ' + str(int((dishEl / DRIVE_DEG_PER_CNT - el_cnts) * self.el_enc_scale)) + '\r'
         self._write(elMoveCmd.encode('ascii'))
-        print ("checkpoint 6")
         dishResponse = self._write(b'.b t 1\r')
         return dishResponse
 
@@ -363,4 +356,3 @@ class TelescopeServer(TelescopeDirect):
             resp = ''
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
-

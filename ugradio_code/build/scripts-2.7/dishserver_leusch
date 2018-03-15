@@ -3,11 +3,12 @@
 whose serial port is connected to the drive encoders for the
 UGRadio Interferometer.'''
 
-from __future__ import print_function
+print "<running python luesch dish server>"
+
+# from __future__ import print_function
 from ugradio.leusch import TelescopeServer
 import time
 import traceback
-
 while True:
     try:
         print('Starting server...')

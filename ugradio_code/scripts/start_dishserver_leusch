@@ -1,4 +1,5 @@
 #! /bin/bash
+echo "<running start dish server bash script>"
 
 pkill dishserver_leusch
 sleep 1
