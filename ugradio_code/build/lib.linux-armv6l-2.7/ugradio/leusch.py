@@ -8,12 +8,12 @@ from __future__ import print_function
 import socket, serial, time, thread, math
 
 
-MAX_SLEW_TIME = 60 # seconds
+MAX_SLEW_TIME = 140 # seconds
 
-ALT_MIN, ALT_MAX = 13., 85. # Pointing bounds, degrees
-AZ_MIN, AZ_MAX  = 5., 355. # Pointing bounds, degrees
+ALT_MIN, ALT_MAX = 15., 85. # Pointing bounds, degrees
+AZ_MIN, AZ_MAX  = 5., 350. # Pointing bounds, degrees
 
-ALT_STOW = 90. # Position for stowing antenna
+ALT_STOW = 85. # Position for stowing antenna
 AZ_STOW = 180. # Position for stowing antenna
 
 ALT_MAINT = 20. # Position for antenna maintenance
@@ -28,8 +28,8 @@ class leuschTelescopeClient:
         self.hostport = (host,port)
     def _check_pointing(self, alt, az):
         '''Ensure pointing is within bounds.  Raises AssertionError if not.'''
-        assert(ALT_MIN < alt < ALT_MAX) # range is nominally 5 to 175 degrees
-        assert(AZ_MIN < az < AZ_MAX)    # range is nominally 90 to 300 degrees
+        assert(ALT_MIN < alt < ALT_MAX) # range is nominally 15 to 85 degrees
+        assert(AZ_MIN < az < AZ_MAX)    # range is nominally 5 to 350 degrees
     def _command(self, cmd, bufsize=1024, timeout=10, verbose=False):
         '''Communicate with host server and return response as string.'''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -123,8 +123,8 @@ HOST_ANT = '192.168.1.156' # RPI host for antenna
 PORT = 1420
 
 # Offsets to subtract from crd to get encoder value to write
-DELTA_ALT_ANT = 0  # (true - encoder) offset
-DELTA_AZ_ANT = 0  # (true - encoder) offset
+DELTA_ALT_ANT = 0.165  # (true - encoder) offset
+DELTA_AZ_ANT = -0.34  # (true - encoder) offset
 
 
 class leuschTelescope:
@@ -235,14 +235,14 @@ class TelescopeDirect:
     def init_dish(self):
         self._read(flush=True)
         self._write(b'.a s r0xc8 257\r')
-        self._write(b'.a s r0xcb 15000\r')
-        self._write(b'.a s r0xcc 25\r')
-        self._write(b'.a s r0xcd 25\r')
+        self._write(b'.a s r0xcb 1500000\r')
+        self._write(b'.a s r0xcc 2500\r')
+        self._write(b'.a s r0xcd 2500\r')
         self._write(b'.a s r0x24 21\r')
         self._write(b'.b s r0xc8 257\r')
-        self._write(b'.b s r0xcb 15000\r')
-        self._write(b'.b s r0xcc 25\r')
-        self._write(b'.b s r0xcd 25\r')
+        self._write(b'.b s r0xcb 1500000\r')
+        self._write(b'.b s r0xcc 2500\r')
+        self._write(b'.b s r0xcd 2500\r')
         self._write(b'.b s r0x24 21\r')
     def reset_dish(self, sleep=10):
         self._write(b'r\r')
@@ -252,6 +252,8 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
+            print ("wait_az status=", status)
+#            if i == 5: status = '0'
             if status == '0': break
             time.sleep(1)
         return status
@@ -259,6 +261,7 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
+            print("wait_el status=", status)
             if status == '0': break
             time.sleep(1)
         return status
@@ -296,19 +299,30 @@ class TelescopeDirect:
         stubLength = 1.487911343574524
         encScale = 6.173610955784170E-08
         cLength = 9.587619900703430E-01
-        dishEl = dishEl * math.pi / 180.0
-        print ("checkpoint 2")
-        curEl = self.get_el()
+        local_dishEl = dishEl * math.pi / 180.0
+        
+        curEl= float(self._write(b'.b g r0x112\r').split()[1])
+        print (" ")
+        print ("----")
+        print ("solution# 1: curEl)in leusch.py line 307=", float (curEl) )
         curEl = ((float(curEl)-(self.dish_el_offset*(2.0**14)/(2.0*math.pi))+2.0**14) % 2.0**14)*(2.0*math.pi)/(2.0**14)
+        
+        print("solution# 2: curEl in leusch.py in line 127", curEl)
+        
         curElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos(curEl)))-stubLength)/encScale
-        print ("checkpoint 3")
-        nextElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos((0.5*math.pi-dishEl)-self.el_enc_offset-self.dish_el_offset)))-stubLength)/encScale
-        print ("checkpoint 4")
+        print ("solution# 3: curELVal in leusch.py line 313=", curElVal)
+        
+        nextElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos((0.5*math.pi-local_dishEl)-self.el_enc_offset-self.dish_el_offset)))-stubLength)/encScale
+        print (" solution# 4: nextELVal in leusch.py line 316=", nextElVal)
+        
         elMoveCmd =  '.b s r0xca ' + str(int(nextElVal-curElVal)) + '\r'
-        print ("checkpoint 5")
+        print("elMoveCmd calculated value leusch.py line 319=", elMoveCmd)
+        print (" ")
+#        elMoveCmd = '.b s r0xca -4462196\r'
         self._write(elMoveCmd.encode('ascii'))
-        print ("checkpoint 6")
+        str_calculated_move_steps = str(int(nextElVal-curElVal))
         dishResponse = self._write(b'.b t 1\r')
+        print ("the dish response in funct_move_el=", dishResponse)
         return dishResponse
 
 CMD_MOVE_AZ = 'moveAz'
@@ -343,6 +357,7 @@ class TelescopeServer(TelescopeDirect):
         if self.verbose: print('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
         cmd = cmd.split('\n')
+        print ("the cmd is: ", cmd)
         if cmd[0] == 'simple':
             resp = self._write(cmd[1].encode('ascii'))
         elif cmd[0] == CMD_MOVE_AZ:
