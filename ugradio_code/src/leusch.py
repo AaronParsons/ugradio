@@ -1,14 +1,12 @@
 # New leuschner class definitions
 
-"""Module for controlling the X-band antennas in the interferometer."""
-
-# XXX tracking mode?
+"""Module for controlling the Leuschner radio telescope."""
 
 from __future__ import print_function
 import socket, serial, time, thread, math
 
 
-MAX_SLEW_TIME = 140 # seconds
+MAX_SLEW_TIME = 220 # seconds
 
 ALT_MIN, ALT_MAX = 15., 85. # Pointing bounds, degrees
 AZ_MIN, AZ_MAX  = 5., 350. # Pointing bounds, degrees
@@ -232,7 +230,7 @@ class TelescopeDirect:
         self._serial.write(cmd) #Receiving from client
         time.sleep(0.1) # Let the configuration command make the change it needs
         return self._read(bufsize=bufsize)
-    def init_dish(self):
+    def init_dish(self): # The following definitions are specific to the Copley BE2 model
         self._read(flush=True)
         self._write(b'.a s r0xc8 257\r')
         self._write(b'.a s r0xcb 1500000\r')
@@ -248,7 +246,7 @@ class TelescopeDirect:
         self._write(b'r\r')
         time.sleep(sleep)
         self.init_dish()
-    def wait_az(self, max_wait=120):
+    def wait_az(self, max_wait=220):
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
@@ -257,7 +255,7 @@ class TelescopeDirect:
             if status == '0': break
             time.sleep(1)
         return status
-    def wait_el(self, max_wait=120):
+    def wait_el(self, max_wait=220):
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
@@ -289,7 +287,6 @@ class TelescopeDirect:
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
     def move_el(self, dishEl):
-        print ("checkpoint 1")
         elResponse = self.wait_el()
         if elResponse != '0':
             return 'e 1'
@@ -302,27 +299,19 @@ class TelescopeDirect:
         local_dishEl = dishEl * math.pi / 180.0
         
         curEl= float(self._write(b'.b g r0x112\r').split()[1])
-        print (" ")
-        print ("----")
-        print ("solution# 1: curEl)in leusch.py line 307=", float (curEl) )
-        curEl = ((float(curEl)-(self.dish_el_offset*(2.0**14)/(2.0*math.pi))+2.0**14) % 2.0**14)*(2.0*math.pi)/(2.0**14)
-        
-        print("solution# 2: curEl in leusch.py in line 127", curEl)
-        
+#        print ("solution# 1: curEl)in leusch.py line 307=", float (curEl) )
+        curEl = ((float(curEl)-(self.dish_el_offset*(2.0**14)/(2.0*math.pi))+2.0**14) % 2.0**14)*(2.0*math.pi)/(2.0**14)        
+#        print("solution# 2: curEl in leusch.py in line 127", curEl)        
         curElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos(curEl)))-stubLength)/encScale
-        print ("solution# 3: curELVal in leusch.py line 313=", curElVal)
-        
+#        print ("solution# 3: curELVal in leusch.py line 313=", curElVal)        
         nextElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos((0.5*math.pi-local_dishEl)-self.el_enc_offset-self.dish_el_offset)))-stubLength)/encScale
-        print (" solution# 4: nextELVal in leusch.py line 316=", nextElVal)
-        
+#        print (" solution# 4: nextELVal in leusch.py line 316=", nextElVal)        
         elMoveCmd =  '.b s r0xca ' + str(int(nextElVal-curElVal)) + '\r'
-        print("elMoveCmd calculated value leusch.py line 319=", elMoveCmd)
-        print (" ")
-#        elMoveCmd = '.b s r0xca -4462196\r'
+#        print("elMoveCmd calculated value leusch.py line 319=", elMoveCmd)
         self._write(elMoveCmd.encode('ascii'))
         str_calculated_move_steps = str(int(nextElVal-curElVal))
         dishResponse = self._write(b'.b t 1\r')
-        print ("the dish response in funct_move_el=", dishResponse)
+#        print ("the dish response in funct_move_el=", dishResponse)
         return dishResponse
 
 CMD_MOVE_AZ = 'moveAz'
