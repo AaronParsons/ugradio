@@ -368,3 +368,87 @@ class TelescopeServer(TelescopeDirect):
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
 
+
+
+# define global variable called noise_cmd_temp        
+noise_cmd_temp     
+class LeuschNoiseServer: 
+    def run(self, host='', port=PORT, verbose=True, timeout=10):
+        self.verbose = verbose
+        if self.verbose:
+            print('Initializing noise_server..')
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind((host,port))
+            s.listen(10)
+            while True:
+                conn, addr = s.accept()
+                conn.settimeout(timeout)
+                if self.verbose: print('Request from', (conn,addr))
+                thread.start_new_thread(self._handle_request, (conn,))
+        finally:
+            s.close()
+    def _handle_request(self, conn):
+        global noise_cmd_temp
+        '''Private thread for handling an individual connection.  Will execute
+        at most one write and one read before terminating connection.'''
+        noise_cmd = conn.recv(1024)
+        if not noise_cmd: return
+        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        noise_cmd = noise_cmd.decode('ascii')
+        
+        # only execute digital I/O write code if a change of state
+        # command is received over the socket.  I will avoid multiple of
+        # overwrite commands to the Raspberry
+        if noise_cmd != noise_cmd_temp: noise_cmd =  noise_cmd_temp                       
+            if noise_cmd == 'off': int_noise_cmd = 0
+            if noise_cmd == 'on': int_noise_cmd = 1
+            
+            # switch pin 29 of Raspberry Pi to TTL level low           
+            if int_noise_cmd == 0:
+                print 'write digital I/O low'
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setwarnings(False)
+                GPIO.setup(05, GPIO.OUT) # pin 29
+                GPIO.output(05, False)   # pin 29                
+  
+            # switch pin 29 of Raspberry Pi to TTL level high    
+            if int_noise_cmd == 1:
+                print 'write digital I/O low'         
+                GPIO.setmode(GPIO.BCM)
+                GPIO.setwarnings(False)
+                GPIO.setup(05, GPIO.OUT) # pin 29
+                GPIO.output(05, True)   # pin 29
+            
+            
+        
+
+HOST_NOISE_SERVER = '192.168.1.90' 
+
+class LeuschNoise:
+
+    def __init__(self):
+        
+            # noise_toggle_value is 0 for noise generator off and 1 for generator on
+        print 'the value of noise_sw_val=', noise_sw_val
+        noise_sw_val  = 99
+    def switch(self, noise_sw_val):
+        if noise_sw_val == "off": int_noise_sw_val  = 0
+        if noise_sw_val == "on": int_noise_sw_val  = 1
+        print 'noise_sw_val  =', noise_sw_val 
+        if noise_sw_val ==99:
+            print 'The noise argument must be on OR off  '
+            sys.exit()
+        if noise_sw_val  == 0: print "<switching noise off>"
+        if noise_sw_val  == 1: print "<switching noise on>"
+        string_out = str(int_noise_toggle)
+        HOST = HOST_NOISE_SERVER   # The remote host 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((HOST, PORT))
+        s.sendall(string_out)
+
+
+        
+        
+        
+
