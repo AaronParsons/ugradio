@@ -431,14 +431,14 @@ class LeuschNoise:
     def __init__(self):
         
             # noise_toggle_value is 0 for noise generator off and 1 for generator on
-        print 'the value of noise_sw_val=', noise_sw_val
+        print ('the value of noise_sw_val='), noise_sw_val
         noise_sw_val  = 99
     def switch(self, noise_sw_val):
         if noise_sw_val == "off": int_noise_sw_val  = 0
         if noise_sw_val == "on": int_noise_sw_val  = 1
         print ('noise_sw_val  ='), noise_sw_val 
         if noise_sw_val ==99:
-            print 'The noise argument must be on OR off  '
+            print ('The noise argument must be on OR off  ')
             sys.exit()
         if noise_sw_val  == 0: print ("<switching noise off>")
         if noise_sw_val  == 1: print ("<switching noise on>")
