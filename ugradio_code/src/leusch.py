@@ -407,7 +407,7 @@ class LeuschNoiseServer:
             
             # switch pin 29 of Raspberry Pi to TTL level low           
             if int_noise_cmd == 0:
-                print 'write digital I/O low'
+                print ('write digital I/O low')
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
                 GPIO.setup(05, GPIO.OUT) # pin 29
