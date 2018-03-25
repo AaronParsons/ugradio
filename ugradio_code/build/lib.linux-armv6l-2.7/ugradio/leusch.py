@@ -432,8 +432,8 @@ class LeuschNoise:
         int_noise_sw_val  = 3
         if str_noise_sw_val == "off": int_noise_sw_val  = 0
         if str_noise_sw_val == "on": int_noise_sw_val  = 1
-        print ('noise_sw_val  ='), noise_sw_val 
-        if noise_sw_val == 3:
+        print ('str_noise_sw_val  ='), str_noise_sw_val
+        if str_noise_sw_val == 3:
             print ('The noise argument must be on OR off  ')
             sys.exit()
         if int_noise_sw_val  == 0: print ("<switching noise off>")
