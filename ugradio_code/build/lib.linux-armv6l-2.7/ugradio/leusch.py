@@ -368,8 +368,13 @@ class TelescopeServer(TelescopeDirect):
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
 
+
            
-class LeuschNoiseServer: 
+class LeuschNoiseServer:
+
+    def __init__(self):
+        self.noise_cmd = ' '
+    
     def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
         if self.verbose:
@@ -396,10 +401,10 @@ class LeuschNoiseServer:
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
         # overwrite commands to the Raspberry
-        if noise_cmd != noise_cmd_temp:
-            noise_cmd =  noise_cmd_temp                       
-            if noise_cmd == 'off': int_noise_cmd = 0
-            if noise_cmd == 'on': int_noise_cmd = 1
+        if self.noise_cmd != noise_cmd_temp:
+            self.noise_cmd =  noise_cmd_temp                       
+            if self.noise_cmd == 'off': int_noise_cmd = 0
+            if self.noise_cmd == 'on': int_noise_cmd = 1
             
             # switch pin 29 of Raspberry Pi to TTL level low           
             if int_noise_cmd == 0:
