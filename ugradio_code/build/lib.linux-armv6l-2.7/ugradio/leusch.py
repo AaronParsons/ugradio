@@ -400,7 +400,8 @@ class LeuschNoiseServer:
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
         # overwrite commands to the Raspberry
-        if noise_cmd != noise_cmd_temp: noise_cmd =  noise_cmd_temp                       
+        if noise_cmd != noise_cmd_temp:
+            noise_cmd =  noise_cmd_temp                       
             if noise_cmd == 'off': int_noise_cmd = 0
             if noise_cmd == 'on': int_noise_cmd = 1
             
