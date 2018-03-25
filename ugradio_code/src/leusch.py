@@ -391,7 +391,7 @@ class LeuschNoiseServer:
         noise_cmd_temp = conn.recv(1024)
         if not noise_cmd_temp: return
         if self.verbose: print('Enacting:', [noise_cmd_temp], 'from', conn)
-        noise_cmd_temp = noise_cmd.decode('ascii')
+        noise_cmd_temp = noise_cmd_temp.decode('ascii')
         
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
