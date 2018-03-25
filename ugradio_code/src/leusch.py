@@ -428,17 +428,17 @@ class LeuschNoise:
         pass
 # noise_toggle_value is 0 for noise generator off and 1 for generator on               
     
-    def switch(self, noise_sw_val):
+    def switch(self, str_noise_sw_val):
         int_noise_sw_val  = 3
-        if noise_sw_val == "off": int_noise_sw_val  = 0
-        if noise_sw_val == "on": int_noise_sw_val  = 1
+        if self.str_noise_sw_val == "off": int_noise_sw_val  = 0
+        if self.str_noise_sw_val == "on": int_noise_sw_val  = 1
         print ('noise_sw_val  ='), noise_sw_val 
         if noise_sw_val == 3:
             print ('The noise argument must be on OR off  ')
             sys.exit()
-        if noise_sw_val  == 0: print ("<switching noise off>")
-        if noise_sw_val  == 1: print ("<switching noise on>")
-        string_out = str(int_noise_toggle)
+        if int_noise_sw_val  == 0: print ("<switching noise off>")
+        if int_noise_sw_val  == 1: print ("<switching noise on>")
+        string_out = self.str_noise_sw_val
         HOST = HOST_NOISE_SERVER   # The remote host 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((HOST, PORT))
