@@ -368,10 +368,7 @@ class TelescopeServer(TelescopeDirect):
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
 
-
-
-# define global variable called noise_cmd_temp        
-noise_cmd_temp     
+           
 class LeuschNoiseServer: 
     def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
@@ -389,13 +386,12 @@ class LeuschNoiseServer:
         finally:
             s.close()
     def _handle_request(self, conn):
-        global noise_cmd_temp
         '''Private thread for handling an individual connection.  Will execute
         at most one write and one read before terminating connection.'''
-        noise_cmd = conn.recv(1024)
-        if not noise_cmd: return
+        noise_cmd_temp = conn.recv(1024)
+        if not noise_cmd_temp: return
         if self.verbose: print('Enacting:', [cmd], 'from', conn)
-        noise_cmd = noise_cmd.decode('ascii')
+        noise_cmd_temp = noise_cmd.decode('ascii')
         
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
