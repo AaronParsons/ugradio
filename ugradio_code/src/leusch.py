@@ -415,7 +415,7 @@ class LeuschNoiseServer:
   
             # switch pin 29 of Raspberry Pi to TTL level high    
             if int_noise_cmd == 1:
-                print 'write digital I/O low'         
+                print ('write digital I/O low')         
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
                 GPIO.setup(05, GPIO.OUT) # pin 29
@@ -436,12 +436,12 @@ class LeuschNoise:
     def switch(self, noise_sw_val):
         if noise_sw_val == "off": int_noise_sw_val  = 0
         if noise_sw_val == "on": int_noise_sw_val  = 1
-        print 'noise_sw_val  =', noise_sw_val 
+        print ('noise_sw_val  ='), noise_sw_val 
         if noise_sw_val ==99:
             print 'The noise argument must be on OR off  '
             sys.exit()
-        if noise_sw_val  == 0: print "<switching noise off>"
-        if noise_sw_val  == 1: print "<switching noise on>"
+        if noise_sw_val  == 0: print ("<switching noise off>")
+        if noise_sw_val  == 1: print ("<switching noise on>")
         string_out = str(int_noise_toggle)
         HOST = HOST_NOISE_SERVER   # The remote host 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
