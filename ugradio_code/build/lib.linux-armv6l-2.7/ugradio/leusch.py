@@ -390,7 +390,7 @@ class LeuschNoiseServer:
         at most one write and one read before terminating connection.'''
         noise_cmd_temp = conn.recv(1024)
         if not noise_cmd_temp: return
-        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        if self.verbose: print('Enacting:', [noise_cmd_temp], 'from', conn)
         noise_cmd_temp = noise_cmd.decode('ascii')
         
         # only execute digital I/O write code if a change of state
