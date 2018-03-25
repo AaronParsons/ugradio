@@ -425,8 +425,9 @@ HOST_NOISE_SERVER = '192.168.1.90'
 class LeuschNoise:
 
     def __init__(self):
-        
-            # noise_toggle_value is 0 for noise generator off and 1 for generator on       
+        pass
+# noise_toggle_value is 0 for noise generator off and 1 for generator on               
+    
     def switch(self, noise_sw_val):
         int_noise_sw_val  = 3
         if noise_sw_val == "off": int_noise_sw_val  = 0
