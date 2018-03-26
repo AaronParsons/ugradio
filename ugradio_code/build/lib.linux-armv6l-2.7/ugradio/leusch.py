@@ -4,8 +4,7 @@
 
 from __future__ import print_function
 import socket, serial, time, thread, math
-import sys
-import RPi.GPIO as GPIO
+
 
 
 
@@ -409,8 +408,15 @@ class LeuschNoiseServer:
             if self.noise_cmd == 'off': int_noise_cmd = 0
             if self.noise_cmd == 'on': int_noise_cmd = 1
             
+            import sys
+            import RPi.GPIO as GPIO
+            
             # switch pin 29 of Raspberry Pi to TTL level low           
             if int_noise_cmd == 0:
+                print ('simulated write low')
+                print(sys.version)
+                sys.exit()
+                
                 print ('write digital I/O low')
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
@@ -419,7 +425,11 @@ class LeuschNoiseServer:
   
             # switch pin 29 of Raspberry Pi to TTL level high    
             if int_noise_cmd == 1:
-                print ('write digital I/O low')         
+                print ('simulated write high')
+                print(sys.version)
+                sys.exit()
+                
+                print ('write digital I/O high')         
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
                 GPIO.setup(05, GPIO.OUT) # pin 29
