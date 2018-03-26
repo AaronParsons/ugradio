@@ -4,6 +4,9 @@
 
 from __future__ import print_function
 import socket, serial, time, thread, math
+import sys
+import RPi.GPIO as GPIO
+
 
 
 MAX_SLEW_TIME = 220 # seconds
