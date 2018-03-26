@@ -413,10 +413,7 @@ class LeuschNoiseServer:
             
             # switch pin 29 of Raspberry Pi to TTL level low           
             if int_noise_cmd == 0:
-                print ('simulated write low')
-                print(sys.version)
-                sys.exit()
-                
+                import RPi.GPIO as GPIO               
                 print ('write digital I/O low')
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
@@ -425,10 +422,7 @@ class LeuschNoiseServer:
   
             # switch pin 29 of Raspberry Pi to TTL level high    
             if int_noise_cmd == 1:
-                print ('simulated write high')
-                print(sys.version)
-                sys.exit()
-                
+                import RPi.GPIO as GPIO
                 print ('write digital I/O high')         
                 GPIO.setmode(GPIO.BCM)
                 GPIO.setwarnings(False)
