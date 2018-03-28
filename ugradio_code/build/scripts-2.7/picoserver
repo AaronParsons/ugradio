@@ -1,7 +1,0 @@
-#!/usr/bin/python
-
-# This script runs on pulsar, which has a USB serial connection
-# to the picosampler.
-
-import ugradio.pico
-ugradio.pico.picoserver()

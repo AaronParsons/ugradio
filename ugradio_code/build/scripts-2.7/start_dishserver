@@ -1,7 +1,0 @@
-#! /bin/bash
-
-pkill dishserver 
-sleep 1
-dishserver < /dev/null >& dishserver.log &
-
-exit 0
