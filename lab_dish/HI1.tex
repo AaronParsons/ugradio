@@ -1,13 +1,39 @@
-\documentclass[preprint]{aastex}
+\documentclass[psfig,preprint]{aastex}
 \usepackage{graphicx}
+\usepackage[verbose]{wrapfig}
 \begin{document}
 \tolerance=10000
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
-\title{THE HI LINE, THE GALAXY, and SUPERNOVA SHOCKS}
+\title{MAPPING THE HI LINE: THE GALAXY AND SUPERSHELLS}
 
 \tableofcontents
+
+\section{GOALS} 
+
+The goals of this lab consist of some collection of the following,
+depending on the project chosen: \begin{itemize}
+
+  \item Perform a large-scale observing survey project balancing
+    considerations of telescope time, integration time, sky coverage,
+    data reduction, report writing, and personal time commitment versus
+    research goals and quality of results and their presentation.
+
+\item Use the collected data to infer astrophysical phenomenae or
+  quantities such as the properties of supernova-driven interstellar
+  supershells and the Galaxy.
+
+\item Present data and/or using greyscale and/or color images.
+
+\item Learn about using colors in computer graphics including plots and
+  images. 
+
+\item Learn about problems in using color for presentations,
+  specifically contrast issues and colorblindness.
+
+\end{itemize}
+
 
 \section{INTRODUCTION}
 
@@ -19,23 +45,29 @@ scales, magnetic fields, pressure differences, and thermal instability
 shape the gas into thin filaments and sheets. On still smaller scales,
 the densities get large from self-gravitation; the gas turns molecular
 and stars form. 
+The dense regions where Star formation occurs occupy a
+small fraction of the interstellar volume. In contrast, the atomic gas
+(HI) resides in less-dense regions that occupy large fractions of
+interstellar space and you see Galactic HI wherever you point the
+telescope. 
 
-For this lab, we outline a several projects in HI that are suitable for
-our 4.5-m diameter Leuschner dish. They fall into two categories. One
-explores large-scale Galactic structure and dynamics by obtaining HI
-spectra along great circles, presenting the data as position-velocity
-images, and interpreting those maps as discussed below. The other maps
-specific objects by sampling a grid of spectra over a large area,
-presenting the data as grey-scale images of velocity-integrated line
-intensity (i.e., antenna temperature $T_A$) or as images in which image
-brightness indicates velocity-integrated $T_A$ and color indicates
-velocity, and interpreting the data.
+For this lab, we outline several projects to map interesting structures
+in HI using our 4.5-m diameter Leuschner dish. The HI projects
+fall into two categories. One explores large-scale Galactic structure
+and dynamics by obtaining HI spectra along great circles, presenting the
+data as position-velocity images, and interpreting those maps as
+discussed below. The other category maps specific interstellar
+structures (e.g., expanding shells produced by multi-supernovae) by
+sampling a grid of spectra over a large area, presenting the data as
+grey-scale images of velocity-integrated line intensity (i.e., antenna
+temperature $T_A$) or as images in which image brightness indicates
+velocity-integrated $T_A$ and color indicates velocity.
 
 We'd like each group to pick a single project and carry it through to
 completion by the time the lab reports are due, which is the last day of
-instruction. All projects involve making maps and images. One of
-the features of this lab is to learn about image processing and using
-colors in images.
+class (May 2). All of the HI projects involve making maps and
+images. One of the features of this lab is to learn about image
+processing and using colors in images.
 
 For the great-circle projects (\S \ref{galacticplane} and \S
 \ref{galacticpoles}), we gain large angular scale information
@@ -47,40 +79,183 @@ some of the circle lies too far south, so we do as much as we can.
 
 \section{SCHEDULE}
 
-The end of the semester is approaching like a freight train. Imagine
-yourself tied onto the tracks by a madman: you've gotta finish before it
-hits. Here's a schedule. If you don't keep up with this, you're in
-trouble! \begin{enumerate}
+The end of the semester is approaching like a freight train. Here's our
+schedule.  \begin{enumerate}
 
-\item Week 1: Get the standard spectrum with the big horn
-  on Campbell's roof.
+\item Week 1: Pick a group project. Figure out the RA and
+  Dec boundaries of your object, when the object is up, and how you
+  sample the area with telescope pointings. Coordinate with other groups
+  to figure out how you can share telescope time.
+Devise a scheme for scheduling observations of all the points in your
+map.  Begin the process of obtaining and reducing your map data. 
 
-\item Week 2: Pick a group project. Get the standard
-  spectrum with the Leuschner dish. Figure out how you will get the data
-  for your project. Get some data. Reduce the data.
+Obtain some frequency-switched test spectra, in
+particular at our canonical comparison position at Galactic coordinates
+$(\ell, b) = (120^\circ, 0^\circ)$.  We will compare the spectra of all
+groups at the class on 11 April, and if your group doesn't have a
+spectrum to show this will be considered {\it very} bad form.
+
+\item Week 2: Get as much data as you can. Reduce the data.  Decide what
+  projection you will use to present your maps; create the map plane and
+  populate it to the extent possible with the data you've obtained.  You
+  won't have all of your data, but begin the map-making process anyway
+  (\S \ref{datadisplay}); this process begins with making a data cube.
 
 \item Week 3: Get the rest of your data. Figure out
   how you want to present the data as images. Make some first-try
   images. 
 
 \item Week 4: Finalize data. Make final images. Write
-report. Report is due the last day of claas, 03may.
+report. Report is due the last day of class, 02 May.
 \end{enumerate}
 
+\section {CONTROLLING THE LEUSCHNER TELESCOPE}
 
+\subsection {Connecting to the heiles Computer at Leuschner}
+Use {\tt ssh} to connect to Leuschner, like this:
+\begin{verbatim}
+   ssh -XY radiolab@leuschner.berkeley.edu -p 31
+\end{verbatim}
+\noindent Use the password we give you in class.
+
+All external users use the {\tt radiolab} account. You don't
+want a subdirectory that contains files of other users, so immediately
+after logging in create a subdirectory for yourself and do all of your
+work there. For example, if your group is named DREAMTEAM: 
+\begin{verbatim}
+   radiolab@heiles:~> mkdir dreamteam
+   radiolab@heiles:~> cd dreamteam
+   radiolab@heiles:~/dreamteam> 
+\end{verbatim}
+The prompt tells you what subdirectory you're in; if in doubt, type {\tt
+  pwd} . All of the editors\footnote{When using {\tt emacs}, using the
+  {\tt -nw} option will eliminate latency and delays, and your
+  associated frustrations.} and IDL are available to you, just as on the
+{\tt ugastro} network.
+
+\subsection {Using VNC at the heiles Computer at Leuschner}
+For running observing files that run automatically for long periods of
+time, we strongly recommend using VNC for the reasons explained in
+class. In particular, if everyone uses the same VNC Leuschner window, we
+will avoid having more than one group observing at a time. We have set
+up a particular VNC server on the heiles computer at Leuschner, which is
+number 5901. You access it by, first, establishing the connection:
+\begin{verbatim}
+    ssh -L 59XX:127.0.0.1:5901 -p 31 -N -f radiolab@leuschner.berkeley.edu
+\end{verbatim}
+\noindent It will require a password; use the password for the {\tt
+  radiolab} account given in class. Here {\tt XX} is a number of your
+own choosing; it refers to a port on your local machine. If it responds
+by saying {\tt bind: Address already in use}, then choose a different
+number and try again. Once you find a number that works, use it in
+subsequent connections. {\it This ssh command needs to be done only
+  once}\footnote{Unless the remote machine had to be rooted for some
+  reason; this will probably not happen during the duration.}. 
+
+Having done that first step, on all subsequent occasions access the
+Leuschner/heiles VNC window with the command
+\begin{verbatim}
+   vncviewer -shared localhost::59XX
+\end{verbatim}
+\noindent It will require a password; use the password for the radiolab
+account's VNC session given in class. Leuschner's VNC window should pop
+up on your screen, and you can access and create terminals on this
+window in the usual way. The function key F8 gives a short menu of
+available actions, such as quitting the VNC viewer. Use of the {\tt
+  -shared} option allows multiple users to access the VNC window
+simultaneously. For example, if you are in the 5th floor lab and begin
+observing, you can leave your VNC session running and you can go home
+and access the same VNC window from there. 
+
+\subsection{IDL Procedures for Controlling the Dish}
+\begin{enumerate}
+\item {\tt print, getaltaz()} prints the current (alt,az) of the dish
+\item {\tt pointl\_radec} moves the telescope to a specified (ra,dec),
+  sun, or moon
+\item {\tt follow} tracks a given (ra,dec), sun, or moon and can write a
+  file containing relevant pointing data.
+\item {\tt pointl} moves the telescope to a specified (alt,az)
+\item {\tt maint} moves the telescope to maintenance position
+\item {\tt stow} moves the telescope to stow position
+\end{enumerate}
+Normally, you will use only {\tt pointl\_radec} or {\tt follow} from the
+above list.
+
+\subsection{IDL Procedures for Taking Data}
+\begin{enumerate}
+\item {\tt getspect} sets the l.o.\ and the noise diode, then averages a
+  specified number of spectra from the ROACH box and optionally plots or
+  saves the result in an IDL save file, which contain ancillary info
+  such as Julian day. ra, dec, etc.
+\item {\tt mk\_strin} makes an input strucure containing various
+  parameters such as the source position and name, the l.o.\ frequency,
+  whether the noise diode was turned on, off, or was unchanged.
+\item {\tt noise} turns on or off the calibration noise diode.
+\item {\tt set\_lhp} sets the frequency and level of the l.o.
+\item {\tt rxpwr} returns the channel-integrated spectral power from the
+  ROACH box as input.
+\item {\tt startchart1} runs a `chart recorder' using the
+  channel-integrated spectral power from the ROACH box as input. 
+\item {\tt leuschner\_rx} Take and record spectra with the ROACH box.
+\item {\tt filename} generate a filename of the form:
+  {\tt jjjjjjj.jjjjjj\_sn0000\_nd1\_1270123456}
+\item {\tt fits\_to\_sav} converts a fits file, which contains nrspectra
+  spectra, into a sav file with a single spectrum equal to the avg,
+  also the median. Also lots of ancillary info, all in a structure
+\item {\tt frq} calculate the array of IF or RF freqs from the tags in
+  the standard output structure.
+\end{enumerate}
+Normally, you will use only {\tt getspect} and {\tt mk\_strin} from the
+  above list.
+
+\subsection{Our Standard Output Structure}
+If you use our recommended commands for mapping, and in particular if
+you create the input structure {\tt strin} for {\tt getspec} (\S
+\ref{mappingcommands}), then you will use {\tt fits\_to\_sav} to write
+your datafiles. It saves your data in the following structure:
+\begin{verbatim}
+   SRCNR           INT           9999           you choose the source number
+   SRCNAME         STRING    '-9999'            you choose the source name
+   JD              DOUBLE           2457483.5   Julian day
+   RA              FLOAT          0.430058      RA
+   DEC             FLOAT           62.7256      Dec
+   SPCT_AVG        FLOAT     Array[8192, 4]     Average spectrum
+   PWR_AVG         FLOAT     Array[4]           chnl-avg of spct_avg
+   SPCT_MED        FLOAT     Array[8192, 4]     median spectrum
+   PWR_MED         FLOAT     Array[4]           chnl-avg of spct_med
+   NRSPECTRA       LONG               100       nrspectra in avg/med
+   FREQ_IF_CHNL0   DOUBLE       1.4400000e+08   IF freq chnl 0
+   FREQ_IF_CHNL8191
+                   DOUBLE       1.5599854e+08   IF freq chnl 8191
+   FREQ_RF_CHNL0   DOUBLE       1.4144000e+09   RF freq chnl 0
+   FREQ_RF_CHNL8191
+                   DOUBLE       1.4263985e+09   RF freq chnl 8191
+   LO1             DOUBLE       1.2704000e+09   LO freq
+   SB              DOUBLE           1.0000000   sideband
+   ND              INT              0           noise diode on/off
+   UGDOPP          FLOAT     Array[4]           ugdoppler output
+   PANGLE          DOUBLE           97.123027   parallactic angle
+   LST             DOUBLE           4.3368460   LST
+   AZ              DOUBLE           324.82700   Az
+   ALT             DOUBLE           47.232719   Alt
+   GL              DOUBLE           120.00000   Galactic longitude
+   GB              DOUBLE       5.9575176e-05   Galactic latitude
+   FREQARR         STRING    '=  fst.freq_if_chnl0 + (dindgen(8192)*'...
+\end{verbatim}
+ 
 \section{ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE} \label{sampling} 
 
-All projects examine the angular dependence of the 21-cm line profile,
-so you need closely-spaced observations to make a map or an image. How
-closely should the observations be spaced?  The usual criterion is two
-samples per HPBW (Half-Power BeamWidth), because observing at more
-closely spaced angles just gives redundant information and takes extra
-time, while more widely spaced angles loses small-scale structural
-information. (This statement can be justified more exactly by Fourier
-transforming the structure of the sky in terms of angular frequency and
-then imposing the Nyquist criterion\dots).  The HPBW is $\sim 4^\circ$;
-using a spacing of $2^\circ$ is close to optimum, and it's being a round
-number is nice.
+\subsection{Sampling Your Sky Area}
+All of the HI projects examine the angular dependence of the 21-cm line
+profile, so you need closely-spaced observations to make a map or an
+image. How closely should the observations be spaced?  The usual
+criterion is two samples per HPBW (Half-Power BeamWidth), because
+observing at more closely spaced angles just gives redundant information
+and takes extra time, while more widely spaced angles loses small-scale
+structural information. (This statement can be justified more exactly by
+Fourier transforming the structure of the sky in terms of angular
+frequency and then imposing the Nyquist criterion\dots).  The HPBW is
+almost $4^\circ$; so a spacing of $2^\circ$ is about right.
 
 For the mapping projects (not the great-circle ones), we need to cover
 areas of 1000 to 2000 square degrees. Consider the Orion-Eridanus
@@ -88,10 +263,10 @@ Superbubble (\S \ref{eridanus} below), which wants to map the the region
 covering roughly $(\ell=160^\circ \rightarrow 220^\circ, b=-70^\circ
 \rightarrow -10^\circ)$. You might think you'd set up a regular grid in
 $(\ell,b)$ with $(\Delta \ell, \Delta b)$ both equal to
-$2^\circ$. That's find for $\Delta b$, but you'd be sampling too closely
+$2^\circ$. That's fine for $\Delta b$, but you'd be sampling too closely
 in $\ell$. That's because the true (great-circle) angular distance
 between two points is $\Delta \ell \cdot \cos(b)$; there's a
-foreshortening for $b \ne 0^\circ$ (e.g.: when you're at the Earth's
+foreshortening for $b \neq 0^\circ$ (e.g.: when you're at the Earth's
 North Pole, you can go completely around a small circle of constant $b$
 with just a few steps.). So you can save lots of observing time by
 observing at $\Delta \ell = {2^\circ \over \cos(b)}$ instead of $\Delta
@@ -106,13 +281,42 @@ pointings), but rather only about 2800 square degrees.  At $2^\circ$
 sampling, that's about 700 pointings.
 
 These projects require what seems like a lot of pointings,
-but---hey!---the telescope is automated. With the magic of our
+but---hey!---the telescope is automated. With the magic of a
 computer-controlled telescope you can do these observations in just one
 or two days. But it will require planning and coordination with other
 groups---all of you are in the same boat! (Or should we say, ``in the
-same dish''?) I suggest some trial observations to get started, both
-making sure you are observing correctly and also getting your datataking
-and reduction software in shape.
+same dish''?)
+
+\subsection{Recommended IDL Commands} \label{mappingcommands}
+
+For actually taking the data at a particular position, we recommend the
+following sequence of commands for each position:
+\begin{verbatim}
+        find the (ra, dec) for your position. you can use 'glactc' if you wish
+        strin=mk_strin(ra=ra, dec=dec) (defines input structure)
+        nrspectra=100 (number of 0.7-sec spectra to obtain--pick an appropriate number)
+        pointl_radec, strin.ra, strin.dec (point the telesccope
+           You should point the dish to r.a.\ smaller than the position's r.a.\ by
+           half the observing time so that the midpoint of the integration
+           coincides with the position of the source.
+        getspect, strin, nrspectra (takes and records the data)
+\end{verbatim}
+\noindent You are srongly advised to look at the documentation of these procedures before using them!
+
+\subsection{Beware Operating near Azimuth 0/360!!}
+
+If the azimuth of the current position is $6^\circ$ and of the next one
+is $354^\circ$, the telescope has to rotate nearly $360^\circ$ in azimuth,
+which takes a long time! You don't want to make this transition more
+than once! (or at all, if you can manage it). Note: the telescope will
+reliably point in the $370^\circ$-wide azimuth range $-5^\circ$ to
+$365^\circ$---but not outside this range.
+
+\subsection{Beware Operating Above Altitude 85 and Below/Near 14!!}
+
+The telescope cannot point above altitude $85^\circ$. And it cannot
+point below $14^\circ$. When you are at low altitude, you might be
+seeing the ground!
 
 \section{THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO 
 \boldmath{$(b=0^\circ$)}} 
@@ -137,7 +341,16 @@ total Galactic mass comes from interstellar gas? For this you'll need to
 know the radius of the Solar circle: it's 8.5 kpc.  See {\it Commentary}
 below for a discussion. 
 
-	\item {\it Spiral Structure of the Galaxy}.  All your life,
+\item {\it The Galactic center.} Our Galactic center, like others, has a
+  big black hole, with infalling matter and jets and lots of anomalous
+  velocities. You can see a lot of this activity in  your map. Using the
+  spatial extents and the velocities, you can estimate a black hole
+  mass. To get an accurate estimate, you need to look at motions of
+  matter lying really close to the black hole, which you can't do
+  because you don't have the angular resolution. But you can at least
+  make an estimate!
+
+	\item {\it Spiral Structure of the Galaxy}. All your life,
 you've been told that we live in a spiral galaxy.  Are they lying? In
 principle, to detect spiral structure you make a position-velocity plot
 along the Galactic plane [that's the image $T_A(\ell,V_{LSR})$ for
@@ -170,7 +383,7 @@ decades. Finding them in the outer Galaxy is not so bad.
 
 \section{IS THE GALACTIC PLANE FLAT?}
 
-	External galaxies are often distorted (like the brim of a Fedora). 
+External galaxies are often distorted (like the brim of a Fedora). 
 These distortions are probably produced primarily by nearby neighbors. 
 How about our own Galaxy? To determine this we want to look at the
 vertical structure of the Galactic plane and see where the peaks occur;
@@ -219,17 +432,18 @@ high-velocity gas).
 gas layer and to determine the vertical kinematics of the gas, and if
 possible an estimate of the energy involved in the vertical motions.
 
-%\section{MAPPING THE NORTH CELESTIAL POLE} \label{celestial}
-%
-%{\bf NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!}
-%The region near the North Celestial pole contains a large shell,
-%probably produced by one or more supernovae, and also to has angular
-%scales that are well-matched to our telescope and the available time for
-%your project. For this, you'd map the region covering roughly
-%$(\ell=105^\circ \ {\rm to} \ 160^\circ), (b=15^\circ \ {\rm to} \
-%50^\circ)$. Interesting features should produce antenna temperatures
-%$\sim 10$ K. This is about 1600 square degrees and, with 2 degree
-%spacing, requires about 400 profiles. 
+\section{MAPPING THE NORTH CELESTIAL POLE} \label{celestial}
+
+The region near the North Celestial pole contains a large shell,
+probably produced by one or more supernovae, and also to has angular
+scales that are well-matched to our telescope and the available time for
+your project. For this, you'd map the region covering roughly
+$(\ell=105^\circ \ {\rm to} \ 160^\circ), (b=15^\circ \ {\rm to}
+\ 50^\circ)$. Interesting features should produce antenna temperatures
+$\sim 10$ K. This is about 1600 square degrees and, with 2 degree
+spacing, requires about 400 profiles. With our telescope, this is
+probably the most spectacular and contrasty object we can map in the
+sky.
 
 \section{MAPPING THE ORION-ERIDANUS SUPERBUBBLE} \label{eridanus}
 
@@ -242,9 +456,9 @@ $\sim 20$ K. This is almost 2800 square degrees and, with 2 degree
 spacing, requires almost 700 profiles. See \S \ref{sampling}!
 
 The goal here is to map the HI in the 3-d space of $(l, b, v)$ (that's
-Galactic longitude, latitude, and velocity) and then---the challenging
-part---present the results in one or more color images to show the
-hollowed-out shell with the swept-up gas piled up at the edges.
+Galactic longitude, latitude, and velocity) and then present the results
+in one or more color images to show the hollowed-out shell with the
+swept-up gas piled up at the edges.
 
 \section{MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}
 
@@ -268,10 +482,9 @@ observations, you need to cover as far south as you possibly can. See
 \S \ref{sampling}!
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
-Galactic longitude, latitude, and velocity) and then---the challenging
-part---present the results in one or more color images to show the
-hollowed-out shell with the expanding swept-up gas piled up at the
-edges.
+Galactic longitude, latitude, and velocity) and then present the results
+in one or more color images to show the hollowed-out shell with the
+expanding swept-up gas piled up at the edges.
 
 \section{MAPPING A BIG HIGH-VELOCITY CLOUD}
 
@@ -286,10 +499,8 @@ about 900 profiles at $2^\circ$ spacing. See
 \S \ref{sampling}!
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
-Galactic longitude, latitude, and velocity) and then---the challenging
-part---present the results in one or more color images to show the
-hollowed-out shell with the expanding swept-up gas piled up at the
-edges.
+Galactic longitude, latitude, and velocity) and then present the results
+in one or more color images.
 
 \section{MAPPING THE MAGELLANIC STREAM}
 
@@ -306,59 +517,8 @@ along its length, so you need frequency switch by a large enough
 interval!
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
-Galactic longitude, latitude, and velocity) and then---the challenging
-part---present the results in one or more color images to show the
-hollowed-out shell with the expanding swept-up gas piled up at the
-edges.
-
-\section{DETECTING OH MASERS IN W49}
-
-The OH molecule is an important one for star formation and molecular
-clouds because it is one of the first to form when a diffuse atomic
-cloud starts to become denser; in other words, OH marks the transition
-between atomic and molecular gas. It persists at higher densities. The
-ground rotational/vibrational state exhibits ``$\Lambda$ doubling'',
-which produces two spectral lines; each of these is hyperfine-split
-(just like the 21-cm line), and the net result is four lines centered at
-1612.2310, 1665.4018, 1667.3590, 1720.5300 MHz. At sufficiently high
-densities, OH can be ``pumped'' by collisions, IR, or UV radiation to
-make these lines shine as masers.
-
-The maser lines are strong, but our telescope is small, and the
-strongest source, W49, will produce $< 1$ K antenna temperature. We have
-interference, which makes the line difficult---maybe impossible---to
-detect. We've never detected it with our equipment. 
-
-The goal here is to detect the maser line in W49, which has $(ra,\
- dec) = (19^h 10^m 17s, +09^\circ 06.0')$. This will require
- investigating the time/frequency properties of the interference using
- plots and images; excising the interference by hand; experimenting with 
-algorithms to reduce or eliminate the interference (known as ``signal
- processing''), presenting the results, and learning some of the basic
- maser theory. 
-
-We are currently working on this project to see if it is feasible. This
-project is more oriented towards computing and signal processing than
-``astronomy'', and as such would not appeal to everyone.
-
-\section{ IF YOU HAVE TIME and ARE TOTALLY IN LOVE WITH RADIO ASTRONOMY
-  (AND NOTHING OR NOBODY ELSE) THEN: MEASURE THE TELESCOPE BEAMWIDTH} 
-
-	Determine the beamwidth of the telescope by observing the Sun.  Also
-answer the question: is the beam circularly symmetric? You'd think so,
-given that the telescope has a circular aperture\dots
-
-	Here you are using the Sun as a ``point source'' so that its
-antenna temperature $T_A$ is proportional to the gain of the telescope as a
-function of angle. The resulting $T_A$ is just the telescope's diffraction
-pattern! The ``half power beam width'' (HPBW) is what radio astronomers
-generally use as the single-parameter specification of the angular size of
-the diffraction pattern. 
-
-          Measure the HPBW and compare it with a theoretical estimate of
-the HPBW, which you can make from the usual diffraction argument. 
-
-%\section{COMMENTARY}
+Galactic longitude, latitude, and velocity) and then present the results
+in one or more color images.
 
 \section{BASICS OF THE 21-CM LINE.} \label{basics}
 
@@ -387,7 +547,7 @@ brightness temperature of the 21-cm line, which is a function of
 velocity $v$; and $v$ is the velocity in km s$^{-1}$. The velocity $v$
 is produced by the Doppler effect, so a frequency shift $\Delta \nu$
 from line center corresponds to velocity $v = - c {\Delta \nu \over
-\nu}$ or, for the 21-cm line, $v = -{\Delta \nu \over 4.73 {\rm kHz}}$.
+\nu}$ or, for the 21-cm line, $v = -{\Delta \nu \over 4.73 {\rm kHz}}$ km/s.
 Note the minus sign! It means that positive velocities are receding---a
 very convenient convention for astronomy, because of the expansion of
 the Universe. 
@@ -480,10 +640,9 @@ especially in the Galactic plane.
 beam area, which is known, so it's easy to calculate $M_{HI}(v)$---but
 only if you know the distance! Often you don't know the distance, but
 you might have a hunch for a reasonable value for the distance. Suppose
-this is 100 parsecs. In this
-case, people usually evaluate the mass for this distance and, when
-giving the mass, say ``The mass is $xxx \times d_{100}$, where $d_{100}$
-is the distance in units of 100 pc''. 
+this is 100 parsecs. In this case, people usually evaluate the mass for
+this distance and, when giving the mass, say ``The mass is $xxx \times
+d_{100}^2$, where $d_{100}$ is the distance in units of 100 pc''.
 
 \subsection{Converting Galactic Rotation to Doppler Velocity}
 
@@ -508,9 +667,162 @@ R_\odot \sin(\ell)
 \noindent The values at the solar circle are $V(R_\odot) \approx 220$
 km/s, $R_\odot \approx 8.5$ kpc.
 
+\section{DISPLAYING YOUR DATA} \label{datadisplay}
+
+Before actually working with images on the computer, you need to
+familiarize yourself with our imaging handouts:
+\begin{enumerate}
+
+\item MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER
+  SCREEN.
+
+\item 1d2d3d: ONE, TWO, AND THREE DIMENSIONAL COLOR IMAGES. This
+is not IDL oriented, but rather discusses general principles of imaging:
+gray-scale imaging, pseudocolor imaging, 2d color imaging (intensity
+and a color table), 3d color imaging (red-green-blue, or rgb,
+imaging). Read this first!
+
+\item IMAGE DISPLAY AND MANIPULATION; AND COLORBARS. This covers
+  the basics of imaging and is mainly oriented toward using IDL for
+  imaging and imaging processing.
+\end{enumerate}
+
+\subsection{MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER SCREEN}
+
+Computer screens consist of an array of dots that can glow in various
+colors. The dots are arranged in a square array and are called {\it
+  pixels}. PostScript images are the same, with the added feature that
+the pixels need not be square; that is, then horizontal distance can
+differ from the vertical one. To display our data as an image on the
+screen, we must populate these pixels with observed data. 
+
+Our observed positions do not lie on this grid. Rather, our observations
+lie on the celestial sphere. We need to represent this spherical surface
+on our 2d pixellated computer screen---or as a 2d PostScript image on
+a flat piece of paper. There are innumerable ways to do this
+{\it projection}, each of which has its own
+desirable properties. No projection is perfect; each is a compromise 
+among various desirable and undesirable properties. 
+
+Our handout MAP PROJECTIONS describes the most common projections. Two
+examples:
+\begin{enumerate}
+
+\item The simplest is the {\it cylindrical
+equidistant projection}, for which the entire sky is represented by
+longitude horizontally and latitude vertically with square pixels each
+having the same size in $(\Delta \ell, \Delta b)$. Near the equator this
+is a very nice projection because it has many desirable qualities: it
+is nearly conformal, the pixels are nearly of equal solid angle. But as
+you move away from the equator, these properties decay with increasing
+severity because of foreshortening.
+
+\item Suppose we want to be as conformal as possible, particularly with
+  respect to representing small circles (supernova remnants or
+  supershell walls). This is the {\it stereographic projection}, which
+  is centered on its own defined pole and for which the conversion
+  between its $(long, lat)$ and the pixel values $(x,y)$ is
+%
+\begin {mathletters}
+\begin{equation}
+   R = \tan[ 0.5 \times (90.-lat)] 
+\end{equation}
+\begin{equation}
+   x= R \; \cos(long) 
+\end{equation}
+\begin{equation}
+   y= R \; \sin(long) 
+\end{equation}
+\end {mathletters}
+%
+You can use the procedures we developed to create a stereographic or
+gnomic projection; see our `How to create a perspective projection in
+IDL' on the web paage. It tells how to define a
+new coordinate system by specifying the pole of the projection, which ideally
+is near the center of the supershell being mapped, how to convert
+$(ra,dec)$ or $(\ell,b)$ to the $(long,lat)$ of that new system, and how
+to populate the projection map plane.
+
+\end{enumerate}
+
+\subsection{Regridding}
+
+
+How do we populate this $(x,y)$ grid
+with our data? This process is called {\it regridding}. There are
+several ways to regrid; we describe the one that loses least
+information (but requires the most computer resources---our
+philosophy is `computers are cheap').
+
+To regrid proceed as
+follows: \begin{enumerate}
+
+\item Set the angular $(x,y)$ pixel size. The size must be smaller than
+  the smallest great-circle distance between observed points. For
+  example, if the separation between observed points is 2 degrees, a
+  pixel size of 1 degree (or 0.1 degree) is OK. For the cylindrical
+  equidistant projection with a pixel size of 1 degree there are 360
+  horizontal pixels and 180 vertical ones, for a total of 64800 pixels.
+
+\item Create an empty 3-d data cube of the appropriate dimensions. The
+  first two dimensions are $(x,y)$ and the third is velocity. If you
+  have 256 velocity channels, the above cylindrical equidistant cube
+  would have dimensions $360 \times 180 \times 256$. The cells in this
+  cube are 3-d and are called {\it voxels}.
+
+\item For each pixel, find the nearest observed position. For the angles
+  on the sky, a suitable approximation for the distance squared is $[
+    (\cos (b) \Delta \ell)^2 + \Delta b^2]$. Populate that pixel with
+  the nearest observed data value. For the velocity, use linear
+  interpolation.  (IDL's {\tt interpol} procedure is convenient for
+  this purpose).
+
+\end{enumerate}
+
+\subsection{Displaying Your Data---The Exploratory Phase}
+
+For public presentation, you may want to display your data cube in its
+full 3d glory with a 2d image where brightness represents `amount'
+(e.g., the integrated area of the HI line) and color the mean
+velocity. Or by describing each pixel by 3 numbers (e.g., the integrated
+intensity within 3 different velocity ranges) and writing them on the
+same image plane as the 3 independent colors red, green, blue.
+
+However, making effective use of color requires defining what color
+means, and the best `exploratory' work uses gray-scale imaging.  Set up
+an IDL imaging window and look at successive $(x,y)$ grayscale images at
+different velocities. That is, make a `movie'. For our above example
+$360 \times 180 \times 256$ data cube, in IDL a quick and dirty way
+is: \begin{enumerate}
+
+\item Create the 256 movie frames, together with an array of their
+  window numbers called {\tt warray}:
+
+\begin{verbatim}
+window,0,xs=512,ys=512 (at least twice the (x,y) dimensions of image)
+warray= intarr( 256)
+for nc = 0, 255 do begin
+display, image[*,*,nc], title=string(nc), min=0, max=33, top=240
+cblink, [0,0], /autosave, wnd
+warray[ nc]= wnd
+endfor
+\end{verbatim}
+
+\noindent Here the keywords {\tt (min, max)} mean a data value of {\tt
+  min} gives black and {\tt max} gives white, with shades of gray in
+between, and {\tt top} means use color table entries below 240 (our
+default colortable reserves the upper entries for non-gray colors).
+This creates one window for each velocity channel, a total of 256
+windows, which are numbered 32 to 287; type {\tt help,/dev} for a list of
+these windows. Create an array of the window numbers you want in the
+movie, e.g.\ {\tt windowarray = 32 + indgen(256)} for the full set. 
+
+\item Run the movie:
+
+{\tt blink, warray, delay=0.1}
+
+\noindent where we set the delay between successive images to 0.1 sec
+\end{enumerate}
+
 \end{document}
-
-\end
-
-
 
