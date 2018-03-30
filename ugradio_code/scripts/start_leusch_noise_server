@@ -1,0 +1,8 @@
+#! /bin/bash
+echo "<running start leusch_noise_server bash script>"
+
+pkill dishserver_leusch
+sleep 1
+leusch_noise_server < /dev/null >& leusch_noise_server.log &
+
+exit 0
