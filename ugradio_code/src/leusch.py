@@ -1,12 +1,13 @@
-# New leuschner class definitions
+# New Leuschner class definitions
 
 """Module for controlling the Leuschner radio telescope."""
 
 from __future__ import print_function
 import socket, serial, time, thread, math
-
-
-
+try:
+    import RPi.GPIO as GPIO # necessary for LeuschNoiseServer
+except(ImportError):
+    pass
 
 MAX_SLEW_TIME = 220 # seconds
 
@@ -19,10 +20,18 @@ AZ_STOW = 180. # Position for stowing antenna
 ALT_MAINT = 20. # Position for antenna maintenance
 AZ_MAINT = 180. # Position for antenna maintenance
 
-class leuschTelescopeClient:
+HOST_ANT = '192.168.1.156' # RPI host for antenna
+PORT = 1420
+
+# Offsets to subtract from crd to get encoder value to write
+DELTA_ALT_ANT = 0.165  # (true - encoder) offset
+DELTA_AZ_ANT = -0.34  # (true - encoder) offset
+
+class LeuschTelescope:
     '''Interface for controlling a single antenna.  Use Interferometer to
     control the pair with default settings.'''
-    def __init__(self, host, port, delta_alt, delta_az):
+    def __init__(self, host=HOST_ANT, port=PORT,
+            delta_alt_ant=DELTA_ALT_ANT, delta_az_ant=DELTA_AZ_ANT):
         self._delta_alt = delta_alt
         self._delta_az = delta_az
         self.hostport = (host,port)
@@ -119,102 +128,32 @@ class leuschTelescopeClient:
         None'''
         self.point(ALT_MAINT, AZ_MAINT, wait=wait, verbose=verbose)
 
-HOST_ANT = '192.168.1.156' # RPI host for antenna
-PORT = 1420
-
-# Offsets to subtract from crd to get encoder value to write
-DELTA_ALT_ANT = 0.165  # (true - encoder) offset
-DELTA_AZ_ANT = -0.34  # (true - encoder) offset
-
-
-class leuschTelescope:
-    '''Interface for controlling the UGRadio Leuschner telescopes.'''
-    def __init__(self, host_ant=HOST_ANT, port=PORT,
-            delta_alt_ant=DELTA_ALT_ANT, delta_az_ant=DELTA_AZ_ANT):
-        self.ant = leuschTelescopeClient(host_ant, port, delta_alt=delta_alt_ant, delta_az=delta_az_ant)
-    def point(self, alt, az, wait=True, verbose=False):
-        '''Point both antennas to the specified alt/az.
-
-        Parameters
-        ----------
-        alt     : float degrees, altitude angle to point to
-        az      : float degrees, azimuthal angle to point to
-        wait    : bool, pause until both antennas have completed pointing, default=True
-        verbose : bool, be verbose, default=False
-
-        Returns
-        -------
-        None'''
-        self.ant.point(alt, az, wait=False, verbose=verbose)
-        if wait: self.wait(verbose=verbose)
-    def wait(self, verbose=False):
-        '''Wait until both telescopes' slewing is complete
-
-        Parameters
-        ----------
-        verbose : bool, be verbose, default=False
-
-        Returns
-        -------
-        None'''
-        self.ant.wait(verbose=verbose)
-    def get_pointing(self, verbose=False):
-        '''Return the current telescope pointing
-
-        Parameters
-        ----------
-        verbose : bool, be verbose, default=False
-
-        Returns
-        -------
-        pointing: dict with {'ant':(alt,az)for  antenna'''
-        pnt = self.ant.get_pointing(verbose=verbose)
-        return {'ant': pnt}
-    def stow(self, wait=True, verbose=False):
-        '''Point both antennas to the stow position
-
-        Parameters
-        ----------
-        wait    : bool, pause until antenna has completed pointing, default=True
-        verbose : bool, be verbose, default=False
-
-        Returns
-        -------
-        None'''
-        self.ant.stow(wait=False, verbose=verbose)
-        if wait: self.wait(verbose=verbose)
-    def maintenance(self, wait=True, verbose=False):
-        '''Point both antennas to the maintenance position
-
-        Parameters
-        ----------
-        wait    : bool, pause until antenna has completed pointing, default=True
-        verbose : bool, be verbose, default=False
-
-        Returns
-        -------
-        None'''
-        self.ant.maintenance(wait=False, verbose=verbose)
-        if wait: self.wait(verbose=verbose)
-
 AZ_ENC_OFFSET = -3035.0 # -4901
 AZ_ENC_SCALE = 1800.342065
 EL_ENC_OFFSET = -0.02181661564#-0.3774466558186913
 DISH_EL_OFFSET = -3.556300401687622E-01
 DRIVE_ENCODER_STATES = float(2**14)
 DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
+DEG2RAD = math.pi / 180.
+
+DRIVE_STUB_LEN = 1.487911343574524
+DRIVE_ENC_SCALE = 6.173610955784170E-08
+DRIVE_CLENGTH = 9.587619900703430E-01
 
 class TelescopeDirect:
     def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1, verbose=True,
             az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
-            el_enc_offset=EL_ENC_OFFSET, dish_el_offset=DISH_EL_OFFSET):
-        # el_enc_scale=EL_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, dish_el_offset=DISH_EL_OFFSET,
+            stub_len=DRIVE_STUB_LEN, drive_enc_scale=DRIVE_ENC_SCALE, drive_clength=DRIVE_CLENGTH):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
         self.verbose = verbose
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
         self.dish_el_offset = dish_el_offset
+        self.stub_len = stub_len
+        self.drive_enc_scale = drive_enc_scale
+        self.drive_clength = drive_clength
         self.init_dish()
     def _read(self, flush=False, bufsize=1024):
         resp = []
@@ -252,8 +191,7 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
-            print ("wait_az status=", status)
-#            if i == 5: status = '0'
+            if self.verbose: print ("wait_az status=", status)
             if status == '0': break
             time.sleep(1)
         return status
@@ -261,7 +199,7 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
-            print("wait_el status=", status)
+            if self.verbose: print("wait_el status=", status)
             if status == '0': break
             time.sleep(1)
         return status
@@ -272,8 +210,10 @@ class TelescopeDirect:
         return az
     def get_el(self):
         el_cnts = float(self._write(b'.b g r0x112\r').split()[1])
-        el_cnts %= DRIVE_ENCODER_STATES
-        el = str(90-((float(el_cnts)*DRIVE_DEG_PER_CNT)+(self.el_enc_offset*180.0/math.pi)))
+        #el_cnts %= DRIVE_ENCODER_STATES
+        #el = 90 - ((float(el_cnts)*DRIVE_DEG_PER_CNT)+(self.el_enc_offset*180.0/math.pi))
+        #el = ((el_cnts-(self.dish_el_offset*DRIVE_ENCODER_STATES/(2.0*math.pi))+DRIVE_ENCODER_STATES) % DRIVE_ENCODER_STATES)*(2.0*math.pi)/(DRIVE_ENCODER_STATES)        
+        el = ((el_cnts - self.dish_el_offset/DEG2RAD/DRIVE_DEG_PER_CNT) % DRIVE_ENCODER_STATES) * DRIVE_DEG_PER_CNT
         return el
     def move_az(self, dishAz):
         azResponse = self.wait_az()
@@ -288,6 +228,10 @@ class TelescopeDirect:
         self._write(azMoveCmd.encode('ascii'))
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
+    def _el_to_drive_enc(self, el_rad):
+        drive_len = math.sqrt(1 + self.drive_clength**2 - 2*self.drive_clength*math.cos(el_rad))
+        enc = (drive_len - self.stub_len) / self.drive_enc_scale
+        return enc
     def move_el(self, dishEl):
         elResponse = self.wait_el()
         if elResponse != '0':
@@ -295,25 +239,15 @@ class TelescopeDirect:
         # Enforce absolute bounds.  Comment out to override.
         if (dishEl < ALT_MIN) or (dishEl > ALT_MAX):
             return 'e 1'
-        stubLength = 1.487911343574524
-        encScale = 6.173610955784170E-08
-        cLength = 9.587619900703430E-01
-        local_dishEl = dishEl * math.pi / 180.0
-        
-        curEl= float(self._write(b'.b g r0x112\r').split()[1])
-#        print ("solution# 1: curEl)in leusch.py line 307=", float (curEl) )
-        curEl = ((float(curEl)-(self.dish_el_offset*(2.0**14)/(2.0*math.pi))+2.0**14) % 2.0**14)*(2.0*math.pi)/(2.0**14)        
-#        print("solution# 2: curEl in leusch.py in line 127", curEl)        
-        curElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos(curEl)))-stubLength)/encScale
-#        print ("solution# 3: curELVal in leusch.py line 313=", curElVal)        
-        nextElVal = (math.sqrt(1.0+cLength**2-(2.0*cLength*math.cos((0.5*math.pi-local_dishEl)-self.el_enc_offset-self.dish_el_offset)))-stubLength)/encScale
-#        print (" solution# 4: nextELVal in leusch.py line 316=", nextElVal)        
+        dishEl_rad = dishEl * DEG2RAD
+        curEl_rad = self.get_el() * DEG2RAD
+        curElVal = self._el_to_drive_enc(curEl_rad)
+        #curElVal = (math.sqrt(1.0 + self.drive_clength**2 - (2.0*self.drive_clength*math.cos(curEl_rad))) - self.stub_len) / self.drive_enc_scale
+        nextElVal = self._el_to_drive_enc(math.pi/2 - dishEl_rad - self.el_enc_offset - self.dish_el_offset)
+        #nextElVal = (math.sqrt(1.0 + self.drive_clength**2 - (2.0*self.drive_clength*math.cos((0.5*math.pi-dishEl_rad)-self.el_enc_offset-self.dish_el_offset))) - self.stub_len) / self.drive_enc_scale
         elMoveCmd =  '.b s r0xca ' + str(int(nextElVal-curElVal)) + '\r'
-#        print("elMoveCmd calculated value leusch.py line 319=", elMoveCmd)
         self._write(elMoveCmd.encode('ascii'))
-        str_calculated_move_steps = str(int(nextElVal-curElVal))
         dishResponse = self._write(b'.b t 1\r')
-#        print ("the dish response in funct_move_el=", dishResponse)
         return dishResponse
 
 CMD_MOVE_AZ = 'moveAz'
@@ -348,7 +282,7 @@ class TelescopeServer(TelescopeDirect):
         if self.verbose: print('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
         cmd = cmd.split('\n')
-        print ("the cmd is: ", cmd)
+        if self.verbose: print ("the cmd is: ", cmd)
         if cmd[0] == 'simple':
             resp = self._write(cmd[1].encode('ascii'))
         elif cmd[0] == CMD_MOVE_AZ:
@@ -369,15 +303,14 @@ class TelescopeServer(TelescopeDirect):
             resp = ''
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
-
-
            
 class LeuschNoiseServer:
-
+    '''Class for providing remote control over the noise diode on Leuschner dish.
+    Runs on a RPI with a direct connection to the noise diode via GPIO pins.'''
     def __init__(self):
-        self.noise_cmd = ' '
-    
+        self.prev_cmd = None
     def run(self, host='', port=PORT, verbose=True, timeout=10):
+        '''Begin hosting server allowing remote control of noise diode on specified port.'''
         self.verbose = verbose
         if self.verbose:
             print('Initializing noise_server..')
@@ -395,68 +328,47 @@ class LeuschNoiseServer:
     def _handle_request(self, conn):
         '''Private thread for handling an individual connection.  Will execute
         at most one write and one read before terminating connection.'''
-        noise_cmd_temp = conn.recv(1024)
-        if not noise_cmd_temp: return
-        if self.verbose: print('Enacting:', [noise_cmd_temp], 'from', conn)
-        noise_cmd_temp = noise_cmd_temp.decode('ascii')
-        
+        cmd = conn.recv(1024)
+        if not cmd: return
+        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        cmd = cmd.decode('ascii')
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
         # overwrite commands to the Raspberry
-        if self.noise_cmd != noise_cmd_temp:
-            self.noise_cmd =  noise_cmd_temp                       
-            if self.noise_cmd == 'off': int_noise_cmd = 0
-            if self.noise_cmd == 'on': int_noise_cmd = 1
-            
-            import sys
-            import RPi.GPIO as GPIO
-            
+        if self.prev_cmd != cmd:
+            self.prev_cmd = cmd                       
+            GPIO.setmode(GPIO.BCM) # Errors out if import RPi.GPIO failed
+            GPIO.setwarnings(False)
+            GPIO.setup(05, GPIO.OUT) # pin 29
             # switch pin 29 of Raspberry Pi to TTL level low           
-            if int_noise_cmd == 0:
-                import RPi.GPIO as GPIO               
-                print ('write digital I/O low')
-                GPIO.setmode(GPIO.BCM)
-                GPIO.setwarnings(False)
-                GPIO.setup(05, GPIO.OUT) # pin 29
+            if cmd == CMD_NOISE_OFF:
+                if self.verbose: print('write digital I/O low')
                 GPIO.output(05, False)   # pin 29                
-  
             # switch pin 29 of Raspberry Pi to TTL level high    
-            if int_noise_cmd == 1:
-                import RPi.GPIO as GPIO
-                print ('write digital I/O high')         
-                GPIO.setmode(GPIO.BCM)
-                GPIO.setwarnings(False)
-                GPIO.setup(05, GPIO.OUT) # pin 29
+            elif cmd == CMD_NOISE_ON:
+                if self.verbose: print('write digital I/O high')         
                 GPIO.output(05, True)   # pin 29
-            
-            
-        
 
-HOST_NOISE_SERVER = '192.168.1.90' 
+HOST_NOISE_SERVER = '192.168.1.90'
+CMD_NOISE_OFF = 'off'
+CMD_NOISE_ON = 'on'
 
 class LeuschNoise:
-
-    def __init__(self):
-        pass
-# noise_toggle_value is 0 for noise generator off and 1 for generator on               
-    
-    def switch(self, str_noise_sw_val):
-        int_noise_sw_val  = 3
-        if str_noise_sw_val == "off": int_noise_sw_val  = 0
-        if str_noise_sw_val == "on": int_noise_sw_val  = 1
-        if str_noise_sw_val == 3:
-            print ('The noise argument must be on OR off  ')
-            sys.exit()
-        if int_noise_sw_val  == 0: print ("<switching noise off>")
-        if int_noise_sw_val  == 1: print ("<switching noise on>")
-        string_out = str_noise_sw_val
-        HOST = HOST_NOISE_SERVER   # The remote host 
+    '''Interface for controlling noise diode on Leuschner dish.'''
+    def __init__(self, host=HOST_NOISE_SERVER, port=PORT, verbose=False):
+        self.hostport = (host,port)
+        self.verbose = verbose
+    def on(self):
+        '''Turn Leuschner noise diode on.'''
+        self._cmd(CMD_NOISE_ON)
+    def off(self):
+        '''Turn Leuschner noise diode off.'''
+        self._cmd(CMD_NOISE_OFF)
+    def _cmd(self, cmd):
+        '''Low-level interface for sending command to LeuschNoiseServer.'''
+        assert(cmd in (CMD_NOISE_OFF, CMD_NOISE_OFF)) # check if valid command
+        if self.verbose:
+            print('LeuschNoise sending command:', [cmd])
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((HOST, PORT))
-        s.sendall(string_out)
-
-
-        
-        
-        
-
+        s.connect(self.hostport)
+        s.sendall(cmd)
