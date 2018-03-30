@@ -21,6 +21,7 @@ ALT_MAINT = 20. # Position for antenna maintenance
 AZ_MAINT = 180. # Position for antenna maintenance
 
 HOST_ANT = '192.168.1.156' # RPI host for antenna
+HOST_NOISE_SERVER = '192.168.1.90' # RPI host for noise diode
 PORT = 1420
 
 # Offsets to subtract from crd to get encoder value to write
@@ -127,6 +128,26 @@ class LeuschTelescope:
         -------
         None'''
         self.point(ALT_MAINT, AZ_MAINT, wait=wait, verbose=verbose)
+
+class LeuschNoise:
+    '''Interface for controlling noise diode on Leuschner dish.'''
+    def __init__(self, host=HOST_NOISE_SERVER, port=PORT, verbose=False):
+        self.hostport = (host,port)
+        self.verbose = verbose
+    def on(self):
+        '''Turn Leuschner noise diode on.'''
+        self._cmd(CMD_NOISE_ON)
+    def off(self):
+        '''Turn Leuschner noise diode off.'''
+        self._cmd(CMD_NOISE_OFF)
+    def _cmd(self, cmd):
+        '''Low-level interface for sending command to LeuschNoiseServer.'''
+        assert(cmd in (CMD_NOISE_OFF, CMD_NOISE_OFF)) # check if valid command
+        if self.verbose:
+            print('LeuschNoise sending command:', [cmd])
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(self.hostport)
+        s.sendall(cmd)
 
 AZ_ENC_OFFSET = -3035.0 # -4901
 AZ_ENC_SCALE = 1800.342065
@@ -303,6 +324,9 @@ class TelescopeServer(TelescopeDirect):
             resp = ''
         if self.verbose: print('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
+
+CMD_NOISE_OFF = 'off'
+CMD_NOISE_ON = 'on'
            
 class LeuschNoiseServer:
     '''Class for providing remote control over the noise diode on Leuschner dish.
@@ -348,27 +372,3 @@ class LeuschNoiseServer:
             elif cmd == CMD_NOISE_ON:
                 if self.verbose: print('write digital I/O high')         
                 GPIO.output(05, True)   # pin 29
-
-HOST_NOISE_SERVER = '192.168.1.90'
-CMD_NOISE_OFF = 'off'
-CMD_NOISE_ON = 'on'
-
-class LeuschNoise:
-    '''Interface for controlling noise diode on Leuschner dish.'''
-    def __init__(self, host=HOST_NOISE_SERVER, port=PORT, verbose=False):
-        self.hostport = (host,port)
-        self.verbose = verbose
-    def on(self):
-        '''Turn Leuschner noise diode on.'''
-        self._cmd(CMD_NOISE_ON)
-    def off(self):
-        '''Turn Leuschner noise diode off.'''
-        self._cmd(CMD_NOISE_OFF)
-    def _cmd(self, cmd):
-        '''Low-level interface for sending command to LeuschNoiseServer.'''
-        assert(cmd in (CMD_NOISE_OFF, CMD_NOISE_OFF)) # check if valid command
-        if self.verbose:
-            print('LeuschNoise sending command:', [cmd])
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(self.hostport)
-        s.sendall(cmd)
