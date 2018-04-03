@@ -4,4 +4,7 @@
 *.swp
 *.out
 *ipynb_checkpoints*
+ugradio_code/build
+ugradio_code/build/*
+*~
 .DS_Store

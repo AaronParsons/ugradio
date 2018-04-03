@@ -1,0 +1,8 @@
+#! /bin/bash
+echo "<running start dish server bash script>"
+
+pkill dishserver_leusch
+sleep 1
+dishserver_leusch < /dev/null >& dishserver_leusch.log &
+
+exit 0
