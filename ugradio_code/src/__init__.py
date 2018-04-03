@@ -9,3 +9,4 @@ try:
 except(ImportError): pass
 
 import pico, dft, agilent, hp_multi, interf, leusch
+import nch, leo
