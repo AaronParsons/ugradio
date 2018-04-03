@@ -63,9 +63,10 @@ grey-scale images of velocity-integrated line intensity (i.e., antenna
 temperature $T_A$) or as images in which image brightness indicates
 velocity-integrated $T_A$ and color indicates velocity.
 
+% XXX change date each year
 We'd like each group to pick a single project and carry it through to
 completion by the time the lab reports are due, which is the last day of
-class (May 2). All of the HI projects involve making maps and
+class (May 1). All of the HI projects involve making maps and
 images. One of the features of this lab is to learn about image
 processing and using colors in images.
 
@@ -89,10 +90,11 @@ schedule.  \begin{enumerate}
 Devise a scheme for scheduling observations of all the points in your
 map.  Begin the process of obtaining and reducing your map data. 
 
+% XXX change date each year
 Obtain some frequency-switched test spectra, in
 particular at our canonical comparison position at Galactic coordinates
 $(\ell, b) = (120^\circ, 0^\circ)$.  We will compare the spectra of all
-groups at the class on 11 April, and if your group doesn't have a
+groups at the class on 10 April, and if your group doesn't have a
 spectrum to show this will be considered {\it very} bad form.
 
 \item Week 2: Get as much data as you can. Reduce the data.  Decide what
@@ -105,8 +107,9 @@ spectrum to show this will be considered {\it very} bad form.
   how you want to present the data as images. Make some first-try
   images. 
 
+% XXX change date each year
 \item Week 4: Finalize data. Make final images. Write
-report. Report is due the last day of class, 02 May.
+report. Report is due the last day of class, 1 May.
 \end{enumerate}
 
 \section {CONTROLLING THE LEUSCHNER TELESCOPE}
@@ -128,13 +131,13 @@ work there. For example, if your group is named DREAMTEAM:
    radiolab@heiles:~/dreamteam> 
 \end{verbatim}
 The prompt tells you what subdirectory you're in; if in doubt, type {\tt
-  pwd} . All of the editors\footnote{When using {\tt emacs}, using the
+  pwd} . All of the canonical editors\footnote{When using {\tt emacs}, using the
   {\tt -nw} option will eliminate latency and delays, and your
-  associated frustrations.} and IDL are available to you, just as on the
+  associated frustrations.} and Python/IPython are available to you, just as on the
 {\tt ugastro} network.
 
 \subsection {Using VNC at the heiles Computer at Leuschner}
-For running observing files that run automatically for long periods of
+For running observing sessions that run automatically for long periods of
 time, we strongly recommend using VNC for the reasons explained in
 class. In particular, if everyone uses the same VNC Leuschner window, we
 will avoid having more than one group observing at a time. We have set
@@ -167,81 +170,131 @@ simultaneously. For example, if you are in the 5th floor lab and begin
 observing, you can leave your VNC session running and you can go home
 and access the same VNC window from there. 
 
-\subsection{IDL Procedures for Controlling the Dish}
-\begin{enumerate}
-\item {\tt print, getaltaz()} prints the current (alt,az) of the dish
-\item {\tt pointl\_radec} moves the telescope to a specified (ra,dec),
-  sun, or moon
-\item {\tt follow} tracks a given (ra,dec), sun, or moon and can write a
-  file containing relevant pointing data.
-\item {\tt pointl} moves the telescope to a specified (alt,az)
-\item {\tt maint} moves the telescope to maintenance position
-\item {\tt stow} moves the telescope to stow position
-\end{enumerate}
-Normally, you will use only {\tt pointl\_radec} or {\tt follow} from the
-above list.
+\subsection{Python Procedures for Controlling the Dish}
 
-\subsection{IDL Procedures for Taking Data}
+The {\tt ugradio.leusch} module provides an interface for controlling
+the Leuschner dish.  In particular, the {\tt LeuschTelescope} class should
+look familiar to you; it works basically the same as the {\tt Interferometer}
+class you used in the previous lab.
+% XXX provide follow or ra/dec functionality?
 \begin{enumerate}
-\item {\tt getspect} sets the l.o.\ and the noise diode, then averages a
-  specified number of spectra from the ROACH box and optionally plots or
-  saves the result in an IDL save file, which contain ancillary info
-  such as Julian day. ra, dec, etc.
-\item {\tt mk\_strin} makes an input strucure containing various
-  parameters such as the source position and name, the l.o.\ frequency,
-  whether the noise diode was turned on, off, or was unchanged.
-\item {\tt noise} turns on or off the calibration noise diode.
-\item {\tt set\_lhp} sets the frequency and level of the l.o.
-\item {\tt rxpwr} returns the channel-integrated spectral power from the
-  ROACH box as input.
-\item {\tt startchart1} runs a `chart recorder' using the
-  channel-integrated spectral power from the ROACH box as input. 
-\item {\tt leuschner\_rx} Take and record spectra with the ROACH box.
-\item {\tt filename} generate a filename of the form:
-  {\tt jjjjjjj.jjjjjj\_sn0000\_nd1\_1270123456}
-\item {\tt fits\_to\_sav} converts a fits file, which contains nrspectra
-  spectra, into a sav file with a single spectrum equal to the avg,
-  also the median. Also lots of ancillary info, all in a structure
-\item {\tt frq} calculate the array of IF or RF freqs from the tags in
-  the standard output structure.
+\item {\tt LeuschTelescope.get\_pointing()} returns the current (alt,az) of the dish, in degrees.
+\item {\tt LeuschTelescop.point(alt,az)} moves the telescope to a specified alt, az in degrees.
+%\item {\tt follow} tracks a given (ra,dec), sun, or moon and can write a
+%  file containing relevant pointing data.
+\item {\tt LeuschTelescope.maint()} moves the telescope to maintenance position.
+\item {\tt LeuschTelescope.stow()} moves the telescope to stow position.
 \end{enumerate}
-Normally, you will use only {\tt getspect} and {\tt mk\_strin} from the
-  above list.
 
-\subsection{Our Standard Output Structure}
-If you use our recommended commands for mapping, and in particular if
-you create the input structure {\tt strin} for {\tt getspec} (\S
-\ref{mappingcommands}), then you will use {\tt fits\_to\_sav} to write
-your datafiles. It saves your data in the following structure:
-\begin{verbatim}
-   SRCNR           INT           9999           you choose the source number
-   SRCNAME         STRING    '-9999'            you choose the source name
-   JD              DOUBLE           2457483.5   Julian day
-   RA              FLOAT          0.430058      RA
-   DEC             FLOAT           62.7256      Dec
-   SPCT_AVG        FLOAT     Array[8192, 4]     Average spectrum
-   PWR_AVG         FLOAT     Array[4]           chnl-avg of spct_avg
-   SPCT_MED        FLOAT     Array[8192, 4]     median spectrum
-   PWR_MED         FLOAT     Array[4]           chnl-avg of spct_med
-   NRSPECTRA       LONG               100       nrspectra in avg/med
-   FREQ_IF_CHNL0   DOUBLE       1.4400000e+08   IF freq chnl 0
-   FREQ_IF_CHNL8191
-                   DOUBLE       1.5599854e+08   IF freq chnl 8191
-   FREQ_RF_CHNL0   DOUBLE       1.4144000e+09   RF freq chnl 0
-   FREQ_RF_CHNL8191
-                   DOUBLE       1.4263985e+09   RF freq chnl 8191
-   LO1             DOUBLE       1.2704000e+09   LO freq
-   SB              DOUBLE           1.0000000   sideband
-   ND              INT              0           noise diode on/off
-   UGDOPP          FLOAT     Array[4]           ugdoppler output
-   PANGLE          DOUBLE           97.123027   parallactic angle
-   LST             DOUBLE           4.3368460   LST
-   AZ              DOUBLE           324.82700   Az
-   ALT             DOUBLE           47.232719   Alt
-   GL              DOUBLE           120.00000   Galactic longitude
-   GB              DOUBLE       5.9575176e-05   Galactic latitude
-   FREQARR         STRING    '=  fst.freq_if_chnl0 + (dindgen(8192)*'...
-\end{verbatim}
+If you find you need the coordinates of the Leuschner Educational Observatory, they are stored in
+{\tt ugradio.leo}.
+
+\subsection{Python Procedures for Taking Data}
+
+The Leuschner dish has a noise diode at the front that you can turn on/off for
+calibration purposes.
+\begin{enumerate}
+\item {\tt ugradio.leusch.LeuschNoise()} instantiates an interface to the noise diode (it's controlled
+by a Raspberry Pi).
+\item {\tt LeuschNoise.on()} turns the noise source on.
+\item {\tt LeuschNoise.off()} turns the noise source off.
+\end{enumerate}
+
+We also have an l.o. that you can shift around for calibration purposes.  It's actually the same
+Agilent l.o. you used in the horn lab, only we've unplugged it and moved it to Leuschner.  This
+means you can control it with {\it ugradio.agilent}, same as before, but connect to the {\tt heiles}
+computer, instead of the lab machine that was hosting it.  Since {\tt heiles} is the computer you are
+already logged into, use the address 127.0.0.1 (which means ``self").
+\begin{enumerate}
+\item {\tt ugradio.agilent.SynthClient(host='127.0.0.1')} instantiates an interface to the l.o.
+\item {\tt SynthClient.set\_frequency} changes the l.o. frequency.
+\end{enumerate}
+
+Next, we need to read data from the spectrometer attached to the Leuschner dish.  This
+spectrometer is controlled by the {\tt leuschner} module outside of {\tt ugradio} (e.g.
+{\tt import leuschner}.  As always, for more information, read the {\tt leuschner} code documentation.
+\begin{enumerate}
+\item {\tt leuschner.Spectrometer('10.0.1.2')} instantiates an interface to the spectrometer
+at the specified IP address.
+\item {\tt leuschner.Spectrometer.int\_time} tells you how long each spectrum is integrated for.
+\item {\tt Spectrometer.read\_spec('out.fits', N, (ra,dec), 'eq')} will read N spectra and
+store the output in a FITS file, writing the ra/dec coordinates into the header of the file.  Note that
+this does {\bf not} point the telescope; it just documents where it is pointed in the file.  You
+could also provide {\it read\_spec('out.fits, N, (glat,glon), 'ga')} to write galactic coordinates
+into the FITS header, if you'd like.
+\item {\tt Spectrometer.check\_connected()} allows you to check that you are ready to take data.
+\end{enumerate}
+
+Finally, once you have a saved FITS file, you need to be able to get your data out of it.  For this,
+we use the standard module {\tt pyfits}.
+\begin{enumerate}
+\item {\tt f = pyfits.open('out.fits')} opens your file and returns you a handle to it.
+\item {\tt f[0].header} holds lots of metadata about your observation.  Your can {\tt print f[0].header},
+or you can convert it to a dictionary with {\tt dict(f[0].header}.
+\item {\tt f[1].data['auto0\_real']} returns the first spectrum for the first polarization, {\tt f[1].data['auto1\_real']} returns the first spectrum for the second polarization, and {\tt f[N].data['auto0\_real']} returns the N$^{\rm th}$
+spectrum for the first polarization.
+\end{enumerate}
+
+% XXX need to get the LO control at leuschner migrated to ugradio.agilent
+%\begin{enumerate}
+%\item {\tt getspect} sets the l.o.\ and the noise diode, then averages a
+%  specified number of spectra from the ROACH box and optionally plots or
+%  saves the result in an IDL save file, which contain ancillary info
+%  such as Julian day. ra, dec, etc.
+%\item {\tt mk\_strin} makes an input strucure containing various
+%  parameters such as the source position and name, the l.o.\ frequency,
+%  whether the noise diode was turned on, off, or was unchanged.
+%\item {\tt set\_lhp} sets the frequency and level of the l.o.
+%\item {\tt rxpwr} returns the channel-integrated spectral power from the
+%  ROACH box as input.
+%\item {\tt startchart1} runs a `chart recorder' using the
+%  channel-integrated spectral power from the ROACH box as input. 
+%\item {\tt leuschner\_rx} Take and record spectra with the ROACH box.
+%\item {\tt filename} generate a filename of the form:
+%  {\tt jjjjjjj.jjjjjj\_sn0000\_nd1\_1270123456}
+%\item {\tt fits\_to\_sav} converts a fits file, which contains nrspectra
+%  spectra, into a sav file with a single spectrum equal to the avg,
+%  also the median. Also lots of ancillary info, all in a structure
+%\item {\tt frq} calculate the array of IF or RF freqs from the tags in
+%  the standard output structure.
+%\end{enumerate}
+%Normally, you will use only {\tt getspect} and {\tt mk\_strin} from the
+%  above list.
+
+%\subsection{Our Standard Output Structure}
+%If you use our recommended commands for mapping, and in particular if
+%you create the input structure {\tt strin} for {\tt getspec} (\S
+%\ref{mappingcommands}), then you will use {\tt fits\_to\_sav} to write
+%your datafiles. It saves your data in the following structure:
+%\begin{verbatim}
+%   SRCNR           INT           9999           you choose the source number
+%   SRCNAME         STRING    '-9999'            you choose the source name
+%   JD              DOUBLE           2457483.5   Julian day
+%   RA              FLOAT          0.430058      RA
+%   DEC             FLOAT           62.7256      Dec
+%   SPCT_AVG        FLOAT     Array[8192, 4]     Average spectrum
+%   PWR_AVG         FLOAT     Array[4]           chnl-avg of spct_avg
+%   SPCT_MED        FLOAT     Array[8192, 4]     median spectrum
+%   PWR_MED         FLOAT     Array[4]           chnl-avg of spct_med
+%   NRSPECTRA       LONG               100       nrspectra in avg/med
+%   FREQ_IF_CHNL0   DOUBLE       1.4400000e+08   IF freq chnl 0
+%   FREQ_IF_CHNL8191
+%                   DOUBLE       1.5599854e+08   IF freq chnl 8191
+%   FREQ_RF_CHNL0   DOUBLE       1.4144000e+09   RF freq chnl 0
+%   FREQ_RF_CHNL8191
+%                   DOUBLE       1.4263985e+09   RF freq chnl 8191
+%   LO1             DOUBLE       1.2704000e+09   LO freq
+%   SB              DOUBLE           1.0000000   sideband
+%   ND              INT              0           noise diode on/off
+%   UGDOPP          FLOAT     Array[4]           ugdoppler output
+%   PANGLE          DOUBLE           97.123027   parallactic angle
+%   LST             DOUBLE           4.3368460   LST
+%   AZ              DOUBLE           324.82700   Az
+%   ALT             DOUBLE           47.232719   Alt
+%   GL              DOUBLE           120.00000   Galactic longitude
+%   GB              DOUBLE       5.9575176e-05   Galactic latitude
+%   FREQARR         STRING    '=  fst.freq_if_chnl0 + (dindgen(8192)*'...
+%\end{verbatim}
  
 \section{ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE} \label{sampling} 
 
@@ -287,19 +340,20 @@ or two days. But it will require planning and coordination with other
 groups---all of you are in the same boat! (Or should we say, ``in the
 same dish''?)
 
-\subsection{Recommended IDL Commands} \label{mappingcommands}
+\subsection{Recommended Commands} \label{mappingcommands}
 
 For actually taking the data at a particular position, we recommend the
 following sequence of commands for each position:
 \begin{verbatim}
-        find the (ra, dec) for your position. you can use 'glactc' if you wish
-        strin=mk_strin(ra=ra, dec=dec) (defines input structure)
-        nrspectra=100 (number of 0.7-sec spectra to obtain--pick an appropriate number)
-        pointl_radec, strin.ra, strin.dec (point the telesccope
-           You should point the dish to r.a.\ smaller than the position's r.a.\ by
-           half the observing time so that the midpoint of the integration
-           coincides with the position of the source.
-        getspect, strin, nrspectra (takes and records the data)
+        find the (ra, dec) for your position. you can use 'astropy' if you wish
+        Nspectra = ??? (number of 0.7-sec spectra to obtain--pick an appropriate number)
+        telescope.point(alt,az) at the alt/az corresponding to the position
+            of your chosen ra/dec at the midpoint of your upcoming observing time
+           so that the midpoint of the integration coincides with the position of the source.
+        filename = jjjjjjj.jjjjjj\_pt0000\_nd1.fits or something similar that encodes
+            enough useful information (JD, pointing, noise diode, etc.) that you can find
+            what you need after making many observations.
+        spectrometer.read\_spec(filename, Nspectra, (ra,dec), 'eq') takes and records the data.
 \end{verbatim}
 \noindent You are srongly advised to look at the documentation of these procedures before using them!
 
@@ -319,7 +373,7 @@ point below $14^\circ$. When you are at low altitude, you might be
 seeing the ground!
 
 \section{THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO 
-\boldmath{$(b=0^\circ$)}} 
+\boldmath{$(b=0^\circ)$}} 
 \label{galacticplane}
 
 	Point the telescope at a series of Galactic longitudes ($\ell$)
@@ -669,36 +723,28 @@ km/s, $R_\odot \approx 8.5$ kpc.
 
 \section{DISPLAYING YOUR DATA} \label{datadisplay}
 
-Before actually working with images on the computer, you need to
+Before actually working with images on the computer, you may need to
 familiarize yourself with our imaging handouts:
 \begin{enumerate}
 
 \item MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER
   SCREEN.
 
-\item 1d2d3d: ONE, TWO, AND THREE DIMENSIONAL COLOR IMAGES. This
-is not IDL oriented, but rather discusses general principles of imaging:
-gray-scale imaging, pseudocolor imaging, 2d color imaging (intensity
-and a color table), 3d color imaging (red-green-blue, or rgb,
-imaging). Read this first!
-
-\item IMAGE DISPLAY AND MANIPULATION; AND COLORBARS. This covers
-  the basics of imaging and is mainly oriented toward using IDL for
-  imaging and imaging processing.
+\item {\tt jupyter\_tutorials/lab4} has examples of making images, colorbars, and map projections.
 \end{enumerate}
 
 \subsection{MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER SCREEN}
 
 Computer screens consist of an array of dots that can glow in various
 colors. The dots are arranged in a square array and are called {\it
-  pixels}. PostScript images are the same, with the added feature that
+  pixels}. Images are the same, with the added feature that
 the pixels need not be square; that is, then horizontal distance can
 differ from the vertical one. To display our data as an image on the
 screen, we must populate these pixels with observed data. 
 
 Our observed positions do not lie on this grid. Rather, our observations
 lie on the celestial sphere. We need to represent this spherical surface
-on our 2d pixellated computer screen---or as a 2d PostScript image on
+on our 2d pixellated computer screen---or as a 2d image on
 a flat piece of paper. There are innumerable ways to do this
 {\it projection}, each of which has its own
 desirable properties. No projection is perfect; each is a compromise 
@@ -735,9 +781,10 @@ severity because of foreshortening.
 \end{equation}
 \end {mathletters}
 %
+% XXX Basemap?
 You can use the procedures we developed to create a stereographic or
-gnomic projection; see our `How to create a perspective projection in
-IDL' on the web paage. It tells how to define a
+gnomic projection; see our `How to create a perspective projection'
+on the web page. It tells how to define a 
 new coordinate system by specifying the pole of the projection, which ideally
 is near the center of the supershell being mapped, how to convert
 $(ra,dec)$ or $(\ell,b)$ to the $(long,lat)$ of that new system, and how
@@ -746,7 +793,6 @@ to populate the projection map plane.
 \end{enumerate}
 
 \subsection{Regridding}
-
 
 How do we populate this $(x,y)$ grid
 with our data? This process is called {\it regridding}. There are
@@ -774,7 +820,7 @@ follows: \begin{enumerate}
   on the sky, a suitable approximation for the distance squared is $[
     (\cos (b) \Delta \ell)^2 + \Delta b^2]$. Populate that pixel with
   the nearest observed data value. For the velocity, use linear
-  interpolation.  (IDL's {\tt interpol} procedure is convenient for
+  interpolation.  ({\tt scipy.interpolate} has many convenient options for
   this purpose).
 
 \end{enumerate}
@@ -789,40 +835,25 @@ intensity within 3 different velocity ranges) and writing them on the
 same image plane as the 3 independent colors red, green, blue.
 
 However, making effective use of color requires defining what color
-means, and the best `exploratory' work uses gray-scale imaging.  Set up
-an IDL imaging window and look at successive $(x,y)$ grayscale images at
+means.  Set up
+an {\tt matplotlib} imaging window and look at successive $(x,y)$ scalar images at
 different velocities. That is, make a `movie'. For our above example
-$360 \times 180 \times 256$ data cube, in IDL a quick and dirty way
-is: \begin{enumerate}
-
-\item Create the 256 movie frames, together with an array of their
-  window numbers called {\tt warray}:
+$360 \times 180 \times 256$ data cube, a quick and dirty way
+is: 
 
 \begin{verbatim}
-window,0,xs=512,ys=512 (at least twice the (x,y) dimensions of image)
-warray= intarr( 256)
-for nc = 0, 255 do begin
-display, image[*,*,nc], title=string(nc), min=0, max=33, top=240
-cblink, [0,0], /autosave, wnd
-warray[ nc]= wnd
-endfor
+plt.ion() # makes pylab interactive, so you can replot data in the same figure
+fig = plt.imshow(data[...,0], vmax=max, vmin=min, cmap=cmap)
+plt.draw() # not necessary if run within IPython
+for i in xrange(1, data.shape[-1]):
+    time.sleep(1) # change data every 1 second
+    fig.set_data(data[...i])
+    plt.draw()
 \end{verbatim}
 
-\noindent Here the keywords {\tt (min, max)} mean a data value of {\tt
-  min} gives black and {\tt max} gives white, with shades of gray in
-between, and {\tt top} means use color table entries below 240 (our
-default colortable reserves the upper entries for non-gray colors).
-This creates one window for each velocity channel, a total of 256
-windows, which are numbered 32 to 287; type {\tt help,/dev} for a list of
-these windows. Create an array of the window numbers you want in the
-movie, e.g.\ {\tt windowarray = 32 + indgen(256)} for the full set. 
-
-\item Run the movie:
-
-{\tt blink, warray, delay=0.1}
-
-\noindent where we set the delay between successive images to 0.1 sec
-\end{enumerate}
+Here, colors are chosen from the {\tt cmap} (there are bazillions of options).
+The keywords {\tt (min, max)} mean a data value of {\tt
+  min} gives the minimum color and {\tt max} gives the maximum.
 
 \end{document}
 
