@@ -4,4 +4,5 @@
 # Agilent synthesizer.
 
 import ugradio.agilent
-ugradio.agilent.SynthServer()
+a = ugradio.agilent.SynthServer()
+a.run(verbose=True)
