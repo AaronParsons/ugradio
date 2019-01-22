@@ -1,4 +1,5 @@
 \documentclass[12pt,preprint]{aastex}
+\usepackage{amsmath}
 
 % ARP 1/30/18 some groups are getting ~200 bogus samples at start of data capture.  should test picoserver to see if this is the fault of capture code or is something deeper in the picosampler
 
@@ -11,25 +12,24 @@
 
 \tableofcontents
 
-	The purpose of this lab is to experimentally investigate digital
-sampling, digital Fourier transforms, and mixers. Mixers are the basis
-of heterodyne spectroscopy. Heterodyne spectroscopy, in turn, is what
+\noindent
+The purpose of this lab is to experimentally investigate digital
+sampling, discrete Fourier Transforms, and mixers. Mixers are the basis
+of heterodyne spectroscopy. Heterodyne spectroscopy which, whether you knew it or not, is what
 you use every day that you listen to a radio, use a cell phone, watch
 TV---or do radio astronomy. In the second lab, we'll use it
-to observe the 21-cm line emission from our Galaxy.
+to observe the 21-cm line emission from hydrogen our Galaxy.
 
 In this lab, you will be performing several experiments, analyzing the
-data and generating a number of different data files. You will need to
-keep careful notes in your {\bf lab notebook}! Or, pay the penalty, and
-forget what you did, do things twice, and be completely
-disorganized. Your choice!
+data, and generating a number of different data files. Keep careful notes,
+preferably in a {\bf lab notebook}.  (And no, a {\tt jupyter} notebook is
+not equivalent.)
 
 \section{GOALS} \label{goals}
 
 \begin{itemize}
 
-\item Learn how to sample electronic signals---here, one or more sine
-  waves---digitally using our computers.
+\item Learn how to sample electronic signals and convert them into digital signals.
 
 \item Get started with our programming language, Python, using it for the
   mathematical analysis, signal processing, and making nice plots.
@@ -37,8 +37,8 @@ disorganized. Your choice!
 \item Become acquainted with aliasing and the basic law of sampling: the
   Nyquist criterion.
 
-\item Learn how to use Digital Fourier Transforms (or Discrete Fourier
-  Transforms; DFT) to determine the frequency power spectrum of a time
+\item Learn how to use Discrete Fourier Transforms (DFTs) to 
+  determine the frequency power spectrum of a time
   series. Understand leakage power and frequency resolution when
   sampling a single sine wave.
 
@@ -48,27 +48,29 @@ disorganized. Your choice!
 \item Learn how the FT treats noise, which is the important case for
   radio astronomy.
 
-\item Learn about correlation functions and, in particular,
+\item Learn about the convolution theorem (and its cousin, the
+correlation theorem), and discover the relationship between 
   autocorrelation functions and power spectra.
 
-\item Learn the basics of mixing for frequency conversion (that's
-  the {\it heterodyne} technique). Explore how real mixers differ from
-  the ideal.
+\item Learn the basics of mixing for frequency conversion
+  (the heterodyne technique). Explore how real mixers differ from
+  ideal ones.
 
-\item Learn how complex inputs to a FT break the negative/positive
-  frequency degeneracy.
+\item Learn about negative frequencies and how complex inputs to a FT 
+break the positive/negative frequency degeneracy.
 
-\item Construct a sideband-separating (SSB) mixer and explore the mixing
+\item Construct a single-sideband (SSB) mixer and explore the mixing
   process.
   
 
-\item Learn enough Latex to write up your results in a formal lab
+\item Learn enough \LaTeX to write up your results in a formal lab
   report, including nice plots and graphs.
 
 \end{itemize}
 
 \section{SCHEDULE}
 
+\noindent
 There's a lot to do in this lab! If you don't understand the Nyquist criterion
 by the end of the first week, you're behind. Here's how it should be:
 \begin{enumerate}
@@ -92,12 +94,43 @@ by the end of the first week, you're behind. Here's how it should be:
 
 \end{enumerate}
 
+\section{SOFTWARE ENGINEERING}
+
+\noindent
+You are about to write a bunch of code.  For many of you, this lab may require more
+coding than you've done before.  As the scale of your programming grows, you will
+need to learn to organize, document, test, and stabilize your code.  The process
+of building sound code is broadly referred to as {\bf software engineering}, and
+in addition to being helpful for scientific research, it may be one of the most marketable
+skills you learn in this class.
+
+Learning software engineering will be an on-going process, but let's start with a few
+principles for your first lab.
+\begin{itemize}
+\item {\it Package your code}.  For now, this is means keeping the bulk of your code together
+in a directory that is separate from the data you acquire.  You might also think about separating
+the {\bf functions} and {\bf classes} you build from the {\bf scripts} and {\bf notebooks} that
+execute that code.  To do this, you'll want to build a {\bf module}.  Try it; it's easy!
+
+\item{\it Code twice}.  Code once to figure out how to make it work, and then, once you know
+how it works and what you want to do, code it again, this time doing it right.
+
+\item{\it Revision control}.  {\tt git} is quickly becoming foundational to serious software
+engineering.  Do youself a favor and open a GitHub account (they're free), make a project in
+your account for this class, and regularly commit to it.  It backs up your work, allows you to
+make changes with impunity (you can always go back to a working state), and allows you to
+easily synchronize your work across multiple computers.  Seriously, it's worth the learning curve.
+Just do it.
+\end{itemize}
+
+
 \section{IN THE LAB: DIGITALLY SAMPLING A SINGLE SINE WAVE (First
   Week)}
 \label{nyquist}
 %
 \subsection{Handouts and Software}
 
+\noindent
 As you begin real work this first week, you will need to become immersed
 in the Linux operating system, your (Vi/Emacs/3rd party) text editor, and Python. To this end,
 you'll need to become familiar with the resources and links posted on Astrobaki.
@@ -134,9 +167,9 @@ you'll need to become familiar with the resources and links posted on Astrobaki.
 %
 \subsubsection{The {\tt ugradio} Python Package}
 
-{\it Modules} are a way to distribute and reuse Python code.  They are themselves
+{\bf Modules} are a way to distribute and reuse Python code.  They are themselves
 just bundles code that you {\tt import} into your program, where you can
-access everything as if you'd written it yourself.  {\it Packages} are bundles
+access everything as if you'd written it yourself.  {\bf Packages} are bundles
 of modules that can all be installed together.  For this class, we will be using
 the {\tt ugradio} package to provide supporting code for your labs.  This package
 is already installed on the lab computers (you can test this by opening {\tt ipython}
@@ -228,7 +261,7 @@ homegrown DFT procedure (see \S \ref{dft}).
 
 Now, {\it look at both sets of these plots} and note any funny business.
 Think about your results and draw your own conclusion: just what is the
-minimum sampling rate that you can get away with? (That's {\it Nyquist's
+minimum sampling rate that you can get away with? (That's {\bf Nyquist's
   criterion)}. 
 
 \subsection{Fourier Voltage and Power Spectra}
@@ -249,7 +282,7 @@ frequencies about 0. What do you see?
 To make sure that any conclusions you draw regarding the symmetry are
 not just a fluke, repeat this process for several independent data
 streams.  The mathematicians have a name for the kind of symmetry
-exhibited in these voltage spectra. It's called {\it Hermitian} symmetry.
+exhibited in these voltage spectra. It's called {\bf Hermitian} symmetry.
 
 What does it mean that the voltage spectra are complex? What do the real
 and imaginary parts represent? Is the imaginary part any less `real'
@@ -288,7 +321,7 @@ Making the output frequencies closer together gives a more nearly
 continuous frequency coverage in the plot of the output spectrum.  Turn
 up the vertical scale a lot to see if there is any nonzero power at
 frequencies other than $\nu_{sig}$.  You {\it do} see such power! This
-is {\it Spectral Leakage}. It affects all power spectra calculated using
+is {\bf spectral leakage}. It affects all power spectra calculated using
 Fourier techniques. 
 
 Can you understand what's going on from a mathematical viewpoint?
@@ -303,7 +336,7 @@ you'll again want to plot points much more closely spaced in frequency
 than the $\Delta \nu = \nu_{samp}/N$ recommended in \S \ref{dft}.  
 
 How close together can the two frequencies be for you to still be able
-distinguish them? This is called the {\it frequency resolution.} How
+distinguish them? This is called the {\bf frequency resolution.} How
 does it depend on the number of samples you use in the DFT? In
 particular, how does it compare to the length of the time interval that
 those samples cover?
@@ -317,7 +350,7 @@ Above, we calculated Fourier spectra for frequencies in the range $\pm
 taking a Nyquist-sampled time series and calculating the Fourier
 spectrum for a much larger frequency range, $\pm N \nu_{samp}/2$, where
 $N$ is at least 4, retaining the original frequency interval. Each value
-of $N$ gives you a spectrum in a different {\it Nyquist window}. How do
+of $N$ gives you a spectrum in a different {\bf Nyquist window}. How do
 the spectra in different Nyquist windows compare? Note that, for $N>1$,
 you are calculating power spectra for frequencies that violate the
 Nyquist criterion. Nevertheless, the results aren't gibberish. In fact,
@@ -325,7 +358,7 @@ in Lab 4 of the course we use a digital spectrometer that samples the
 12$^{th}$ Nyquist window.
 
 This shows that the strictly correct statement of the Nyquist criterion
-is that the bandwidth---i.e., the frequency {\it range} of the
+is that the bandwidth---i.e., the frequency range of the
 signal---must not exceed $\nu_{samp}$. For the first Nyquist window this
 is equivalent to the simpler statement of the Nyquist criterion that we
 explored at first.
@@ -340,7 +373,7 @@ operate in the regime $h\nu/kT \ll 1$, so the blackbody formula
 goes to the much simpler Rayleigh-Jeans (RJ) limit,
 $I=2kT/\lambda^2$. The noise power depends linearly on $T$. 
 For a number of good reasons, radio astronomers choose to measure noise
-power in units of temperature and {\it define} a brightness temperature
+power in units of temperature and define a brightness temperature
 $T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity.
 
 When we observe, the electric field of the blackbody radiation is
@@ -394,37 +427,51 @@ VERSIONS (First Week)}
  
 \subsection{The Analytic Fourier Transform}
 
-        The input to the Fourier transform is voltage versus time, say
-        $E(t)$; the output is voltage versus frequency, say $E(\nu)$.
-        The Fourier transform is the integral
+A Fourier Transform (FT) maps a function between two complementary coordinates which,
+for now, are usually time, $t$, and spectral frequency, $\nu$.
+The input to the forward Fourier Transform (FT) is a signal versus time, say
+$E(t)$; the output is a signal versus frequency, say $\tilde E(\nu)$.
+Mathematically, the Fourier Transform is the integral
 % 
-\begin{equation} \label{ift}
-E(\nu) = {1 \over T} \int_{-T/2}^{T/2} E(t) e^{2 \pi j \nu t} dt \ .
+\begin{equation}
+\tilde E(\nu) = \int_{-T/2}^{T/2} E(t) e^{2 \pi i \nu t} dt \ .
+\label{eq:dft}
 \end{equation}
 % 
-\noindent The input voltage $E(t)$ is real; it is multiplied by the complex
-exponential and integrated, so the output $E(\nu)$ is complex. Of particular
-importance is that the Fourier Transform is {\it invertible}: you can go
+\noindent The input signal $E(t)$ is multiplied by the complex
+exponential and integrated, so the output $\tilde E(\nu)$ is complex. Of particular
+importance is that the Fourier Transform is {\bf invertible}: you can go
 from the time to the frequency domain, and from the frequency domain you can
 get back to the time domain using the inverse transform
 %
 \begin{equation}
-E(t) = {1 \over F} \int_{-F/2}^{F/2} E(\nu) e^{-2 \pi j \nu t} d\nu \ .
+E(t) = {1 \over F} \int_{-F/2}^{F/2} \tilde E(\nu) e^{-2 \pi i \nu t} d\nu \ .
 \end{equation}
 % 
+This is because (complex) sine waves form a {\bf basis} over the space of functions.
+Any function can be expressed exactly and uniquely by its Fourier coefficients.
+For those of you looking for applications of that linear algebra class you took,
+the Fourier Transform a linear matrix operation akin to a fancy rotation matrix. 
+As such, it has lots of nice properties like: (1) {\bf linearity} (the FT
+of a sum is the sum of the FTs), (2) {\bf invertibility}
+(there is no information loss in the FT; it can be undone), and (3)
+unitarity (the FT is power-preserving).
 \noindent {\it Note:} If you're paying attention, you would wonder how
 the integration limits $F$ and $T$ are defined above. In the proper
 analytic formulation, they are both infinity. We emphasize their
 boundedness here because, in practice, i.e.\ when you do actual
-measurements or numerical calculations, neither can be infinity!
+measurements or numerical calculations, neither can be infinity!  Also note that,
+according to the Fourier conventions we've written here, our forward FT does not divide
+by the integration interval, but the inverse FT does.  These conventions match {\tt numpy}'s
+{\tt fft} and {\tt ifft} conventions.
 
 \subsection{The Discrete Fourier Transform (DFT)} \label{dft}
 
-Our voltage versus time is not continuous, but rather it is discrete
-samples. With the digital transform, the integral becomes a sum. In
+Once we sample our signal at discrete interals versus time, it is no longer continuous.
+With the discrete transform, the integral becomes a sum. In
 this sum, you need to specify: \begin{enumerate}
 
-\item The set of sample times. I {\it strongly} suggest: \begin
+\item The set of sample times. I suggest: \begin
  {enumerate}
 \item  Using $N$ samples, where $N$ is even (and even better: a power of 2).
 
@@ -434,41 +481,41 @@ this sum, you need to specify: \begin{enumerate}
 \end{enumerate}
 
 \item The output is a function of frequency, so you have to specify the
-  frequencies for which you want the output $E(\nu)$. I {\it strongly}
-  suggest that, {\it at first}, you calculate the the output for $N$
+  frequencies for which you want the output $E(\nu)$. I 
+  suggest that, at first, you calculate the the output for $N$
   frequencies running from $-{\nu_{samp} \over 2}$ to $+{\nu_{samp}
     \over 2} \left( 1 - {2 \over N} \right)$. This makes the frequency
   increment equal to $\Delta \nu = \nu_{samp}/N$ over a total range of
-  just under $\nu_{samp}$. Thus, you calculate a {\it voltage} spectrum
+  just under $\nu_{samp}$. Thus, you calculate a {\bf voltage spectrum}
   running from $-{\nu_{samp} \over 2}$ to not quite ${\nu_{samp} \over
     2}$ using our in-house DFT procedure (see the {\tt ugradio.dft} module). 
 To find out how to use the DFT, you can type {\tt ugradio.dft.<tab>} to see an
 auto-complete of what is available in the module.  You can also type {\tt ugradio.dft??} to see
-the code, and, of course, you can type {\tt ugradio.dft.dft?} to see the docs for
+the code, and of course, you can type {\tt ugradio.dft.dft?} to see the docs for
 the DFT function inside the {\tt dft} module.
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
 \label{pwrspect}
 
-We are often interested in the output {\it power spectrum}, say
-$P(\nu)$.  Power is voltage squared.  For complex quantities, the squaring
+We are often interested in the output {\bf power spectrum}, 
+$P_\nu$.  Power is proportional to voltage squared.  For complex quantities, the squaring
 operation means we want the sum of the squares of the real and imaginary
 parts.  We obtain this by multiplying the voltage by its complex
-conjugate,
+conjugate (denoted by `$^*$'),
 %
 \begin{equation}
-P(\nu) = E(\nu) E(\nu)^* \ .
+P_\nu = \tilde E(\nu) \tilde E^*(\nu) \ .
 \end{equation}
 % 
 \noindent In Python, there are two ways to get this product.  One is to use
-the \verb$conj$ function, i.e.\ {\tt PF = EF * EF.conj()}.  Should the
-imaginary part of \verb$PF$ be zero? (answer: yes! Why is this?) Is it?
+the \verb$conj$ function, i.e.\ {\tt P = E * E.conj()}.  Should the
+imaginary part of \verb$P$ be zero? (answer: yes! Why is this?) Is it?
 (answer: not always! Why not?) To get rid of this annoying and extraneous
 imaginary part, you can use the \verb$float$ function: 
-\verb$PF = float(PF)$. For arrays, this becomes {\tt PF = PF.astype(numpy.float)}.
+\verb$P = float(P)$. For arrays, this becomes {\tt P = P.astype(numpy.float)}.
  
 The other (more convenient and suggested) way is to square the length of
-the complex vector, i.e.\ \verb$PF = numpy.abs(EF)**2$. The result is
+the complex vector, i.e.\ \verb$P = numpy.abs(E)**2$. The result is
 automatically real.
 
 \end{enumerate}
@@ -477,8 +524,8 @@ automatically real.
   (ACF)} \label{acf}
 
 There is a very important theorem involving Fourier transforms of two
-functions. It is called the {\it convolution theorem}. It has a cousin
-called the {\it correlation theorem}. Understanding these, and being
+functions. It is called the {\bf convolution theorem}. It has a cousin
+called the {\bf correlation theorem}. Understanding these, and being
 able to apply them, is one of the requirements for being a real radio
 astronomer. 
 
@@ -487,55 +534,51 @@ may be functions of either frequency or time; here, we take them as
 functions of time. The convolution of these two functions is
 %
 \begin{equation}
-[convol(E(t),F(t))](\tau) = [E * F](\tau) = 
-       {1 \over T} \int_{-T/2}^{+T/2} E(t) F(\tau - t) \ dt
+[E * F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau - t) \ dt
 \end{equation}
 %
 and the correlation of the two functions is
 %
 \begin{equation}
-[corr(E,F)](\tau) = 
-       {1 \over T} \int_{-T/2}^{+T/2} E(t) F(\tau + t) \ dt
+[E\star F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau + t) \ dt
 %\int_{-\infty}^{+\infty} E(t) F(\tau + t) \ dt
 \end{equation}
 %
-\noindent Conceptually, these two functions describe `sliding $F$ over
-$E$ by changing the parameter $\tau$'. $\tau$ is called the `time
+\noindent Conceptually, these two functions describe sliding $F$ over
+$E$ by changing the parameter $\tau$. $\tau$ is called the `time
 delay', or simply the `delay'. These two expressions are almost
 identical; the only difference is the sign of $t$ in the argument of
 $F$. If $F$ is symmetric, which is the case of interest for us, the two
-are identical. Denote the Fourier transform of $E$ as
-%
-\begin {equation}
-E^{FT}(\nu) = [FT (E(t))](\nu) = {1 \over T} \int_{-T/2}^{T/2} E(t) e^{2 \pi j \nu t} dt \ .
-\end{equation}
-% 
-and similarly for $F(t)$. Then the convolution theorem states:
+are identical. Using our definition of the Fourier transform from
+Equation \ref{eq:dft}, the convolution theorem states:
 %
 \begin{equation}
-[FT(convol(E(t),F(t)) ](\nu) = [FT (E(t))](\nu) \times  [FT(F(t))](\nu) 
+\widetilde{[E*F]}(\tau)\equiv\int_{-T/2}^{T/2} [E*F](\tau)~e^{2\pi i \tau\nu} d\tau =
+    \tilde E(\nu) \cdot \tilde F(\nu)
 \end{equation}
 %
 and the correlation theorem:
-\begin{equation} \label{acfpwr}
-FT([corr(E(t),F(t))](\nu) = [FT (E(t))](\nu) \times  [FT(F(t))]^*(\nu) 
+\begin{equation}
+\widetilde{[E\star F]}(\tau)\equiv\int_{-T/2}^{T/2} [E\star F](\tau)~e^{2\pi i \tau\nu} d\tau =
+    \tilde E(\nu) \cdot \tilde F^*(\nu)
+\label{eq:acfpwr}
 \end{equation}
 %
-where the asterisk means `complex conjugate'. These theorems apply
+These theorems apply
 strictly only in the limit $T \rightarrow \infty$ (because of `end
 effects' when $T$ is finite), but for finite $T$---the case for any real
-measurement---their equality is `good enough'. In words: {\it The FT of
+measurement---their equality is `good enough'. In words: {\bf The FT of
   the convolution in the time domain is equal to the product of the
   Fourier transforms in the frequency domain.} Ditto for the correlation
 theorem, except that one of the FTs is complex-conjugated.  If $F(t)$ is
 symmetric, then the imaginary part of its Fourier transform is zero,
-which means $F^{FT,*}(\nu) = F^{FT}(\nu)$, and two theorems become
+which means $\tilde F^*(\nu) = \tilde F^(\nu)$, and two theorems become
 identical.
 
 A hugely important application of this theorem is the case when
 $E(t)=F(t)$, in which the correlation function becomes the {\it
-  Autocorrelation function} $ACF(\tau)$, and equation \ref{acfpwr}
-states, in words: \\ {\it The power spectrum is equal to the Fourier
+  Autocorrelation function} $ACF(\tau)$, and equation \ref{eq:acfpwr}
+states, in words: {\bf The power spectrum is equal to the Fourier
   transform of the ACF}
 
 We'll talk about other examples and applications in class.
@@ -547,6 +590,7 @@ terms in the sum is always smaller than $N$ because the delays `spill
 over the edge' of the available samples. So when you calculate the ACF
 you need to properly normalize:
 
+%XXX I don't think this equation clarifies matters
 \begin{equation}
 ACF(\Delta N) = { \Sigma_{k=0}^{ N-\Delta N-1} x_k x_{k+\Delta N} \over
                   \Sigma_{k=0}^{ N-\Delta N-1} x_k^2}
@@ -567,7 +611,7 @@ time, there is a very fast algorithmic implementation called the {\it
 Normally when you do a DFT, you have $N$ input numbers and $N$ output
 numbers and the number of calculations $\propto N^2$. When $N$ gets
 large, this takes a long time!  For the FFT, on the
-contrary, the number of calculations $\propto N {\rm ln}_2(N)$, and this
+contrary, the number of calculations $\propto N\log(N)$, and this
 makes it possible to do large-$N$ transforms.
 
 Try Python's FFT (in the {\tt numpy.fft} module) and compare it to your DFT calculation above. The FFT
@@ -578,7 +622,7 @@ first, then $N \over 2$ negative frequencies
 %(i.e., $0 \rightarrow
 %{\nu_{samp} {N-1 \over N}, -\nu_{samp} \over 2} \rightarros
 %    -\nu_{samp}/N$.  
-However, it's really {\it not} awkward for most
+However, it's really not awkward for most
     applications. See our ``DFT's with DFT's'' handout for details.
 
 From now on, use FFT instead of DFT---unless you need results for
@@ -607,7 +651,7 @@ mixer port, and the i.f.\ output is the third port.
 \end{figure}
 
 For the mixer use a Mini-Circuits ZAD-1, which has three BNC connectors
-(three {\it ports}) and works well at these frequencies.  The ZAD-1,
+(three {\bf ports}) and works well at these frequencies.  The ZAD-1,
 like nearly all mixers, has its ports labeled ``R'' (the ``RF'' or
 ``signal''); ``L'' (the ``local oscillator''); and ``X'' (the ``mixing
 product'') or ``I'' (the ``intermediate frequency'').  The ZAD-1 is a
@@ -627,7 +671,7 @@ For this, use two SRS synthesizer oscillators as inputs to a mixer to
 explore the spectra and waveforms in the DSB mixing process.  One SRS
 synthesizer works up to 30 MHz (the fancy one), and the other works up
 to 15 MHz.  Assign one of the SRS synthesizers to
-be your ``local oscillator'' ({\it lo}) with frequency $\nu_{lo}$, and
+be your ``local oscillator'' (LO) with frequency $\nu_{lo}$, and
 the other your ``signal'' with frequencies $\nu_{sig} = \nu_{lo} \pm
 \delta \nu$.  Here, you choose the frequency difference $\delta \nu$ and
 you set the two synthesizers, one to the lo frequency and the other to
@@ -647,7 +691,7 @@ extremely important issues regarding sampling rate. The most basic is
 the Nyquist criterion. Here, we also want enough samples per period to
 give you a reasonable visual facsimile of the sine wave when you plot
 it; from this standpoint, it's nicer to sample at twice
-Nyquist, or even faster.  Another issue is the {\it number of points}
+Nyquist, or even faster.  Another issue is the number of points
 you sample, which must be large enough to give you at least a few
 periods of the slowest sine wave.
 
@@ -678,7 +722,7 @@ the product of harmonics of each input signal times the other,
 vice-versa, and even harmonics of each input signal with itself---in
 essence, whatever signal is present inside the mixer will be combined
 with every other signal. These undesired products produce nonideal
-signals, which are {\it intermodulation products}; engineers fondly call
+signals, which are {\bf intermodulation products}; engineers fondly call
 them `intermods' or, more colloquially, `birdies'. When a well-designed
 mixer is operated with the proper input signal levels, the intermods
 have much less power than the main product, but they can nevertheless
@@ -697,7 +741,7 @@ l.o. {\it Note the important part:} the right-hand l.o.\ is delayed by
 $90 ^\circ$ relative to the left-hand one, which means that the mixing
 product on the right is delayed by $90^\circ$ with respect to the
 left. This means we can regard the right-hand output as the real part
-and the left as the imaginary part of a {\it complex vector.} We sample
+and the left as the imaginary part of a {\bf complex vector.} We sample
 both outputs simultaneously and use them as the complex input to the
 Fourier transform; the resulting power spectrum shows both negative and
 positive frequencies. Engineers and geeks call this `IQ sampling'.
@@ -752,91 +796,167 @@ Why does it behave this way?
 \subsection{Some Commentary: The Heterodyne Process}
 %
 Mixers are important because they allow us to shift the frequency of the
-whole input spectrum by a uniform amount.  They do this by multiplying
-the input signal by the ``local oscillator'' (l.o.) with frequency
-$\nu_{lo}$; this shifts the frequencies by $\nu_{lo}$.  In radio
-reception, this is very important because nearly always our {\it
-  detectors} work best in a fixed frequency range, but our {\it signals}
+whole input spectrum by a uniform amount, $\nu_0$.  They do this by multiplying
+the input signal by a sine-wave {\bf local oscillator} (LO) with frequency
+$\nu_0$ (though we will use
+angular frequency, $\omega_0$, below for cleaner notation).
+
+In radio
+reception, this is vital because our {\it
+  detectors} usually work best over a fixed frequency range, but our signals
 come in at many different frequencies.  For example, for an AM station
 playing rock music, the ultimate detector is our ear, which works only
-at audio frequencies; however, the AM stations transmit at much higher
+at audio (kHz) frequencies; however, the AM stations transmit at much higher
 frequency, nearly 1 MHz.  A mixer is used to shift the frequencies of
-the AM station down to the audio region.  Such receivers are called {\it
+the AM station down to the audio region.  Such receivers are called {\bf
   heterodyne} receivers, and this principle is used universally not only
-in consumer radios, TV's, and cellphones but also in many other
-applications including radio astronomy.
+in consumer radios, TV's, and cellphones, but also more nobel pursuits, like
+radio astronomy.
 %
-\subsection { Some Theory: The Double Sideband (DSB) Mixer}
-%
-We now turn to the basic theory of the ordinary DSB mixer, which
-is very straightforward.  An ideal mixer multiplies the two input
-signals together; this multiplication makes the output signal have the
-sum and difference frequencies.  Usually, one of these is eliminated by
-using a filter.
+\subsection{Some Theory: The Single Sideband (SSB) Mixer}
 
-        Suppose for simplicity that the mixer is ideal and that the two
-input signals are the following: {\bf (1)} the ``local oscillator'' with
-voltage equal to unity (for convenience) and frequency $\omega_0$; and
-{\bf (2)} two ``signals'' with voltage $E_s$ and frequencies
-$\omega_{s-} = (\omega_0 - |\delta \omega |)$ and $\omega_{s+} =
-(\omega_0 + |\delta \omega |)$. We handle the two signal case
-simultaneously by writing $\omega_{s \pm} = (\omega_0 \pm |\delta \omega
-|)$.\footnote{In real life, e.g.\ a radio station, the ``signal'' is
-speech or music with a broad range of $\delta f$. In astronomical life,
+Even though we do the SSB Mixer second in the lab, the theory of a SSB
+is probably more straightforward to understand, so long as we are willing
+to use complex numbers and allow for the existence of {\bf negative frequencies}.
+Negative frequencies might seem a little weird; how can something oscillate
+a negative number of times per second?
+
+To understand, let's use
+Euler's formula to write a complex sinusoid as
+\begin{equation}
+Ae^{iwt} = A\cos(\omega t) + i\cdot A\sin(\omega t).
+\end{equation}
+In some ways, this complex sinusoid is the ``true" sine wave.  The real-valued
+versions are built out of pairs of complex sine waves:
+\begin{align}
+\cos(\omega t) &= \frac12(e^{i\omega t} + e^{-i\omega t}) \\
+\sin(\omega t) &= \frac1{2i}(e^{i\omega t} - e^{-i\omega t})
+\end{align}
+
+Now, once we've defined a complex sine wave (which very soon will just be
+called a ``sine wave"), we can switch $-\omega$
+for $\omega$,
+\begin{equation}
+Ae^{i(-w)t} = A\cos(\omega t) - i\cdot A\sin(\omega t),
+\end{equation}
+which is to say that the negation of a frequency swaps the sign of the imaginary 
+component.  So rather than thinking of a negative frequency as ``negative Hertz",
+let's instead think of it as a phase relationship between the sine and cosine components.
+In fact, if we take $x=\cos\omega t$ and $y=\sin\omega t$, it's a phase relationship that,
+for $\omega<0$, makes $(x,y)$ run the opposite direction around a circle from $\omega>0$.
+
+Now let's take an idealized SSB mixer that has a LO that
+is a complex sinusoid $e^{-i\omega_0t}$ of unity amplitude with a negative frequency.  
+This LO is mixed (multiplied) by an input signal. As an example, let's take an input signal
+that is the sum of two real-valued sine waves,
+\begin{equation}
+E(t)=A\sin (\omega_0-\Delta\omega)t + B \sin (\omega_0+\Delta\omega)t.
+\end{equation}
+We can then use Euler's formula to express the product output by the mixer as
+\begin{align}
+E(t)\cdot e^{-i\omega_0t} &= A\sin (\omega_0-\Delta\omega)t\cdot e^{-i\omega_0t} + B \sin (\omega_0+\Delta\omega)t \cdot e^{-i\omega_0t}\\
+&= \frac{A}{2i}\left[e^{i(\omega_0-\Delta\omega)t}-e^{-i(\omega_0-\Delta\omega)t}\right]e^{-i\omega_0t} +
+  \frac{B}{2i}\left[e^{i(\omega_0+\Delta\omega)t}-e^{-i(\omega_0+\Delta\omega)t}\right]e^{-i\omega_0t}\\
+&= \frac{A}{2i}\left[e^{-i\Delta\omega t}-e^{-i(2\omega_0-\Delta\omega)t}\right] +
+  \frac{B}{2i}\left[e^{i\Delta\omega t}-e^{-i(2\omega_0+\Delta\omega)t}\right].
+\end{align}
+After mixing, each component sine wave in $E(t)$ has a term that appears at a beat frequency 
+$e^{\pm i \Delta\omega t}$, as well as a component that appears a much higher frequency near $2\omega_0$.
+These higher-frequency components are typically filtered off using a low-pass filter (LPF), leaving just the
+beat-frequency terms
+\begin{equation}
+{\rm LPF}\left[E(t)\cdot e^{-i\omega_0t}\right] =
+  \frac{A}{2i}e^{-i\Delta\omega t} + \frac{B}{2i} e^{i\Delta\omega t}.
+\end{equation}
+These terms retain amplitude and $\Delta\omega$ of their original signal, but have been shifted down
+to a lower frequency where they can be more easily sampled and processed%
+\footnote{In real life, e.g.\ a radio station, the ``signal'' is
+speech or music which spans a range of $\delta f$. In astronomical life,
 e.g.\ the 21-cm line, the ``signal'' is a Doppler broadened line, which
-again has a broad range of $\delta f$. The system is linear, so signals
-add without mutual interaction, so the discussion for a single $\delta
-f$ also applies to these broad spectra.}
+again has a broad range of $\delta f$.  In both cases, a mixer with a well-chosen
+LO frequency can be used to ``mix" the signal down to low frequency, where it can
+be sent to a speaker (if you are listening to the radio, or if you are Jodie Foster's
+character {\it Ellie} in {\it Contact}.}.
 
-        The mixer outputs in the two cases are $MO_-$ and $MO_+$;
-similarly, we write $MO_{\pm}$. $MO_{\pm}$ is the product of the signal and
-l.o.~signals, and can be expressed in terms of the sum and difference
-frequencies by the usual trig identity
-%
-\begin{mathletters} \label{eqn4}
-\begin{equation} \label{eqn4a}
-MO_{\pm,LHS} = E_s \underbrace{\cos [\omega_{s \pm} t] \cos [\omega_0 t]
-}_{product} =
-        {E_s \over 2} (\underbrace {\cos [(\omega_{s\pm} - \omega_0)t
-	]}_{diff} +
-        \underbrace { \cos [(\omega_{s\pm} + \omega_0)t]) }_{sum}
-\end{equation}
-%
-\noindent Here we include the additional subscript `LHS', which refers to
-the left-hand half of the SSB mixer in Figure \ref{ssb}. Replacing
-$\omega_{s\pm}$ by $\omega_0 \pm |\delta \omega|$, we get
-%
-\begin{equation} \label{mopm} \label{eqn4b}
-MO_{\pm, LHS} = E_s \underbrace{\cos [(\omega_0 \pm |\delta \omega |)t]
-\times
-\cos [\omega_0 t]}_{product} = {E_s \over 2}
-        (\underbrace{ \cos [\pm|\delta \omega | t]}_{diff} +
-        \underbrace{ \cos[(2\omega_0 \pm |\delta \omega |) t]}_{sum} ) \
-.
-\end{equation}
-\end{mathletters}
-%
-\noindent Thus, the signal frequency has been shifted to {\it two}
-frequencies by an amount equal to the l.o.\ frequency:  downward in the
-first term (to $\delta \omega $, the difference frequency) and upward
-in the second term (to $2\omega_0 \pm |\delta \omega |$, the sum
-frequency).  The output contains {\it both} the difference {\it and} the
-sum frequency terms.
+Furthermore, so long as we retain both the real and imaginary components (which,
+in reality, are just the components of the original signal that were multiplied by 
+the cosine and sine components of the LO, respectively), we can distinguish 
+between the $A$ and $B$ signal components by whether they appear at positive or negative
+frequency.  This ability to distinguish between positive and negative {\bf sidebands}
+is why we call this a Single-SideBand Mixer: we can look at each sideband separately.
+If we didn't have both the cosine and sine components, we would not be able to distinguish
+positive and negative frequencies. Signals $A$ and $B$ would then sit on top
+of each other, and we would have no choice but to look at both sidebands simultaneously.
 
-        Now we insert a low pass filter to eliminate the sum term. We do
-this because we are observing at some very high frequency, say the 21-cm
-line at 1.4 GHz, and need to convert to much lower frequencies where our
-backend equipment works. (In the TV case it's the same: the signals are
-at hundreds of MHz and the picture processing circuitry operates below
-10 MHz). This low-pass filter removes the second sum-frequency term, which
-leaves us with
+Figure\ \ref{ssb} shows a block diagram of the SSB mixer.  The RF input
+and the LO are each split by a power splitter so that we have two
+identical mixers, one on the left and one on the right, whose outputs
+are labelled {\bf Re(IF)} and {\bf Im(IF)}, respectively. The one on
+the left is identical to the DSB mixer in figure \ref{dsb}. The one on
+the right differs in only one way, which is crucial: its LO is delayed
+by $90^\circ$ relative to that on the left. With this, the {\bf Im(IF)}
+output lags the {\bf Re(IF)}, becoming a sine wave to the {\bf Re(IF)}'s 
+cosine.
+
+\begin{figure}[h]
+%        \begin{center}
+%\hspace{-0.5in}
+%        \leavevmode
+        \includegraphics[width=6.5in]{ssbm.png}
+%        \end{center}
+\caption{Outputs of the first mixers for the two sideband cases. Dashed
+  curve shows the left-hand mixer, solid is the right-hand
+  mixer. Left panel shows $\delta \omega > 0$ (upper
+  sideband---USB); right panel shows $\delta \omega < 0$ (lower
+  sideband---LSB).
+\label{mixerout}}
+\end{figure}
+
+
+\subsection {Some Theory: The Double Sideband (DSB) Mixer}
 %
-  \begin{equation} \label{eqn5} \label{baseband}
-MO_{\pm, LHS} = {E_s \over 2} \cos [\pm|\delta \omega | t] = {E_s \over
-  2}
-   \cos [|\delta \omega | t] \ .
+We now turn to the theory of the DSB mixer, which
+is very straightforward to build (the LO is just a real-valued sine wave, as is the RF, so we only
+require one mixing circuit),
+but a bit more complicated to understand and get to work.  
+
+In this case, we are going to repeat the SSB derivation, but instead of
+using $e^{-i\omega_0t}$ as our LO, we will use $\sin \omega_0 t$.  To begin,
+let's take our signal to be $E(t)=A\sin(\omega_0+\Delta\omega)t$.  In this case,
+the output of our mixer becomes
+\begin{align}
+E(t)\cdot \sin\omega_0t &= A\sin (\omega_0+\Delta\omega)t\cdot \sin (\omega_0t)\\
+&= \frac{A}{2i}\left[e^{i(\omega_0+\Delta\omega)t}-e^{-i(\omega_0+\Delta\omega)t}\right]\cdot
+  \frac{1}{2i}\left[e^{i\omega_0t}-e^{-i\omega_0t}\right] \\
+&= \frac{A}{2}\left[e^{i\Delta\omega t}+e^{-i\Delta\omega_0t} -
+  e^{i(2\omega_0+\Delta\omega) t}-e^{-i(2\omega_0+\Delta\omega)t}\right]\\
+&= A\left[\cos\Delta\omega t - \cos(2\omega_0+\Delta)t\right].
+\end{align}
+As in the SSB, the mixer output has two components: a beat frequency (which is our
+desired output) and a component near $2\omega_0$ (which we typically remove using a LPF).
+
+The unfortunate part about the DSB mixer becomes obvious if we consider the
+case we used for the SSB mixer, where $E(t)=A\sin(\omega_0+\Delta\omega)t + B\sin(\omega_0-\Delta\omega)t$.
+Repeating our algebra above for each component above, we find that
+\begin{equation}
+E(t)\cdot \sin\omega_0t = 
+A\left[\cos\Delta\omega t - \cos(2\omega_0+\Delta)t\right] +
+B\left[\cos(-\Delta\omega) t - \cos(2\omega_0-\Delta)t\right].
 \end{equation}
-%
+But $\cos(-\Delta\omega)t=\cos\Delta\omega t$, so after removing the high-frequency ($2\omega_0$) components
+with a LPF, we end up with
+\begin{equation}
+{\rm LPF}\left[E(t)\cdot \sin\omega_0t\right] = (A+B)\cos\Delta\omega t.
+\end{equation}
+Which, you can see, has two signals that were at two different fequencies 
+($\omega_0+\Delta\omega$ and $\omega_0-\Delta\omega$)
+added on top of each other.
+
+The DSB mixer, though simpler to build, cannot distinguish between postive and negative deviations around
+the LO frequency.  It stacks them right on top of each other, so that any frequency you look at in the output
+can be the sum of two different signals.  This is what lends it the name ``Double Sideband".
+
+
 \begin{figure}[p!]
 %\begin{center}
 %\hspace{-0.7in}
@@ -846,7 +966,7 @@ MO_{\pm, LHS} = {E_s \over 2} \cos [\pm|\delta \omega | t] = {E_s \over
 \caption{Upper and lower sidebands in DSB and SSB mixers for a set of
 $\delta$-function test signals on top of broad level noise spectra. Top:
   the RF
-spectrum. The next two show the USB and LSB {\it individually} when
+spectrum. The next two show the USB and LSB individually when
 they undergo the DSB mixing process; panel 4 shows how they both add
 together. The bottom panel shows the SSB mixer, which keeps them
 separate. \label{sideband}}
@@ -854,11 +974,11 @@ separate. \label{sideband}}
 %
         Three things are important here: \begin{enumerate}
 
-        \item {\it The two sidebands---the two different input
-frequencies} ($[\omega_{s-}= \omega_0 - \delta \omega]$ and $[\omega_{s+}=
-\omega_0 + \delta \omega]$)--- produce the {\it same
+        \item The two sidebands---the two different input
+frequencies ($[\omega_{s-}= \omega_0 - \delta \omega]$ and $[\omega_{s+}=
+\omega_0 + \delta \omega]$)--- produce the same
 symmetric-around-zero pair of IF output frequencies $\pm |\delta
-\omega|$}. The DSB mixer
+\omega|$. The DSB mixer
 cannot distinguish between the two input frequencies.
 
         \item Consider how $|\delta \omega|$ depends on $\omega_0$: for
@@ -868,7 +988,7 @@ cannot distinguish between the two input frequencies.
           \ref{sideband} elucidate the situation.
 
         \item A value of $E_s$ for one sideband produces a certain mixer
-output {\it power}; the same value of $E_s$ for the other sideband
+output power; the same value of $E_s$ for the other sideband
 produces the same power. With regard to power, the sidebands are {\it
 indistinguishable}.
 
@@ -891,78 +1011,10 @@ complicated! With a DSB mixer, you can't distinguish between LSB and
 USB. The LSB and USB are inextricably
 mixed and you get the sum of the power spectra. 
 The only way can achieve the rejection of either the LSB or the USB is by
-using an appropriate {\it bandpass} filter on the input RF spectrum. 
+using an appropriate {\bf bandpass filter} on the input RF spectrum. 
 
 But, nirvana! The bottom panel shows that SSB (Sideband Separating, or
 Single Sideband) mixing retains the sideband separation and identity.
-
-\subsection{More Theory: The SSB Mixer}
-
-The SSB mixer has the capability of distinguishing whether the
-difference frequency $|\delta f|$ is positive or negative---that
-is, it distinguishes between the two sidebands.  The sidebands can, and
-usually do, contain completely independent signals; a common example in
-everyday life is stereo FM.
-
-Figure\ \ref{ssb} shows a block diagram of the SSB mixer.  The RF input
-and the LO are each split by a power splitter so that we have two
-identical mixers, one on the left and one on the right, whose outputs
-are labelled {\bf Re(IF)} and {\bf Im(IF)}, respectively. The one on
-the left is identical to the DSB mixer in figure \ref{dsb}. The one on
-the right differs in only one way, which is crucial: its LO is delayed
-by $90^\circ$ relative to that on the left. With this, the {\bf Im(IF)}
-output lags the {\bf Re(IF)} one by $90^\circ$ in phase. This allows us
-to remove the degeneracy in the sidebands by using both inputs to the
-Fourier transform, regarding the FT input as complex.
-
-To understand how this works, let's repeat exactly the same math in
-equations \ref{eqn4} and \ref{eqn5}, with the addition of a $90^\circ$
-phase delay to the l.o.\ signal. In equation \ref{eqn4}, we represented
-the LHS l.o.\ by a cosine and used the trig identity `cos times cos = cos +
-cos'. With the $90^\circ$ phase delay, the RHS l.o.\ cosine becomes a sine,
-and the corresponding trig identity becomes `sin times cos = sin +
-sin'. The RHS equivalent of equation \ref{eqn5} becomes
-%
-\begin{equation}
-MO_{\pm, RHS} = {E_s \over 2} \sin [\pm|\delta \omega | t] = \pm {E_s \over
-  2}
-   \sin [|\delta \omega | t] \ ,
-\end{equation}
-%
-which is identical except that the cosines are sines.
-
-Suppose that the RF input signal a cosine wave in the {\it lower}
-sideband, with frequency {\it below} the l.o.\ frequency, i.e.\ $\delta
-\omega$ is negative.  Then the LHS
-and RHS outputs are sinusoidal, with the two mixer outputs $\propto \cos
-[|\delta \omega| t]$ and $-\sin [|\delta \omega| t]$ for the LHS and
-RHS, respectively.  These are shown in right panel of Figure
-\ref{mixerout}, with the LHS side [$MO_{-,LHS}$] dashed and the RHS side
-    [$MO_{-,RHS}$] solid. The two signals are shifted in phase: for the
-    RF input being in the {\it lower} sideband, the dashed curve $MO_{-,
-      LHS}$ {\it leads} the solid one $MO_{-, RHS}$. When FT'd, this
-    corresponds to a {\it negative} IF frequency.
-
-If the RF input signal is a cosine wave in the {\it upper} sideband, with
-frequency {\it above} the l.o.\ frequency, $\delta \omega$ is positive
-and the situation is
-reversed: the dashed curve $MO_{+, LHS}$ {\it lags} the solid
-one $MO_{+, RHS}$. When FT'd, this corresponds to a {\it positive}
-IF frequency.
-
-\begin{figure}[h]
-%        \begin{center}
-%\hspace{-0.5in}
-%        \leavevmode
-        \includegraphics[width=6.5in]{ssbm.png}
-%        \end{center}
-\caption{Outputs of the first mixers for the two sideband cases. Dashed
-  curve shows the {\it left-hand} mixer, solid is the {\it right-hand}
-  mixer. Left panel shows $\delta \omega > 0$ ({\it upper}
-  sideband---USB); right panel shows $\delta \omega < 0$ ({\it lower}
-  sideband---LSB).
-\label{mixerout}}
-\end{figure}
 
 \section{ON PAPER: YOUR LAB REPORT (Third Week)} \label{report}
 
@@ -972,18 +1024,18 @@ IF frequency.
 \item What should your lab report look like? {\tt
   labreport\_comments.pdf} {\it ``SUGGESTIONS FOR LAB REPORTS''}
 
-\item You must use Latex for your lab report! {\tt sample.pdf} ``LaTex
-  Is Your Friend OR ENEMY?????????'' Answer to this question is a
+\item You must use \LaTeX for your lab report! {\tt sample.pdf} ``LaTex
+  Is Your Friend OR ENEMY?'' Answer to this question is a
   resounding YES for `Friend'---if you have followed his handout. Use
-  LaTex for preparing your lab report!
+  \LaTeX for preparing your lab report!
 
 \item Now's the time for another look at efficient use of your text
   editor, because if you learn the keystoke commands you'll be much
   quicker and save lots of time further down the road.
 
 \item You'll need to show plots into your lab report. To do this you
-  make PDF files of your plots. See {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
-  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Section 6.0.1.
+  make PDF files of your plots. %See {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
+  %Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Section 6.0.1.
 
 \end{enumerate}
 \end{document}

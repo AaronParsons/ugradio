@@ -1,15 +1,28 @@
-\contentsline {section}{\numberline {1}INTRODUCTION}{2}
-\contentsline {section}{\numberline {2}SCHEDULE}{2}
-\contentsline {section}{\numberline {3}ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE}{3}
-\contentsline {section}{\numberline {4}THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO \relax \mathversion {bold}{$(b=0^\circ $)}}{4}
-\contentsline {section}{\numberline {5}IS THE GALACTIC PLANE FLAT?}{4}
-\contentsline {section}{\numberline {6}THE GALACTIC POLES: GREAT CIRCLES AT CONSTANT LONGITUDE $\ell $}{5}
-\contentsline {section}{\numberline {7}MAPPING THE ORION-ERIDANUS SUPERBUBBLE}{5}
-\contentsline {section}{\numberline {8}MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}{6}
-\contentsline {section}{\numberline {9}MAPPING A BIG HIGH-VELOCITY CLOUD}{6}
-\contentsline {section}{\numberline {10}MAPPING THE MAGELLANIC STREAM}{7}
-\contentsline {section}{\numberline {11}DETECTING OH MASERS IN W49}{7}
-\contentsline {section}{\numberline {12} IF YOU HAVE TIME and ARE TOTALLY IN LOVE WITH RADIO ASTRONOMY (AND NOTHING OR NOBODY ELSE) THEN: MEASURE THE TELESCOPE BEAMWIDTH}{8}
-\contentsline {section}{\numberline {13}BASICS OF THE 21-CM LINE.}{8}
-\contentsline {subsection}{\numberline {13.1}Column Density and Mass}{8}
-\contentsline {subsection}{\numberline {13.2}Converting Galactic Rotation to Doppler Velocity}{10}
+\contentsline {section}{\numberline {1}GOALS}{2}
+\contentsline {section}{\numberline {2}INTRODUCTION}{3}
+\contentsline {section}{\numberline {3}SCHEDULE}{3}
+\contentsline {section}{\numberline {4}CONTROLLING THE LEUSCHNER TELESCOPE}{4}
+\contentsline {subsection}{\numberline {4.1}Connecting to the heiles Computer at Leuschner}{4}
+\contentsline {subsection}{\numberline {4.2}Using VNC at the heiles Computer at Leuschner}{4}
+\contentsline {subsection}{\numberline {4.3}Python Procedures for Controlling the Dish}{5}
+\contentsline {subsection}{\numberline {4.4}Python Procedures for Taking Data}{6}
+\contentsline {section}{\numberline {5}ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE}{7}
+\contentsline {subsection}{\numberline {5.1}Sampling Your Sky Area}{7}
+\contentsline {subsection}{\numberline {5.2}Recommended Commands}{8}
+\contentsline {subsection}{\numberline {5.3}Beware Operating near Azimuth 0/360!!}{8}
+\contentsline {subsection}{\numberline {5.4}Beware Operating Above Altitude 85 and Below/Near 14!!}{8}
+\contentsline {section}{\numberline {6}THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO \relax \mathversion {bold}{$(b=0^\circ )$}}{8}
+\contentsline {section}{\numberline {7}IS THE GALACTIC PLANE FLAT?}{9}
+\contentsline {section}{\numberline {8}THE GALACTIC POLES: GREAT CIRCLES AT CONSTANT LONGITUDE $\ell $}{10}
+\contentsline {section}{\numberline {9}MAPPING THE NORTH CELESTIAL POLE}{10}
+\contentsline {section}{\numberline {10}MAPPING THE ORION-ERIDANUS SUPERBUBBLE}{11}
+\contentsline {section}{\numberline {11}MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}{11}
+\contentsline {section}{\numberline {12}MAPPING A BIG HIGH-VELOCITY CLOUD}{11}
+\contentsline {section}{\numberline {13}MAPPING THE MAGELLANIC STREAM}{12}
+\contentsline {section}{\numberline {14}BASICS OF THE 21-CM LINE.}{12}
+\contentsline {subsection}{\numberline {14.1}Column Density and Mass}{12}
+\contentsline {subsection}{\numberline {14.2}Converting Galactic Rotation to Doppler Velocity}{14}
+\contentsline {section}{\numberline {15}DISPLAYING YOUR DATA}{14}
+\contentsline {subsection}{\numberline {15.1}MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER SCREEN}{15}
+\contentsline {subsection}{\numberline {15.2}Regridding}{15}
+\contentsline {subsection}{\numberline {15.3}Displaying Your Data---The Exploratory Phase}{16}
