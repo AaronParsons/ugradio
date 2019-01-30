@@ -3,7 +3,10 @@
 # XXX tracking mode?
 
 from __future__ import print_function
-import socket, serial, time, thread
+import socket, serial, time
+try: import thread
+except(ImportError): import _thread as thread
+
 
 MAX_SLEW_TIME = 60 # seconds
 
@@ -17,7 +20,7 @@ ALT_MAINT = 20. # Position for antenna maintenance
 AZ_MAINT = 180. # Position for antenna maintenance
 
 class TelescopeClient:
-    '''Interface for controlling a single antenna.  Use Interferometer to 
+    '''Interface for controlling a single antenna.  Use Interferometer to
     control the pair with default settings.'''
     def __init__(self, host, port, delta_alt, delta_az):
         self._delta_alt = delta_alt
@@ -56,7 +59,7 @@ class TelescopeClient:
         -------
         None'''
         self._check_pointing(alt, az) # AssertionError if out of bounds
-        # Request encoded alt/az with calibrated offset 
+        # Request encoded alt/az with calibrated offset
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
         assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
@@ -85,7 +88,7 @@ class TelescopeClient:
 
         Returns
         -------
-        alt     : float degrees, altitude angle 
+        alt     : float degrees, altitude angle
         az      : float degrees, azimuthal angle'''
         az = float(self._command(CMD_GET_AZ, verbose=verbose))
         alt = float(self._command(CMD_GET_EL, verbose=verbose))
@@ -126,10 +129,10 @@ DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset
 DELTA_ALT_ANT_E =  0.   # (true - encoder) offset
 DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
 
-    
+
 class Interferometer:
     '''Interface for controlling the two UGRadio interferometer telescopes together.'''
-    def __init__(self, host_ant_w=HOST_ANT_W, host_ant_e=HOST_ANT_E, port=PORT, 
+    def __init__(self, host_ant_w=HOST_ANT_W, host_ant_e=HOST_ANT_E, port=PORT,
             delta_alt_ant_w=DELTA_ALT_ANT_W, delta_az_ant_w=DELTA_AZ_ANT_W,
             delta_alt_ant_e=DELTA_ALT_ANT_E, delta_az_ant_e=DELTA_AZ_ANT_E):
         self.ant_w = TelescopeClient(host_ant_w, port, delta_alt=delta_alt_ant_w, delta_az=delta_az_ant_w)
@@ -284,7 +287,7 @@ class TelescopeDirect:
             return 'e 1'
         dishAz = (dishAz + 360.) % 360
         # Enforce absolute bounds.  Comment out to override.
-        if (dishAz < AZ_MIN) or (dishAz > AZ_MAX): 
+        if (dishAz < AZ_MIN) or (dishAz > AZ_MAX):
             return 'e 1'
         az_cnts = int(self.get_az() / DRIVE_DEG_PER_CNT)
         azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
@@ -296,7 +299,7 @@ class TelescopeDirect:
         if elResponse != '0':
             return 'e 1'
         # Enforce absolute bounds.  Comment out to override.
-        if (dishEl < ALT_MIN) or (dishEl > ALT_MAX): 
+        if (dishEl < ALT_MIN) or (dishEl > ALT_MAX):
             return 'e 1'
         el_cnts = int(self.get_el() / DRIVE_DEG_PER_CNT)
         elMoveCmd =  '.b s r0xca ' + str(int((dishEl / DRIVE_DEG_PER_CNT - el_cnts) * self.el_enc_scale)) + '\r'

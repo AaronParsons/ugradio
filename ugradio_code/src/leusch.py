@@ -3,7 +3,9 @@
 """Module for controlling the Leuschner radio telescope."""
 
 from __future__ import print_function
-import socket, serial, time, thread, math
+import socket, serial, time, math
+try: import thread
+except(ImportError): import _thread as thread
 try:
     import RPi.GPIO as GPIO # necessary for LeuschNoiseServer
 except(ImportError):
@@ -392,16 +394,17 @@ class LeuschNoiseServer:
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
         # overwrite commands to the Raspberry
+        pin = 5 # This was originally 05
         if self.prev_cmd != cmd:
             self.prev_cmd = cmd
             GPIO.setmode(GPIO.BCM) # Errors out if import RPi.GPIO failed
             GPIO.setwarnings(False)
-            GPIO.setup(05, GPIO.OUT) # pin 29
+            GPIO.setup(pin, GPIO.OUT) # pin 29
             # switch pin 29 of Raspberry Pi to TTL level low
             if cmd == CMD_NOISE_OFF:
                 if self.verbose: print('write digital I/O low')
-                GPIO.output(05, False)   # pin 29
+                GPIO.output(pin, False)   # pin 29
             # switch pin 29 of Raspberry Pi to TTL level high
             elif cmd == CMD_NOISE_ON:
                 if self.verbose: print('write digital I/O high')
-                GPIO.output(05, True)   # pin 29
+                GPIO.output(pin, True)   # pin 29
