@@ -125,7 +125,7 @@ class DelayClient:
             r = s.recv(bufsize)
             response.append(r)
             if len(r) < bufsize: break
-        reponse = ''.join(response)
+        response = ''.join(response)
         if verbose: print('Got Response:', [response])
         return response
  
