@@ -112,7 +112,7 @@ class DelayClient:
     def __init__(self, host=HOST, port=PORT):
         self.hostport = (host, port)
 
-    def delay_ns(self, data, verbose=False):
+    #def delay_ns(self, data, verbose=False):
     def _command(self, cmd, bufsize=1024, timeout=10, verbose=False):
         '''Communicate with host server and return response as string.'''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -172,7 +172,7 @@ class DelayDirect:
     def write_relays(self, relay_config):
         self.log('Setting Relay Config: ', relay_config)
         assert(len(relay_config) == 8) # make sure all relay states are encoded
-        assert(set(relay_config) == set('01')) # make sure only 1s or 0s are sent
+        assert(set(relay_config).issubset(set('01'))) # make sure only 1s or 0s are sent
         for sw in self.switches():
             self.switch_relays(sw, bool(int(relay_config[sw])))
 
