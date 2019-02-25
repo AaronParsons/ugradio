@@ -123,7 +123,7 @@ class DelayClient:
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
-            reponse.append(r)
+            response.append(r)
             if len(r) < bufsize: break
         reponse = ''.join(response)
         if verbose: print('Got Response:', [response])
@@ -208,7 +208,7 @@ class DelayServer(DelayDirect):
         if not cmd: return
         if self.verbose: print('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
-        cmd = cmd.strip()
+        cmd = cmd.split('\n')   
         self.write_relays(cmd)
         resp = 'success'
         if self.verbose: print('Returning:', [resp])
