@@ -1,0 +1,21 @@
+#! /usr/bin/env python
+'''This script is started by start_delayserver and runs on a RPI
+whose GPIO is connected to the delay line control for the
+UGRadio Interferometer.'''
+
+from __future__ import print_function
+from ugradio.interf_delay import DelayServer
+import time
+import traceback
+
+while True:
+    try:
+        print('Starting server...')
+        ts = DelayServer()
+        ts.run(verbose=True)
+    except Exception as e:
+        print('Delay server crashed with the following message:')
+        print(traceback.format_exc())
+        print('Restarting...')
+        time.sleep(1)
+

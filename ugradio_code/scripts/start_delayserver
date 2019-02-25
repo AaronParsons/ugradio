@@ -1,0 +1,7 @@
+#! /bin/bash
+
+pkill delayserver 
+sleep 1
+delayserver < /dev/null >& delayserver.log &
+
+exit 0
