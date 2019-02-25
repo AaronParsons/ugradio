@@ -10,14 +10,15 @@ import time # XXX I think this is unused.
 
 PORT = 1421
 HOST = '10.32.92.121'    # Raspberry Pi connected to delay line control
-MAX_DELAY = 32
+MAX_DELAY = 32.0
 
-def encode_delay(time_ns, dt=0.5, N=8):
+def encode_delay(time_ns, N=8):
     '''Convert a desired delay in nanoseconds into a relay configuration.
 
     Parameters
     ----------
     time_ns : float nanoseconds, the time delay to implement
+    N       : default 8, optional, the number of switches in the delay line
 
     Returns
     -------
@@ -34,13 +35,13 @@ def encode_delay(time_ns, dt=0.5, N=8):
     # register function, shift all seven bits to the left.  Then, Xor the original 7 bit binary number to the
     # new 8 bit binary number (8 bits produced by the left shift register function)
     # The 8 bit Xor result will be applied to the individual relay circuits.
-
+    dt = MAX_DELAY / 2**(N-2)
     delay_total = MAX_DELAY - time_ns
     dly_cnts = int(round(delay_total / dt))
     c = min(dly_cnts, 2**(N-1) - 1)
     c = bin(c ^ (2 * c))[2:] # bitwise xor with left-shifted numbers
     relay_config = '0' * (N - len(c)) + c # pad out to 8 characters
-    return relay_config
+    return relay_config[::-1] # reverse to make string indexable
 
 class DelayClient:
     '''Interface for controlling the delay line from a lab computer.'''
