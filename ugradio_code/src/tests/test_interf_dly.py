@@ -1,6 +1,8 @@
 import unittest
 import ugradio.interf_delay as dly
 
+dly.MAX_DELAY = 32. # move back to an old calibration
+
 class TestMethods(unittest.TestCase):
     def test_encode_delay(self):
         answers = {
