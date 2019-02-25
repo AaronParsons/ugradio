@@ -62,89 +62,29 @@ class DelayDirect:
         self._gpio = GPIO
         self._gpio.setmode(self._gpio.BCM)
         self._gpio.setwarnings(False)
+        for sw in self.switches():
+            self._gpio.setup(SWITCH_LAYOUT[sw], self._gpio.OUT)
         self.verbose = verbose
+
     def log(self, *args):
         if self.verbose:
             print(*args)
+
+    def switches(self):
+        return SWITCH_LAYOUT.keys()
+
     def write_relays(self, relay_config):
-        self.log('the relay config=: ', relay_config)
-        if (relay_config[7]) == '0':
-            relay_number_state = 'k0off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[7]) == '1':
-            relay_number_state = 'k0on'
-            self.switch_relays(relay_number_state)
+        self.log('Setting Relay Config: ', relay_config)
+        for sw in self.switches()
+            self.switch_relays(sw, bool(int(relay_config[i])))
 
-        if (relay_config[6]) == '0':
-            relay_number_state = 'k1off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[6]) == '1':
-            relay_number_state = 'k1on'
-            self.switch_relays(relay_number_state)
-            
-        if (relay_config[5]) == '0':
-            relay_number_state = 'k2off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[5]) == '1':
-            relay_number_state = 'k2on'
-            self.switch_relays(relay_number_state)
-
-        if (relay_config[4]) == '0':
-            relay_number_state = 'k3off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[4]) == '1':
-            relay_number_state = 'k3on'
-            self.switch_relays(relay_number_state) 
-            
-        if (relay_config[3]) == '0':
-            relay_number_state = 'k4off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[3]) == '1':
-            relay_number_state = 'k4on'
-            self.switch_relays(relay_number_state)
-
-        if (relay_config[2]) == '0':
-            relay_number_state = 'k5off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[2]) == '1':
-            relay_number_state = 'k5on'
-            self.switch_relays(relay_number_state)
-            
-        if (relay_config[1]) == '0':
-            relay_number_state = 'k6off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[1]) == '1':
-            relay_number_state = 'k6on'
-            self.switch_relays(relay_number_state)
-
-        if (relay_config[0]) == '0':
-            relay_number_state = 'k7off'
-            self.switch_relays(relay_number_state)
-        if (relay_config[0]) == '1':
-            relay_number_state = 'k7on'
-            self.switch_relays(relay_number_state) 
-
-    
-
-
-    def switch_relays(self, relay_number_state):
-        int_relay_number = int(relay_number_state[1])
-        relay_state = (relay_number_state[2:])
-        if relay_state == 'off':
-            int_relay_state = False
-        if relay_state == 'on':
-            int_relay_state = True
-        gpio_index = SWITCH_LAYOUT[int_relay_number]
-        self._gpio.setup(gpio_index, self._gpio.OUT)
-        self._gpio.output(gpio_index, int_relay_state)
-        self.log('<GPIO %d Switch to %s>' % (gpio_index, int_relay_state))
-
-# switch the state of individual relays based on command - relay_number_state
+    def switch_relays(self, sw_num, state):
+        gpio_index = SWITCH_LAYOUT[sw_num]
+        self._gpio.output(gpio_index, state)
+        self.log('<GPIO %d Switch to %s>' % (gpio_index, state))
 
     def all_relays_off(self):           
-        
-        for i in SWITCH_LAYOUT.keys():
-            self.switch_relays('k%doff' % (i))
+        self.write_relays('0' * len(self.switches()))
 
 
 class DelayServer(DelayDirect):
