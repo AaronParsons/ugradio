@@ -76,7 +76,7 @@ class DelayDirect:
     def write_relays(self, relay_config):
         self.log('Setting Relay Config: ', relay_config)
         for sw in self.switches():
-            self.switch_relays(sw, bool(int(relay_config[i])))
+            self.switch_relays(sw, bool(int(relay_config[sw])))
 
     def switch_relays(self, sw_num, state):
         gpio_index = SWITCH_LAYOUT[sw_num]
