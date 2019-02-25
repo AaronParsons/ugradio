@@ -3,6 +3,7 @@ delay lines.  These delay lines can be used to remove the geometric
 delay between the signals entering two antennas, enable a wider
 simultaneous bandwidth to be used for better sensitivity.'''
 
+from __future__ import print_function
 import socket, thread
 import time # XXX I think this is unused.
 
@@ -42,17 +43,31 @@ class DelayClient:
         response = "got it"
         return response
 
-
-
+SWITCH_LAYOUT = {
+    0: 27, # pin 13
+    1: 22, # pin 15
+    2:  5, # pin 29
+    3:  6, # pin 31
+    4: 13, # pin 33
+    5: 26, # pin 37
+    6: 18, # pin 12
+    7: 23, # pin 16
+}
 
 class DelayDirect:
     '''Low-level interface for controlling delay lines from a Raspberry
     Pi with a direction connection to the delay-line switches.'''
-    def __init__(self):
+    def __init__(self, verbose=True):
         import RPi.GPIO as GPIO
         self._gpio = GPIO
+        self._gpio.setmode(self._gpio.BCM)
+        self._gpio.setwarnings(False)
+        self.verbose = verbose
+    def log(self, *args):
+        if self.verbose:
+            print(*args)
     def write_relays(self, relay_config):
-        print 'the relay config=: ', relay_config
+        self.log('the relay config=: ', relay_config)
         if (relay_config[7]) == '0':
             relay_number_state = 'k0off'
             self.switch_relays(relay_number_state)
@@ -116,206 +131,27 @@ class DelayDirect:
         int_relay_number = int(relay_number_state[1])
         relay_state = (relay_number_state[2:])
         if relay_state == 'off':
-            int_relay_state = 0
+            int_relay_state = False
         if relay_state == 'on':
-            int_relay_state = 1      
-
-
-# switch the state of individual relays based on command - relay_number_state
-
-        #  KO
-        if int_relay_number == 0:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(27, self._gpio.OUT) # pin 13  
-            if int_relay_state == 0:
-                self._gpio.output(27, False)
-                print '<GPIO 27 Switch to Low - K0 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(27, True)        
-                print '<GPIO 27 Switch to High - K0 On>'
-
-        #  K1
-        if int_relay_number == 1:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(22, self._gpio.OUT) # pin 15    
-            if int_relay_state == 0:
-                self._gpio.output(22, False)
-                print '<GPIO 22 Switch to Low - K1 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(22, True)        
-                print '<GPIO 22 Switch to High - K1 On>'
-
-
-            #  K2
-        if int_relay_number == 2:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(05, self._gpio.OUT) # pin 29 
-            if  int_relay_state == 0:
-                self._gpio.output(05, False)
-                print '<GPIO 05 Switch to Low - K2 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(05, True)        
-                print '<GPIO 05 Switch to High - K2 On>'
-
-
-            #  K3
-        if int_relay_number == 3:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(06, self._gpio.OUT) # pin 31
-            print '>'
-            print '>'    
-            if int_relay_state == 0:
-                self._gpio.output(06, False)
-                print '<GPIO 06 Switch to Low - K3 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(06, True)        
-                print '<GPIO 06 Switch to High - K3 On>'
-
-
-            #  K4
-        if int_relay_number == 4:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(13, self._gpio.OUT) # pin 33
-            if int_relay_state == 0:
-                self._gpio.output(13, False)
-                print '<GPIO 13 Switch to Low - K4 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(13, True)        
-                print '<GPIO 13 Switch to High - K4 On>'
-
-
-            #  K5
-        if int_relay_number == 5:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(26, self._gpio.OUT) # pin 37
-            if int_relay_state == 0:
-                self._gpio.output(26, False)
-                print '<GPIO 26 Switch to Low - K5 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(26, True)        
-                print '<GPIO 26 Switch to High - K5 On>'
-
-            #  K6
-        if int_relay_number == 6:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(18, self._gpio.OUT) # pin 12
-            if int_relay_state == 0:
-                self._gpio.output(18, False)
-                print '<GPIO 18 Switch to Low - K6 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(18, True)        
-                print '<GPIO 18 Switch to High - K6 On>'
-
-            #  K7
-        if int_relay_number == 7:
-            self._gpio.setmode(self._gpio.BCM)
-            self._gpio.setwarnings(False)
-            self._gpio.setup(23, self._gpio.OUT) # pin 16
-            if int_relay_state == 0:
-                self._gpio.output(23, False)
-                print '<GPIO 23 Switch to Low - K7 Off>'        
-            if int_relay_state == 1:
-                self._gpio.output(23, True)        
-                print '<GPIO 23 Switch to High - K7 On>'
-                print ' '
-                print '>'
-   
+            int_relay_state = True
+        gpio_index = SWITCH_LAYOUT[int_relay_number]
+        self._gpio.setup(gpio_index, self._gpio.OUT)
+        self._gpio.output(gpio_index, int_relay_state)
+        self.log('<GPIO %d Switch to %s>' % (gpio_index, int_relay_state))
 
 # switch the state of individual relays based on command - relay_number_state
 
     def all_relays_off(self):           
         
-        #  KO
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(27, self._gpio.OUT) # pin 13
-        print '>' 
-        self._gpio.output(27, False)
-        print '<GPIO 27 Switch to Low - K0 Off>'
-
-            
-        #  K1
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(22, self._gpio.OUT) # pin 15
-        print '>'   
-        self._gpio.output(22, False)
-        print '<GPIO 22 Switch to Low - K1 Off>'        
-
-
-        #  K2
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(05, self._gpio.OUT) # pin 29
-        print '>'
-           
-        self._gpio.output(05, False)
-        print '<GPIO 05 Switch to Low - K2 Off>'        
-
-
-
-         #  K3
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(06, self._gpio.OUT) # pin 31
-        print '>'
-        self._gpio.output(06, False)
-        print '<GPIO 06 Switch to Low - K3 Off>'        
-
-
-        #  K4
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(13, self._gpio.OUT) # pin 33
-        print '>'
-        self._gpio.output(13, False)
-        print '<GPIO 13 Switch to Low - K4 Off>'        
-
-
-
-        #  K5
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(26, self._gpio.OUT) # pin 37
-        print '>'
-        self._gpio.output(26, False)
-        print '<GPIO 26 Switch to Low - K5 Off>'
-
-
-        #  K6
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(18, self._gpio.OUT) # pin 12
-        print '>'
-        self._gpio.output(18, False)
-        print '<GPIO 18 Switch to Low - K6 Off>'
-
-
-        #  K7
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setwarnings(False)
-        self._gpio.setup(23, self._gpio.OUT) # pin 16
-        print '>'
-        self._gpio.output(23, False)
-        print '<GPIO 23 Switch to Low - K7 Off>'        
-  
-             
-                  
-
+        for i in SWITCH_LAYOUT.keys():
+            self.switch_relays('k%doff' % (i))
 
 
 class DelayServer(DelayDirect):
     def run(self, host='', port=PORT, verbose=False, timeout=10):
         self.verbose = verbose
         if self.verbose:
-            print('Initializing..')
+            self.log('Initializing..')
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host,port))
@@ -364,7 +200,7 @@ class DelayServer(DelayDirect):
             sign = True
 
         if time_delay >32 or time_delay < -32:
-            print 'the value is out of range, please enter a number between -32 to +32: '
+            self.log('the value is out of range, please enter a number between -32 to +32: ')
             exit()
 
 
