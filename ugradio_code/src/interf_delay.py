@@ -208,7 +208,7 @@ class DelayServer(DelayDirect):
         if not cmd: return
         if self.verbose: print('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
-        cmd = cmd.split('\n')   
+        cmd = cmd.strip()
         self.write_relays(cmd)
         resp = 'success'
         if self.verbose: print('Returning:', [resp])
