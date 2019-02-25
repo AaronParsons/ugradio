@@ -41,7 +41,7 @@ def encode_delay(time_ns, N=8):
     c = min(dly_cnts, 2**(N-1) - 1)
     c = bin(c ^ (2 * c))[2:] # bitwise xor with left-shifted numbers
     relay_config = '0' * (N - len(c)) + c # pad out to 8 characters
-    return relay_config[::-1] # reverse to make string indexable
+    return relay_config # reverse to make string indexable
 
 class DelayClient:
     '''Interface for controlling the delay line from a lab computer.'''
@@ -110,7 +110,7 @@ class DelayDirect:
         assert(len(relay_config) == 8) # make sure all relay states are encoded
         assert(set(relay_config).issubset(set('01'))) # make sure only 1s or 0s are sent
         for sw in self.switches():
-            self.switch_relays(sw, bool(int(relay_config[sw])))
+            self.switch_relays(sw, bool(int(relay_config[-1-sw])))
 
     def switch_relays(self, sw_num, state):
         gpio_index = SWITCH_LAYOUT[sw_num]
