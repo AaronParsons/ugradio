@@ -35,7 +35,7 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
         numpy array (dtype int16) of all data.
     '''
     assert(volt_range in VOLT_RANGE)
-    assert(nblocks >= 1 and nblocks < 100)
+    assert(nblocks >= 1 and nblocks <= 1000)
     cmd = '1 %d %s %d %d %d' % (dual_mode, volt_range, divisor, nsamples, nblocks)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
