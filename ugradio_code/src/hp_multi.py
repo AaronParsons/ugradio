@@ -59,6 +59,21 @@ class HP_Multimeter:
             return resp, t
         else:
             return resp
+    def _read_thread(self):
+        '''Used by start_recording to acquire data.  Not for end use.'''
+        while self._running:
+            for i in xrange(tries):
+                try:
+                    v,t = self.read_voltage(return_time=True)
+                    break
+                except(ValueError): # this happens when read_voltage gets an invalid response
+                    self._errors += 1
+                    if i == tries - 1: # we've exhausted our last try
+                        raise RuntimeError('HP Multimeter recording failed after %d tries.' % tries)
+                    time.sleep(.75*float(dt)/tries) # sleep as long we can before reading again
+            self._volts.append(v)
+            self._times.append(t)
+            time.sleep(dt - ((time.time() - self._start_time) % dt)) # sleep remainder of time 
     def start_recording(self, dt, tries=10):
         '''Initiate continuous reading from multimeter every dt seconds.
 
@@ -71,21 +86,7 @@ class HP_Multimeter:
         None'''
         self._clear_buffers()
         self._running = True
-        def read_thread():
-            while self._running:
-                for i in xrange(tries):
-                    try:
-                        v,t = self.read_voltage(return_time=True)
-                        break
-                    except(ValueError): # this happens when read_voltage gets an invalid response
-                        self._errors += 1
-                        if i == tries - 1: # we've exhausted our last try
-                            raise RuntimeError('HP Multimeter recording failed after %d tries.' % tries)
-                        time.sleep(.75*float(dt)/tries) # sleep as long we can before reading again
-                self._volts.append(v)
-                self._times.append(t)
-                time.sleep(dt - ((time.time() - self._start_time) % dt)) # sleep remainder of time 
-        self._thread = threading.Thread(target=read_thread)
+        self._thread = threading.Thread(target=self._read_thread)
         self._thread.daemon = True
         self._start_time = time.time()
         self._thread.start()
