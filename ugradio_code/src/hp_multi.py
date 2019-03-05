@@ -59,7 +59,7 @@ class HP_Multimeter:
             return resp, t
         else:
             return resp
-    def _read_thread(self):
+    def _read_thread(self, dt, tries):
         '''Used by start_recording to acquire data.  Not for end use.'''
         while self._running:
             for i in xrange(tries):
@@ -86,7 +86,7 @@ class HP_Multimeter:
         None'''
         self._clear_buffers()
         self._running = True
-        self._thread = threading.Thread(target=self._read_thread)
+        self._thread = threading.Thread(target=self._read_thread, args=(dt, tries))
         self._thread.daemon = True
         self._start_time = time.time()
         self._thread.start()
