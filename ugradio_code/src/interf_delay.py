@@ -20,7 +20,8 @@ def encode_delay(time_ns, N=8):
 
     Returns
     -------
-    relay_config : a string of 0's and 1's encoding the relay configuration'''
+    relay_config : a string of 0's and 1's encoding the relay configuration
+    delay_rnd    : float nanoseconds, the time delay actually encoded'''
     assert(-MAX_DELAY <= time_ns <= MAX_DELAY)
     # Conversion Explanation:
     # the number of bits are 128 (2 to the power of 7)
@@ -36,6 +37,29 @@ def encode_delay(time_ns, N=8):
     dt = MAX_DELAY / 2**(N-2)
     delay_total = MAX_DELAY - time_ns
     dly_cnts = int(round(delay_total / dt))
+    delay_rnd = MAX_DELAY - (dly_cnts * dt) # Rounded delay actually written
+    c = min(dly_cnts, 2**(N-1) - 1)
+    c = bin(c ^ (2 * c))[2:] # bitwise xor with left-shifted numbers
+    relay_config = '0' * (N - len(c)) + c # pad out to 8 characters
+    return relay_config, delay_rnd # reverse to make string indexable
+
+def decode_delay(relay_config, N=8):
+    '''Convert a relay configuration into the expected delay in nanoseconds.
+
+    Parameters
+    ----------
+    relay_config : a string of 0's and 1's encoding the relay configuration
+    N       : default 8, optional, the number of switches in the delay line
+
+    Returns
+    -------
+    time_ns : float nanoseconds, the time delay to implement'''
+    dt = MAX_DELAY / 2**(N-2)
+    delay_total = MAX_DELAY - time_ns
+    dly_cnts = int(round(delay_total / dt))
+    dly_cnts = int(relay_config, 2)
+    delay_total = dly_cnts * dt
+    time_ns = MAX_DELAY - delay_total
     c = min(dly_cnts, 2**(N-1) - 1)
     c = bin(c ^ (2 * c))[2:] # bitwise xor with left-shifted numbers
     relay_config = '0' * (N - len(c)) + c # pad out to 8 characters
@@ -68,9 +92,10 @@ class DelayClient:
         self._command(relay_config, verbose=verbose)
 
     def delay_ns(self, time_ns, verbose=False):
-        relay_config = encode_delay(time_ns)
+        relay_config, delay_rnd = encode_delay(time_ns)
         if verbose: print('Converted %f ns ->', relay_config)
         self._command(relay_config, verbose=verbose)
+        return delay_rnd
     
 
 SWITCH_LAYOUT = {
