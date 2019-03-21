@@ -8,7 +8,7 @@ import socket, thread
 
 PORT = 1421
 HOST = '10.32.92.121'    # Raspberry Pi connected to delay line control
-MAX_DELAY = 35.5 # calibrated 2/25/19 by Frank Latora and Aaron Parsons
+MAX_DELAY = 64.8 # calibrated 3/21/19 by Frank Latora and Aaron Parsons
 
 def encode_delay(time_ns, N=8):
     '''Convert a desired delay in nanoseconds into a relay configuration.
