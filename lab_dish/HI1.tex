@@ -66,7 +66,7 @@ velocity-integrated $T_A$ and color indicates velocity.
 % XXX change date each year
 We'd like each group to pick a single project and carry it through to
 completion by the time the lab reports are due, which is the last day of
-class (May 1). All of the HI projects involve making maps and
+class (May 7). All of the HI projects involve making maps and
 images. One of the features of this lab is to learn about image
 processing and using colors in images.
 
@@ -80,7 +80,7 @@ some of the circle lies too far south, so we do as much as we can.
 
 \section{SCHEDULE}
 
-The end of the semester is approaching like a freight train. Here's our
+The end of the semester approacheth. Here's our
 schedule.  \begin{enumerate}
 
 \item Week 1: Pick a group project. Figure out the RA and
@@ -90,12 +90,11 @@ schedule.  \begin{enumerate}
 Devise a scheme for scheduling observations of all the points in your
 map.  Begin the process of obtaining and reducing your map data. 
 
-% XXX change date each year
 Obtain some frequency-switched test spectra, in
 particular at our canonical comparison position at Galactic coordinates
 $(\ell, b) = (120^\circ, 0^\circ)$.  We will compare the spectra of all
 groups at the class on 10 April, and if your group doesn't have a
-spectrum to show this will be considered {\it very} bad form.
+spectrum to show this will be considered poor form.
 
 \item Week 2: Get as much data as you can. Reduce the data.  Decide what
   projection you will use to present your maps; create the map plane and
@@ -109,7 +108,7 @@ spectrum to show this will be considered {\it very} bad form.
 
 % XXX change date each year
 \item Week 4: Finalize data. Make final images. Write
-report. Report is due the last day of class, 1 May.
+report. Report is due the last day of class, May 7.
 \end{enumerate}
 
 \section {CONTROLLING THE LEUSCHNER TELESCOPE}
@@ -136,38 +135,44 @@ The prompt tells you what subdirectory you're in; if in doubt, type {\tt
   associated frustrations.} and Python/IPython are available to you, just as on the
 {\tt ugastro} network.
 
-\subsection {Using VNC at the heiles Computer at Leuschner}
-For running observing sessions that run automatically for long periods of
-time, we strongly recommend using VNC for the reasons explained in
-class. In particular, if everyone uses the same VNC Leuschner window, we
-will avoid having more than one group observing at a time. We have set
-up a particular VNC server on the heiles computer at Leuschner, which is
-number 5901. You access it by, first, establishing the connection:
+\subsection {Using VNC at the heiles computer at Leuschner}
+For observing sessions that run automatically for long periods of
+time, we will use VNC to serve up a remote desktop.
+If everyone uses the same VNC Leuschner window, we
+avoid having more than one group observing at a time. We have set
+up a VNC server on the heiles computer at Leuschner.  All network traffic
+between computers happens with specified port numbers; ports give 
+programs running on a computer their own channel for communicating without
+getting traffic from other programs.  The VNC
+server is usually on port 5901.  (Other famous ports include 22 for {\tt ssh} and 80 for web servers---the internet).
+
+So we have a VNC server communicating on a port (5901) of a remote computer (heiles).
+We need to access that server from a VNC client running on a local machine.
+To do this, we first need to establish a tunnel between a port on our local machine
+and {\tt heiles:5901}.  This is done with {\tt ssh} from the local machine:
 \begin{verbatim}
     ssh -L 59XX:127.0.0.1:5901 -p 31 -N -f radiolab@leuschner.berkeley.edu
 \end{verbatim}
 \noindent It will require a password; use the password for the {\tt
   radiolab} account given in class. Here {\tt XX} is a number of your
-own choosing; it refers to a port on your local machine. If it responds
-by saying {\tt bind: Address already in use}, then choose a different
+own choosing; it refers to a port on your local machine. If you get the error
+{\tt bind: Address already in use}, then choose a different
 number and try again. Once you find a number that works, use it in
-subsequent connections. {\it This ssh command needs to be done only
-  once}\footnote{Unless the remote machine had to be rooted for some
-  reason; this will probably not happen during the duration.}. 
+subsequent connections. {\it As long as this {\tt ssh} command is active, it does not need to be re-run}.
 
 Having done that first step, on all subsequent occasions access the
-Leuschner/heiles VNC window with the command
+Leuschner/heiles VNC session with the command
 \begin{verbatim}
    vncviewer -shared localhost::59XX
 \end{verbatim}
-\noindent It will require a password; use the password for the radiolab
-account's VNC session given in class. Leuschner's VNC window should pop
-up on your screen, and you can access and create terminals on this
+\noindent It will require a VNC password---the password we tell you in class
+for the VNC server we started.  Leuschner's VNC window should pop
+up on your screen and you can access and create terminals on this
 window in the usual way. The function key F8 gives a short menu of
-available actions, such as quitting the VNC viewer. Use of the {\tt
+available actions, such as quitting the VNC viewer. Using the {\tt
   -shared} option allows multiple users to access the VNC window
 simultaneously. For example, if you are in the 5th floor lab and begin
-observing, you can leave your VNC session running and you can go home
+observing, you can leave your VNC session running, go home,
 and access the same VNC window from there. 
 
 \subsection{Python Procedures for Controlling the Dish}
@@ -200,14 +205,14 @@ by a Raspberry Pi).
 \item {\tt LeuschNoise.off()} turns the noise source off.
 \end{enumerate}
 
-We also have an l.o. that you can shift around for calibration purposes.  It's actually the same
-Agilent l.o. you used in the horn lab, only we've unplugged it and moved it to Leuschner.  This
-means you can control it with {\it ugradio.agilent}, same as before, but connect to the {\tt heiles}
-computer, instead of the lab machine that was hosting it.  Since {\tt heiles} is the computer you are
-already logged into, use the address 127.0.0.1 (which means ``self").
+We also have an LO that you can shift around for calibration purposes.  It's actually the same
+Agilent frequency synthesizer you used in the horn lab, only we've unplugged it and moved it to Leuschner.  This
+means you can control it remotely with {\it ugradio.agilent}. 
+ {\tt heiles} is the computer you are
+already logged into, we'll use the {\tt SynthDirect} interface:
 \begin{enumerate}
-\item {\tt ugradio.agilent.SynthClient(host='127.0.0.1')} instantiates an interface to the l.o.
-\item {\tt SynthClient.set\_frequency} changes the l.o. frequency.
+\item {\tt ugradio.agilent.SynthDirect()} instantiates an interface to the LO
+\item {\tt SynthClient.set\_frequency} changes the LO frequency.
 \end{enumerate}
 
 Next, we need to read data from the spectrometer attached to the Leuschner dish.  This
@@ -237,14 +242,14 @@ spectrum for the first polarization.
 
 % XXX need to get the LO control at leuschner migrated to ugradio.agilent
 %\begin{enumerate}
-%\item {\tt getspect} sets the l.o.\ and the noise diode, then averages a
+%\item {\tt getspect} sets the LO\ and the noise diode, then averages a
 %  specified number of spectra from the ROACH box and optionally plots or
 %  saves the result in an IDL save file, which contain ancillary info
 %  such as Julian day. ra, dec, etc.
 %\item {\tt mk\_strin} makes an input strucure containing various
-%  parameters such as the source position and name, the l.o.\ frequency,
+%  parameters such as the source position and name, the LO\ frequency,
 %  whether the noise diode was turned on, off, or was unchanged.
-%\item {\tt set\_lhp} sets the frequency and level of the l.o.
+%\item {\tt set\_lhp} sets the frequency and level of the LO
 %\item {\tt rxpwr} returns the channel-integrated spectral power from the
 %  ROACH box as input.
 %\item {\tt startchart1} runs a `chart recorder' using the
@@ -300,24 +305,23 @@ spectrum for the first polarization.
 
 \subsection{Sampling Your Sky Area}
 All of the HI projects examine the angular dependence of the 21-cm line
-profile, so you need closely-spaced observations to make a map or an
+profile, so you need closely spaced observations to make a map or an
 image. How closely should the observations be spaced?  The usual
-criterion is two samples per HPBW (Half-Power BeamWidth), because
+criterion is two samples per FWHM (Full Width, Half Max) of the beam, because
 observing at more closely spaced angles just gives redundant information
 and takes extra time, while more widely spaced angles loses small-scale
-structural information. (This statement can be justified more exactly by
-Fourier transforming the structure of the sky in terms of angular
-frequency and then imposing the Nyquist criterion\dots).  The HPBW is
+structural information. (This is a re-statement of the Nyquist criterion for sampling
+sky structure versus angle).  The FWHM is
 almost $4^\circ$; so a spacing of $2^\circ$ is about right.
 
 For the mapping projects (not the great-circle ones), we need to cover
 areas of 1000 to 2000 square degrees. Consider the Orion-Eridanus
-Superbubble (\S \ref{eridanus} below), which wants to map the the region
+Superbubble (\S \ref{eridanus} below), which aims to map a region
 covering roughly $(\ell=160^\circ \rightarrow 220^\circ, b=-70^\circ
-\rightarrow -10^\circ)$. You might think you'd set up a regular grid in
+\rightarrow -10^\circ)$. Suppose you set up a regular grid in
 $(\ell,b)$ with $(\Delta \ell, \Delta b)$ both equal to
 $2^\circ$. That's fine for $\Delta b$, but you'd be sampling too closely
-in $\ell$. That's because the true (great-circle) angular distance
+in $\ell$ because the true (great-circle) angular distance
 between two points is $\Delta \ell \cdot \cos(b)$; there's a
 foreshortening for $b \neq 0^\circ$ (e.g.: when you're at the Earth's
 North Pole, you can go completely around a small circle of constant $b$
@@ -327,22 +331,21 @@ observing at $\Delta \ell = {2^\circ \over \cos(b)}$ instead of $\Delta
 
 The true angular area is not the total extent in $\ell$ times the total
 extent in $b$ because of the foreshortening discussed in the above
-paragraph. So the actual angular area of the Orion-Eridanus area area
+paragraph. So the actual angular area of the Orion-Eridanus map
 isn't the range in $\ell$ times the range in $b$, i.e.\ $60^\circ
 \times 60^\circ = 3600$ square degrees (which would require 900
 pointings), but rather only about 2800 square degrees.  At $2^\circ$
 sampling, that's about 700 pointings.
 
-These projects require what seems like a lot of pointings,
-but---hey!---the telescope is automated. With the magic of a
-computer-controlled telescope you can do these observations in just one
-or two days. But it will require planning and coordination with other
-groups---all of you are in the same boat! (Or should we say, ``in the
-same dish''?)
+These projects require a lot of pointings,
+but fortunately, the telescope is automated. With a
+computer-controlled telescope you can do these observations in one
+or two days, but that requires planning and coordination with other
+groups.
 
 \subsection{Recommended Commands} \label{mappingcommands}
 
-For actually taking the data at a particular position, we recommend the
+For taking the data at a particular position, we recommend the
 following sequence of commands for each position:
 \begin{verbatim}
         find the (ra, dec) for your position. you can use 'astropy' if you wish
@@ -355,22 +358,22 @@ following sequence of commands for each position:
             what you need after making many observations.
         spectrometer.read\_spec(filename, Nspectra, (ra,dec), 'eq') takes and records the data.
 \end{verbatim}
-\noindent You are srongly advised to look at the documentation of these procedures before using them!
+\noindent You are advised to look at the documentation of these procedures before using them.
 
-\subsection{Beware Operating near Azimuth 0/360!!}
+\subsection{Beware Operating near Azimuth 0/360}
 
 If the azimuth of the current position is $6^\circ$ and of the next one
 is $354^\circ$, the telescope has to rotate nearly $360^\circ$ in azimuth,
-which takes a long time! You don't want to make this transition more
-than once! (or at all, if you can manage it). Note: the telescope will
+which takes a long time. You don't want to make this transition more
+than once (or at all, if you can manage it). Note: the telescope will
 reliably point in the $370^\circ$-wide azimuth range $-5^\circ$ to
 $365^\circ$---but not outside this range.
 
-\subsection{Beware Operating Above Altitude 85 and Below/Near 14!!}
+\subsection{Beware Operating Above Altitude 85 and Below/Near 14}
 
-The telescope cannot point above altitude $85^\circ$. And it cannot
-point below $14^\circ$. When you are at low altitude, you might be
-seeing the ground!
+The telescope cannot point above altitude $85^\circ$ or 
+below $14^\circ$. When you are at low altitude, you might be
+seeing the ground.
 
 \section{THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO 
 \boldmath{$(b=0^\circ)$}} 
@@ -389,7 +392,7 @@ curve of the Galaxy for the portion of the Galaxy inside the Sun and use
 the result to estimate the {\it gravitational} mass $M_{grav}$ of the
 Galaxy that lies inside the Solar circle; for this, you just assume the
 usual $v^2 = {G M_{grav} \over R}$.  In fact, you can even get the
-radial dependence $M_{grav}(R)$! Also, use your observations to estimate
+radial dependence $M_{grav}(R)$. Also, use your observations to estimate
 the {\it gaseous} mass $M_{gas}(R)$ of the Galaxy.  What fraction of the
 total Galactic mass comes from interstellar gas? For this you'll need to
 know the radius of the Solar circle: it's 8.5 kpc.  See {\it Commentary}
@@ -402,7 +405,7 @@ below for a discussion.
   mass. To get an accurate estimate, you need to look at motions of
   matter lying really close to the black hole, which you can't do
   because you don't have the angular resolution. But you can at least
-  make an estimate!
+  make an estimate.
 
 	\item {\it Spiral Structure of the Galaxy}. All your life,
 you've been told that we live in a spiral galaxy.  Are they lying? In
@@ -431,7 +434,7 @@ the Galactic geometry.
 
 {\it Comment:} Finding spiral arms inside the Solar circle is very
 difficult, and has thwarted efforts by astronomers over the past several
-decades. Finding them in the outer Galaxy is not so bad.
+decades. Finding them in the outer Galaxy is not as difficult.
 
 \end{enumerate}
 
@@ -446,7 +449,7 @@ a flat Galaxy would everywhere have the peaks at $b=0^\circ$.
 The most comprehensive way to observe and display these distortions is
 with a map that covers the biggest possible swath in Galactic longitude
 $\ell$ for the range of Galactic latitude ($b$) from $-20^\circ$ to
-$+20^\circ$. This is a huge area---almost $10^4$ square degrees! At
+$+20^\circ$. This is a huge area---almost $10^4$ square degrees. At
 $2^\circ$ sampling, you'd need $\sim 2500$ profiles.  To make the
 project more manageable, you can increase the increment in $\ell$, say
 to 4 degrees, while keeping the same, fully-sampled increment in
@@ -464,14 +467,14 @@ straightforward given the absence of data in the ``Southern'' Galaxy.
 \label{galacticpoles}
 
 How is the interstellar gas distributed within the Galaxy---for example,
-is it ``disklike'' or more spherically distributed? Are there any
+is it ``disk-like'' or more spherically distributed? Are there any
 systematic motions other than just ``Galactic rotation''? (You'd be
-surprised!).  To answer these questions, determine the column density
+surprised).  To answer these questions, determine the column density
 and mean velocity of interstellar gas as a function of Galactic latitude
 $b$. 
 
-	To answer this completely you'd need to do a sky survey! That's
-a big job.  So let's do something easier. We have one project (\S
+	To answer this completely you'd need to do an all-sky survey. That's
+a big job.  Let's do something easier. We have one project (\S
 \ref{galacticplane}) that looks around a great circle, the Galactic
 equator (constant $b$). Other projects could check out one or more
 orthogonal great circles (at constant longitudes $\ell$) going from one
@@ -507,7 +510,7 @@ vicinity of the Orion nebula. For this, you'd map the region covering
 roughly $(\ell=160^\circ \rightarrow 220^\circ, b=-70^\circ \rightarrow
 -10^\circ)$. Interesting features should produce antenna temperatures
 $\sim 20$ K. This is almost 2800 square degrees and, with 2 degree
-spacing, requires almost 700 profiles. See \S \ref{sampling}!
+spacing, requires almost 700 profiles. See \S \ref{sampling}.
 
 The goal here is to map the HI in the 3-d space of $(l, b, v)$ (that's
 Galactic longitude, latitude, and velocity) and then present the results
@@ -528,12 +531,12 @@ For this, you'd map the region covering roughly $(\ell=210^\circ
 \rightarrow 20^\circ, b=0^\circ \rightarrow 90^\circ)$. (The longitude
 range is $170^\circ$: $210^\circ \rightarrow 360^\circ$ plus $0^\circ
 \rightarrow 20^\circ$). This is roughly 1/4 of the whole sky, so this is
-a huge area---almost 10000 square degrees! (This shell has an angular
+a huge area---almost 10000 square degrees. (This shell has an angular
 diameter of $120^\circ$). But (unfortunately) you can't measure the
 equivalent 2000 HI profiles because most of this area is too far
-south. At least, this makes the project do-able! In doing your
+south. On the plus side, this makes the project do-able. In doing your
 observations, you need to cover as far south as you possibly can. See
-\S \ref{sampling}!
+\S \ref{sampling}.
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
 Galactic longitude, latitude, and velocity) and then present the results
@@ -550,7 +553,7 @@ at least a few minutes per point.  This project needs to map the region
 bounded roughly by $(\ell=60^\circ \rightarrow 180^\circ), b=20^\circ
 \rightarrow 60^\circ)$. This is about 3700 square degrees and needs
 about 900 profiles at $2^\circ$ spacing. See
-\S \ref{sampling}!
+\S \ref{sampling}.
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
 Galactic longitude, latitude, and velocity) and then present the results
@@ -565,10 +568,10 @@ longer integration times than for the above projects---a minimum of 10
 minutes per point. You need to map the pie-shaped area bounded roughly
 by $(\ell=60^\circ \rightarrow 110^\circ), b=-90^\circ \rightarrow
 -30^\circ)$. This is about 1250 square degrees and needs about 310
-profiles at $2^\circ$ spacing. See \S \ref{sampling}!  Also, the LSR
+profiles at $2^\circ$ spacing. See \S \ref{sampling}.  Also, the LSR
 velocity of this gas ranges from roughly $-400 \ {\rm to} \ -100$ km/s
 along its length, so you need frequency switch by a large enough
-interval!
+interval.
 
 The goal here is to map the HI in the 3-d space of ${l, b, v}$ (that's
 Galactic longitude, latitude, and velocity) and then present the results
@@ -602,7 +605,7 @@ velocity $v$; and $v$ is the velocity in km s$^{-1}$. The velocity $v$
 is produced by the Doppler effect, so a frequency shift $\Delta \nu$
 from line center corresponds to velocity $v = - c {\Delta \nu \over
 \nu}$ or, for the 21-cm line, $v = -{\Delta \nu \over 4.73 {\rm kHz}}$ km/s.
-Note the minus sign! It means that positive velocities are receding---a
+Note the minus sign. It means that positive velocities are receding---a
 very convenient convention for astronomy, because of the expansion of
 the Universe. 
 
@@ -692,7 +695,7 @@ especially in the Galactic plane.
 
 	$T_A(v)$ is directly measured and $\Omega_b$ is the telescope
 beam area, which is known, so it's easy to calculate $M_{HI}(v)$---but
-only if you know the distance! Often you don't know the distance, but
+only if you know the distance. Often you don't know the distance, but
 you might have a hunch for a reasonable value for the distance. Suppose
 this is 100 parsecs. In this case, people usually evaluate the mass for
 this distance and, when giving the mass, say ``The mass is $xxx \times
