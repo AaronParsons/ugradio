@@ -3,19 +3,19 @@
 \contentsline {section}{\numberline {3}SCHEDULE}{3}
 \contentsline {section}{\numberline {4}CONTROLLING THE LEUSCHNER TELESCOPE}{4}
 \contentsline {subsection}{\numberline {4.1}Connecting to the heiles Computer at Leuschner}{4}
-\contentsline {subsection}{\numberline {4.2}Using VNC at the heiles Computer at Leuschner}{4}
+\contentsline {subsection}{\numberline {4.2}Using \texttt {screen} at the heiles computer at Leuschner}{4}
 \contentsline {subsection}{\numberline {4.3}Python Procedures for Controlling the Dish}{5}
-\contentsline {subsection}{\numberline {4.4}Python Procedures for Taking Data}{6}
+\contentsline {subsection}{\numberline {4.4}Python Procedures for Taking Data}{5}
 \contentsline {section}{\numberline {5}ON MAPPING AREAS: HOW TO SPATIALLY SAMPLE}{7}
 \contentsline {subsection}{\numberline {5.1}Sampling Your Sky Area}{7}
-\contentsline {subsection}{\numberline {5.2}Recommended Commands}{8}
-\contentsline {subsection}{\numberline {5.3}Beware Operating near Azimuth 0/360!!}{8}
-\contentsline {subsection}{\numberline {5.4}Beware Operating Above Altitude 85 and Below/Near 14!!}{8}
+\contentsline {subsection}{\numberline {5.2}Recommended Commands}{7}
+\contentsline {subsection}{\numberline {5.3}Beware Operating near Azimuth 0/360}{8}
+\contentsline {subsection}{\numberline {5.4}Beware Operating Above Altitude 85 and Below/Near 14}{8}
 \contentsline {section}{\numberline {6}THE GALACTIC PLANE: THE GREAT CIRCLE AT LATITUDE ZERO \relax \mathversion {bold}{$(b=0^\circ )$}}{8}
 \contentsline {section}{\numberline {7}IS THE GALACTIC PLANE FLAT?}{9}
 \contentsline {section}{\numberline {8}THE GALACTIC POLES: GREAT CIRCLES AT CONSTANT LONGITUDE $\ell $}{10}
 \contentsline {section}{\numberline {9}MAPPING THE NORTH CELESTIAL POLE}{10}
-\contentsline {section}{\numberline {10}MAPPING THE ORION-ERIDANUS SUPERBUBBLE}{11}
+\contentsline {section}{\numberline {10}MAPPING THE ORION-ERIDANUS SUPERBUBBLE}{10}
 \contentsline {section}{\numberline {11}MAPPING THE NORTH POLAR SPUR and its associated EXPANDING HI SHELL}{11}
 \contentsline {section}{\numberline {12}MAPPING A BIG HIGH-VELOCITY CLOUD}{11}
 \contentsline {section}{\numberline {13}MAPPING THE MAGELLANIC STREAM}{12}

@@ -135,45 +135,61 @@ The prompt tells you what subdirectory you're in; if in doubt, type {\tt
   associated frustrations.} and Python/IPython are available to you, just as on the
 {\tt ugastro} network.
 
-\subsection {Using VNC at the heiles computer at Leuschner}
+\subsection {Using \texttt{screen} at the heiles computer at Leuschner}
 For observing sessions that run automatically for long periods of
-time, we will use VNC to serve up a remote desktop.
-If everyone uses the same VNC Leuschner window, we
-avoid having more than one group observing at a time. We have set
-up a VNC server on the heiles computer at Leuschner.  All network traffic
-between computers happens with specified port numbers; ports give 
-programs running on a computer their own channel for communicating without
-getting traffic from other programs.  The VNC
-server is usually on port 5901.  (Other famous ports include 22 for {\tt ssh} and 80 for web servers---the internet).
+time, we will use \texttt{screen} to serve up a remote desktop. 'texttt{screen} is a command that allows us to maintain a persistent session on a remote machine even when everyone is logged out. If everyone uses the same \texttt{screen} session, we avoid having more than one group observing at a time. We have set up a \texttt{screen} window on the heiles computer at Leuschner.  
 
-So we have a VNC server communicating on a port (5901) of a remote computer (heiles).
-We need to access that server from a VNC client running on a local machine.
-To do this, we first need to establish a tunnel between a port on our local machine
-and {\tt heiles:5901}.  This is done with {\tt ssh} from the local machine:
+To attach to this window, in heiles, run 
 \begin{verbatim}
-    ssh -L 59XX:127.0.0.1:5901 -p 31 -N -f radiolab@leuschner.berkeley.edu
-\end{verbatim}
-\noindent It will require a password; use the password for the {\tt
-  radiolab} account given in class. Here {\tt XX} is a number of your
-own choosing; it refers to a port on your local machine. If you get the error
-{\tt bind: Address already in use}, then choose a different
-number and try again. Once you find a number that works, use it in
-subsequent connections. {\it As long as this {\tt ssh} command is active, it does not need to be re-run}.
+    screen -r
+\end{verbatim} (``r'' for ``reattach'') on heiles. This connects you to the existing session and command-line environment. Please remember to do this as soon as you log in! It can be easy to forget to go into \texttt{screen} before running your scripts as you usually would.
 
-Having done that first step, on all subsequent occasions access the
-Leuschner/heiles VNC session with the command
+While you're in a screen session, all \texttt{screen} commands begin with \texttt{Ctrl-a}. To detach from the window and return to your login environment, run
 \begin{verbatim}
-   vncviewer -shared localhost::59XX
-\end{verbatim}
-\noindent It will require a VNC password---the password we tell you in class
-for the VNC server we started.  Leuschner's VNC window should pop
-up on your screen and you can access and create terminals on this
-window in the usual way. The function key F8 gives a short menu of
-available actions, such as quitting the VNC viewer. Using the {\tt
-  -shared} option allows multiple users to access the VNC window
-simultaneously. For example, if you are in the 5th floor lab and begin
-observing, you can leave your VNC session running, go home,
-and access the same VNC window from there. 
+    Ctrl-a d
+\end{verbatim}. Before you log out of heiles, it's best to first detach the screen window before exiting -- otherwise, you may close the entire screen session and accidentally abort running programs.
+
+Those commands should be sufficient for this lab, but \texttt{screen} is a very useful tool in general. If you're working on a remote machine and would like to run long programs without staying logged in, you can just type in  \texttt{screen} and it will start the program. You can also create a new window within the \texttt{screen} session by running \texttt{Ctrl-a c} (for ``create''). Once there are multiple windows, you can do \texttt{Ctrl-a n} (for ``next'') to cycle between them. Finally, if you want to close a window, you can do \texttt{Ctrl-a k} (for ``kill''). And as always, to bring up the full documentation, just do \texttt{man screen} at the command line.
+
+%\subsection {Using VNC at the heiles computer at Leuschner}
+%For observing sessions that run automatically for long periods of
+%time, we will use VNC to serve up a remote desktop.
+%If everyone uses the same VNC Leuschner window, we
+%avoid having more than one group observing at a time. We have set
+%up a VNC server on the heiles computer at Leuschner.  All network traffic
+%between computers happens with specified port numbers; ports give 
+%programs running on a computer their own channel for communicating without
+%getting traffic from other programs.  The VNC
+%server is usually on port 5901.  (Other famous ports include 22 for {\tt ssh} and 80 for web servers---the internet).
+%
+%So we have a VNC server communicating on a port (5901) of a remote computer (heiles).
+%We need to access that server from a VNC client running on a local machine.
+%To do this, we first need to establish a tunnel between a port on our local machine
+%and {\tt heiles:5901}.  This is done with {\tt ssh} from the local machine:
+%\begin{verbatim}
+%    ssh -L 59XX:127.0.0.1:5901 -p 31 -N -f radiolab@leuschner.berkeley.edu
+%\end{verbatim}
+%\noindent It will require a password; use the password for the {\tt
+%  radiolab} account given in class. Here {\tt XX} is a number of your
+%own choosing; it refers to a port on your local machine. If you get the error
+%{\tt bind: Address already in use}, then choose a different
+%number and try again. Once you find a number that works, use it in
+%subsequent connections. {\it As long as this {\tt ssh} command is active, it does not need to be re-run}.
+%
+%Having done that first step, on all subsequent occasions access the
+%Leuschner/heiles VNC session with the command
+%\begin{verbatim}
+%   vncviewer -shared localhost::59XX
+%\end{verbatim}
+%\noindent It will require a VNC password---the password we tell you in class
+%for the VNC server we started.  Leuschner's VNC window should pop
+%up on your screen and you can access and create terminals on this
+%window in the usual way. The function key F8 gives a short menu of
+%available actions, such as quitting the VNC viewer. Using the {\tt
+%  -shared} option allows multiple users to access the VNC window
+%simultaneously. For example, if you are in the 5th floor lab and begin
+%observing, you can leave your VNC session running, go home,
+%and access the same VNC window from there. 
 
 \subsection{Python Procedures for Controlling the Dish}
 
