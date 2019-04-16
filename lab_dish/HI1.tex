@@ -142,12 +142,20 @@ time, we will use \texttt{screen} to serve up a remote desktop. 'texttt{screen} 
 To attach to this window, in heiles, run 
 \begin{verbatim}
     screen -r
-\end{verbatim} (``r'' for ``reattach'') on heiles. This connects you to the existing session and command-line environment. Please remember to do this as soon as you log in! It can be easy to forget to go into \texttt{screen} before running your scripts as you usually would.
+\end{verbatim} 
+(``r'' for ``reattach'') on heiles. This connects you to the existing session and command-line environment. Please remember to do this as soon as you log in! It can be easy to forget to go into \texttt{screen} before running your scripts as you usually would.
 
 While you're in a screen session, all \texttt{screen} commands begin with \texttt{Ctrl-a}. To detach from the window and return to your login environment, run
 \begin{verbatim}
     Ctrl-a d
-\end{verbatim}. Before you log out of heiles, it's best to first detach the screen window before exiting -- otherwise, you may close the entire screen session and accidentally abort running programs.
+\end{verbatim}. 
+Before you log out of heiles, it's best to first detach the screen window before exiting -- otherwise, you may close the entire screen session and accidentally abort running programs.
+
+Lastly, to check whether you are in \texttt{screen} or not, run
+\begin{verbatim}
+    screen -ls
+\end{verbatim}
+This will display any session that exist and tell you whether you are ``attached'' or ``detached'' to any of them!
 
 Those commands should be sufficient for this lab, but \texttt{screen} is a very useful tool in general. If you're working on a remote machine and would like to run long programs without staying logged in, you can just type in  \texttt{screen} and it will start the program. You can also create a new window within the \texttt{screen} session by running \texttt{Ctrl-a c} (for ``create''). Once there are multiple windows, you can do \texttt{Ctrl-a n} (for ``next'') to cycle between them. Finally, if you want to close a window, you can do \texttt{Ctrl-a k} (for ``kill''). And as always, to bring up the full documentation, just do \texttt{man screen} at the command line.
 
