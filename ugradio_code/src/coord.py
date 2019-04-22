@@ -92,7 +92,7 @@ def precess(ra,dec,jd=None,equinox='J2000'):
     dec : float, declination in degrees
         
     """
-    c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',frame='fk5',equinox='J2000')
+    c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',frame='fk5',equinox=equinox)
     if jd: t = astropy.time.Time(jd,format='jd')
     else: t = astropy.time.Time(time.time(),format='unix')
     gcrs_now = astropy.coordinates.GCRS(obstime=t)
