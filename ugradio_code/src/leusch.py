@@ -178,6 +178,7 @@ class TelescopeDirect:
             el_enc_offset=EL_ENC_OFFSET, dish_el_offset=DISH_EL_OFFSET,
             stub_len=DRIVE_STUB_LEN, drive_enc_scale=DRIVE_ENC_SCALE, drive_clength=DRIVE_CLENGTH):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
+        self._lock = thread.allocate_lock()
         self.verbose = verbose
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
@@ -202,9 +203,12 @@ class TelescopeDirect:
 
     def _write(self, cmd, bufsize=1024):
         if self.verbose: print('Writing', [cmd])
+        self._lock.acquire()
         self._serial.write(cmd) #Receiving from client
         time.sleep(0.1) # Let the configuration command make the change it needs
-        return self._read(bufsize=bufsize)
+        rv = self._read(bufsize=bufsize)
+        self._lock.release()
+        return rv
 
     def init_dish(self): # The following definitions are specific to the Copley BE2 model
         self._read(flush=True)
@@ -229,6 +233,7 @@ class TelescopeDirect:
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
             if self.verbose: print ("wait_az status=", status)
+            # XXX sometimes it seems status = 16384 instead of zero?  Curious if lock solves problem
             if status == '0': break
             time.sleep(1)
         return status
