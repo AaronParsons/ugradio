@@ -252,7 +252,7 @@ class TelescopeDirect:
         az_cnts = float(self._write(b'.a g r0x112\r').split()[1])
         az_cnts %= DRIVE_ENCODER_STATES
         az = (az_cnts - self.az_enc_offset) * DRIVE_DEG_PER_CNT
-        # az %= 360 # uncomment this if legitimately pointing near 0/360
+        az %= 360 # necessary b/c encoder wraps at az=65 deg
         return az
 
     def get_el(self):
@@ -268,7 +268,7 @@ class TelescopeDirect:
         azResponse = self.wait_az()
         if azResponse != '0':
             return 'e 1'
-        #dishAz = (dishAz + 360.) % 360 # uncomment this line if needing calibrated pointing near 0/360
+        dishAz = (dishAz + 360.) % 360 # necessary b/c encoder wraps at az=65 deg
         # Enforce absolute bounds.  Comment out to override.
         if (dishAz < AZ_MIN) or (dishAz > AZ_MAX):
             return 'e 1'
