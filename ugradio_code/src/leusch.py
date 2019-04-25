@@ -233,8 +233,8 @@ class TelescopeDirect:
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
             if self.verbose: print ("wait_az status=", status)
-            # XXX sometimes it seems status = 16384 instead of zero?  Curious if lock solves problem
-            if status == '0': break
+            # sometimes status = 16384: set when move is aborted, see Copley Parameter Dictionary pg 45
+            if int(status) >= 0: break
             time.sleep(1)
         return status
 
@@ -243,7 +243,8 @@ class TelescopeDirect:
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
             if self.verbose: print("wait_el status=", status)
-            if status == '0': break
+            # sometimes status = 16384: set when move is aborted, see Copley Parameter Dictionary pg 45
+            if int(status) >= 0: break
             time.sleep(1)
         return status
 
