@@ -1,6 +1,8 @@
 '''Module for interaction with Agilent N9310a Frequency Synthesizer.'''
 
-import socket, thread
+import socket
+try: import thread
+except(ImportError): import _thread as thread
 
 DEVICE = '/dev/usbtmc0' # default mounting point
 HOST, PORT = '10.32.92.95', 1341
@@ -32,7 +34,7 @@ class SynthBase:
     def set_frequency(self, val, unit):
         '''Set the frequency of the CW (continuous wave) output
         mode of the synthesizer.
-        
+
         Parameters
         ----------
         val  : float, numerical frequency setting
@@ -59,7 +61,7 @@ class SynthBase:
     def set_amplitude(self, val, unit):
         '''Set the amplitude of the CW (continuous wave) output
         mode of the synthesizer.
-        
+
         Parameters
         ----------
         val  : float, numerical amplitude setting
@@ -73,7 +75,7 @@ class SynthBase:
         self._write(cmd)
 
 class SynthDirect(SynthBase):
-    '''Implements a direct connection to the synthesizer via a 
+    '''Implements a direct connection to the synthesizer via a
     USB connection (typically device='/dev/usbtmc0' or similar).'''
     def __init__(self, device=DEVICE):
         '''Parameters
@@ -144,7 +146,8 @@ class SynthServer(SynthDirect):
             s.listen(10)
             while True:
                 conn, addr = s.accept()
-                if self.verbose: print 'Request from ' + addr[0] + ':' + str(addr[1])
+                if self.verbose:
+                    print('Request from ' + addr[0] + ':' + str(addr[1]))
                 if self._device_failure:
                     self._open_device()
                     self._device_failure = False
@@ -156,8 +159,9 @@ class SynthServer(SynthDirect):
         at most one write and one read before terminating connection.'''
         cmd = conn.recv(1024)
         if not cmd: return
-        if self.verbose: print 'Received:', [cmd]
-        try: 
+        if self.verbose:
+            print('Received:', [cmd])
+        try:
             self._write(cmd)
         except(IOError):
             self._device_failure = True

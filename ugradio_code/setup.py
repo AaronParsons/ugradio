@@ -1,4 +1,7 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 import glob
 import os
 import sys
@@ -25,7 +28,11 @@ setup_args = {
     'packages': ['ugradio'],
     'include_package_data': True,
     'scripts': glob.glob('scripts/*'),
-    'install_requires': ['astropy>2','numpy','barycorrpy'],
+    'install_requires': [
+        'astropy>2',
+        'numpy',
+        'barycorrpy',
+        'serial'],
     'version': '0.0.1',
     #'package_data': {'ugradio': data_files},
     'zip_safe': False,
