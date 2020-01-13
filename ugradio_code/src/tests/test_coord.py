@@ -3,41 +3,23 @@ import time
 from astropy.coordinates import SkyCoord,EarthLocation
 from astropy.time import Time
 import ugradio.coord as coord
+import ugradio.nch
+LAT,LON = ugradio.nch.lat, ugradio.nch.lon
 import unittest
 
+JD = 2458500.3
+
 class TestSunPos(unittest.TestCase):
-    
-    def setUp(self):
-        self.now = Time(time.time(),format='unix')
-        
-    def test_sunpos_time(self): 
-        ra1,dec1 = coord.sunpos(jd=self.now.jd)
-        ra2,dec2 = coord.sunpos(jd=self.now.jd+1)
-        self.assertNotEqual(ra1,ra2,
-        msg='sunpos: ra not changing with time.') 
-        self.assertNotEqual(dec1,dec2, 
-        msg='sunpos: dec not changing with time.')
+    def test_sunpos(self): 
+        ra1,dec1 = coord.sunpos(jd=JD)
+        self.assertAlmostEqual(ra1, 298.375, 0)
+        self.assertAlmostEqual(dec1, -20.8789, 0)
 
 class TestMoonPos(unittest.TestCase):
-
-    def setUp(self):
-        self.now = Time(time.time(),format='unix')
-        self.ra,self.dec = coord.moonpos(jd=self.now.jd)
-        
     def test_moonpos_loc(self):
-        #ra,dec should change with location
-        ra2,dec2 = coord.moonpos(jd=self.now.jd,lat=38,lon=-120)
-        self.assertNotEqual(self.ra,ra2,
-        msg='moonpos: ra not changing with observer location.') 
-        self.assertNotEqual(self.dec,dec2, 
-        msg='moonpos: dec not changing with observer location.')
-
-    def test_moonpos_time(self): 
-        ra2,dec2 = coord.moonpos(jd=self.now.jd+1)
-        self.assertNotEqual(self.ra,ra2,
-        msg='moonpos: ra not changing with time.') 
-        self.assertNotEqual(self.dec,dec2, 
-        msg='moonpos: dec not changing with time.')
+        ra2,dec2 = coord.moonpos(jd=JD,lat=LAT,lon=LON)
+        self.assertAlmostEqual(ra2, 56.0618, 0)
+        self.assertAlmostEqual(dec2, 14.2344, 0)
 
 class TestGetAltAz(unittest.TestCase):
 
