@@ -129,6 +129,10 @@ ugradio.coord.precess(ra, dec, jd, equinox) returns the precessed ra/dec
 for the ra/dec catalog coordinate with given 'equinox' specifing the coordinate
 system on the input ra/dec parameters.
 
+d = ugradio.interf_delay.DelayClient provides an interface for controlling the delay line from a lab computer.
+
+d.delay_ns(time_ns) will set the delay to time_ns, i.e. d.delay_ns(0)
+
 \end{verbatim}
 
 \section{OUR INTERFEROMETER}

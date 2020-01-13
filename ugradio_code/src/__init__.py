@@ -8,5 +8,11 @@ try:
     import gauss # ImportError if scipy not installed
 except(ImportError): pass
 
-import pico, dft, agilent, hp_multi, interf, leusch
-import nch, leo
+from . import pico
+from . import dft
+from . import agilent
+from . import hp_multi
+from . import interf
+from . import leusch
+from . import nch
+from . import leo
