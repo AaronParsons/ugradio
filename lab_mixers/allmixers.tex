@@ -12,129 +12,219 @@
 
 \tableofcontents
 
+
+\section{Introduction}
+
 \noindent
-The purpose of this lab is to experimentally investigate digital
-sampling, discrete Fourier Transforms, and mixers. Mixers are the basis
-of heterodyne spectroscopy. Heterodyne spectroscopy which, whether you knew it or not, is what
-you use every day that you listen to a radio, use a cell phone, watch
-TV---or do radio astronomy. In the second lab, we'll use it
-to observe the 21-cm line emission from hydrogen our Galaxy.
+In this lab, we experimentally investigate digital
+samplers, discrete Fourier Transforms, and mixers. These are 
+tools of the trade in radio astronomy, and
+you use them every day when you use a cell phone, listen to the radio,
+or watch television. Did you know that wifi was invented by a radio
+astronomer?
 
-In this lab, you will be performing several experiments, analyzing the
-data, and generating a number of different data files. Keep careful notes,
-preferably in a {\bf lab notebook}.  (And no, a {\tt jupyter} notebook is
-not equivalent.)
+To get firm footing in the methods of radio astronomy, you will perform a series of
+experiments that illustrate the utility and hazards of these various techniques. 
+You will configure equipment in the lab, acquire and analyze data, and store and illustrate the results.
+The signal processing pipeline you build in this lab will be re-used in Lab 2 to
+observe 21-cm line emission from hydrogen in the Milky Way, so 
+put in the time to make it work and understand it. The effort you
+invest now will pay dividends later in the class.
 
-\section{GOALS} \label{goals}
+This first lab is an excellent time to establish good research and laboratory practices.
+Remember that your grade is determined by the report you turn in
+three weeks from now. All of the exercises that fallow are aimed at building your
+understanding and giving you the raw materials (and data) out of which to build that report.
+You don't have to finish everything, or proceed in the in order presented, but you do have
+to write a quality report that addresses the goals in \S\ref{goals}.
+
+Here are some specific suggestions for turning these lab instructions into a successful report:
+\begin{itemize}
+
+\item Keep careful notes, preferably in a {\bf lab notebook} that you write in as you hook things up.
+Good notes document how the data are derived from the experimental setup so you can describe it accurately and track down mistakes.
+If you show your knowledgable GSI a head-scratcher of a plot but cannot remember
+which port of the mixer you plugged the noise into, they may have trouble diagnosing your problem.
+
+\item Back up (or revision control) your data, code, and plots. Nothing is more demoralizing than re-doing work
+or being unable to find the combination of parameters that reproduce a result.
+
+\item Start your report early. If you plan for which equipment, data, and plots you need
+for your report, your time in the lab will be spent more efficiently and you will avoid the 
+panic that comes from writing up at the last minute.
+
+\item Formal lectures, the pages linked on AstroBaki, and these lab instructions are 
+resources to help you write a strong report. As in real-life research, there
+is no one text book containing everything you need to know. Explore, take notes, and show
+me what you learned in your report. Remember, I can only grade you on what you write down.
+Make sure what you write down is your own work, in your own words. Cite sources
+external to this class (no need to cite AstroBaki, lecture, or the lab instructions).
+
+\item Your reports will be in the style of scientific publications. They are narratives of explanation and discovery 
+that bring the reader---a science colleague---to the point of being able to understand and have confidence in your results.
+You may be presenting your work, but this report is about the {\it reader's} journey, not yours.
+It is a presentation of synthesized results with the background and salient details necessary to understand them. 
+It is {\it not} a play-by-play of everything you did, all the plots you made, and all the wrong turns along the way.
+
+\end{itemize}
+
+
+\section{Goals} \label{goals}
+
+\noindent
+The goals of this lab---the results your report should
+demonstrate you have achieved---are as follows.
 
 \begin{itemize}
 
-\item Learn how to sample electronic signals and convert them into digital signals.
+\item Learn how to sample electronic signals and convert them into digital signals. Demonstrate
+the phenomenon of aliasing and quantitatively relate that to the Nyquist criterion.
 
-\item Get started with our programming language, Python, using it for the
-  mathematical analysis, signal processing, and making nice plots.
-
-\item Become acquainted with aliasing and the basic law of sampling: the
-  Nyquist criterion.
-
-\item Learn how to use Discrete Fourier Transforms (DFTs) to 
+\item Learn how to correctly use and display Discrete Fourier Transforms (DFTs) to 
   determine the frequency power spectrum of a time
-  series. Understand leakage power and frequency resolution when
-  sampling a single sine wave.
+  series. Correctly calculate and label frequency and power axes in plots and demonstrate
+  understanding of how frequency ranges and resolutions are determined from the duration and 
+  cadence of samples in a time series.
 
-\item Learn about the Fast Fourier Transform (FFT) as a fast
-  implementation of the DFT.
+\item Learn about negative frequencies. Motivate and measure how complex inputs to a Fourier Transform
+break the positive/negative frequency degeneracy.
 
-\item Learn how the FT treats noise, which is the important case for
-  radio astronomy.
+%\item Learn about the Fast Fourier Transform (FFT) as a fast
+%  implementation of the DFT.
 
-\item Learn about the convolution theorem (and its cousin, the
-correlation theorem), and discover the relationship between 
+\item Learn about the origin of noise in electronic measurements and explore how the noise behaves 
+  under the Fourier Transform.
+
+\item Learn about the convolution/correlation theorem, demonstrate how
+  spectral leakage in a power spectrum can be understood in this framework,
+  and identify the relationship between 
   autocorrelation functions and power spectra.
 
 \item Learn the basics of mixing for frequency conversion
-  (the heterodyne technique). Explore how real mixers differ from
-  ideal ones.
-
-\item Learn about negative frequencies and how complex inputs to a FT 
-break the positive/negative frequency degeneracy.
-
-\item Construct a single-sideband (SSB) mixer and explore the mixing
-  process.
-  
-
-\item Learn enough \LaTeX to write up your results in a formal lab
-  report, including nice plots and graphs.
+  (the heterodyne technique) and explore how electronic mixers differ from
+  ideal ones. Construct double- and single-sideband mixers and use measurements
+  to demonstrate the theoretical and practical differences in their operation.
 
 \end{itemize}
 
-\section{SCHEDULE}
+\noindent
+In order to achieve these goals, you will be developing technical skills that are
+crucial, but need not be written about explicitly in your report. (The quality of
+the report itself will demonstrate your growing proficiency.) These include:
+
+\begin{itemize}
+
+\item Using the Python programming language for analysis, signal processing, and plotting,
+
+\item Learning enough \LaTeX to write up your results in a formal lab
+  report that including an abstract, captioned figures, tables, and citations.
+
+\item Gaining familiarity with configuring laboratory equipment 
+and navigating the computing environment.
+
+\end{itemize}
+
+\section{Schedule}
 
 \noindent
-There's a lot to do in this lab! If you don't understand the Nyquist criterion
-by the end of the first week, you're behind. Here's how it should be:
+This is an ambitious lab with a steep learning curve.
+It is important not to get behind or backload your work schedule.
+In particular, writing the report takes a lot longer than you might think.
 \begin{enumerate}
 
-\item {\it The First Week.} Finish \S
-  \ref{nyquist}, which requires reading the accompanying
-  material in \S \ref{pwrspectrum}. {\it Be prepared to show your work, your
-  software, and your results to the class, making real-time plots in
-  Python during your presentation.}
+\item {\it Week 1.} Finish \S
+  \ref{nyquist} and read the accompanying
+  material in \S \ref{pwrspectrum}. {\it Be prepared to show work, 
+  software, and results to the class.}
 
-\item {\it The Second Week.} Finish \S
-  \ref{mixersect} and the reading in \S \ref{hetereo}. Again, be prepared
-  to strut your stuff to the class.
+\item {\it Week 2.} Finish \S
+  \ref{mixersect} and read \S \ref{hetereo}. Again, be prepared
+  to present to the class.
 
-\item {\it The Third Week.} Read the handouts in \S
-  \ref{report}, and then write and hand in your formal report!  Your
-  report should contain relevant plots together with commentary to
-  illustrate your work, your thought processes, and your conclusions.
-  Generally speaking, your lab report should address, with discussion
-  and/or plots, each of the goals in \S \ref{goals}.
+\item {\it Week 3.} Read the handouts in \S
+  \ref{report} and write your formal report.  Refer to
+  our handouts and linked material for tips on how to structure
+  a scientific paper. You will be graded on the degree to which your
+  report addresses the specific goals in \S\ref{goals} and conforms to
+  standards of a quality scientific publication.
 
 \end{enumerate}
 
-\section{SOFTWARE ENGINEERING}
+\section{Software Engineering}
 
 \noindent
-You are about to write a bunch of code.  For many of you, this lab may require more
-coding than you've done before.  As the scale of your programming grows, you will
-need to learn to organize, document, test, and stabilize your code.  The process
-of building sound code is broadly referred to as {\bf software engineering}, and
-in addition to being helpful for scientific research, it may be one of the most marketable
-skills you learn in this class.
+The programming required to complete these labs will increase in scale throughout the semester.
+As it does, you will need to learn to organize, document, test, and stabilize your code.  The process
+of building sound code is broadly referred to as software engineering, and
+it may be one of the most marketable skills you learn in this class.
 
-Learning software engineering will be an on-going process, but let's start with a few
-principles for your first lab.
+Learning to engineer good software can take a lifetime, but let us start with a few
+principles in this lab.
+
 \begin{itemize}
-\item {\it Package your code}.  For now, this is means keeping the bulk of your code together
-in a directory that is separate from the data you acquire.  You might also think about separating
-the {\bf functions} and {\bf classes} you build from the {\bf scripts} and {\bf notebooks} that
-execute that code.  To do this, you'll want to build a {\bf module}.  Try it; it's easy!
 
-\item{\it Code twice}.  Code once to figure out how to make it work, and then, once you know
-how it works and what you want to do, code it again, this time doing it right.
+\item {\it Package your code}.  Keep files containing code together in 
+directories that are separate from the data you acquire.  
+Organize your code into functions and classes, and put the definitions in separate, importable files called modules.  
+Modules separate the definition
+of the code from the scripts and notebooks you use to execute code with changeable parameters. Packaging code vastly improves
+organization, testability, and the degree to which you can re-use good code. Functions, classes, modules, and installable {\bf packages}
+are easy to implement in Python, and there are many resources online to teach you how to use them. 
 
-\item{\it Revision control}.  {\tt git} is quickly becoming foundational to serious software
-engineering.  Do youself a favor and open a GitHub account (they're free), make a project in
-your account for this class, and regularly commit to it.  It backs up your work, allows you to
-make changes with impunity (you can always go back to a working state), and allows you to
-easily synchronize your work across multiple computers.  Seriously, it's worth the learning curve.
-Just do it.
+\item {\it Code (at least) twice}. It is nearly impossible to write well-organized code while figuring
+something out for the first time. You need room to hack at the problem, try and fail, learn and iterate.
+Code once to get a sense of how your program should work, then
+re-code it to get the organization and interfaces right. Time spent organizing and testing code up front will pay
+dividends later.
+
+\item {\it Test your code.} How do you know your code is doing what it should? Yes, it may run
+without raising an exception, but that doesn't mean it did what you intended. In software as in science,
+you can only trust something to the extent that you have tested it.
+Keep your tests organized so that you know what you have tested, and how. Modular testing (a.k.a 
+{\bf unit testing}) is the key to success in large
+software projects, particularly ones involving multiple people. The {\tt unittest} module is 
+commonly used in Python, but other modules have their own merits.
+
+\item{\it Control your revisions}.  {\bf Revision control} uses a specialized program ({\tt git} is popular) to
+track the changes made to your code. They allow you to edit code with impunity, knowing that you can
+always ask for a report on what you changed and where, and you can always backtrack to a previously committed
+state of the code if you screw something up.
+I suggest opening a (free) GitHub account, initializing a project
+for this class, and then committing to it regularly.  GitHub works with {\tt git} to back up your work remotely, and it also 
+allows you to easily synchronize your work across multiple computers.  It is seriously worth the learning curve.
+
 \end{itemize}
 
+\noindent
+Advanced software engineering combines all of the steps outlined above, using online repositories to hold various
+branches of a software project, and when any of a community of coders push their changes, a continuous integration system runs
+unit tests on the code to make sure that nothing was broken, that the new codes defines new tests it must pass, and that
+all the code conforms to reasonable documentation and legibility standards.  Code reviews examine changes that are
+made and submitted through pull requests, and then the changes (often multiple in parallel) are merged into the master code base of the
+project.
 
-\section{IN THE LAB: DIGITALLY SAMPLING A SINGLE SINE WAVE (First
-  Week)}
+We don't need the advanced machinery for this class, but it is good to be aware of how coding communities work and
+to start down the path of good coding practices yourself. Try to improve your software engineering practices using the
+suggestions above.
+
+{\it At a minimum, firmly separate data acquisition (the code that runs and interacts with
+equipment in the lab and at the telescope) from data analysis}.  For the former, scripts that run from the command line
+are most appropriate. For the latter, {\tt jupyter} notebooks are a fantastic tool. If you have code that needs to
+run under both environments, write modules that you can import into either.
+
+
+\section{Digitally Sampling a Sine Wave (Lab Activity, Week 1)}
 \label{nyquist}
-%
+
 \subsection{Handouts and Software}
 
 \noindent
-As you begin real work this first week, you will need to become immersed
-in the Linux operating system, your (Vi/Emacs/3rd party) text editor, and Python. To this end,
-you'll need to become familiar with the resources and links posted on Astrobaki.
-% XXX link to astrobaki?
+Your work this first week will require you to navigate
+the Linux operating system, using your (Vi/Emacs/3rd party) text editor to write Python. 
+On Astrobaki\footnote{\url{https://casper.ssl.berkeley.edu/astrobaki/index.php/Undergraduate\_Radio\_Lab}}
+we have linked primers on
+Linux/Unix, Python Installation and Basic Programming, Unix Text Editors, and Revision Control.  You can
+also review the key course content for this week: Nyquist Sampling and the Fourier Transform.
 
 %\subsubsection{Handouts}
 %\begin{enumerate}
@@ -167,6 +257,7 @@ you'll need to become familiar with the resources and links posted on Astrobaki.
 %
 \subsubsection{The {\tt ugradio} Python Package}
 
+\noindent
 {\bf Modules} are a way to distribute and reuse Python code.  They are themselves
 just bundles code that you {\tt import} into your program, where you can
 access everything as if you'd written it yourself.  {\bf Packages} are bundles
@@ -174,14 +265,14 @@ of modules that can all be installed together.  For this class, we will be using
 the {\tt ugradio} package to provide supporting code for your labs.  This package
 is already installed on the lab computers (you can test this by opening {\tt ipython}
 and typing {\tt import ugradio}).  If you ever need to install it on another computer,
-all of the code is linked to from the course website.  
+all of the code is on GitHub and linked to from the course website.  
 
 You will make use of two modules inside of the {\tt ugradio} package: {\tt pico}, and {\tt dft}.
 Take a minute to browse the code in these two modules so that you understand how to use it.
 
-\begin{enumerate}
+\begin{itemize}
 
-\item {\tt ugradio.pico} --- runs the A/D board to digitally sample signals. This is essential.
+\item {\tt ugradio.pico} --- runs the PicoSampler Analog-to-Digital Converter to digitally sample signals. This is essential.
 
 \item {\tt ugradio.dft} --- provides code for doing arbitrary Discrete Fourier Transforms.  This
 contrasts the functionality of {\tt numpy.fft}, which can only do certain kinds of
@@ -194,305 +285,361 @@ Discrete Fourier Transforms, but can do them very fast.
 %\item {\tt srs1\_dbm.pro}, {\tt srs1\_vpp.pro} --- sets the output level
 %  of the same SRS. 
 
-\end{enumerate}
+\end{itemize}
 
 
 \subsection{Your First Digital Sampling: the Nyquist Criterion}
 
-We begin this course by exploring the all-important realms of the
-Nyquist criterion and aliasing in digital sampling.  If you
-sample a signal too slowly, the signal won't be well-reproduced.  But if you
-sample really fast, then you generate large data files that take a long
-time to process.  Just how slowly can you sample the signal without
-completely losing its basic properties (such as, for example, the fact
-that it oscillates with frequency $\nu_{sig}$)?
+\noindent
+In class, we learned about the 
+Nyquist criterion for sampling discretely in time. 
+Sampling too slowly results in a signal being aliased, but oversampling
+generates excessively large data files.
+Let us determine the optimal balance by sampling a sine wave
+and comparing the recovered signal
+to the original for different ratios of the signal frequency ($\nu_0$) and the
+sampling frequency ($\nu_s$).
 
-The fundamental parameter here is the ratio of sampling frequency
-$\nu_{samp}$ to signal frequency $\nu_{sig}$. With our equipment we can
-set $\nu_{samp}$ to only selected, quantized values ($62.5~{\rm MHz} / N$, where
-$N$ is a small integer). However, we can set
-$\nu_{sig}$ with almost arbitrarily high precision. So to explore these
-issues we will pick a sampling frequency $\nu_{samp}$ and take data at
-several signal frequencies $\nu_{sig}$.  Be sure to use a coax T so that
-you can look at the sampled signal on the oscilloscope.  Set the
-peak-to-peak voltage appropriately so that it doesn't saturate the
-Analog-to-Digital Converter (known as the ADC). 
+In the lab, we will sample signals using a PicoSampler 2000 Analog-to-Digital Converter (ADC).
+The sampling frequency is set during data acquisition with the {\tt capture\_data} function
+in {\tt ugradio.pico} module, but the ADC only samples at
+quantized values of $62.5~{\rm MHz} / N$, where $N$ (set by the {\tt divisor} parameter)
+is a small integer. However, we can set
+$\nu_0$ with arbitrarily high precision using a signal generator, so instead of trying
+different sample frequencies for a fixed $\nu_0$, we will do the reverse:
+\begin{itemize} 
+	\item Pick a convenient sampling frequency $\nu_s$, then
+	\item Set the synthesizer to frequency $\nu_0 = (0.1, 0.2,
+	  0.3, \dots, 0.9)~\nu_s$ and take data. 
+\end{itemize}
 
-Use {\tt ugradio.pico} to get your data, which will appear in the form
-of a numpy array.  In order to avoid having to re-take your data every
-time you run your program, you should save this numpy array to a file
-with either {\tt numpy.save} or {\tt numpy.savez}.  Thereafter, you can
-just load your data from this file with {\tt numpy.load}.
+\noindent We suggest using a co-axial T joint so
+you can put a copy of the signal you are sampling into an oscilloscope.
+Good science is about inspection, verification, and documentation. In that spirit,
+inspect the signal you are sampling at each step with the oscilloscope, verify that it matches that amplitude
+and period you set on the function generator, and document the settings used and files generated
+in your lab notebook.
 
-	We want to explore sampling rate issues, so to that end 
-we will begin by\dots \begin{enumerate} 
-	\item Pick a convenient sampling frequency $\nu_{samp}$.  
-	\item Set the synthesizer to frequency $\nu_{sig} = (0.1, 0.2,
-	  0.3, \dots, 0.9) \nu_{samp}$ and take data. 
-\end{enumerate}
-
-\noindent The sampler gives you {\tt nsamples=16000} samples, which is to
+Use {\tt ugradio.pico.capture\_data} to get your data, which will appear in the form
+of a numpy array.  You should save this array to a file
+with {\tt numpy.save} or {\tt numpy.savez}.  Your analysis scripts can then 
+load data from this file with {\tt numpy.load}.
+The sampler gives you {\tt nsamples=16000} samples, which is to
 say that you can change how many samples you request, but it defaults to 16000. 
-For this part of
-the lab, it's easier to deal with fewer, so just use the first $N$ (in
-Python, with the command {\tt firstN = samples[:N]}), with $N$ being a
-few hundred or thousand.  Throughout the datataking, you should always
-be monitoring the signal with the oscilloscope. These are sine waves, so
-it's easy to measure the period by looking at the oscilloscope; each
-time you digitally sample the signal, you should write down the period
-(maybe in your {\it lab notebook?}).
+Be sure to set the
+peak-to-peak voltage of the ADC so the input signal does not saturate it, but is much
+bigger than the quantized states of the ADC.
 
-For each dataset, use Python to plot (with the {\tt pylab}/{\tt matplolib.pyplot} package)
+For each dataset, use the {\tt matplotlib.pyplot} package (typically imported
+as {\tt import matplotlib.pyplot as plt} to plot
 the digitally sampled waveform versus
-time.  Make the plots informative, meaning that you label the
-axes (in particular, label the $x$-axis in time units) and you can
-clearly see the signal shape; if necessary, plot only a part of the data
-so you can clearly see the signal shape (e.g., a few cycles of the sine
-wave). Plot both the sampled points and the lines connecting the points
-(e.g., {\tt pylab.plot(times, data, 'k.-')}).  Compare your plot with the
-oscilloscope trace.  
+time.  
+For plotting, it is easier to visualize fewer samples, so if you load a wavefrom from file into
+a variable {\tt data}, you can slice off the first, say, 200 samples with the command {\tt data = data[:200]}.
+Make the plot informative by putting the $x$ axis in time units (e.g. {\tt plt.plot(tiimes, data)} instead of {\tt plt.plot(data)}). 
+Does the period match what you expected?
 
-Also, for all the datasets derive and plot the Fourier power spectrum
-(see \S \ref{dft} and \S \ref{pwrspect}).  Make sure that you {\it label
-  the axes} with proper values of time and frequency---and choose
-convenient units, such as microsec ($\mu$s) and MegaHz (MHz), to avoid
-huge and tiny numbers.  In deriving the Fourier spectra, use our
-homegrown DFT procedure (see \S \ref{dft}).
+If you would like to use this (or any) plot in your report, make sure you label both axes (with
+approprite units to avoid tiny or huge numbers)
+give it a title, and restrict the range to an appropriate scale where you can clearly see
+the signal shape and frequency. You will also need to come up with an appropriate caption that
+stands alone as a description of the plot and what it demonstrates.
 
-Now, {\it look at both sets of these plots} and note any funny business.
-Think about your results and draw your own conclusion: just what is the
-minimum sampling rate that you can get away with? (That's {\bf Nyquist's
-  criterion)}. 
+For each of the datasets you take, derive and plot the Fourier power spectrum
+(e.g. the square magnitude of the voltage spectrum; see \S\ref{dft} and \S\ref{pwrspect}). You can use {\tt numpy.fft} to do the Fourier
+transform, 
+but we suggest using our homegrown {\tt ugradio.dft} version until you have mastered dealing with
+Fourier units and the subtleties of {\tt fftshift}.
 
-\subsection{Fourier Voltage and Power Spectra}
+Now, examining the results, draw your own conclusion: what is the
+minimum sampling rate ($\nu_{s,min}$) that accurately reproduces the spectral frequency $\nu_0$ in
+the sampled data?  That is {\bf Nyquist's criterion}. 
 
-Above we looked
-at the power spectrum and didn't examine the voltage spectrum. Now let's
-look at the voltage spectrum. The voltage spectrum numbers are complex,
-with real and imaginary parts. Plot the real and imaginary parts
-separately. It is most informative to have them on the same panel, which
-you can do either by plotting the real part and then overplotting the
-imaginary part in a different color; or you can use two plots one below
-the other by setting {\tt pylab.subplot(2,1,1)} and {\tt pylab.plot(freqs, spec.real)},
-  and then {\tt pylab.subplot(2,1,2)} and {\tt pylab.plot(freqs, spec.imag)}.
- Take a detailed look at the plotted points with the
-goal of seeing if they exhibit any symmetry for negative and positive
-frequencies about 0. What do you see?
+\subsection{Voltage Spectra and Power Spectra}
 
-To make sure that any conclusions you draw regarding the symmetry are
-not just a fluke, repeat this process for several independent data
-streams.  The mathematicians have a name for the kind of symmetry
-exhibited in these voltage spectra. It's called {\bf Hermitian} symmetry.
+\noindent
+Power spectra show which frequencies are occupied by signal power by telling
+us about the magnitudes of the complex numbers in the Fourier transform.  Voltage
+spectra, by contrast, give us phase information,
+with real and imaginary parts.
 
-What does it mean that the voltage spectra are complex? What do the real
-and imaginary parts represent? Is the imaginary part any less `real'
-than the real part? Is it just a figment of your imagination?
-What does it mean that we talk of frequencies as being negative and
-positive? Are negative frequencies any less real than positive ones?
+What does it mean, that the voltage spectra are complex? What do the real
+and imaginary parts represent? Is the imaginary part less `real'
+than the real part?
+What does it mean, for frequencies to be negative versus
+positive? These are questions your lab report could try to answer.
 
-When you compare the plots for several independent data streams, do the
+For one of your data captures in the previous section, plot the real and imaginary parts
+(e.g. {\tt spec.real} and {\tt spec.imag})
+of the voltage spectrum on the same panel in different colors.
+Do the plotted points 
+exhibit any symmetry between negative and positive
+frequencies?
+
+Repeat this process on independent data
+streams to ensure the result is not a fluke.
+When you compare the plots for several independent data captures of the same sine wave, do the
 voltage spectra repeat identically?  Why not? What is happening when
 sometimes the real portions are positive or negative? When the imaginary
 portions have more amplitude than the real ones?
 
 For the power spectra, repeat this symmetry examination and the test for
 repeatability. What kind of symmetry do the power spectral points
-exhibit? Apply to the power spectra the questions we posed just above
-for the voltage spectra.
+exhibit? Why might we use power spectra instead of voltage spectra, and vice versa?
 
-Choose one of the power spectra and take its inverse Fourier transform.
-For this to work, you need to make sure your DFT correctly infers
-which array bins in your power spectrum correspond to which frequencies.
+Choose a power spectrum and take its inverse Fourier transform.
+For this to work, you need to make sure {\tt dft.idft} correctly infers
+the frequencies corresponding to each bins in your power spectrum array,
 Separately, calculate the autocorrelation function (ACF) directly from 
-the voltage time series, either manually or with \verb$numpy.correlate$.
-According to the correlation theorem, the FT
-of the power spectrum should equal the ACF. Does it? 
+the voltage time series manually with {\tt dft/idft}, with \verb$numpy.correlate$, and with \verb$scipy.signal.correlate$.
+According to the correlation theorem, the Fourier transform
+of the power spectrum should equal the ACF. Does it? Explain any differences.
 
 \subsection{Leakage Power} \label{subleakage}
 
-Above, you calculated a power spectrum for each input signal at $N$
-distinct frequencies separated by $\Delta \nu = \nu_{samp}/N$. In each,
-you found a spike corresponding to the input signal's frequency. Here,
-focus on just one of the properly-sampled signals $\nu_{sig}$. Calculate
-the power spectrum for many more than $N$ output frequencies than
-recommended in \S \ref{dft}, i.e.\ make the
-frequency increment much smaller than $\Delta \nu = \nu_{samp}/N$.
-Making the output frequencies closer together gives a more nearly
-continuous frequency coverage in the plot of the output spectrum.  Turn
-up the vertical scale a lot to see if there is any nonzero power at
-frequencies other than $\nu_{sig}$.  You {\it do} see such power! This
-is {\bf spectral leakage}. It affects all power spectra calculated using
-Fourier techniques. 
+\noindent
+By default, \verb$dft$ calculates a power spectrum at $N$ frequencies for a signal with 
+$N$ time samples, each frequency sepearated by $\Delta\nu = \nu_s/N$. (For Fast Fourier Transform (FFT)
+operations like \verb$numpy.fft$, this correspondence between time and frequency samples is hard-coded.) 
+For some of the waveforms you captured above, calculate
+the power spectrum with $N_{\rm freq}\gg N$, contrary to the
+recommendations in \S \ref{dft}. Use \verb$dft$ and choose 
+frequency increments much smaller than $\Delta \nu = \nu_s/N$.
+Use a logrithmic vertical axis to see if there is nonzero power at
+frequencies other than $\nu_0$.  This
+is evidence of {\bf spectral leakage}, which affects all power spectra 
+calculated using Fourier techniques. 
 
-Can you understand what's going on from a mathematical viewpoint?
+Can you explain mathematically why you might find power at $\nu\ne\nu_0$ using a Discrete Fourier Transform?
 
 \subsection{Frequency Resolution} \label{freqres}
 
-If you had two sharp spectral lines, how closely spaced in frequency
-could they be and still resolve them? Investigate this experimentally by
-combining two SRS outputs in a power splitter, with the two SRS
-frequencies very close together, and plot the power spectrum. For this,
-you'll again want to plot points much more closely spaced in frequency
-than the $\Delta \nu = \nu_{samp}/N$ recommended in \S \ref{dft}.  
+\noindent
+If you had two spectral lines (sine waves), how closely spaced in frequency
+could they be and still be resolvable? Investigate this experimentally by
+combining the output of two function generators in a power splitter. (A splitter
+run backward is a combiner.) Use two 
+frequencies very close together and plot the power spectrum again
+using points more closely spaced in frequency
+than the $\Delta \nu = \nu_s/N$.
 
-How close together can the two frequencies be for you to still be able
+How close together can the two frequencies be for you to still 
 distinguish them? This is called the {\bf frequency resolution.} How
-does it depend on the number of samples you use in the DFT? In
-particular, how does it compare to the length of the time interval that
-those samples cover?
+does it depend on the number of samples used in the DFT? In
+particular, how does it compare to time interval that
+those samples span?
 
-Can you understand this from a mathematical viewpoint?
+Can you explain your findings mathematically?
 
 \subsection{Nyquist Windows}
 
-Above, we calculated Fourier spectra for frequencies in the range $\pm
-\nu_{samp}/2$. What do we get when we increase this range? Explore by
-taking a Nyquist-sampled time series and calculating the Fourier
-spectrum for a much larger frequency range, $\pm N \nu_{samp}/2$, where
-$N$ is at least 4, retaining the original frequency interval. Each value
-of $N$ gives you a spectrum in a different {\bf Nyquist window}. How do
-the spectra in different Nyquist windows compare? Note that, for $N>1$,
+\noindent
+Above, we calculated spectra for frequencies in the range $\pm
+\nu_s/2$. What happens if we increase this range?
+
+Explore by
+taking a Nyquist-sampled time series and calculating the power
+spectrum for a much larger frequency range, $\pm W \nu_s/2$, where
+$W$ is at least 4, centered on the original frequency interval. Each value
+of $W$ gives you a spectrum in a different {\bf Nyquist window}. How do
+the spectra in different Nyquist windows compare? Note that, for $W>1$,
 you are calculating power spectra for frequencies that violate the
-Nyquist criterion. Nevertheless, the results aren't gibberish. In fact,
-in Lab 4 of the course we use a digital spectrometer that samples the
+Nyquist criterion, yet the results are sensible, in their way. 
+In Lab 4, we will use a digital spectrometer that samples the
 12$^{th}$ Nyquist window.
 
 This shows that the strictly correct statement of the Nyquist criterion
-is that the bandwidth---i.e., the frequency range of the
-signal---must not exceed $\nu_{samp}$. For the first Nyquist window this
-is equivalent to the simpler statement of the Nyquist criterion that we
-explored at first.
+is that the bandwidth---the frequency range of the
+signal {\it including negative frequencies}---must not exceed $\nu_s$. For the first Nyquist window this
+is equivalent to the simpler statement of the Nyquist criterion we first
+explored.
 
-\subsection{FTs of Noise}
+\subsection{Fourier Transforms of Noise}
 
-A blackbody radiator with temperature $T$ emits electromagnetic waves
+\noindent
+Noise comes into our data from a variety of sources. 
+Here, we restrict the term noise to refer to random fluctations with a known statistical distribution (in
+our cases, this is almost always a Gaussian with mean zero). We are careful to distinguish
+this from such things as: systematic contributions to error, bias, ambiguity, and posterior likelihood.
+Unlike how we use the term colloquially, noise has a specific meaning in science, so be careful with it.
+
+Many of the astronomical signals we observe are, in fact, noise. 
+Blackbodies are noise sources: a blackbody at temperature $T$ emits statistically 
+random electromagnetic waves
 with specific intensity (power per area per Hz per solid angle) given by the 
-blackbody formula $I=
-2h\nu^3/c^2(e^{h\nu/kT}-1)$. We are radio astronomers, which means we
-operate in the regime $h\nu/kT \ll 1$, so the blackbody formula
-goes to the much simpler Rayleigh-Jeans (RJ) limit,
-$I=2kT/\lambda^2$. The noise power depends linearly on $T$. 
+Planck function
+\begin{equation}
+B_\nu = \frac{2h\nu^3}{c^2}\frac{1}{e^{h\nu/kT}-1}. 
+\end{equation}
+As radio astronomers, we
+operate in the regime where $h\nu/kT \ll 1$ (the Rayleigh-Jeans limit), 
+so the blackbody formula simplifies to:
+\begin{equation}
+B_\nu\approx\frac{2kT}{\lambda^2}. 
+\end{equation}
+Notice, the noise power depends linearly on $T$. 
+
 For a number of good reasons, radio astronomers choose to measure noise
 power in units of temperature and define a brightness temperature
-$T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity.
+$T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity,
+even if the radiation source is, say, the galactic synchrotron and not even remotely thermal.
 
-When we observe, the electric field of the blackbody radiation is
-converted to voltage when it strikes the probe in the `feed' of the
-telescope. The electric field and its corresponding voltage have the
-same statistical properties: Gaussian randomness and zero mean. Because
-of the randomness, it's called `noise'. or more properly `Gaussian
-random noise'. In the lab we have laboratory sources of noise. Explore
-the properties of digitally sampled noise: \begin{enumerate}
+Using this framework, all sources of power in our measurement can be related to a temperature,
+including the receiver noise that is added to our incoming astronomical signal 
+by the thermal motion of electrons in our amplifiers and resistors 
+(otherwise known as {\bf Johnson} noise).  This noise (which,
+by the Central Limit Theorem, is almost always Gaussian) has a variance that
+is characterized by receiver temperature, $T_{rx}$, and adds onto the brightness temperature, $T_B$, 
+that characterizes the variance of signal coming through the antenna feed of the telescope.
 
-\item Connect our noise generator to our $\sim 6$-MHz wide bandpass
+For calibration and testing, we have laboratory sources of noise. Explore
+the properties of digitally sampled noise:
+
+\begin{itemize}
+
+\item Connect the noise generator to a $\sim 6$-MHz wide bandpass
   filter (the Minicircuits SBP-21.4 filter) and take a 16000-point time
-  series with the picosampler. These samples are voltages. What's the
-  mean voltage (sum the voltages, divide by the number in the sum)?
-  What's the mean square voltage (sum the squares of the voltages,
-  divide by the number in the sum). What's the root-mean-square (rms)
-  voltage (it's the square root of the mean square voltage)?
+  series with the ADC. These samples are voltages. What is the
+  mean voltage over this sample?
+  What is the variance? The standard deviation (which, for a zero-mean signal,
+  is the same as the root-mean-square, or rms)?
 
-\item Plot a histogram of the sampled voltages (see Python's {\tt
-  numpy.histogram} function---for documentation, type {\tt numpy.histogram?} in IPython).
+\item Plot a histogram of the sampled voltages (see {\tt
+  numpy.histogram}---for documentation, type {\tt numpy.histogram?} in IPython).
   The histogram
   should look Gaussian, with a width equal to the rms
-  voltage. Overplot this theoretically-expected Gaussian---does it look
-  like your data?
+  voltage. Overplot this theoretically-expected Gaussian. Does it look
+  like your observed distribution?
 
-\item Take a total of 32 16000-point samples with the picosampler (let's
-  call these 32 `blocks' and derive the power spectrum for each block
-  using the direct FT method. Plot the average of all 32 power
-  spectra. What does this look like?
+\item Take 32 blocks of 16000 samples with the ADC. Compute the power spectrum
+  of each block, as well as the average of all 32 power
+  spectra.
 
 \item Plot the power spectrum for a single block and compare to the
   above average. Do the same for the average of $N$ blocks, where $N=(2,
   4, 8, 16)$ What you are doing here is looking at how integration time
-  affects the signal-to-noise ratio (SNR): the `signal' is what you see
-  with long integration times and the `noise' is the `grass'. How does
-  SNR depend on $N$? (Hint: SNR is proportional to $N^x$; what is $x$?)
+  affects the signal-to-noise ratio (SNR): the `signal' is the relatively
+  smooth distribution that emerges with long integration times.
+  The `noise' is the scatter you see around that value. How does
+  SNR depend on $N$? (Hint: SNR is proportional to $N^x$ for some value of $x$.)
 
-\item Calculate the ACF for a single block, using the entire set of
-  16000 samples for delays of $\le 2000$ samples. Also derive the power
-  spectrum from this ACF and compare with the direct FT-derived power
+\item Calculate the ACF (by manually computing Fourier transfroms and by using \verb$numpy/scipy$'s version)
+  for all
+  16000 samples in a block. Zoom in on delays of $\le 2000$ samples. Also derive the power
+  spectrum from this ACF and compare with the Fourier-transform-derived power
   spectrum for the same block.  Are they identical?
-  Compare the width (full width half max, or FWHM) of the ACF ($\Delta
+  Compare the width (full-width half-max, or FWHM) of the ACF ($\Delta
   \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta
-  F_{FWHM}$). How do $\Delta \tau_{FWHM}$ and $\Delta F_{FWHM}$ compare?
-\end{enumerate}
+  F_{FWHM}$). Are they related?
+
+\end{itemize}
 
 %=============================================================
-\section{IN THE MIND: FOURIER TRANSFORMS, THE ANALYTIC AND DISCRETE 
-VERSIONS (First Week)} 
+\section{Fourier Transforms, Analytic and Discrete (At Home, Week 1)} 
 \label{pwrspectrum}
  
 \subsection{The Analytic Fourier Transform}
 
-A Fourier Transform (FT) maps a function between two complementary coordinates which,
-for now, are usually time, $t$, and spectral frequency, $\nu$.
-The input to the forward Fourier Transform (FT) is a signal versus time, say
-$E(t)$; the output is a signal versus frequency, say $\tilde E(\nu)$.
-Mathematically, the Fourier Transform is the integral
+\noindent
+A Fourier transform maps a function between two complementary coordinates which
+for now are usually time, $t$, and spectral frequency, $\nu$.
+The input to a forward Fourier transform is a signal versus time, 
+$E(t)$; the output is a signal versus frequency, $\tilde E(\nu)$,
+which is computed as
 % 
 \begin{equation}
 \tilde E(\nu) = \int_{-T/2}^{T/2} E(t) e^{2 \pi i \nu t} dt \ .
 \label{eq:dft}
 \end{equation}
 % 
-\noindent The input signal $E(t)$ is multiplied by the complex
-exponential and integrated, so the output $\tilde E(\nu)$ is complex. Of particular
-importance is that the Fourier Transform is {\bf invertible}: you can go
-from the time to the frequency domain, and from the frequency domain you can
-get back to the time domain using the inverse transform
+\noindent The input signal $E(t)$ is multiplied by a complex
+exponential and integrated, so the $\tilde E(\nu)$ is a complex-valued function. Of particular
+importance is that the Fourier Transform is {\bf invertible}: 
+you can get back to the time domain using the inverse transform
 %
 \begin{equation}
-E(t) = {1 \over F} \int_{-F/2}^{F/2} \tilde E(\nu) e^{-2 \pi i \nu t} d\nu \ .
+E(t) = {1 \over B} \int_{-B/2}^{B/2} \tilde E(\nu) e^{-2 \pi i \nu t} d\nu \ .
 \end{equation}
 % 
-This is because (complex) sine waves form a {\bf basis} over the space of functions.
-Any function can be expressed exactly and uniquely by its Fourier coefficients.
-For those of you looking for applications of that linear algebra class you took,
-the Fourier Transform a linear matrix operation akin to a fancy rotation matrix. 
-As such, it has lots of nice properties like: (1) {\bf linearity} (the FT
-of a sum is the sum of the FTs), (2) {\bf invertibility}
-(there is no information loss in the FT; it can be undone), and (3)
-unitarity (the FT is power-preserving).
-\noindent {\it Note:} If you're paying attention, you would wonder how
-the integration limits $F$ and $T$ are defined above. In the proper
+This works because (complex) sine waves form a {\bf basis} over the space of functions.
+Any function can be expressed exactly and uniquely by its Fourier coefficients
+\footnote{You may wonder how
+the integration limits $B$ and $T$ are defined above. In the proper
 analytic formulation, they are both infinity. We emphasize their
-boundedness here because, in practice, i.e.\ when you do actual
-measurements or numerical calculations, neither can be infinity!  Also note that,
+boundedness here because, in practice, 
+neither can be infinity, and this necessarily introduces spectral leakage. Also note that,
 according to the Fourier conventions we've written here, our forward FT does not divide
-by the integration interval, but the inverse FT does.  These conventions match {\tt numpy}'s
-{\tt fft} and {\tt ifft} conventions.
+by the integration interval, but the inverse FT does.  These conventions match 
+the {\tt numpy.fft}
+and {\tt ifft} conventions.}
+
+For those of you looking for applications of that linear algebra class you took,
+the Fourier transform (FT) is a linear matrix operation akin to a rotation. 
+As such, it has nice properties like:
+\begin{enumerate}
+\item linearity: the FT
+of a sum is the sum of the FTs, 
+\item invertibility: there is no information loss in the FT; it can be undone, and 
+\item unitarity: the FT is power-preserving.
+\end{enumerate}
+
 
 \subsection{The Discrete Fourier Transform (DFT)} \label{dft}
 
-Once we sample our signal at discrete interals versus time, it is no longer continuous.
-With the discrete transform, the integral becomes a sum. In
-this sum, you need to specify: \begin{enumerate}
+\noindent
+The difference between an analytic Fourier transform and a discrete Fourier transform is
+that signals sampled at discrete intervals are no longer continuous. This means that
+integrals become somes, and the Nyquist criterion applies.
 
-\item The set of sample times. I suggest: \begin
- {enumerate}
-\item  Using $N$ samples, where $N$ is even (and even better: a power of 2).
+You have multiple discrete Fourier transform implementations at your disposal.  Eventually, we would like you
+to use \verb$numpy.fft$, which is fast (it can handle millions of points), but does not allow you to choose
+which frequencies are in your output. It also has the (sensible but confusing) feature that, in the output
+spectrum puts the zero frequency in the 0th array index, counts upward through the positive frequencies, then
+switches in the moddle to the most negative frequency and continues counting in the positive direction
+toward zero.  The inverse Fourier transform \verb$numpy.fft.ifft$ requires the input spectrum to be in this
+order to work properly.
 
-\item Define the time range so that the center time is the zero
-  point. With $N$ even, there is no center time, so make the times
-  run from ${-N \over 2}/ \nu_{samp}$ to $({N \over 2} -1)/ \nu_{samp}$.
-\end{enumerate}
+However sensible, this arrangement of frequencies is not ideal for plotting. There is a function \verb$fftshift$
+that will swap the order to a plot-friendly negative-to-positive order. However, once you apply this shift to
+your array, \verb$ifft$ no longer works as you expect.  For this reason, {\it I suggest only using 
+\verb$fftshift$ in plotting calls to avoid confusion.}
+See our ``DFT's with DFT's'' handout for details.
 
-\item The output is a function of frequency, so you have to specify the
-  frequencies for which you want the output $E(\nu)$. I 
-  suggest that, at first, you calculate the the output for $N$
-  frequencies running from $-{\nu_{samp} \over 2}$ to $+{\nu_{samp}
-    \over 2} \left( 1 - {2 \over N} \right)$. This makes the frequency
-  increment equal to $\Delta \nu = \nu_{samp}/N$ over a total range of
-  just under $\nu_{samp}$. Thus, you calculate a {\bf voltage spectrum}
-  running from $-{\nu_{samp} \over 2}$ to not quite ${\nu_{samp} \over
-    2}$ using our in-house DFT procedure (see the {\tt ugradio.dft} module). 
+You should also take a look at \verb$fftfreq$, which calculates the frequencies of the \verb$numpy.fft$ output.
+
+For this class, we also provide the \verb$ugradio.dft$ module.  It is slow, but it allows you to manually specify
+which output frequencies are desired, and it accepts and returns coordinate arrays (time and frequency, respectively)
+to facilitate clarity and transparency. We recommend using this module in the first week and for applications where
+you need to oversample the output frequencies. Otherwise, migrate to \verb$numpy.fft$.
+
+To use \verb$ugradio.dft$, here are some recommendations:
+\begin{itemize}
+
+\item The set of sample times, $N$. Modern FFT libraries allow for arbitrary $N$, but performance improves
+if $N$ has small prime factors. 
+It is also advantageous to use even values of $N$, so that the zero frequency falls in the center of a bin.
+Powers of two are common. 
+Our \verb$dft$ module is slow, though, and this won't help. 
+
+\item Define the time range so that $t=0$ falls at the center of the range.
+  For $N$ even, there is no center time, so make the times
+  run from $-\frac{N}{2}/ \nu_s$ to $(\frac{N}{2} -1)/ \nu_s$.
+
+\item 
+  In specifying the frequencies for which you want the output $\tilde E(\nu)$, I 
+  suggest that you first calculate the output for $N$
+  frequencies running from $-\frac{\nu_s}{2}$ to $+\frac{\nu_s}{2}\left(1 - \frac{2}{N} \right)$. 
+This makes the frequency
+  increment equal to $\Delta \nu = \nu_s/N$ over a total range of
+  just under $\nu_s$.
+
+\end{itemize}
+
 To find out how to use the DFT, you can type {\tt ugradio.dft.<tab>} to see an
 auto-complete of what is available in the module.  You can also type {\tt ugradio.dft??} to see
-the code, and of course, you can type {\tt ugradio.dft.dft?} to see the docs for
+the code, and of course, you can type {\tt ugradio.dft.dft?} to see the documentation for
 the DFT function inside the {\tt dft} module.
+
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
 \label{pwrspect}
@@ -511,43 +658,37 @@ P_\nu = \tilde E(\nu) \tilde E^*(\nu) \ .
 the \verb$conj$ function, i.e.\ {\tt P = E * E.conj()}.  Should the
 imaginary part of \verb$P$ be zero? (answer: yes! Why is this?) Is it?
 (answer: not always! Why not?) To get rid of this annoying and extraneous
-imaginary part, you can use the \verb$float$ function: 
-\verb$P = float(P)$. For arrays, this becomes {\tt P = P.astype(numpy.float)}.
+imaginary part, try casting your array as a float.
  
 The other (more convenient and suggested) way is to square the length of
 the complex vector, i.e.\ \verb$P = numpy.abs(E)**2$. The result is
 automatically real.
 
-\end{enumerate}
 
 \subsection{The Power Spectrum and the Autocorrelation Function
   (ACF)} \label{acf}
 
-There is a very important theorem involving Fourier transforms of two
-functions. It is called the {\bf convolution theorem}. It has a cousin
-called the {\bf correlation theorem}. Understanding these, and being
-able to apply them, is one of the requirements for being a real radio
-astronomer. 
+Facility with the {\bf convolution theorem} and its cousin,
+the {\bf correlation theorem}, 
+is a requirement for being a real radio astronomer. 
 
-The convolution theorem: Consider two functions $E(t)$ and $F(t)$. They
-may be functions of either frequency or time; here, we take them as
-functions of time. The convolution of these two functions is
+The convolution of two functions $E$ and $F$ (here arbitrarily taken
+to be functions of time) is
 %
 \begin{equation}
-[E * F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau - t) \ dt
+[E * F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau - t) \ dt,
 \end{equation}
 %
 and the correlation of the two functions is
 %
 \begin{equation}
-[E\star F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau + t) \ dt
+[E\star F](\tau) = \int_{-T/2}^{+T/2} E(t) F(\tau + t) \ dt.
 %\int_{-\infty}^{+\infty} E(t) F(\tau + t) \ dt
 \end{equation}
 %
 \noindent Conceptually, these two functions describe sliding $F$ over
-$E$ by changing the parameter $\tau$. $\tau$ is called the `time
-delay', or simply the `delay'. These two expressions are almost
-identical; the only difference is the sign of $t$ in the argument of
+$E$ by changing the delay parameter, $\tau$.
+The only difference between convolution and correlation is the sign of $t$ in the argument of
 $F$. If $F$ is symmetric, which is the case of interest for us, the two
 are identical. Using our definition of the Fourier transform from
 Equation \ref{eq:dft}, the convolution theorem states:
@@ -575,70 +716,36 @@ symmetric, then the imaginary part of its Fourier transform is zero,
 which means $\tilde F^*(\nu) = \tilde F^(\nu)$, and two theorems become
 identical.
 
-A hugely important application of this theorem is the case when
+An important application of this theorem is the case when
 $E(t)=F(t)$, in which the correlation function becomes the {\it
   Autocorrelation function} $ACF(\tau)$, and equation \ref{eq:acfpwr}
 states, in words: {\bf The power spectrum is equal to the Fourier
   transform of the ACF}
 
-We'll talk about other examples and applications in class.
-
 When calculating a digital version of the correlation function, you have
 to worry about `end effects'. Suppose you are calculating an ACF for $N$
 samples with delays $\Delta N$ ranging up to $N/2$. Then the number of
 terms in the sum is always smaller than $N$ because the delays `spill
-over the edge' of the available samples. So when you calculate the ACF
-you need to properly normalize:
+over the edge' of the available samples. 
 
-%XXX I don't think this equation clarifies matters
-\begin{equation}
-ACF(\Delta N) = { \Sigma_{k=0}^{ N-\Delta N-1} x_k x_{k+\Delta N} \over
-                  \Sigma_{k=0}^{ N-\Delta N-1} x_k^2}
-\end{equation}
+%So when you calculate the ACF you need to properly normalize:
 
-\subsection{The Fast Fourier Transform (FFT)} \label{fft}
-
-Above in \S \ref{dft}, you had $N$ time samples and evaluated the DFT
-for $N$ well-chosen frequencies. These were ``well-chosen'' because for
-these particular values of frequency---and {\it only} these particular
-values---you can get back to the time domain by using the inverse
-transform (in Python using {\tt ugradio.dft.idft}).
-% XXX make sure idft exists
-
-It so happens that, for these particular combinations of frequency and
-time, there is a very fast algorithmic implementation called the {\it
-  Fast Fourier Transform}, the FFT. What do we mean by ``Fast''? 
-Normally when you do a DFT, you have $N$ input numbers and $N$ output
-numbers and the number of calculations $\propto N^2$. When $N$ gets
-large, this takes a long time!  For the FFT, on the
-contrary, the number of calculations $\propto N\log(N)$, and this
-makes it possible to do large-$N$ transforms.
-
-Try Python's FFT (in the {\tt numpy.fft} module) and compare it to your DFT calculation above. The FFT
-output is ordered in what you might think is a funny and awkward way:
-when Fourier transforming a time series to obtain N frequencies, the
-frequency array is ordered with ${N \over 2} - 1$ positive frequencies
-first, then $N \over 2$ negative frequencies 
-%(i.e., $0 \rightarrow
-%{\nu_{samp} {N-1 \over N}, -\nu_{samp} \over 2} \rightarros
-%    -\nu_{samp}/N$.  
-However, it's really not awkward for most
-    applications. See our ``DFT's with DFT's'' handout for details.
-
-From now on, use FFT instead of DFT---unless you need results for
-additional output points, either more closely-spaced or over a broader
-range.
+%%XXX I don't think this equation clarifies matters
+%\begin{equation}
+%ACF(\Delta N) = { \Sigma_{k=0}^{ N-\Delta N-1} x_k x_{k+\Delta N} \over
+%                  \Sigma_{k=0}^{ N-\Delta N-1} x_k^2}
+%\end{equation}
 
 
 
-\section{IN THE LAB: MIXERS (Second Week)} \label{mixersect}
+\section{Mixers (In the Lab, Week 2)} \label{mixersect}
 
-\subsection{The Double-sideband Mixer (DSB Mixer)} \label{sectdsb}
+\subsection{The Double-SideBand (DSB) Mixer} \label{sectdsb}
 
-Figure \ref{dsb} shows a block diagram of a DSB mixer, whose backbone is
-the device called a mixer, which multiplies the two input signals. It's simple: the
-r.f.\ signal goes into one mixer port, the l.o.\ goes into the second
-mixer port, and the i.f.\ output is the third port.
+In this section, you will build a Double SideBand (DSB) mixer (Figure \ref{dsb}).
+A mixer is an electronic device that multiplies the two input signals. It is simple: the
+radio frequency (RF) signal goes into one mixer port, the local oscillator (LO) goes into the second
+mixer port, and the intermediate frequency (IF) product is output through the third port.
 
 \begin{figure}[h!]
 \begin{center}
@@ -647,47 +754,47 @@ mixer port, and the i.f.\ output is the third port.
 \end{center}
 %\vspace{-0.8in}
 \caption{\footnotesize A DSB mixer. In the text, we sometimes refer to
-  the r.f.\ input as the `signal'. \label{dsb}}
+  the RF input as the `signal'. \label{dsb}}
 \end{figure}
 
-For the mixer use a Mini-Circuits ZAD-1, which has three BNC connectors
-(three {\bf ports}) and works well at these frequencies.  The ZAD-1,
-like nearly all mixers, has its ports labeled ``R'' (the ``RF'' or
-``signal''); ``L'' (the ``local oscillator''); and ``X'' (the ``mixing
-product'') or ``I'' (the ``intermediate frequency'').  The ZAD-1 is a
-balanced mixer, so the ``R'' and ``L`` ports are identical, and in
-particular will not couple to DC or very low frequencies.  To find out
-the frequency ranges a ZAD-1 supports on each input, I encourage
-you to look up its datasheet online.  In contrast,
-the ``I'' port is coupled differently and will handle voltages all the
-way down to, and including, DC.  The mixing process functions no matter
-which two ports are used as inputs.  For example, if you are using a
-mixer to modulate a high frequency (say, a few MHz) with a low frequency
-(say, a few kHz), you should use the ``I'' port for the low frequency
-and either of the other two for the high frequency; take the output from
-the third port.  
+Our mixer will be a Mini-Circuits ZAD-1, which has three BNC connectors
+and works well at these frequencies.  The ZAD-1,
+like nearly all mixers, has its ports labeled ``R'' (RF),
+``L'' (LO); and ``X'' or ``I'' (IF).
+The ZAD-1 is a
+balanced mixer, so the R and L ports are identical, and it
+{\it will not couple to DC or very low frequencies}.  To find out
+the frequency ranges a ZAD-1 supports on each input, 
+look up its datasheet online. 
 
-For this, use two SRS synthesizer oscillators as inputs to a mixer to
-explore the spectra and waveforms in the DSB mixing process.  One SRS
-synthesizer works up to 30 MHz (the fancy one), and the other works up
-to 15 MHz.  Assign one of the SRS synthesizers to
-be your ``local oscillator'' (LO) with frequency $\nu_{lo}$, and
-the other your ``signal'' with frequencies $\nu_{sig} = \nu_{lo} \pm
+%In contrast,
+%the ``I'' port is coupled differently and will handle voltages all the
+%way down to, and including, DC.  The mixing process functions no matter
+%which two ports are used as inputs.  For example, if you are using a
+%mixer to modulate a high frequency (say, a few MHz) with a low frequency
+%(say, a few kHz), you should use the ``I'' port for the low frequency
+%and either of the other two for the high frequency; take the output from
+%the third port.  
+
+Use two signal generators as inputs to the mixer and
+explore the spectra and waveforms in the DSB mixing process. 
+Assign one of the signal generators to
+be your LO with frequency $\nu_{LO}$ and
+the other your RF ``signal'' with frequency $\nu_{RF} = \nu_{LO} \pm
 \delta \nu$.  Here, you choose the frequency difference $\delta \nu$ and
-you set the two synthesizers, one to the lo frequency and the other to
-the signal frequency. There are two cases for the signal frequency,
-$\nu_{sig} = \nu_{lo} + \delta \nu$ and $\nu_{sig} = \nu_{lo} - \delta
-\nu$.  Make $\delta \nu$ somewhat small compared to $\nu_{lo}$, maybe
-$5\%$ of $\nu_{lo}$.  For the input power level, a good choice is 0
-dBm\footnote{What does this ``dBm'' mean? It's the power relative to 1
-  milliwatt, expressed in decibels (dB). For our system the cable
-  impedance is 50 ohms; what's the rms voltage for a signal with power
-  level 0 dBm?} for both synthesizers. The output consists of both the
+you set the two signal generators 
+for each of two cases:
+$\nu_{RF} = \nu_{LO} + \delta \nu$ and $\nu_{RF} = \nu_{LO} - \delta
+\nu$.  Make $\delta \nu$ small compared to $\nu_{LO}$, maybe
+$5\%$ of $\nu_{LO}$.  For the input power level, a good choice is 0
+dBm\footnote{What does this ``dBm'' mean? It is the power relative to 1
+  milliwatt, expressed in decibels (dB).}
+  for both synthesizers. The output consists of both the
 sum and difference frequencies, so choose the ports appropriately.
 
-We will want to digitally sample the mixer output and explore both the
-sum and difference frequencies. As you learned above, there are
-extremely important issues regarding sampling rate. The most basic is
+Digitally sample the mixer output and explore the
+sum and difference frequencies. As you have learned, there are
+important issues regarding sampling rate you should get right. Consider
 the Nyquist criterion. Here, we also want enough samples per period to
 give you a reasonable visual facsimile of the sine wave when you plot
 it; from this standpoint, it's nicer to sample at twice
@@ -695,7 +802,7 @@ Nyquist, or even faster.  Another issue is the number of points
 you sample, which must be large enough to give you at least a few
 periods of the slowest sine wave.
 
-For the two cases $\nu_{sig} = \nu_{lo} \pm \delta \nu$, plot the power
+For the two cases $\nu_{RF} = \nu_{LO} \pm \delta \nu$, plot the power
 spectra versus frequency. Explain why the plots look the way they do. In
 your explanation include the terms ``upper sideband'' and ``lower
 sideband''.
