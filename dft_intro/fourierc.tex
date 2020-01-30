@@ -36,12 +36,12 @@
 %\author{\copyright Carl Heiles \& Kara Kundert \\ \today }
 
 \begin{abstract}
+\noindent
 Spectral analysis---describing a time-varying signal
 by its 
 frequency spectrum---is an essential tool in many fields.
 Astronomers use spectral analysis to de-disperse pulsars,
 measure the chemical composition of stars, and find the velocities of hydrogen clouds. 
-
 As we learn the tools of spectral analysis and apply them to our labs, we
 will need to master the intricacies of digital sampling and discrete Fourier
 transforms.  This handout offers an introduction to both.
@@ -118,7 +118,7 @@ Consider the analytic solution of
 equation \ref{eqtwo} for a monochromatic cosine wave of frequency
 $\nu_s$, that is $E(t) = \cos 2 \pi \nu_s t$.
 
-As $T \rightarrow \infty$, $E(\nu) = 0$ except where $\nu = \nu_s$.
+As $T \rightarrow \infty$, $E(\nu)$ becomes zero except where $\nu = \nu_s$.
 Formally, $E(\nu)\to\delta(\nu-\nu_z)$, 
 the Dirac delta function.  For finite $T$, this equation still has
 an analytic solution, namely (for $\Delta\nu\equiv\nu-\nu_s$)
@@ -161,94 +161,97 @@ gives the conventional definition of the resolving power of a telescope,
 \subsubsection{Spectral Leakage}
 
 \noindent
-Not only is the infinitesimally-narrow delta function replaced by
-a function of width $\sim {1 \over T}$ but also the function $\sin x
-\over x$ has ``sidelobes'': it spreads power out over a huge range of
-frequencies, albeit---after squaring, anyway---at a low level.  The
-spread-out power gets weaker as you move away from the signal, that is
-as $\Delta \nu$ increases---but it doesn't decrease monotonically. 
-Rather, the    sidelobes mean that there the spread-out power goes to
-zero periodically for $\Delta \nu = {1 \over T}$.  In colloquial terms,
-the power of the monochromatic sine wave ``leaks'' away in the power
-spectrum to all frequencies.  Not surprisingly, this is called
-``spectral leakage''. It's covered in NM chapter 13.4.
+The $\sin x/x$ response pattern describe in Equation \ref{sinxoverx}
+is fundamentally tied to the finite time interval used in Equation \ref{eqtwo}.
+In addition to degrading resolution, this
+response pattern acts as a convolution kernel, spreading power out
+over a huge range of frequencies with its sidelobes, even when the
+original (infinite) sine wave contained no power there.
+This effect is called
+{\it spectral leakage}.
 
-        You can reduce spectral leakage by using a ``window function''
-$W(t)$ that is not ``square''.  What on Earth does this mean? In equation
-\ref{eqtwo}, when you use a finite $T$ you are integrating over a    
-``window'' of total length $T$, as follows:
-
-\begin{equation}
-E(\nu) = {1 \over T}
-\int_{-T/2}^{+T/2} W(t) E(t) e^{[2 \pi i]\nu t}  dt \; .
+One way of understanding spectral leakage is to think of the finite
+bounds of the Fourier transform integral as a {\it windowing function},
+$W(t)$ that is unity for $-\frac{T}{2} < t < \frac{T}{2}$ and zero elsewhere.
+In this case, we may write Equation \ref{eqtwo} as
+\begin{equation} \label{windowfunc}
+E(\nu)=\frac1T\int_{-T/2}^{T/2} E(t)e^{2\pi i\nu t}\,dt
+=\frac1T\int_{-\infty}^{\infty} W(t)E(t)e^{2\pi i\nu t}\,dt\, .
 \end{equation}
 
-\noindent In equation \ref{eqtwo}, the window function $W(t)$ is unity;
-when  we let $W(t) = 1$ for the time window of length $T$, then this is
-called a ``square window function''.  A square window function produces 
-``sharp edges'' in the sense that the function $E(t)$ has its full
-amplitude for all $t$ within the window and then cuts off precipitously
-at the ends of the window.  {\it It's this sudden cutoff---the sharp
-edge---that produces spectral leakage.}
+\noindent
+In other words, the finite Fourier Transform is equivalent to the infinite
+Fourier Transform of $E(t)$, multiplied by the function $W(t)$.
 
-        We can reduce spectral leakage by making $W(t)$ a function that
-produces a {\it gradual} cutoff so as to eliminate the sharp edge.  We
-make $W(t)$ a function that gradually falls to zero at the window edges
-$-T/2$ and $T/2$. As one possible example among many, consider the Hanning
-weighting function, which is commonly used in radio astronomy:
+By the Convolution Theorem (see \S\ref{convolution}),
+the finite result must be the convolution of the infinite spectrum
+with the Fourier transform of the windowing function:
+\begin{equation}
+E_{\rm finite}(\nu) = E_{\rm infinite}(\nu) * W(\nu)\,.
+\end{equation}
+
+\noindent
+For the case where $W(t)$ is a square window (a.k.a. a ``top-hat"),
+$W(\nu)$ corresponds to the sinc function described in Equation \ref{sinxoverx}.
+
+The Fourier transform of a top-hat window has a broad spectral response
+because of the sharp edges in the function. The sudden cutoffs at the $\pm T/2$ 
+have power at arbitrarily high frequencies; these are what produce the sidelobes
+characteristic of the sinc function which leak spectral power all over the spectrum.
+We can reduce spectral leakage by making $W(t)$ a function that
+produces a {\it gradual} cutoff, eliminating the sharp edges.  For example,
+consider the Hanning weighting function, which is commonly used in spectral analysis:
 
 \begin{equation}
-W(t) = {1 \over 2} \left( 1 + \cos{\pi t \over T} \right) \; .
+W(t) = \frac12 \left( 1 + \cos{\frac{2\pi t}{T}} \right) \; .
 \label{weighting}
 \end{equation}
 
-\noindent This drastically reduces the sidelobes.  This comes at a
-price, though: the spectral resolution gets worse---by about a factor
-of two.  The reason is that the window function $W(t)$ goes to zero
-at the ends of the time window $T$, which effectively makes the window
-shorter. {\it Note:} We also use the term ``weighting function'' for
-$W(t)$.
+\noindent This function, if you multiply it into your discretely sampled
+$E(t)$ before Fourier transforming it, drastically reduces sidelobes.
+
+All things come at a price, however. Applying a windowing function
+decreases spectral resolution. For a Hanning window, the
+descrease in resolution is about a factor of two.
+The reason is that by tapering the windowing function to approach
+zero smoothly, we have effectively narrowed the time interval over which the
+Fourier transform is computed.
 
 
+\section{Discretely Sampled Signals}
 
-\section{DISCRETELY SAMPLED SIGNALS}
+	Vinyl records and cassette tapes contain {\it
+continuously-sampled} signals imprinted on the vinyl, or in the paramagnetism
+of iron filings on a film. By contrast, most of the music we hear today
+is digital, containing discretely-sampled signals written as binary numbers.
+Does this mean that mean the music on our phones doen't sound as good as vinyl?
 
-	When I was a teenager we had vinyl records.  They contained {\it
-continuously-sampled} signals that were directly imprinted on the vinyl. 
-Today we focus on CD's.  These contain {\it discretely-sampled} signals
-that are digitized and written on to the little silver disk.  The fact
-that CD's contain discretely sampled data means that the signal is known
-only for certain specific times.  In particular, the signal is not
-sampled {\it between} these times.  Does this mean that CD's don't sound
-as good as the vinyl records?
-
-	Regarding the calculation of our power spectrum with a FT, you'd
-think that the replacement of an integral by a sum would be
-straightforward, with no subtleties.  But this {\it isn't the case}. 
-There {\it are} subtleties, and they are {\it crucial}.  Understanding
-them, and dealing with them properly, makes your CD's sound just as good
-as vinyl.  So read on: we'll first provide a qualitative introduction
+The answer is that it depends on how well-sampled your music is. Understanding
+sampling is crucial, 
+so read on. We will first provide a qualitative introduction
 and then go into details.
 
-\subsection {Discretely-Sampled Signals: The Nyquist Criterion.}
+\subsection {The Nyquist Criterion}
 
-	When your CD music is recorded, or in astronomy when we observe
-a pulsar or sample an incoming signal to determine the spectrum, we
-sample the incoming signal sequentially in time, at regular intervals
-called the {\it sampling interval} $\Delta t = t_{smpl}$.  Equivalently,
+	When digital music is recorded, or in astronomy when we observe
+an incoming signal to determine the spectrum, we
+sample the incoming signal sequentially in time at regular intervals
+$\Delta t$.  Equivalently,
 we are sampling at a regular rate called the sampling frequency
-$\nu_{smpl} = {1 \over t_{smpl}}$. 
+$\nu_{s} = 1/\Delta t$.
 
 	In discrete sampling, we first require that the signal be
 limited in bandwidth.  That is, the highest frequency in its spectrum
 must be limited to an upper cutoff, which we call the bandwidth $B$;
 thus, the frequencies in the signal extend from 0 to $B$ Hz.  Then we
 must sample the signal periodically at a fast enough
-rate---specifically, we require ($\nu_{smpl} \ge 2 B$ Hz).  This is the
-``Nyquist criterion''.  If the Nyquist criterion is violated, we have
+rate---specifically, we require ($\nu_{s} \ge 2 B$ Hz).  This is the
+{\it Nyquist criterion}.
+
+If the Nyquist criterion is violated, we have
 the problem of {\it aliasing}, which means that signals with frequencies
-$\nu > B$ {\it appear} as {\it lower} frequencies.  Remember those
-movies showing cars and the wheels that seem to rotate backwards? That's
+$\nu > B$ appear as lower frequencies.  Remember those
+movies showing cars and the wheels that seem to rotate backwards? That is
 a real-world example of aliasing: the movie frames discretely sample the
 scene at too slow a rate to faithfully reproduce the wheel's rotation. 
 You can understand aliasing by looking at Figure \ref{figone}. 
@@ -260,33 +263,34 @@ You can understand aliasing by looking at Figure \ref{figone}.
  \includegraphics[width=6.0in, clip=true]{fig1}
 \end{center}
 \label{figone}
-\caption{Aliasing at its worst. The sample interval is $t_{smpl}= 0.01$
-s, so the sample frequency is $\nu_{smpl} = 100$ Hz. The Nyquist
-frequency is $f_N=50$ Hz. The stars are the datapoints. The two signals
-shown are at frequencies 37.5 and 62.5, i.e.\ $f_N \pm 12.5$ Hz. Which
+\caption{An example of aliasing. Samples, illustrated with stars,
+are separated by $\Delta t= 0.01$
+s, corresponding to a sampling frequency $\nu_{s} = 100$ Hz. The Nyquist
+frequency is $f_N=50$ Hz. The stars are the datapoints. 
+Two candidate signals are
+shown at frequencies 37.5 and 62.5 ($f_N \pm 12.5$) Hz. Which
 signal do the datapoints represent?  }
 \end{figure}
 
-	To put it another way: When we sample at rate $\nu_{smpl}$, the
+When we sample at rate $\nu_{s}$, the
 maximum signal frequency that can be faithfully reproduced is
-$\nu_{smpl} \over 2$.  This is called the Nyquist frequency and here we
-denote this by $f_N = {\nu_{smpl} \over 2}$.  Clearly, the signal's
-bandwidth $B$ must satisfy $B \le f_N$. All this is called the {\it
-sampling theorem}.
+the Nyquist frequency,
+$f_N = \nu_{s} / 2$.  In other words, the signal's
+bandwidth $B$ must satisfy $B \le f_N$, which is the {\it Nyquist criterion}.
 
-	How rapidly must music be sampled for recording on a CD? The
+How rapidly must music be sampled for audio recording? The
 human ear responds to something like 20 kHz.  To prevent aliasing, we
-need to sample at twice this, at about 40 kHz. 
+muast sample at twice this, at about 40 kHz. 
 
-\subsection {A Popular MISCONCEPTION!!!}
-
-	Somebody, sometime, will probably tell you that aliasing has to
-do with {\it discrete Fourier transforms}.  Tell them to go jump in the
-lake.  It has to do with the sampling rate.  Period.  Aliasing occurs if
-you don't sample fast enough, and affects your results {\it whether or
-not} you are dealing with Fourier transforms.  If you don't believe me,
-just look again at Figure \ref{figone}. And remember what happens to rotating
-wheels in movies. 
+%\subsection {A Popular MISCONCEPTION!!!}
+%
+%	Somebody, sometime, will probably tell you that aliasing has to
+%do with {\it discrete Fourier transforms}.  Tell them to go jump in the
+%lake.  It has to do with the sampling rate.  Period.  Aliasing occurs if
+%you don't sample fast enough, and affects your results {\it whether or
+%not} you are dealing with Fourier transforms.  If you don't believe me,
+%just look again at Figure \ref{figone}. And remember what happens to rotating
+%wheels in movies. 
 
 \section{DISCRETE SAMPLING AND THE FOURIER TRANSFORM}
 
@@ -942,7 +946,7 @@ This means that the two ends of the datastream abut at the middle of the
 shifted array. This, in turn, means that you need to add the zeros {\it
 all in the middle} of the array that you use in the FFT procedure.
 
-\section{CORRELATION AND CONVOLUTION}  
+\section{CORRELATION AND CONVOLUTION} \label{convolution}
 
 	Two important theorems regarding FT's: \begin{enumerate}
 
