@@ -705,7 +705,8 @@ and the correlation of the two functions is
 \end{equation}
 %
 \noindent Conceptually, these two functions describe sliding $F$ over
-$E$ by changing the delay parameter, $\tau$.
+$E$ by changing the delay parameter, $\tau$, which describes a
+time shift between the to functions.
 The only difference between convolution and correlation is the sign of $t$ in the argument of
 $F$.
 
@@ -713,13 +714,13 @@ Using our definition of the Fourier transform from
 Equation \ref{eq:dft}, the convolution theorem states:
 %
 \begin{equation}
-\widetilde{[E*F]}(\tau)\equiv\int_{-T/2}^{T/2} [E*F](\tau)~e^{2\pi i \tau\nu} d\tau =
+\widetilde{[E*F]}(\nu)\equiv\int_{-T/2}^{T/2} [E*F](\tau)~e^{2\pi i \tau\nu} d\tau =
     \tilde E(\nu) \cdot \tilde F(\nu)
 \end{equation}
 %
 and the correlation theorem:
 \begin{equation}
-\widetilde{[E\star F]}(\tau)\equiv\int_{-T/2}^{T/2} [E\star F](\tau)~e^{2\pi i \tau\nu} d\tau =
+\widetilde{[E\star F]}(\nu)\equiv\int_{-T/2}^{T/2} [E\star F](\tau)~e^{2\pi i \tau\nu} d\tau =
     \tilde E(\nu) \cdot \tilde F^*(\nu)
 \label{eq:acfpwr}
 \end{equation}
