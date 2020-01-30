@@ -1,161 +1,174 @@
-\documentclass[preprint]{aastex}
+\documentclass[11pt,preprint]{aastex}
+\usepackage{amsmath}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+%\usepackage{natbib}
+%\usepackage{natbibspacing}
+\usepackage{enumitem}
+\usepackage{url}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+%\setlength{\bibspacing}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\headsep}{6pt}
+\setlength{\topskip}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\topsep}{6pt}
+\setlength{\partopsep}{0pt}
+\setlength{\footnotesep}{8pt}
 
-\makeatletter
-\renewcommand\theequation{\thesection.\arabic{equation}}
-        \@addtoreset{equation}{section}
-\renewcommand\thefigure{\thesection.\arabic{figure}}
-        \@addtoreset{figure}{section}
-\renewcommand\thetable{\thetable.\arabic{table}}
-        \@addtoreset{table}{section}
-\makeatother
+%\makeatletter
+%\renewcommand\theequation{\thesection.\arabic{equation}}
+%        \@addtoreset{equation}{section}
+%\renewcommand\thefigure{\thesection.\arabic{figure}}
+%        \@addtoreset{figure}{section}
+%\renewcommand\thetable{\thetable.\arabic{table}}
+%        \@addtoreset{table}{section}
+%\makeatother
 
 \usepackage{float}
 \usepackage{graphicx}
 
 \begin{document}
 
-\setcounter{section}{-1}
+\title{Spectral Analysis with Discrete Fourier Transforms}
 
-\title{DISCREETLY FINE TIMES \\ with \\ DISCRETE FOURIER TRANSFORMS \\
-(DFT's with DFT's) \\ or \\ ``WHY DOES THAT FFT OUTPUT LOOK SO
-WEIRD???''}
+%\author{\copyright Carl Heiles \& Kara Kundert \\ \today }
 
-\author{\copyright Carl Heiles \& Kara Kundert \\ \today }
+\begin{abstract}
+Spectral analysis---describing a time-varying signal
+by its 
+frequency spectrum---is an essential tool in many fields.
+Astronomers use spectral analysis to de-disperse pulsars,
+measure the chemical composition of stars, and find the velocities of hydrogen clouds. 
 
-          ``Spectral analysis'' means describing a time-varying signal
-by its power spectrum, otherwise known as its Fourier spectrum or its
-frequency spectrum.  It should be obvious that such spectra are essential for
-astronomers: for example, spectra tell us not only about pulsar periods,
-but also about chemical composition in stars and Doppler velocities. 
-But the description of signals in terms of spectra or Fourier components
-has importance in many fields, and this becomes obvious on just a little
-reflection.  A prime example: a bridge is subject to shaking by
-earthquakes; if its natural resonance frequency is close to the
-frequency of ground movement, you've got trouble!
-
-	Spectral analysis is an integral part of some of our labs.  We
-will sample signals at regular intervals with our computers, a process
-known as ``discrete sampling'', and our computers will change the
-voltages to digital numbers, a process known as ``digitization''. We'll
-then do a discrete Fourier transform to calculate the power spectrum.
-There are some intricacies with this process\dots
+As we learn the tools of spectral analysis and apply them to our labs, we
+will need to master the intricacies of digital sampling and discrete Fourier
+transforms.  This handout offers an introduction to both.
+\end{abstract}
 
 \tableofcontents
 
-\section{THE INTEGRAL FOURIER TRANSFORM: TIME $\leftrightarrow$ FREQUENCY}
+\section{Transforming Time to Frequency}
 
-\subsection{Classical Fourier transforms}
+\subsection{Analytic Fourier Transforms}
 
-          We use the Fourier transform (FT) to convert a time-varying
-voltage $E(t)$ from the time to the frequency domain $E(\nu)$, and {\it
-vice versa}.  The formally correct equations are
+\noindent
+We use the Fourier transform (FT) to convert a time-varying
+voltage $E(t)$ from the time to the frequency domain $E(\nu)$, and 
+the inverse Fourier transform (iFT) to do the reverse.
+Formally, these are defined as
 
-\begin{mathletters} \begin{equation}
+\begin{equation}
 \label{eqone}
-E(\nu) = \int_{-\infty}^{\infty} E(t) e^{[2 \pi i]\nu t}  dt \; 
+E(\nu) = \int_{-\infty}^{\infty}{E(t)\ e^{2 \pi i \nu t}  dt}
 \end{equation}
 
-\noindent and, to go the other way, 
+\noindent
+and 
 
 \begin{equation}
  \label{eqoneb}
-E(t) = \int_{-\infty}^{\infty} E(\nu) e^{-[2 \pi i]\nu t}  d\nu \; 
-\end{equation}
-\end{mathletters}
-
-In our case, we are going to modify this a bit so that we don't run into
-infinities. We will write\dots
-
-\begin{equation} \label{eqtwo}
-E(\nu) = \lim_{T \to \infty} {1 \over 2T}
-\int_{-T}^{+T} E(t) e^{[2 \pi i]\nu t}  dt \; .
+E(t) = \int_{-\infty}^{\infty} E(\nu)\ e^{-2 \pi i \nu t}  d\nu \; ,
 \end{equation}
 
-\noindent We are often interested in the {\it power spectrum}.   Power
-goes as amplitude squared, so the power spectrum $P(\nu ) \propto E(\nu
-)^2$.  A small complication: $E(\nu)$ can be complex, but the power
-spectrum is just watts per Hz and must be real.  We take care of this by
-defining
+\noindent
+respectively.
 
+We use the {\it power spectrum} to measure the
+magnitude of the Fourier coefficients of a signal, giving us information
+about the spectral content of a signal without worrying about phase.   
+Because Fourier coefficients are generally complex, the power spectrum
+is defined as
 \begin{equation}
-P(\nu ) = E(\nu ) \times [E(\nu )]^* \; ,
+P(\nu ) = \left|E(\nu)\right|^2 = E(\nu ) \times E^*(\nu ) \; ,
 \end{equation}
 
-\noindent where the superscripted $[E(\nu)]^*$ means the complex
-conjugate.  This multiplication is the equivalent of ``detection''. 
+\noindent where $E^*(\nu)$ denotes the complex conjugate of $E(\nu)$.
 
-\section{EFFECTS OF $T$ BEING FINITE: INTEGRAL TRANSFORMS}
-
+\subsection{Finite Bounds to the Fourier Transform}
 \label{sectiontwo}
 
-	There's a fundamental fact of the real world: we don't live
-forever, and even if we did TAC's wouldn't allow us infinite telescope
-time for our precious projects, so we never can allow $T \rightarrow
-\infty$.  This frustrates the old politicians who want absolute control
-over everything, forever.  Less seriously in some circles---and more in
-others---it has two major ramifications for Fourier transform devotees:
-\begin{enumerate}
+When applying Fourier transforms, we never have infinite data for our signals, so we must
+introduce a finite time interval, $T$, into our integrals. We can relate 
+this to the true transform as the limit
 
-	\item It limits the frequency resolution.
+\begin{equation} \label{eqtwo}
+E(\nu) = \lim_{T \to \infty} {1 \over T}
+\int_{-T/2}^{+T/2} E(t)\ e^{2 \pi i \nu t}  dt \; .
+\end{equation}
 
-	\item It produces ``spectral leakage'': The result at a given
-frequency in the Fourier transform spectrum is contaminated by those at
-{\it all other} frequencies in the spectrum!
-\end{enumerate}
+\noindent
+Introducing finite bounds it has two major ramifications:
+\begin{itemize}
 
-	We treat these two ramifications in the following subsections.
+	\item It limits frequency resolution.
 
-\subsection{Spectral Resolution} \label{spctres}
+	\item It produces {\it spectral leakage}, where power from one
+frequency contaminates other frequencies in the computed spectrum.
+\end{itemize}
 
-        Equations \ref{eqone} and \ref{eqtwo} are fine as they stand,
-but when we sample a signal $T$ is finite. This limits our spectral
-resolution. To understand this, consider the analytic solution of
+\noindent
+We treat these two ramifications below.
+
+\subsubsection{Spectral Resolution} \label{spctres}
+
+\noindent
+Consider the analytic solution of
 equation \ref{eqtwo} for a monochromatic cosine wave of frequency
-$\nu_s$, that is $E(t) = \cos(2 \pi \nu_s t)$.  For $T \rightarrow
-\infty$, $E(\nu) = 0$ except for $\nu = \nu_s$; this is commonly
-expressed by the term ``Dirac delta function''.  But more generally, we
-have as the analytic solution
+$\nu_s$, that is $E(t) = \cos 2 \pi \nu_s t$.
+
+As $T \rightarrow \infty$, $E(\nu) = 0$ except where $\nu = \nu_s$.
+Formally, $E(\nu)\to\delta(\nu-\nu_z)$, 
+the Dirac delta function.  For finite $T$, this equation still has
+an analytic solution, namely (for $\Delta\nu\equiv\nu-\nu_s$)
 
 \begin{equation} \label{sinxoverx}
-E(\nu) = {\sin (2 \pi (\nu - \nu_s) T) \over 2 \pi (\nu - \nu_s)
-T} \; .  
+E(\nu) = {\rm sinc}\,{2\pi(\nu-\nu_s)}
+\equiv\frac{\sin  2 \pi \Delta\nu T}{ 2 \pi \Delta\nu T} \; ,  
 \end{equation}
+%
+%\begin{equation}
+%P(\nu) = \left (\frac{\sin  2 \pi \Delta \nu T}{2 \pi \Delta \nu T}
+%\right)^2 \; ,
+%\end{equation}
+%
 
-\noindent It is simpler to write $\delta \nu = (\nu - \nu_s)$ and write
+\noindent where the ${\rm sinc}$ function, defined as $\sin x / x$, is the classic
+result of Fourier transforming a top-hat function.
+It quantitatively expresses the degradation in frequency
+resolution that comes from finite time. Roughly, the spectral
+resolution $\Delta\nu$ is the width of this function:
 
 \begin{equation}
-E(\nu) = {\sin (2 \pi \delta \nu T) \over 2 \pi \delta \nu T} \; .
+\Delta \nu \sim \frac1T\, .
 \end{equation}
 
+This relationship between span in one coordinate and 
+resolution in its Fourier complement is fundamental.
+In optical and IR astronomy, it relates spectral
+resolution to the long path lengths that distinguish the oscillations of light
+over longer time intervals.
+This, modulo the number of internal reflections employed, sets the physical size 
+of grating and prism spectrometers, for example.
+Similarly, the Fourier relationship between apeture diameter (in wavelengths)
+and directional response (in angle)
+gives the conventional definition of the resolving power of a telescope,
 \begin{equation}
-P(\nu) = \left ({\sin (2 \pi \delta \nu T) \over 2 \pi \delta \nu T}
-\right)^2 \; .
+\theta\sim\frac\lambda{D}\, .
 \end{equation}
 
-\noindent and we see that this is just the famous $\sin x \over x$ type
-behavior.  This quantitatively expresses the degradation in frequency
-resolution when you sample for a finite time; roughly, the spectral
-resolution is the width of this function, which is $\Delta \nu \sim {1
-\over T}$.
+\subsubsection{Spectral Leakage}
 
-	In optical and IR astronomy, the need for high spectral
-resolution leads to the requirement of long time delays, which in turn
-means long path lengths. For grating and prism spectrometers, this can
-be achieved only by using physically large devices. For a Fabry-Perot,
-the long path is achieved by multiple reflections. In terms of the
-conventional definition of resolving power, ${\Delta \lambda \over
-\lambda} \sim {\lambda \over size}$. There's no way around this!
-
-\subsection{Spectral Leakage}
-
-	Not only is the infinitesimally-narrow delta function replaced by
-a function of width $\sim {1 \over 2T}$ but also the function $\sin x
+\noindent
+Not only is the infinitesimally-narrow delta function replaced by
+a function of width $\sim {1 \over T}$ but also the function $\sin x
 \over x$ has ``sidelobes'': it spreads power out over a huge range of
 frequencies, albeit---after squaring, anyway---at a low level.  The
 spread-out power gets weaker as you move away from the signal, that is
-as $\delta \nu$ increases---but it doesn't decrease monotonically. 
+as $\Delta \nu$ increases---but it doesn't decrease monotonically. 
 Rather, the    sidelobes mean that there the spread-out power goes to
-zero periodically for $\delta \nu = {1 \over 2T}$.  In colloquial terms,
+zero periodically for $\Delta \nu = {1 \over T}$.  In colloquial terms,
 the power of the monochromatic sine wave ``leaks'' away in the power
 spectrum to all frequencies.  Not surprisingly, this is called
 ``spectral leakage''. It's covered in NM chapter 13.4.
@@ -163,15 +176,15 @@ spectrum to all frequencies.  Not surprisingly, this is called
         You can reduce spectral leakage by using a ``window function''
 $W(t)$ that is not ``square''.  What on Earth does this mean? In equation
 \ref{eqtwo}, when you use a finite $T$ you are integrating over a    
-``window'' of total length $2T$, as follows:
+``window'' of total length $T$, as follows:
 
 \begin{equation}
-E(\nu) = {1 \over 2T}
-\int_{-T}^{+T} W(t) E(t) e^{[2 \pi i]\nu t}  dt \; .
+E(\nu) = {1 \over T}
+\int_{-T/2}^{+T/2} W(t) E(t) e^{[2 \pi i]\nu t}  dt \; .
 \end{equation}
 
 \noindent In equation \ref{eqtwo}, the window function $W(t)$ is unity;
-when  we let $W(t) = 1$ for the time window of length $2T$, then this is
+when  we let $W(t) = 1$ for the time window of length $T$, then this is
 called a ``square window function''.  A square window function produces 
 ``sharp edges'' in the sense that the function $E(t)$ has its full
 amplitude for all $t$ within the window and then cuts off precipitously
@@ -181,7 +194,7 @@ edge---that produces spectral leakage.}
         We can reduce spectral leakage by making $W(t)$ a function that
 produces a {\it gradual} cutoff so as to eliminate the sharp edge.  We
 make $W(t)$ a function that gradually falls to zero at the window edges
-$-T$ and $T$. As one possible example among many, consider the Hanning
+$-T/2$ and $T/2$. As one possible example among many, consider the Hanning
 weighting function, which is commonly used in radio astronomy:
 
 \begin{equation}
@@ -192,7 +205,7 @@ W(t) = {1 \over 2} \left( 1 + \cos{\pi t \over T} \right) \; .
 \noindent This drastically reduces the sidelobes.  This comes at a
 price, though: the spectral resolution gets worse---by about a factor
 of two.  The reason is that the window function $W(t)$ goes to zero
-at the ends of the time window $2T$, which effectively makes the window
+at the ends of the time window $T$, which effectively makes the window
 shorter. {\it Note:} We also use the term ``weighting function'' for
 $W(t)$.
 
@@ -287,8 +300,8 @@ is the {\it discrete Fourier transform}, or DFT.
 
          OK, we've sampled our signal at regular intervals $t_{smpl}$,
 meaning that the sampling frequency is $\nu_{smpl} = {1 \over t_{smpl}}$
-and $f_N = {\nu_{smpl} \over 2}$. If we do this for time $2T$ then we
-obtain $2J = {2T \over t_{smpl}}$ independent points. From these we wish
+and $f_N = {\nu_{smpl} \over 2}$. If we do this for time $T$ then we
+obtain $2J = {T \over t_{smpl}}$ independent points. From these we wish
 to compute the spectrum.
 
 	If we want to digitally compute the Fourier transform, then the
@@ -302,7 +315,7 @@ the range of frequencies $0 \rightarrow {\nu_{smpl} \over 2}$ or $0
 \rightarrow f_N$; this is known as the {\it bandwidth}, denoted by $B$.
 With $J$ independent points, the separation (and the frequency
 resolution) is $\Delta \nu = {\nu_{smpl} \over 2J}$. Fortunately,
-${\nu_{smpl} \over 2J} = {1 \over 2 J t_{smpl}} = {1 \over 2T}$; this
+${\nu_{smpl} \over 2J} = {1 \over 2 J t_{smpl}} = {1 \over T}$; this
 confirms our earlier discussion in \S \ref{spctres} about frequency
 resolution. 
 
@@ -351,7 +364,7 @@ correspondence of the terms. First we rewrite equation \ref{eqtwo} to
 make it easier for a direct comparison:
 
 \begin{equation} \label{eqtwoa}
-E(\nu) = {1 \over 2T}
+E(\nu) = {1 \over T}
 \int_{-T}^{+T} E(t) e^{[2 \pi i]\nu t}  dt \; .
 \end{equation}
 
@@ -724,7 +737,7 @@ the FT output array.  Remember that the output array $E(k)$ in equation
 phase of the signal.  This phase is defined with respect to $t=0$.  If
 you want the phase to be correctly defined, and if you want to regard
 the samples as extending from $-T \rightarrow T$ instead of $0
-\rightarrow 2T$, then you must reshuffle the discrete time samples
+\rightarrow T$, then you must reshuffle the discrete time samples
 according to the above prescription. 
 
 	Of course, the power spectrum doesn't have any phase
@@ -771,7 +784,7 @@ E(\nu) = {1 \over 2J} \sum_{j=0}^{2J-1} E(j)
     \tan[ \pi (\nu - \nu_j) t_{smpl} ] }
 \end{equation}
 
-\noindent Note that $(2Jt_{smpl}) = 2T =$ the total time; many texts use
+\noindent Note that $(2Jt_{smpl}) = T =$ the total time; many texts use
 $T$ as the total time.
 
 	If you are willing to live with approximate results, then you
@@ -782,8 +795,8 @@ approximation is
 
 \begin{equation} \label{srk}
 E(\nu) = \sum_{j_{nearby}} E(j) 
-  { \sin[ \pi (\nu - \nu_j) (2T) ] \over
-     \pi (\nu - \nu_j) (2T)  }
+  { \sin[ \pi (\nu - \nu_j) (T) ] \over
+     \pi (\nu - \nu_j) (T)  }
 \end{equation}
 
 \noindent where $j_{nearby}$ is a set of nearby frequencies in the
@@ -812,7 +825,7 @@ equations \ref{bw} and \ref{srk} are written correctly.
 (bottom). The sample interval is $t_{smpl}= 0.01$ s, so the sample
 frequency is $\nu_{smpl} = 100$ Hz and the Nyquist frequency is $f_N=50$
 Hz. Stars are from the FFT, located at frequencies $(-f_N + k \Delta
-\nu)$ [$\Delta \nu= {1 \over 2T}$]; the solid curve joins much more
+\nu)$ [$\Delta \nu= {1 \over T}$]; the solid curve joins much more
 closely spaced points calculated using equation \ref{eqfiveb}. } 
 \end{figure}
 
@@ -1039,8 +1052,8 @@ all times are positive, which is the way we usually think of our
 samples, so we write
 
 \begin{equation} \label{eqntwentyfour}
-A(\tau) = \lim_{T \to \infty} {1 \over 2T}
-\int_0^{+2T} E(t) E(t + \tau) dt \; .
+A(\tau) = \lim_{T \to \infty} {1 \over T}
+\int_0^{+T} E(t) E(t + \tau) dt \; .
 \end{equation}
 
 \noindent For example, if $E(t) = \sin( 2 \pi \nu t)$, then $A(\tau) =
@@ -1169,7 +1182,7 @@ calculating power spectra should provide identical results. Not many
 people realize that this isn't exactly the case.
 
 	The reason is that the theorem is proved for integration to
-{\it infinity}. In fact, we integrate only over some range of time $2T$.
+{\it infinity}. In fact, we integrate only over some range of time $T$.
 This limits the spectral resolution as discussed in \S \ref{sectiontwo}:
 the spectrum is convolved by the FT of the weighting function. The
 differences between the FX and XF methods arise only in this realm.
@@ -1190,7 +1203,7 @@ Figure \ref{figfour} illustrates the difference.
 \includegraphics[height=7in]{fig4.pdf} \end{center} 
 
 \caption{Comparison of FX and XF methods for a monochromatic signal.
-$\nu_{smpl}=100$ Hz and $2T= 0.64$ sec. Solid line is XF method, which
+$\nu_{smpl}=100$ Hz and $T= 0.64$ sec. Solid line is XF method, which
 can have negative sidelobes; dotted line is XF method with Hanning
 weighting. Dashed line is FX method. Stars are square-window FFT output
 spectral points. \label{figfour}} \end{figure}
