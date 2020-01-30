@@ -1,5 +1,7 @@
 export PATH=${PATH}:/home/global/bin:/home/apps/imagemagick/bin:/home/apps/texlive/2014/bin/x86_64-linux
-export PYTHONPATH=/home/global/lib/python2.7/site-packages
+#export PYTHONPATH=/home/global/lib/python2.7/site-packages
+export PYTHONPATH=/home/global/lib/python3.6/site-packages
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/apps/imagemagick/lib
+alias python="python3.6"
 alias rm="rm -i" # make rm ask before deleting things
 umask 002

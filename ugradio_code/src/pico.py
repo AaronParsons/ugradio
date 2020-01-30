@@ -36,13 +36,13 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
     '''
     assert(volt_range in VOLT_RANGE)
     assert(nblocks >= 1 and nblocks <= 1000)
-    cmd = '1 %d %s %d %d %d' % (dual_mode, volt_range, divisor, nsamples, nblocks)
+    cmd = b'1 %d %s %d %d %d' % (dual_mode, bytes(volt_range, encoding='utf8'), divisor, nsamples, nblocks)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(cmd)
     datalen = s.recv(struct.calcsize('L'))
     datalen = struct.unpack('L', datalen)[0]
-    data = ''
+    data = b''
     while len(data) < datalen:
         d = s.recv(1024)
         if not d: break
