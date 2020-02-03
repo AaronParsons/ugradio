@@ -26,6 +26,7 @@ def dft(xt,t=[],f=[],vsamp=1):
             default: 1
     Output
     ------
+    f     : The same frequencies input
     Fx    : The discrete fourier transform of the input array
 
     """
