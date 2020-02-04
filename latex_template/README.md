@@ -1,4 +1,4 @@
-Instructions on how to use this latex template with overleaf:
+Instructions on how to use these latex templates with overleaf:
 
 1. Download the latex_example.zip folder onto your computer
 2. Open overleaf.com and log in or make an account
