@@ -1,61 +1,141 @@
-\documentclass[12pt,preprint]{aastex}
-\newcommand{\ch}[1]{\textbf{\color{red}#1}}
+\documentclass[11pt,preprint]{aastex}
+\usepackage{amsmath}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+%\usepackage{natbib}
+%\usepackage{natbibspacing}
+\usepackage{enumitem}
+\usepackage{url}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+%\setlength{\bibspacing}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\headsep}{6pt}
+\setlength{\topskip}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\topsep}{6pt}
+\setlength{\partopsep}{0pt}
+\setlength{\footnotesep}{8pt}
 
 \begin{document}
 \tolerance=10000
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
-\title {ASTRONOMY WITH THE 21-CM LINE; \\ SOME MICROWAVE ELECTRONICS \\ \today}
+\title {LAB 2: Astronomy with the 21-cm Line (and Waveguides)}
 
 \tableofcontents
 
-\section{GOALS} \begin{itemize}
+\section{Introduction}
 
-\item Understand time: UT/UTC, PST, LST, Julian day. 
+\noindent
+In this lab, we build upon the signal processing techniques of the previous lab,
+applying them to making astronomical measurements with a horn antenna
+tuned to frequencies around 1.4 GHz where we can measure 21-cm hyperfine
+emission from neutral hydrogen in the Milky Way.  With luck, we should be able
+to see evidence of the spiral-arm structure of gas in our galaxy.
 
-\item Measure a 21-cm line power spectrum from atomic Hydrogen in the
-  Milky Way.
+In the second half of this lab, we expand our understanding of how signals
+propagate with measurements from transmission lines and waveguides. Our first examination
+of statistical regression uses these measurements to fit a line that empirically
+determines the speed of light.
 
-\item Combine data using mean and median.
+As before, your work should be oriented around producing a high-quality report that
+addresses the goals in \S\ref{sec:goals}. From your previous report, you will
+be familiar with the need to succintly describe your experimental setup and hardware.
+New to this report will be sections describing how you obtained your observations
+and the calibration and analysis that went into producing your key results.
 
-\item Remove the instrumental contribution to the spectrum.
+We have a few more suggestions for how to organize your work, building on the 
+suggestions of the previous lab:
+\begin{itemize}
 
-\item Use rotation matrices to convert among spherical
-  coordinate systems.
+\item Develop (version-controlled) scripts for taking data from the command line.
+Have these scripts save data with {\bf all the necessary metadata} needed to 
+reconstruct your observation. Omitting critical information could
+mean you have to redo observations later.
 
-\item Produce spectra with velocities relative to various reference frames.
-  systems.
+\item Test your reality. How do you know your rotation matrices give you the
+right pointing? How do you know if your gain calibration is right? To build
+your confidence, you need internal consistency checks.
 
-\item Fit spectra with Gaussian components.
+\item As you conduct observations, think critically about your assumptions and
+approximations.  How well have you pointed the horn? How completely did
+you cover the aperture for the calibration run? The more you can capture
+as you do the work, the more resources you will have for critically analyzing your
+results and procedures in your report.
 
-\item Learn the basics of transmission lines and waveguides.
-
-\item Learn about reflections and minimizing them with impedance
-  matching.
-
-\item Derive propagation velocities by measuring the wavelength of
-  standing waves.
-
-\item Empirically explore waveguides and their cutoff properties.
-
-\item Use linear and nonlinear least-squares fitting to squeeze the best
-  results from your data.
+\item By the end, you should have empirical numerical results to report. Remember
+that values without errors are meaningless. As you estimate errors, think about how 
+well your model matches the data. How can you estimate the
+accuracy of your results? Are you confident enough in your analysis to
+bet money on your reported accuracy? If not, think about the sources of error
+(systematic and otherwise) that may be undermining your confidence.
 
 \end{itemize}
 
-\section{SCHEDULE}
+
+\section{Goals} \label{sec:goals}
+
+\noindent
+Below is a list of learning goals that your report should demonstrate mastery of.
+
+\begin{itemize}
+
+\item Learn about time. Demonstrate accurate conversion between UTC, PST, LST,
+and Julian Day.
+
+\item Learn about telescope pointing and use rotation matrices to convert among spherical
+  coordinate systems.
+
+\item Measure a 21-cm line power spectrum from atomic hydrogen in the
+  Milky Way at a defined and reproducible location.
+
+\item Calibrate your telescope observations to an absolute scale, remove
+systematic instrumental effects in your spectra, and apply noise-reduction
+techniques.
+
+\item Learn about Doppler correction and produce spectra with velocities 
+calibated relative to standard frames of reference.
+
+\item Fit spectra with Gaussian components to localize celestial structures.
+
+\item Demonstrate undestanding of transmission lines and waveguides, and 
+how to minimize reflections with impedance matching.
+
+\item Derive propagation velocities of radio waves by measuring the wavelength of
+  standing waves.
+
+\item Empirically explore the relationship between waveguide geometry and cutoff frequency.
+
+\item Use linear and non-linear least-squares methods to fit models to data and
+estimate error.
+
+\end{itemize}
+
+
+\section{Schedule}
+
+\noindent
+This lab covers a lot of new territory, particularly in the realm of data
+analysis. Work hard to get good observations early, reserving plenty of
+time for analysis and, if necessary, re-observation. A suggested schedule
+follows.
 \begin{enumerate}
-\item {\it The First Week. For class JD=2458527:} % XXX change this each year
+
+\item {\it Week 1.}
 Finish \S\ref{radioastro} and \S \ref{analysis}, and understand \S
-  \ref{jultime}. Be prepared for `show and tell'.
+  \ref{jultime}. Be prepared to show work, software, and results in class.
 
-\item {\it The Second Week. For class JD=2458534:} % XXX change this each year
-Finish \S \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}. 
+\item {\it Week 2.}
+Finish \S \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}. Produce
+candidate plots and analysis results for class.
 
-\item {\it The Third Week. For class JD=2458541:} Write up your formal
-  report. And finish what you couldn't get done during the first two
-  weeks!
+\item {\it Week 3.} Finish any re-observations needed for the first
+two weeks, then write your formal
+  report. Remember to follow the report guidelines and address the specific
+goals in \S\ref{sec:goals}.
+
 \end{enumerate}
 
 \section{YOUR LAB REPORT}
