@@ -1,6 +1,6 @@
 import barycorrpy
 import astropy.time
-import nch
+from . import nch
 
 def get_projected_velocity(ra, dec, jd, obs_lat=nch.lat, obs_lon=nch.lon, 
         obs_alt=nch.alt, epoch=2451545.):
