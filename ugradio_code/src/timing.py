@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import astropy.time
 import time
 import datetime
-import nch
+from . import nch
 
 def unix_time(jd=None):
     '''Return (current) time, in seconds since the Epoch (00:00:00 

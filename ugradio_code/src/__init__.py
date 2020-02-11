@@ -1,12 +1,15 @@
 try:
-    import timing # ImportError if astropy not installed
-    import doppler # ImportError if astropy,barycorrpy not installed
-    import coord # ImportError if astropy,barycorrpy not installed
-except(ImportError): pass
-
+    from . import timing # ImportError if astropy not installed
+    from . import doppler # ImportError if astropy,barycorrpy not installed
+    from . import coord # ImportError if astropy,barycorrpy not installed
+except ImportError as error:
+    print(error) # Does not pass silently
+    pass
 try:
-    import gauss # ImportError if scipy not installed
-except(ImportError): pass
+    from . import gauss # ImportError if scipy not installed
+except ImportError as error:
+    print(error) # Does not pass silently
+    pass
 
 from . import pico
 from . import dft

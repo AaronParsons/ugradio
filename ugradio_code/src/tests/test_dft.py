@@ -45,7 +45,7 @@ class TestDFTModule(unittest.TestCase):
         f,Xk = dft.dft(self.xn,t=self.t,f=f)
         Xk = Xk/Xk.max()
 
-        f_fft = np.fft.fftshift(np.fft.fftfreq(self.N/2,1.0/self.vsamp))
+        f_fft = np.fft.fftshift(np.fft.fftfreq(self.N//2,1.0/self.vsamp))
         Xk_fft = np.fft.fftshift(np.fft.fft(self.xn,n=self.N/2))
         Xk_fft = Xk_fft/Xk_fft.max()
 
