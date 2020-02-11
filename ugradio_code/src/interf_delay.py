@@ -4,7 +4,13 @@ delay between the signals entering two antennas, enable a wider
 simultaneous bandwidth to be used for better sensitivity.'''
 
 from __future__ import print_function
-import socket, thread
+import socket
+
+try:
+    import thread
+except ImportError as error:
+    import _thread
+
 
 PORT = 1421
 HOST = '10.32.92.121'    # Raspberry Pi connected to delay line control

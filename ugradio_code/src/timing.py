@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import astropy.time
 import time
 import datetime

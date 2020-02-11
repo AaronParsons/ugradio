@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import astropy
 import astropy.units as u
 from . import nch
