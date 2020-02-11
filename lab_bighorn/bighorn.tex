@@ -22,7 +22,7 @@
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
-\title {LAB 2: Astronomy with the 21-cm Line (and Waveguides)}
+\title {LAB 2: Astronomy with the 21-cm Line and Waveguides}
 
 \tableofcontents
 
@@ -75,9 +75,19 @@ bet money on your reported accuracy? If not, think about the sources of error
 \end{itemize}
 
 
-\section{Goals} \label{sec:goals}
+\section{Goals and Instructions for Your Report} \label{sec:goals}
 
 \noindent
+As always, lab reports and analysis code must be written {\it individually}. 
+
+The electronic components are such an important part of this
+lab that you should include a block diagram of the telescope electronics
+in your lab report. You can prepare this either by either hand or
+computer. If by hand, you'll have to scan your drawing to get a file you can
+insert into your report's tex file. If by computer, you can use your
+favorite software for making line drawings.  Although it is dated, {\tt xfig}
+comes installed on Linux, so that's an option.
+
 Below is a list of learning goals that your report should demonstrate mastery of.
 
 \begin{itemize}
@@ -113,7 +123,6 @@ estimate error.
 
 \end{itemize}
 
-
 \section{Schedule}
 
 \noindent
@@ -138,120 +147,101 @@ goals in \S\ref{sec:goals}.
 
 \end{enumerate}
 
-\section{YOUR LAB REPORT}
 
-The lab reports, as always, are written by {\it individuals}. 
+\section{What Time Is It?} \label{jultime}
 
-The microwave and other electronic components are such an important part of this
-lab that you should include a block diagram of the telescope electronics
-in your lab report. You can prepare this either by either hand or
-computer. If by hand, you'll have to scan your drawing to get a file you can
-insert into your report's tex file. If by computer, you can use your
-favorite software for making line drawings.  Although it is dated, {\tt xfig}
-comes installed on Linux, so that's an option.
-
-The real work in this lab is the analysis, so it's time to 
-flex your programming muscles. Accordingly, {\it
-  each individual} needs to write her/his own analysis software. And this
-software needs to be documented using Python docstrings and comments
-(see, for example, the documentation in the code of {\tt ugradio.pico}, which
-shows up if you type, e.g., {\tt ugradio.pico.capture\_data?} at the Python prompt.)
-{\it Include this
-  documentation} (but not the rest of the software) {\it as part of your lab
-report}. Also include a brief description of how to run your software;
-tell me the subdirectory where your software can be found; and make sure
-I can look at those subdirectories by setting the permissions so that
-they are readable by `world'. 
-
-\section{WHAT TIME IS IT?} \label{jultime}
-
-\subsection{Time is an Illusion}
-
-Okay, maybe it's not an illusion, but it's certainly not an absolute.
-In fact, we don't even need relativistic time dilation make time confusing.
-We've done it to ourselves by creating more time standards than you can
-shake a stick at.  Here, we'll list a few of the most useful.
+\noindent
+From relativity, we know that time depends on
+reference frame. Nothing drives this home like sitting on the surface
+of an orbiting, spinning sphere.
+To deal with this, humans have invented a surfeit of time standards.
+We will restrict our attention to those most useful for astronomy.
 
 {\bf Coordinated Universal Time (UTC)} is the Civil Time\footnote{You use
   Civil Time when you set your alarm clock for getting up in the
-  morning.} in Greenwich, England, which is 8 hours ahead of (larger
-than) PST. Remember that in the middle of this course, we switch from
-PST to PDT; ${\rm PST}={\rm UTC} - 8$ hr, while ${\rm PDT}={\rm UTC} - 7$ hr). Think of Civil time
-as Solar time, because the 24-hour period is the same as that of the
-Sun.
+  morning.} in Greenwich, England, which is 8 hours ahead of 
+Pacific Standard Time (PST). In the middle of this course, we switch from
+PST to Pacific Daylight Time (PDT); 
+${\rm PST}={\rm UTC} - 8$ hr, while ${\rm PDT}={\rm UTC} - 7$ hr). UTC measures
+solar time; 24 hours is the time it takes for the Sun to appear
+in the same position in the sky on neighboring days.
 
 Another standard, common since the computer era, is {\bf Unix Standard Time}, which measures the
-number of seconds since Jan. 1, 1970, midnight UTC. If you call {\tt time.time()}, this
-is what you'll get.  This clock is how your computer keeps track of time; all other times
-are derived from this one.  You phone/computer uses an on-board oscillator to keep track of 
+number of seconds since midnight 1 Jan., 1970, UTC. 
+This clock is how your computer keeps track of time. All other computer times
+are derived from this one; it
+is what you get if you call {\tt time.time()}.
+You phone/computer uses a quartz crystal oscillator to keep track of 
 this time over short intervals.  Over longer intervals, a time-exchange protocol called 
-Network Time Protocol (NTP) is used to correct your on-board clock to times derived from timing
-centers around the world.
+Network Time Protocol (NTP) is used to discipline the on-board clock to 
+atomic clocks in timing centers around the world.
 
-{\bf Sidereal Time} is ``star time''; it tells when a
-particular star (not the Sun) is visible. The 24-hour sidereal time period is a
-bit shorter than the 24-hour Solar time period---$1/356$ less, to
-be almost exact. This is a little less than 4 minutes per day.  {\bf Local Sidereal Time}
-depends on your location on Earth (in particular, your longitude), and tells you
-what {\bf right ascension} (the ``longitude" coordinate for stars) is directly overhead
-at a particular moment.
-
-The {\bf Julian Day} is a sequential numbering of Solar days. As such, it
-uniquely specifies the date without the need for any complications such
-as months (with their nonsensical definitions\footnote{``Thirty days
-  hath September\dots''}), leap years, etc. It begins at noon (UT=12hr)
-in Greenwich, so it is 12 hours out of phase with UT. But the
-international date line is 12 hours away from UT, so the JD is in sync
-with humankind's definition of `when the day begins'. JD=0 begins at
-Greenwich noon on 1 Jan --4713.  The Julian day is a double-precision
-float: it contains the time as the fractional part of the day. It's not
-just an integer day number. The current JD is about 
-2458527. % XXX change this each year
-
-The {\bf Modified Julian Day} is a shorter version of Julian Day. MJD is 12
-hours out of sync with JD, so it is in sync with local time at
-Greenwich. MJD=0 occurs at 0 hr UT on 17 Nov 1858.  The current MJD is
-about 58527. % XXX change this each year
-
-\subsection{ Software---Some Useful Python Procedures for Time Conversion}
-
-Python has several built-in modules for dealing with time, including {\tt time}, {\tt datetime}.
-Astronomers, however, have historically been the best time-keepers on the planet.  For
-astronomy-quality time routines, {\tt astropy.time}, part of the {\tt astropy} package, is
-the industry standard.
-LST tells when a star
-is overhead, so its rate of passage depends on the Earth's spin. The
+{\bf Sidereal Time} is ``star time''; it tells when
+distant stars (i.e. not the Sun) rise and set. The sidereal time period is
+shorter than the 24-hour Solar time period: $1/356.24$ less, to
+be nearly exact. The difference, which corresponds to slightly 
+less than 4 minutes per day, comes from how much the Earth's orbit around the
+Sun changes the position of the Sun in the sky.
+Sidereal time depends on the Earth's spin. The
 Earth is constantly slowing owing to tidal friction produced by the
 Moon. (Where does the angular momentum go?) The conversion between Civil Time and LST has to be adjusted
-periodically by inserting `leap seconds', so unless you keep up with
-this, the conversion will be off by a few seconds. 
+periodically by inserting {\it leap seconds}.
 
-You need to know your
-longitude to calculate LST. New Campbell Hall has \\
+{\bf Local Sidereal Time} (LST)
+adjusts sidereal time by longitude so that a star of a given {\bf right ascension} 
+(RA; the ``longitude" coordinate for celestial sources) transits the local meridian
+(the line of longitude that goes right overhead) at the moment
+that ${\rm LST}={\rm RA}$. 
+
+The {\bf Julian Day} is a sequential numbering of Solar days since 1 Jan. --4713. 
+It
+uniquely specifies the date and time (as a fraction of a day) without 
+involving 
+months (with their nonsensical definitions\footnote{``Thirty days
+  hath September\dots''}), leap years, etc. It begins at noon 
+in Greenwich. This makes it 12 hours out of phase with UTC, but the
+international date line is 12 hours away from UTC, so JD is in sync
+with humankind's definition of `when the day begins'. 
+On computers, the Julian day is represented as double-precision
+float.
+
+The {\bf Modified Julian Day} is a shorter version of Julian Day. MJD is (sigh) 12
+hours out of sync with JD, so it is in sync with UTC.
+MJD=0 corresponds to 0 hr UT on 17 Nov 1858.
+
+\subsection{ Useful Python Procedures for Time Conversion}
+
+\noindent
+Python has several built-in modules for dealing with time, including {\tt time} 
+and {\tt datetime}.
+Astronomers, however, have historically been the best time-keepers on the planet.  For
+astronomy-quality time routines, {\tt astropy.time}, part of the {\tt astropy} package, is
+the industry standard.  We have wrapped some of them into {\tt ugradio.timing} for
+your convenience.
+
+Calculating LST requires knowing your
+longitude. New Campbell Hall (NCH) is at 
 {\tt (lat,lon) = (37.8732, -122.2573)},  Note that {\tt lon = -122.2573 = (360 - 122.2573) = 237.7427}. 
-For all procedures mentioned here, these are the defaults.
+This information is stored in the {\tt ugradio.nch} module.
+For all procedures mentioned below, this location is default
 
 \begin{verbatim}
 local_now = ugradio.timing.local_time() # current local time as a string
-
 ut_now = ugradio.timing.utc() # current UTC as a string
-
 ut_now = ugradio.timing.unix_time() # seconds since 1 January 1970
-
 julian_now = ugradio.timing.julian_date() # current julian day (which \
         contains the current time, too--it's not just an integer \
         number. 
-                                                                               
 lst_now = ugradio.timing.lst() # current LST at NCH
-                                                                               
-lst_julian = ugradio.timing.lst(jd) # LST for the specified Julian day                                                             
-                                                                               
+lst_julian = ugradio.timing.lst(jd) # LST for the specified Julian day                       
 ut_julian = ugradio.timing.unix_time(jd) # seconds since 1/1/1970 for given JD
-                                                                               
 julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
 \end{verbatim}
 
-\section{HANDOUTS} \label{handouts}
+\section{Handouts} \label{handouts}
+
+\noindent
+The following handouts may be of use to you:
 \begin{enumerate}
 %\item A second-level IDL tutorial. {\tt idldatatypes.pdf} ``QUICK IDL % XXX update for python
 %  TUTORIAL NUMBER TWO: IDL DATATYPES AND ORGANIZATIONAL STRUCTURES'' For
@@ -261,13 +251,12 @@ julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
 %  they are. {\it You need to know all of this stuff!}
 
 \item The complete story of producing calibrated spectral line shapes
-  and intensities: ``CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL
-  LINES''. This handout is optional because the steps discussed in
-  this lab writeup (what you're reading now) are sufficient, but
+  and intensities: {\it CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL
+  LINES}. This handout is optional because the steps discussed in
+  the lab instructions are sufficient, but
   if they are unclear or you want to know more, this writeup has it all.
 
-\item What physical quantity are we measuring? Sure, it's power received
-  by the telescope. But what does that mean about the source being
+\item How does the power we receive with a telescope relate to a source being
   observed? It's all about specific intensity, usually denoted $I$:
   ``SPECIFIC INTENSITY: THE FOUNT OF ALL KNOWLEDGE!''. 
   You need to understand these topics to interpret your measurements.
@@ -289,93 +278,90 @@ julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
 
 \end{enumerate}
 
-\section{IN THE LAB: YOUR FIRST 21-cm LINE MEASUREMENT (First Week; by GROUPS)} 
+\section{Your First 21-cm Measurement (Group Lab Activity, Week 1)}
 \label{radioastro}
 
-This week we will use the techniques we explored in Lab 1 to measure the
-21-cm line (colloquially known among astronomers as the {\bf
-  HI}---that's {\it H - ``Roman numeral I'', pronounced ``H-one''}) line
+\noindent
+This week we will use the techniques we explored in Lab 1 to observe the
+21-cm line of neutral hydrogen (colloquially, {\bf
+  HI}, pronounced ``H-one''), measuring its line
 shape, velocity, and intensity using the big horn on the New Campbell Hall roof.
-Most of the measured power comes from our own electronics, not the HI
-line.  It's often called noise, and we need to get rid of this
-instrumental contribution. We also need to obtain the correct line shape
-and intensity.
+Most of the measured power comes from noise in our own electronics, not the HI
+line.  It's often called noise, and we need to calibrate out this
+instrumental contribution and the responses of our amplifiers and filters to
+obtain the correct line shape and intensity.
 
-We'll measure the 21-cm line twice. For the first, the goal is to master
+We'll measure the 21-cm line twice. The first time, the goal is to master
 the technical aspects and familiarize ourselves with the system and
-procedures, so instead of worrying about where to point the horn we'll
-just take whatever position happens to be overhead. For the second (\S
+procedures, so instead of worrying about where to point the horn, we'll
+just take whatever position happens to be overhead. The second time (\S
 \ref{meas2}), we'll manually point the horn to a designated position and
 make a calibrated profile to compare with a well-established standard
 profile measurement.
 
 \subsection{The Receiving System}
-We will use a double-heterodyne system for the 21-cm line at 1420.4 MHz.
-{\bf Double heterodyne} means we have two mixing stages.  It works
-like this: \begin{enumerate}
 
-\item For the first mixer, we use the ordinary DSB technique. Suppose we
+\noindent
+We will use a double-heterodyne system for the 21-cm line at 1420.4 MHz.
+{\bf Double heterodyne} means we have two mixing stages.
+
+the first mixer, we use the DSB technique. Suppose we
   use an LO (the first local oscillator) at 1230.0 MHz so that the
   difference frequency is 190.4 MHz and the sum frequency is 2650.4 MHz.
-  We use a 20 MHz-wide bandpass filter centered at 190 MHz to obliterate
-  the sum frequency, so we are left with a replica of the 21-cm line
-  that is centered at 190.4 MHz instead of 1420.4 MHz.
+  We use a 20 MHz-wide bandpass filter centered at 190 MHz to excise
+  the sum frequency, leaving us with one copy of the 21-cm line
+  shifted to 190.4 MHz from 1420.4 MHz.
 
-\item For the second mixer, we use the SSB technique. The second
-  LO has frequency 190.0 MHz, so the output frequencies are positive
-  and negative, centered about zero; this is called {\bf baseband}. In the
+For the second mixer, we use the SSB technique. The second
+  LO has frequency 190.0 MHz, so the output is at {\bf baseband},
+  with positive and negative frequencies centered about zero. In the
   absence of Doppler shift, we are left with the line centered at 0.4
-  MHz. However, the line is shifted and broadened by Galactic rotation
-  and the Earth's orbital velocity, so it covers a range of frequency
-  of, for example, $1420.2 \pm 0.5$ MHz. We use a low-pass filter with a
-  cutoff frequency of, say, 2 MHz to
+  MHz. However, the line is shifted and broadened by Galactic rotation,
+  the Earth's orbital velocity, and the Earth's spin, so it covers a range of frequency
+  of, for example, $1420.2 \pm 0.5$ MHz. Use a low-pass filter with a
+  cutoff frequency of $\sim$2 MHz to
   eliminate aliasing, sample the complex signal, and Fourier transform
   to calculate the power spectrum. We take many power spectra and
   average them to reduce the noise.
 
-\end{enumerate}
 
 \subsection{Your Measurement}
 
-Before taking actual data, it's important to do some basic system
-checks: (1) make sure the signal levels are OK and (2) experimentally
+\noindent
+Before taking data, do basic system
+checks: (1) make sure the signal levels are okay and (2) experimentally
 determine which way frequency increases on your power spectra.
-\begin{enumerate}
 
-\item Set the system up as you will be using it to observe. Point the
-  horn to zenith to reduce interference and thermal noise.  Take some
+Once you are convinced your signal is getting through,
+set the system up as you will be using it to observe. Point the
+ horn to zenith to reduce interference and thermal noise.  Take some
 data.  How fast must you sample? 
 
-\item Look at the range of sample values by plotting a bunch of
-  them. Best is to make a histogram, which you can do using Python's {\tt
-    numpy.histogram} function.  
-      To get its documentation,
-    type {\tt numpy.histogram?}.
-    The sampled numbers should cover plenty of bits;
-  quantization should be only barely, or not at all, visibly evident in
-  the histogram. Adjust {\tt volt\_range} in the call to {\tt pico.capture\_data}
+Look at the range of sample values using, e.g.,
+  {\tt numpy.histogram}.  As in Lab 1, check that you are not overly quantized or clipping.
+  Adjust {\tt volt\_range} in the call to {\tt pico.capture\_data}
   accordingly.
-
-The
-  histogram shape should look like a well-known function. Which
+  The histogram shape should look like a well-known function. Which
   function? Does it?
 
-\item Insert a test signal so that it appears in the upper sideband and
+Next, insert a test signal (at a low level; $\sim -40$ dBm) so that it 
+appears in the upper sideband and
 take some data; then change the test signal frequency so it's in the
 lower sideband.  You'll use this to make sure that the SSB mixer is
-doing its job properly, and to determine whether the frequency axis
+doing its job properly and to determine whether the frequency axis
 is flipped or not.
 
-\item The horn is a gigantic rain bucket. You won't see any
-  astronomical signal unless you dump it!
+As a final note, remember that if it rains, the horn is a gigantic bucket. 
+You won't see any astronomical signal unless you dump it!
 
-\end{enumerate}
+\subsubsection{Planning Observations}
 
+\noindent
 Having determined that the system basics work, it's time to do
 astronomy! For this first measurement the main goal is to master the
 technical aspects, so use whatever position happens to be overhead and
 point the horn straight up. The line will be strongest---strong enough
-to see visually---for the approximate range LST = 19 - 6 hr.
+to see visually---in the range LST = 19 -- 6 hr.
 
 It is most convenient to use temperature units for the power
 that we measure. Accordingly, the power that we measure is called the
@@ -389,27 +375,30 @@ The system temperature has two contributions: the dominant contribution
   from our electronics, which we call the {\bf receiver temperature} $T_{\rm rx}$;
   and the contribution our antenna picks up from the sky, the {\bf sky temperature}
   $T_{\rm sky}$.  (This is also sometimes called the {\bf antenna temperature}).  
- Thus $T_{\rm sys}= T_{\rm rx} + T_{\rm sky}$, and above 150 MHz, usually $T_{\rm rx} \gg T_{\rm sky}$. 
+ Thus $T_{\rm sys}= T_{\rm rx} + T_{\rm sky}$, and above 300 MHz, usually $T_{\rm rx} \gg T_{\rm sky}$. 
 
 Our horn is equipped with an old, noisy first amplifier so $T_{\rm rx} \sim
 300$ K; in contrast, our Leuschner telescope is much better, with $T_{\rm rx}
 \sim 50$ K. The sky temperature comes from the Cosmic Microwave Background,
 with brightness temperature ($T_{\rm CMB} = 2.7$ K); from
 interstellar/intergalactic space, with brightness temperature
-$T_{\rm astro}$ (usually no more than a few K in the continuum and up to
+$T_{\rm IGM}$ (usually no more than a few K in the continuum and up to
 about 100 K in the HI line); and the Earth's atmosphere with brightness
 temperature $T_{\rm atm}$, perhaps a few K at the HI line frequency. So
-off the HI line we have $T_{\rm sky} \sim 10$ K and on the HI line, in the
+off of the HI line we have $T_{\rm sky} \sim 10$ K, while on the HI line, in the
 Galactic plane where it is strongest, we have $T_{\rm sky} \sim 100$ K.
 
-We'll take two sets of data: (1) a long integration to measure the line's
-{\it shape}. and (2) a short integration so we can calibrate the line's
-{\bf intensity.}
-
-
+We'll take two sets of data:
 \begin{enumerate}
+\item a long integration to measure the line's
+{\it shape}, and 
+\item a short integration so we can calibrate the line's
+{\it intensity.}
+\end{enumerate}
 
-\item 
+\subsubsection{Two Frequency-Switched Line Measurements}
+
+\noindent
 The measured power spectrum shape is dominated by the
 frequency-limiting filters acting on the system temperature. To see the
 line, which is weak, we need to correct for these filter shapes, which
@@ -424,7 +413,7 @@ We could obtain the on-line
   outside the band (this is called {\bf frequency switching}), or partway
   over but is still in the band (in-band frequency
   switching). The latter is better because you are always looking at
-  the line; you end up with more measurements of it and thus get better sig/noise.
+  the line; you end up with more measurements and better signal/noise.
 
 To accomplish this, take a spectrum with the line roughly in the upper
 half of the baseband spectrum, and another with it centered roughly in
@@ -433,19 +422,23 @@ off-line spectrum for the upper half. Similarly, for the lower half,
 use the second as the on-line and the first for the off-line.  (The HI
 line frequency is 1420.4058 MHz).
 
-You can change the LO frequency in software: use {\tt ugradio.agilent.SynthClient}. 
+%You can change the LO frequency in software: use {\tt ugradio.agilent.SynthClient}. 
 
 The line is weak, and you'll need to take lots of spectra. Recall that
 {\tt pico.capture\_data} obtains a specified number of blocks ({\tt nblocks}),
 each of which has 16000 datapoints and writes them all out into a single
 file. Suppose you decide to obtain 10000 spectra. You might be tempted
 to do it in one fell swoop by setting {\tt nblocks=10000}. That
-will work, but be aware that it will take about 5 minutes or more. You
+may work, but be aware that it will take about 5 minutes or more. You
 might want to instead take ten sets with {\tt nblocks=1000} so you can do a
-sanity check on your data without waiting for what seems like forever. 
+sanity check on your data without waiting forever. 
 
-\item Intensity calibration requires a second pair of measurements,
-  which can be short. Easiest is probably to take one with the horn
+\subsubsection{Two Frequency-Switched Reference Measurements}
+
+\noindent
+Intensity calibration requires a second set of (short) measurements
+  with your telescope aimed toward a source of known temperature.
+  Easiest is probably to take one with the horn
   looking at a known blackbody and one looking at the cold sky. What's a
   convenient blackbody? You and your friends! So take one short
   measurement with the horn pointing straight up at the cold sky and the
@@ -453,11 +446,12 @@ sanity check on your data without waiting for what seems like forever.
   fill the aperture. Call these spectra
   $s_{\rm cold}$ and $s_{\rm cal}$, respectively.
 
-\end{enumerate}
 
-\section{THE ANALYSIS (First Week; by INDIVIDUALS)} \label{analysis}
+\section{Analysis (Individually at Home, Week 1)} \label{analysis}
 
 \subsection{Take a Suitable Average/Median}
+
+\noindent
 Consider, first, the $s_{\rm on}$ and $s_{\rm off}$ spectra, from which
 you can find the line shape. There are many individual spectra, 10000 in
 our above example. You need to combine these to make a single spectrum
@@ -465,8 +459,10 @@ for each measurement. You can do this by averaging the power spectra
 (use {\tt numpy}'s {\tt mean} function) or by taking the medians (use {\tt numpy}'s
 {\tt median} function). The former gives a less noisy result, but the
 latter handles time-variable interference better; use both and compare
-the results. Even after combining the 10000 spectra, the resulting
-spectrum will still look noisy.  You can reduce the noise by averaging
+the results.
+
+Even after combining the 10000 spectra, the resulting
+spectrum will look noisy.  You can reduce the noise by averaging
 over channels---by `smoothing' the spectrum. This reduces the noise, but
 degrades the spectral resolution, so you have to make a compromise on
 how many channels to smooth over. To decide, realize that the HI line is
@@ -495,6 +491,7 @@ This is the first factor (i.e., the shape) in equation
 %
 \subsection{Get the Line Intensity}
 
+\noindent
 To get the line intensity in temperature units, we need to multiply terms of the calibration noise source,
 multiply the shape spectrum by the {\bf gain}---the second factor in
 the handout's equation (13). We obtain the gain, $G$, by using a known
@@ -521,7 +518,10 @@ equation (16) in the handout, namely
 T_{\rm line} = s_{\rm line} \times G
 \end{equation}
 %
-\subsection{Plotting Intensity vs.\ Frequency---and Velocity} First,
+\subsection{Plotting Intensity vs.\ Frequency---and Velocity}
+
+\noindent
+First,
 plot your final calibrated spectrum versus the r.f.\ frequency. Next,
 plot it versus the Doppler velocity\footnote{Astronomers usually express
   velocities in km s$^{-1}$.}.  Remember that, by astronomical
@@ -540,6 +540,8 @@ offset from the line frequency $\nu_0$\footnote{Radio astronomers, being
   the optical definition is the usual standard.}. 
 
 \subsection{Finally, Choose a Reference Frame}
+
+\noindent
 You may think we've done it all by this point, but we haven't! We need
 to correct the observed velocity for the orbital velocity of the Earth,
 and also the Earth's spin. And when observing the Galaxy, it is
@@ -576,10 +578,10 @@ in the solar system, and 3) the proper motion of the target source.
 
 \end{enumerate}
 
-\section{IN THE LAB: YOUR SECOND 21-cm LINE MEASUREMENT (Second Week; by
-  GROUPS)} 
+\section{Your Second 21-cm Line Measurement (Group Lab Activity, Week 2)}
 \label{meas2}
 
+\noindent
 Obtain a fully-calibrated spectrum for the horn pointing at Galactic
 coordinates $(l,b)=(120^\circ, 0^\circ)$. How do you know where to point
 the horn? You definitely do need to use rotation matrices!  See the
@@ -628,18 +630,19 @@ are: \begin{enumerate}
   use {\tt gaussval}.
 \end{enumerate}
 
-In class we'll compare the results from all groups. In this class, we
-have never yet---after more than a decade's worth of measurements---had
-the results of all groups agree!
+\noindent
+In class, we will compare the results from all groups. How reproducible is
+our science?
 
-\section {IN THE LAB: PROPAGATION VELOCITY MEASUREMENTS WITH SLOTTED LINES AND 
-WAVEGUIDES (Second Week; by GROUPS)} \label{expt}
+\section {Measuring the Speed of Light with Waveguides (Group Lab Activity, Week 2)}
+\label{expt}
 
+\noindent
 How do you move power or electronic information from one place to
-another? {\bf Transmission lines} (cables) and {\bf waveguides} are
-indispensable. Sounds easy---just connect two things with a wire. But
+another? {\it Transmission lines} (cables) and {\it waveguides} are
+indispensable. It sounds easy---just connect two things with a wire. But
 does this really work? We'll explore cables, waveguides, and reflections
-by measuring the {\bf Voltage Standing Wave Ratio (VSWR)}, which results from
+by measuring the Voltage Standing Wave Ratio (VSWR), which results from
 interference of incident and reflected waves.
 
 The experimental work and measurements described below should
@@ -647,9 +650,11 @@ be done by groups.  The analysis in \S \ref{secondweek} should be done
 by individuals. The analysis is nontrivial, so don't delay with the
 measurements!
 
-{\boldmath % XXX figure out the procedure for these sections
+
 \subsection {The coax slotted line at C-band ($\sim 3$ GHz)} \label{slotted}
-} Set up the slotted coaxial line with the wide-range HP 83712B
+
+\noindent
+Set up the slotted coaxial line with the wide-range HP 83712B
 synthesizer.  With the far end of the slotted line open, find the
 wavelength in the slotted line $\lambda_{sl}$ by measuring the positions
 of {\it all} nulls as accurately as you can.  Do the same with the far
@@ -662,12 +667,13 @@ From your measurements calculate the velocity [what does ``velocity''
 frequency.  First do a quick calculation using your measurements. Then
 do it as accurately as possible by using least-squares fitting and
 following the advice in \S \ref{slottedls}.  {\it Note:} As it happens,
-the velocity is independent of frequency for a coax cable---in contrast
+velocity is independent of frequency for a coax cable---in contrast
 to a waveguide.  If you are so motivated, you can check this
 experimentally.
 
 \subsection {The X-band waveguide (7 to 12 GHz)} \label{waveguide}
 
+\noindent
 Now we'll do the same as we did in \S \ref{slotted}, but for X-band
 waveguide.  The cutoff frequency for X-band waveguide is about 7
 GHz. Pick a suitable frequency and, with the far end of the waveguide
@@ -684,22 +690,22 @@ wavelength (and thus the waveguide width) as accurately as you can.
 Also measure the waveguide dimensions, and compare 
 with the width you derived above.
 
-\section {GETTING THE MOST OUT OF YOUR DATA: STATISTICAL ERROR
-ANALYSIS (Second Week; by INDIVIDUALS)} \label{secondweek}
+\section {Statistical Error Analysis (Individually At Home, Week 2)} \label{secondweek}
 
 \subsection{The coax slotted-line wavelength} \label{lbandcoax} 
 \label{slottedls}
 
-	For the measurements of \S \ref{slotted}, you sampled $M$
-        cycles of the standing wave in the slotted line. You can
-        calculate the wavelength $\lambda_{sl}$ from the distances
-        between a single null pair. While this calculation is a good
-        estimate, each of your measurements has an error. You have
-        measured the distance between $(M-1)$ null pairs. What's the
-        best way to combine these measurements so as to obtain the most
-        accurate $\lambda_{sl}$?
+\noindent
+For the measurements of \S \ref{slotted}, you sampled $M$
+cycles of the standing wave in the slotted line. You can
+calculate the wavelength $\lambda_{sl}$ from the distances
+between a single null pair. While this calculation is a good
+estimate, each of your measurements has an error. You have
+measured the distance between $(M-1)$ null pairs. What's the
+best way to combine these measurements so as to obtain the most
+accurate $\lambda_{sl}$?
 
-{\bf (1)} One way is to calculate the wavelength from each neighboring
+One way is to calculate the wavelength from each neighboring
 null {\it pair} and take the average of the $(M-1)$ {\it pair}s.  You
 might then apply the usual rule to obtain the uncertainty in the
 average, i.e.\ the uncertainty is $\sigma/\sqrt{M-1}$.
@@ -709,7 +715,7 @@ get by averaging the $(M-1)$ pairs is identical to that obtained from a
 this method gives {\it almost} the best estimate of the wavelength.  But
 you can do better!
 
-	{\bf (2)} The positions of the nulls should increase linearly
+Alternately, use the fact that the positions of the nulls should increase linearly
 with distance. So if $x_{m}$ is the position of null number $m$, we
 should have
 
@@ -724,6 +730,7 @@ $\lambda_{sl}$. You can use {\tt numpy.polyfit}.
 
 \subsection{The X-band waveguide}
 
+\noindent
 	RWvD provide a beautiful discussion of the TE$_{10}$ mode in
 common rectangular waveguide (in which the ratio of side lengths equals
 2).  Most important is their equation 11, which gives the {\bf guide
@@ -741,32 +748,35 @@ the frequency gives the propagation velocity in the guide.
 Here we want to do a least-squares fit of equation \ref{lambdaguide} to
 solve for the waveguide width $a$. Now, you've already measured $a$ with
 the caliper. But here the idea is to compare your measurement of the
-$a$ with what theory (that's equation \ref{lambdaguide})
+$a$ with what theory (that's Equation \ref{lambdaguide})
 predicts. So you imagine that $a$ is unknown and determine it from your
 data on $\lambda_g$ versus the free-space wavelength $\lambda_{fs}$.
 Doing this is not as straightforward as above in \S \ref{lbandcoax}
-because $\lambda_g$ depends {\bf nonlinearly} on $a$. The easiest way to
+because $\lambda_g$ depends {\it nonlinearly} on $a$. The easiest way to
 handle
-this problem is by the ``brute force'' method, which we will discuss in
+this problem is by the brute force method, which we will discuss in
 class. 
 
 	From your above solution, determine the best-fit value of $a$
 and compare it with the value you measured with the caliper.
 
-\section {IN THE MIND: REFERENCE READING} \label{RWvD}
+\section {Reference Reading} \label{RWvD}
 
+\noindent
 You can do this lab without doing any reading, so this section, which
 recommends parts of the highly readable and well-written text by Ramo,
 Whinnery, and van Duzer (RWvD), {\it Fields and Waves in Communication
   Electronics}, is optional. If you have the time and inclination to
 read, we suggest that you concentrate on the starred items below ({\bf
   ***}).  The notes below refer to the second edition, which should
-reside in our lab's bookshelf. The italicized numbers refer to the very
-same sections of the book.
+reside in our lab's bookshelf.
 
-\subsection{ Theory of Coaxial Cable}
+\begin{itemize}
+\item Theory of Coaxial Cable
+
+\begin{itemize}
 	
-{\bf ***} {\it RWvD \S 5.2:  Introduction: what transmission lines do.}
+\item {\bf ***} {\it RWvD \S 5.2:  Introduction: what transmission lines do.}
 Basic equations for transmission lines.  Note
 equation (14) for the characteristic impedance $Z_0$, which is the ratio
 of voltage to current in the line.  This is expressed in ohms, but it is
@@ -779,20 +789,23 @@ making the wavelength in the cable shorter than that in free space; one
 needs to account for this when using cables to produce delays in a
 signal, as in an interferometer or a quadrature circuit. 
 
-{\bf ***} {\it RWvD \S 5.4: Reflection and transmission at a resistive
+\item {\bf ***} {\it RWvD \S 5.4: Reflection and transmission at a resistive
 discontinuity.} The purpose of a transmission line is to take power from
 a source to a load. The load should absorb the power and therefore
 should be resistive. If its resistance matches the line impedance, then
 all the power transmitted by the line is absorbed by the load. If not,
 some is reflected; see their equations (4) and (6). We need to tune our
 devices so that they are ``matched'' and reflect no power. 
+\end{itemize}
 
-\subsection{The Theory of Waveguide}
+\item The Theory of Waveguide
           
-{\bf ***} {\it RWvD \S 8.1:  Introduction: general description of
+\begin{itemize}
+
+\item {\bf ***} {\it RWvD \S 8.1:  Introduction: general description of
 waveguides.} 
 
-{\bf ***} {\it RWvD \S 8.8:  The $TE_{10}$ Mode in a Rectangular
+\item {\bf ***} {\it RWvD \S 8.8:  The $TE_{10}$ Mode in a Rectangular
 Guide.} A nice, complete discussion of the TE$_{10}$ mode in common
 rectangular waveguide (in which the ratio of side lengths equals 2). 
 In this mode, E is perpendicular to the long side of the guide
@@ -811,7 +824,7 @@ the probe.  The slot, being parallel to the current flow, does not
 interrupt any current flow and has no effect on the internal
 distribution of fields in the guide.  Clever!
 
-{\it RWvD \S 8.10.} Makes the analogy between coax cable and waveguide.
+\item {\it RWvD \S 8.10.} Makes the analogy between coax cable and waveguide.
 A coaxial line can be considered as a waveguide containing walls not
 only the outside but also on the inside.  The usual mode that propagates
 in coax is the TEM mode.  A TE$_{10}$-like waveguide mode enters for
@@ -819,10 +832,13 @@ wavelengths smaller than that given by their equation (4); at this
 point, coax lines become basically unusable.  For type N connectors, we
 are beginning to approach this limit in our 12 GHz system!
 
-{\it RWvD \S 8.11.} Brief description of how coax lines are coupled to
+\item {\it RWvD \S 8.11.} Brief description of how coax lines are coupled to
 waveguide. The method depends on which mode you wish to excite. For the
 TE$_{10}$ mode, method (b) in Figure 8.11 works well and is almost
 universally the one used.
+
+\end{itemize}
+\end{itemize}
 
 \end{document}
 
