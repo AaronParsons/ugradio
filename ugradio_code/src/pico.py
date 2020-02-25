@@ -22,7 +22,9 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
         divisor: (type int)
             Divide the 62.5 MHz sample clock by this number for sampling.
         dual_mode: (type bool)
-            Sample from A and B ports if True. Returns [A,A,A..A, B,B,B,...B].
+            Sample from A and B ports if True. The first half of the output array
+            will be data from port A and the second half will be data from port B,
+            even with nblocks > 1.
         nsamples: (type int)
             The number of samples acquired per block.
         nblocks: (type int)
