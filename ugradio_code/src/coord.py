@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import astropy
 import astropy.units as u
-import nch
+from . import nch
 import time
 
 def moonpos(jd=None, lat=nch.lat, lon=nch.lon, alt=nch.alt):
