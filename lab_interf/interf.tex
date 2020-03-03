@@ -46,7 +46,7 @@ material!
 \section{Goals and Instructions for Your Report}
 
 \noindent
-You should now be pretty familiar with the process of writing a report
+You should now be familiar with the process of writing a report
 for this class. Below we list the specific goals for this lab that
 your report should address.
 
@@ -115,61 +115,61 @@ As usual, we have attempted to provide you a batteries-included experience with
 the {\tt ugradio} Python module. In this lab, we will be focusing on the
 {\tt interf} and {\tt hp\_multi} submodules.
 
-\begin{verbatim}
-ifm = ugradio.interf.Interferometer() provides an interface for controlling 
+\begin{itemize}
+\item \verb+ifm = ugradio.interf.Interferometer()+ provides an interface for controlling 
 the pointing of the two telescopes that constitute the interferometer.
 
-ifm.stow() points the telescopes to the zenith. This minimizes 
+\item \verb+ifm.stow()+ points the telescopes to the zenith. This minimizes 
 wind drag to help keep the telescope from being destroyed by strong winds. 
 When no-one is using the telescope, it should be stowed.  Please stow the
  telescope when you are not using it!
 
-ifm.maintenance() points the telescope to 'maintenance position' to 
-facilitate working on the feed. alt=20, az=180.
+\item \verb+ifm.maintenance()+ points the telescope to 'maintenance position' to 
+facilitate working on the feed. \verb+alt=20, az=180+.
 
-ifm.get_pointing() returns both telescopes' current alt, az.
+\item \verb+ifm.get_pointing()+ returns both telescopes' current \verb+alt, az+.
 
-ifm.point(alt,az) points telescopes to specified alt, az.
+\item \verb+ifm.point(alt,az)+ points telescopes to specified \verb+alt, az+.
 It can take bit for the telescopes to move, so be patient until this
 command returns.
 
-hpm = ugradio.hp_multi.HP_Multimeter() provides an interface for reading
+\item \verb+hpm = ugradio.hp_multi.HP_Multimeter()+ provides an interface for reading
 the voltage output of the interferometer.
 
-hpm.read_voltage() reads once from the HP Multimeter.
+\item \verb+hpm.read_voltage()+ reads once from the HP Multimeter.
 
-hpm.start_recording(dt) reads from the voltage every dt seconds, indefinitely.
+\item \verb+hpm.start_recording(dt)+ reads from the voltage every dt seconds, indefinitely.
 Data are stored in a buffer inside of hpm.
 
-hpm.get_recording_data() reads out all the voltages (and timestamps) that
-have been acquired since start_recording was called.  NOTE: to avoid losing
+\item \verb+hpm.get_recording_data()+ reads out all the voltages (and timestamps) that
+have been acquired since start recording was called.  NOTE: to avoid losing
 your data for a long observation, you should periodically call this function
 and save the data to disk, just in case your observing script errors out.
 
-hpm.end_recording() terminates the recording.  
+\item \verb+hpm.end_recording()+ terminates the recording.  
 
-ugradio.coord.sunpos(jd) returns the ra/dec of the Sun at the specified jd.
+\item \verb+ugradio.coord.sunpos(jd)+ returns the ra/dec of the Sun at the specified jd.
 
-ugradio.coord.moonpos(jd,lat,lon,alt) returns the ra/dec of the Moon at
+\item \verb+ugradio.coord.moonpos(jd,lat,lon,alt)+ returns the ra/dec of the Moon at
 the specified jd relative to the specified observing lat, lon, and alt.
 Note that because the Moon is close to the Earth, it has a noticeable
 parallax that makes its ra/dec depend on where you are.  This takes that
 into account.
 
-ugradio.coord.get_altaz(ra, dec, jd, lat, lon, alt) returns the alt/az
+\item \verb+ugradio.coord.get_altaz(ra, dec, jd, lat, lon, alt)+ returns the alt/az
 of the specified ra/dec coordinate for the specified lat/lon/alt and
 observing time.  Use the 'equinox' variable to specify the coordinate
 system on the input ra/dec parameters.
 
-ugradio.coord.precess(ra, dec, jd, equinox) returns the precessed ra/dec
+\item \verb+ugradio.coord.precess(ra, dec, jd, equinox)+ returns the precessed ra/dec
 for the ra/dec catalog coordinate with given 'equinox' specifing the coordinate
 system on the input ra/dec parameters.
 
-d = ugradio.interf_delay.DelayClient provides an interface for controlling the delay line from a lab computer.
+\item \verb+d = ugradio.interf_delay.DelayClient()+ provides an interface for controlling the delay line from a lab computer.
 
-d.delay_ns(time_ns) will set the delay to time_ns, i.e. d.delay_ns(0)
+\item \verb+d.delay_ns(time_ns)+ will set the delay to \verb+time_ns+, i.e. \verb+d.delay_ns(0)+
 
-\end{verbatim}
+\end{itemize}
 
 \section{Our X-Band Interferometer}
 
@@ -836,8 +836,6 @@ MF_{theory} \approx  \delta h \sum_{n=-N}^{n=+N}
 \left[ 1 - \left( n \over N\right)^2 \right]^{1/2} 
 \cos \left( 2 \pi f_f R n \over N \right)
 \end{equation}
-
-\subsection{An Important Mathematical Point}
 
 \noindent
 Note the {\it first important point} that $MF_{theory}$\dots
