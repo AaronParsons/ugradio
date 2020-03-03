@@ -1,4 +1,22 @@
 \documentclass[11pt,preprint]{aastex}
+\usepackage{amsmath}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+%\usepackage{natbib}
+%\usepackage{natbibspacing}
+\usepackage{enumitem}
+\usepackage{url}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+%\setlength{\bibspacing}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\headsep}{6pt}
+\setlength{\topskip}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\topsep}{6pt}
+\setlength{\partopsep}{0pt}
+\setlength{\footnotesep}{8pt}
+
 %\documentstyle[11pt,psfig,aaspp4]{article}
 \begin{document}
 
@@ -7,10 +25,13 @@
 
 %{\noindent Astronomy 121 \hfill 2005jan18}
 
-\title {RADIO INTERFEROMETRY AT X BAND \\ \today}
+\title {LAB 3: Radio Interferometry at X-Band}
 
 \tableofcontents
 
+\section{Introduction}
+
+\noindent
 The purpose of this lab is, broadly speaking, to learn radio
 interferometry---the basis for most of modern radio astronomy and, we
 predict, forefront future IR and optical astronomy. We'll cover the
@@ -22,7 +43,12 @@ positions for a few sources and also accurate angular diameters for the
 Sun and Moon. This lab runs for four weeks and clearly there's a lot of new
 material!
 
-\section{GOALS}
+\section{Goals and Instructions for Your Report}
+
+\noindent
+You should now be pretty familiar with the process of writing a report
+for this class. Below we list the specific goals for this lab that
+your report should address.
 
 \begin{itemize}
 
@@ -46,7 +72,13 @@ material!
 
 \end{itemize}
 
-\section{SCHEDULE}
+\section{Schedule}
+
+\noindent
+In contrast to previous labs, this lab spans four weeks (and spring break).
+However, interferometry is challenging, and this lab requires day-long
+observations for each group. You will find that it is still easy to fall
+behind, so try to get ahead early. Below is a suggested schedule.
 
 \begin{enumerate}
 
@@ -76,8 +108,12 @@ observed spectra with these expectations. Be ready for show and tell!
 
 \end{enumerate}
 
-\section{USEFUL PYTHON FUNCTIONS FOR PRECESSION, FINDING SUN AND MOON, AND
-RUNNING THE INTERFEROMETER}
+\section{Software for Precession, Tracking, and Finding the Sun and Moon}
+
+\noindent
+As usual, we have attempted to provide you a batteries-included experience with
+the {\tt ugradio} Python module. In this lab, we will be focusing on the
+{\tt interf} and {\tt hp\_multi} submodules.
 
 \begin{verbatim}
 ifm = ugradio.interf.Interferometer() provides an interface for controlling 
@@ -135,8 +171,9 @@ d.delay_ns(time_ns) will set the delay to time_ns, i.e. d.delay_ns(0)
 
 \end{verbatim}
 
-\section{OUR INTERFEROMETER}
+\section{Our X-Band Interferometer}
 
+\noindent
 	With our interferometer, which operates at about 10.7 GHz, our
 attention focuses on small sources.  Our interferometer has a relatively
 short baseline and the fringe spacing is larger than the size of all
@@ -171,8 +208,9 @@ the amplitude is directly proportional to the source flux (if it's a
 point source).
 
 
-\section {CONTINUUM `POINT' SOURCES}
+\section {Continuum (Point) Sources}
 
+\noindent
 For the first part of the lab we will concentrate on 'point' sources
 that lie outside the Solar system. Our telescopes are small, so there
 are only a few sources that are powerful enough for us; they are listed
@@ -205,13 +243,13 @@ As astronomers, our goal is to measure the absolute declinations as
 accurately as possible. As geologists, our goal is to measure the
 interferometer baseline as accurately as possible (to see, for example,
 the displacement of tectonic plates by earthquake activity). If you look
-at equations \ref{nutau} and \ref{maineqn}, you see that we don't
+at equations \ref{nutau} and \ref{fringeresponse}, you see that we don't
 measure these quantities separably, but rather the products $B_{ew}
 \cos(\delta)$ and $B_{ns} \cos(\delta)$, where $B_{ew}$ and $B_{ns}$ are
 the east-west and north-south components of the interferometer
 baseline. These products can be measured on an absolute basis with
 interferometry by least-squares fitting the fringe phase to the hour
-angle; see \S\ref{declinations} and equation \ref{maineqn} below.  We
+angle; see \S\ref{declinations} and equation \ref{fringeresponse} below.  We
 already know the source positions accurately, from previous
 interferometric measurements; that's where the positions in the above
 table come from. So, for this lab, we'll emphasize the geologic aspect
@@ -235,8 +273,9 @@ fringe phase and amplitude.  Compare your results with other members of
 your group.  Help each other out, but {\it each person should write
   her/his own software}.
 
-\section{THE SUN AND MOON}
+\section{The Sun and Moon}
 
+\noindent
 	The Sun and Moon are special cases, for two reasons. First, 
 their positions change from day to day---and for the Moon, the change in
 just an hour is significant\footnote{Use what you already know to make
@@ -256,8 +295,9 @@ tricky, but we'll ignore that detail for now.
         the Moon will probably lie outside the telescope main beam! {\tt
           moonpos} takes care of this automatically.
 
-\section{SOME ASTROPHYSICS}
+\section{Some Astrophysics}
 
+\noindent
 Here's a bit of physical information.  M17 (``M'' for Messier) and Orion
 are HII regions---places where hot stars have produced warm ($T \sim
 10^4$ K) ionized gas, where the electrons flying past the protons get
@@ -305,8 +345,9 @@ about its surface properties from the polarization of the radiation and
 also from its time variability as the surface heats up from sunlight and
 cools off from darkness---just like the Sahara.
 
-\section {MEASURING $B \cos \delta$} \label{declinations}
+\section {Measuring $B \cos \delta$} \label{declinations}
 
+\noindent
 We measure the product $B \cos \delta$ from the fringe frequency, which
 depends on the baseline orientation, baseline length, declination, and
 hour angle (all these go into the {\it projected baseline}). If we
@@ -320,7 +361,8 @@ from our data.
 
 \subsection{Getting the Data}
 
-	{\it FIRST WEEK:} Before doing the weak sources in the Table, do
+\noindent
+	Before doing the weak sources in the Table, do
 the Sun for a much shorter time, say an hour. This will give you
 confidence that the system works (or so we hope). There should be an
 easily-recognizable signal that you can look at visually, think about,
@@ -331,6 +373,7 @@ of one of the sources from the Table.
 
 \subsection{The Fringe} \label{details}
 
+\noindent
 	The two interferometer telescopes have different distances from
 the source. The difference can range from zero (if the source is
 overhead) to nearly the full baseline (if the source is near the
@@ -456,16 +499,17 @@ to make the substitution
 ``number of turns'' or phase. These substitutions give the {\it Fringe
   Amplitude for a point source}
 %
-\begin{equation} \label{maineqn} \fbox{$
-\label{fringeresponse}
+\begin{equation} \label{fringeresponse} \fbox{$
  F(h_s) = A \cos \left(2 \pi \nu \tau_g' \right) 
          +B \sin \left(2 \pi \nu \tau_g' \right) \; . 
 $}
 \end{equation}
 
 \subsection{The Local Fringe Frequency}
+
+\noindent
 We want to develop the concept of a {\it local fringe frequency}
-$f_f$. In equation \ref{maineqn}, the argument of the trig functions
+$f_f$. In equation \ref{fringeresponse}, the argument of the trig functions
 depends on $h_s$, which is the hour angle and increases monotonically
 with time, so we can regard it as time\footnote{Except that its units
   are radians. This is no problem: 24 hours is $2\pi$ radians.}. Now
@@ -511,9 +555,9 @@ Use the above to calculate the range of local fringe frequencies that
 you should see in your data. Does it work? Look at the Fourier transform
 of your data to check! And try Fourier filtering!
 
-\subsection{Least-Squares Fitting the Fringe to the baselines and/or the
-  Declination}
+\subsection{Least-Squares Fringe Fitting}
 
+\noindent
 Now let's return to the least-squares solution of equation
 \ref{fringeresponse} for the unknown quantities $Q_{ew} = \left[{B_{ew}
     \over \lambda} \cos \delta \right]$ and $Q_{ns}= \left[{B_{ns} \over
@@ -523,6 +567,8 @@ inside nonlinear functions. There are two ways to attack this: the
 conventional way and the `brute-force' way. We'll do the latter first.
 
 \subsubsection{The Brute-Force Technique}
+
+\noindent
 We'll first assume that $B_{ns}=0$, which is not unreasonable because
 our interferometer baseline is close to east-west, and solve for
 $Q_{ew}$. Make a guess at the proper value of $Q_{ew}$ and, if you don't
@@ -549,7 +595,9 @@ S$ around the minimum. The covariance matrix $\alpha^{-1}$ is the
 inverse of the curvature matrix. See \S 2 and \S 3 of
 the `Lite' version of the {\it Aficionado's} handout.
 
-\subsubsection{The Proper Nonlinear Least-Squares Technique}
+\subsubsection{The Nonlinear Least-Squares Technique}
+
+\noindent
 
 The usual technique for nonlinear least-square fitting is this: you
 guess values for unknowns $Q_{ew}$ and $Q_{ns}$, expand the equation for
@@ -568,9 +616,9 @@ time, try both methods--the `brute-force' and `proper' methods, using
 the `brute-force' result as input to the `proper' method, and compare
 the results, in particular the uncertainties. 
 
-\section{MEASURING 1-D BRIGHTNESS DISTRIBUTIONS: THE FIRST STEP OF
-MAKING MAPS} \label{mun}
+\section{Measuring Brightness Distributions: the First Step of Making Maps} \label{mun}
 
+\noindent
 {\bf Disclaimer} {\it This section assumes an east-west
 interferometer. Generalizing to the case of $B_{ns} \ne 0$ can be
 regarded either as an `exercise for the student' or as an unnecessary complication.}
@@ -641,7 +689,7 @@ $h$.
 
 As the Earth rotates, the source moves through the fringe pattern to
 give the fringe response $R(h_s)$. For a point source, $R(h_s)= F(h_s)$
-(see equation \ref{maineqn}); for an extended source, we have to
+(see equation \ref{fringeresponse}); for an extended source, we have to
 integrate over the extent of the source.  Let $I(h - h_s)$ be the 1-d
 intensity distribution in the sky. 
 The source center is the intensity-weighted mean of the
@@ -658,7 +706,7 @@ angle $h$ relative to the hour angle of the source center $h_s$.
 
 
 We can express the interferometer response $R(h_s)$ using equation
-\ref{maineqn}, which is for a point source; for an extended source, we
+\ref{fringeresponse}, which is for a point source; for an extended source, we
 imagine $I(\Delta h)$ as being composed of little slices in hour angle,
 with each little slice of the source characterized by its position
 offset $\Delta h$ and its intensity $I(\Delta h)$, so we just integrate:
@@ -746,9 +794,9 @@ the source contributes equally to the negative and positive portions of
 the fringe and the net integral is zero.
 
 
-\section{MEASURING THE DIAMETER OF A CIRCULAR SOURCE}
+\section{Measuring the Diameter of a Circular Source}
 
-\subsection{Theory and Math}
+\noindent
 Our goal is to measure and compare the diameters of the Sun and
 Moon. We'll make the assumption that the sources are uniformly-bright
 disks of radius $R$, which means
@@ -789,14 +837,18 @@ MF_{theory} \approx  \delta h \sum_{n=-N}^{n=+N}
 \cos \left( 2 \pi f_f R n \over N \right)
 \end{equation}
 
-\subsection{Important Mathematical and <<<PRACTICAL!!! Point!}
+\subsection{An Important Mathematical Point}
 
-Note the {\it first important point} that $MF_{theory}$\dots \begin{itemize}
+\noindent
+Note the {\it first important point} that $MF_{theory}$\dots
+
+\begin{itemize}
 \item is a function {\it only} of the combination $f_f R$, and
 \item in particular, has zero crossings that occur at specific
   values of $f_f R$.
   \end{itemize}
 
+\noindent
   Note the {\it second important point} that for $MF_{observed}$\dots
   \begin{itemize}
     \item The zero crossings occur at specific measured values of
@@ -806,8 +858,9 @@ Note the {\it first important point} that $MF_{theory}$\dots \begin{itemize}
 $MF_{observed}$, you get the radius $R$. 
 
 
-\section {REFERENCE READING on INTERFEROMETRY AND APERTURE SYNTHESIS}
+\section {Reference Reading}
 
+\noindent
 	The appropriate reference for our purposes is the article {\it
 Interferometry and Aperture Synthesis}, which is chapter 10 of the book
 {\it Galactic and Extragalactic Radio Astronomy, First Edition}.  The
@@ -833,12 +886,12 @@ $\nu_f = .025$ Hz.  More generally, for this east-west interferometer
 the fringe frequency is $\nu_f = .025 \cos \delta \cos h$ Hz, where
 $\delta$ is the declination and $h$ the hour angle. 
 
-	If you want to know really everything and in complete
-mathematical detail, read the book {\it Interferometry and Synthesis in
-Radio Astronomy} by Thompson, Moran, and Swenson.  But such detail is
+The book {\it Interferometry and Synthesis in
+Radio Astronomy} by Thompson, Moran, and Swenson goes into even more detail,
+but such detail is
 more than we want and can be overwhelming.  Our main interest is the
-geometry---how the baseline projects on the $u-v$ plane.  This is in
-chapter 4, and the most important sections for us are chapter 4.2 and
+geometry---how the baseline projects on the $uv$ plane.  This is in
+chapter 4, and the most important sections are chapter 4.2 and
 4.4. 
 
 With the longer baselines of research-class interferometers/arrays comes
