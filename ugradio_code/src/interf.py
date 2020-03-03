@@ -36,13 +36,13 @@ class TelescopeClient:
         s.settimeout(timeout) # seconds
         s.connect(self.hostport)
         if verbose: print('Sending', [cmd])
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf-8'))
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
             response.append(r)
             if len(r) < bufsize: break
-        response = ''.join(response)
+        response = b''.join(response)
         if verbose: print('Got Response:', [response])
         return response
     def point(self, alt, az, wait=True, verbose=False):
@@ -62,7 +62,7 @@ class TelescopeClient:
         # Request encoded alt/az with calibrated offset
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
-        assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
+        assert((resp1 == b'ok') and (resp2 == b'ok')) # fails if server is down or rejects command
         if verbose: print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
     def wait(self, verbose=False):
@@ -77,7 +77,7 @@ class TelescopeClient:
         None'''
         resp1 = self._command(CMD_WAIT_AZ,  timeout=MAX_SLEW_TIME, verbose=verbose)
         resp2 = self._command(CMD_WAIT_EL, timeout=MAX_SLEW_TIME, verbose=verbose)
-        assert((resp1 == '0') and (resp2 == '0')) # fails if server is down or rejects command
+        assert((resp1 == b'0') and (resp2 == b'0')) # fails if server is down or rejects command
         if verbose: print('Pointing Complete')
     def get_pointing(self, verbose=False):
         '''Return the current telescope pointing
@@ -233,9 +233,9 @@ class TelescopeDirect:
             c = self._serial.read(1)
             c = c.decode('ascii')
             if len(c) == 0: break
-            if c == '\r' and not flush: break
+            if c == b'\r' and not flush: break
             resp.append(c)
-        resp = ''.join(resp)
+        resp = b''.join(resp)
         if self.verbose: print('Read:', [resp])
         return resp
     def _write(self, cmd, bufsize=1024):
@@ -263,14 +263,14 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
-            if status == '0': break
+            if status == b'0': break
             time.sleep(1)
         return status
     def wait_el(self, max_wait=120):
-        status = '-1'
+        status = b'-1'
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
-            if status == '0': break
+            if status == b'0': break
             time.sleep(1)
         return status
     def get_az(self):
@@ -285,12 +285,12 @@ class TelescopeDirect:
         return el
     def move_az(self, dishAz):
         azResponse = self.wait_az()
-        if azResponse != '0':
-            return 'e 1'
+        if azResponse != b'0':
+            return b'e 1'
         dishAz = (dishAz + 360.) % 360
         # Enforce absolute bounds.  Comment out to override.
         if (dishAz < AZ_MIN) or (dishAz > AZ_MAX):
-            return 'e 1'
+            return b'e 1'
         az_cnts = int(self.get_az() / DRIVE_DEG_PER_CNT)
         azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
         self._write(azMoveCmd.encode('ascii'))
@@ -299,10 +299,10 @@ class TelescopeDirect:
     def move_el(self, dishEl):
         elResponse = self.wait_el()
         if elResponse != '0':
-            return 'e 1'
+            return b'e 1'
         # Enforce absolute bounds.  Comment out to override.
         if (dishEl < ALT_MIN) or (dishEl > ALT_MAX):
-            return 'e 1'
+            return b'e 1'
         el_cnts = int(self.get_el() / DRIVE_DEG_PER_CNT)
         elMoveCmd =  '.b s r0xca ' + str(int((dishEl / DRIVE_DEG_PER_CNT - el_cnts) * self.el_enc_scale)) + '\r'
         self._write(elMoveCmd.encode('ascii'))

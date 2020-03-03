@@ -47,7 +47,7 @@ class HP_Multimeter:
         time        : float, unix time when read occurs, if return_time=True'''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(self.hostport)
-        s.sendall(CMD_TELNET + CMD_ADDR + CMD_TRIGGER)
+        s.sendall(bytes(CMD_TELNET + CMD_ADDR + CMD_TRIGGER, encoding='utf8'))
         t = time.time()
         resp = s.recv(bufsize)
         s.close()
@@ -62,7 +62,7 @@ class HP_Multimeter:
     def _read_thread(self, dt, tries):
         '''Used by start_recording to acquire data.  Not for end use.'''
         while self._running:
-            for i in xrange(tries):
+            for i in range(tries):
                 try:
                     v,t = self.read_voltage(return_time=True)
                     break
