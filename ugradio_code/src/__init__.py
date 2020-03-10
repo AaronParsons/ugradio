@@ -16,6 +16,7 @@ from . import dft
 from . import agilent
 from . import hp_multi
 from . import interf
+from . import interf_delay
 from . import leusch
 from . import nch
 from . import leo
