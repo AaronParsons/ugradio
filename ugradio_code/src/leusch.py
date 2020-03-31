@@ -55,7 +55,7 @@ class LeuschTelescope:
             r = s.recv(bufsize)
             response.append(r)
             if len(r) < bufsize: break
-        response = ''.join(response)
+        response = b''.join(response)
         if verbose: print('Got Response:', [response])
         return response
 
@@ -74,9 +74,9 @@ class LeuschTelescope:
         None'''
         self._check_pointing(alt, az) # AssertionError if out of bounds
         # Request encoded alt/az with calibrated offset
-        resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
-        resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
-        assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
+        resp1 = self._command(CMD_MOVE_AZ+b'\n%s\r' % (az - self._delta_az), verbose=verbose)
+        resp2 = self._command(CMD_MOVE_EL+b'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
+        assert((resp1 == b'ok') and (resp2 == b'ok')) # fails if server is down or rejects command
         if verbose: print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
 
@@ -92,7 +92,7 @@ class LeuschTelescope:
         None'''
         resp1 = self._command(CMD_WAIT_AZ,  timeout=MAX_SLEW_TIME, verbose=verbose)
         resp2 = self._command(CMD_WAIT_EL, timeout=MAX_SLEW_TIME, verbose=verbose)
-        assert((resp1 == '0') and (resp2 == '0')) # fails if server is down or rejects command
+        assert((resp1 == b'0') and (resp2 == b'0')) # fails if server is down or rejects command
         if verbose: print('Pointing Complete')
 
     def get_pointing(self, verbose=False):
