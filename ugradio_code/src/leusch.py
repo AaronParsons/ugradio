@@ -49,7 +49,7 @@ class LeuschTelescope:
         s.settimeout(timeout) # seconds
         s.connect(self.hostport)
         if verbose: print('Sending', [cmd])
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf8'))
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
@@ -74,8 +74,8 @@ class LeuschTelescope:
         None'''
         self._check_pointing(alt, az) # AssertionError if out of bounds
         # Request encoded alt/az with calibrated offset
-        resp1 = self._command(CMD_MOVE_AZ+b'\n%s\r' % (az - self._delta_az), verbose=verbose)
-        resp2 = self._command(CMD_MOVE_EL+b'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
+        resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
+        resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
         assert((resp1 == b'ok') and (resp2 == b'ok')) # fails if server is down or rejects command
         if verbose: print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
@@ -159,7 +159,7 @@ class LeuschNoise:
             print('LeuschNoise sending command:', [cmd])
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(self.hostport)
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf8'))
 
 AZ_ENC_OFFSET = -3035.0 # -4901
 AZ_ENC_SCALE = 1800.342065
