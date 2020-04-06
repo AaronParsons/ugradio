@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 import socket, serial, time, math
+import subprocess
 try: import thread
 except(ImportError): import _thread as thread
 try:
@@ -416,3 +417,21 @@ class LeuschNoiseServer:
             elif cmd == CMD_NOISE_ON:
                 if self.verbose: print('write digital I/O high')
                 GPIO.output(pin, True)   # pin 29
+
+class Spectrometer:
+
+    def __init__(self, ip='10.0.1.2'):
+        self.ip = ip
+
+    def check_connected(self, timeout=10):
+        cmd = ["python2.7", "leusch_helper.py", "cc", self.ip]
+        subprocess.run(cmd)
+
+    def read_spec(self, filename, nspec, coords, system='ga'):
+        cmd = ["python2.7", "leusch_helper.py", "rs", self.ip, filename,
+                str(nspec), str(coords), system]
+        subprocess.run(cmd)
+
+    def int_time(self):
+        cmd = ["python2.7", "leusch_helper.py", "it", self.ip]
+        return float(subprocess.check_output(cmd)[:-1])
