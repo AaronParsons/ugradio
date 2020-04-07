@@ -28,8 +28,8 @@ HOST_NOISE_SERVER = '192.168.1.90' # RPI host for noise diode
 PORT = 1420
 
 # Offsets (in deg) to subtract from crd to get encoder value to write
-DELTA_ALT_ANT = -0.005  # (true - encoder) offset
-DELTA_AZ_ANT = -0.63  # (true - encoder) offset
+DELTA_ALT_ANT = -0.30  # (true - encoder) offset
+DELTA_AZ_ANT  = -0.13  # (true - encoder) offset
 
 class LeuschTelescope:
     '''Interface for controlling the Leuschner Telescope.'''
