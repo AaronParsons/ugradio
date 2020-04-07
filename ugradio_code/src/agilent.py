@@ -15,10 +15,10 @@ class SynthBase:
     Its attributes are inherited by SynthDirect, SynthServer, and SynthClient.'''
     def validate(self):
         '''Make sure this is the device we think it is.'''
-        self._write('*IDN?') # query ID
+        self._write(b'*IDN?') # query ID
         resp = self._read().strip()
-        resp = resp.split(',')
-        assert(resp[0] == 'Agilent Technologies')
+        resp = resp.split(b',')
+        assert(resp[0] == b'Agilent Technologies')
     def get_frequency(self):
         '''Get the current frequency setting for the CW (continuous wave) output
         mode of the synthesizer.
@@ -27,7 +27,7 @@ class SynthBase:
         -------
         fq   : float, numerical frequency setting
         unit : string, units of fq (GHz, MHz, or kHz)'''
-        self._write(':FREQuency:CW?')
+        self._write(b':FREQuency:CW?')
         resp = self._read()
         fq,unit,_ = resp.split()
         return float(fq), unit
@@ -44,7 +44,7 @@ class SynthBase:
         -------
         None'''
         assert(unit in FREQ_UNIT)
-        cmd = ':FREQuency:CW %f %s' % (val, unit)
+        cmd = b':FREQuency:CW %f %s' % (val, unit)
         self._write(cmd)
     def get_amplitude(self):
         '''Get the current amplitude setting for the CW (continuous wave) output
@@ -54,7 +54,7 @@ class SynthBase:
         -------
         amp  : float, numerical amplitude setting
         unit : string, units of amp (dBm, mV, or uV)'''
-        self._write(':AMPLitude:CW?')
+        self._write(b':AMPLitude:CW?')
         resp = self._read()
         amp,unit,_ = resp.split()
         return float(amp), unit
@@ -71,7 +71,7 @@ class SynthBase:
         -------
         None'''
         assert(unit in AMP_UNIT)
-        cmd = ':AMPLitude:CW %f %s' % (val, unit)
+        cmd = b':AMPLitude:CW %f %s' % (val, unit)
         self._write(cmd)
 
 class SynthDirect(SynthBase):
@@ -89,7 +89,7 @@ class SynthDirect(SynthBase):
         try:
             self.dev.close()
         except(AttributeError): pass
-        self.dev = open(self._device, 'r+')
+        self.dev = open(self._device, 'rb+')
         self.validate()
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
@@ -97,7 +97,13 @@ class SynthDirect(SynthBase):
         self.dev.flush()
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
-        return self.dev.read()
+        rv = []
+        while True:
+            ch = self.dev.read(1)
+            if ch == b' ':
+                break
+            rv.append(ch)
+        return b''.join(rv)
 
 class SynthClient(SynthBase):
     '''Implements a network connection to a synthesizer which is being hosted
@@ -116,7 +122,7 @@ class SynthClient(SynthBase):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(10) # seconds
         self.sock.connect(self.hostport)
-        self.sock.sendall(cmd)
+        self.sock.sendall(bytes(cmd, encoding='utf-8'))
         if not cmd.endswith('?'): self.sock.close()
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
