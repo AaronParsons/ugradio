@@ -1,4 +1,5 @@
-'''This script provides a command-line interface to the 
+#! /usr/bin/env python
+'''This script provides a command-line interface to the
 Leuschner spectrometer via the leuschner package. This
 package is only python2 compatible, so this script
 provides an interface by which python3 can interact
