@@ -435,7 +435,7 @@ class Spectrometer:
         subprocess.run(cmd)
 
     def read_spec(self, filename, nspec, coords, system='ga'):
-       """Receives data from the Leuschner spectrometer and
+        """Receives data from the Leuschner spectrometer and
         saves it to a FITS file. The first HDU of the FITS file contains
         information about the observation, such as the coordinates, the
         number of integrations accumulated, and attributes about the
