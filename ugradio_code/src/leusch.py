@@ -27,6 +27,8 @@ HOST_ANT = '192.168.1.156' # RPI host for antenna
 HOST_NOISE_SERVER = '192.168.1.90' # RPI host for noise diode
 PORT = 1420
 
+HOST_SPECTROMETER = '10.0.1.2' # IP address of ROACH spectrometer
+
 # Offsets (in deg) to subtract from crd to get encoder value to write
 DELTA_ALT_ANT = -0.30  # (true - encoder) offset
 DELTA_AZ_ANT  = -0.13  # (true - encoder) offset
@@ -419,19 +421,41 @@ class LeuschNoiseServer:
                 GPIO.output(pin, True)   # pin 29
 
 class Spectrometer:
-
-    def __init__(self, ip='10.0.1.2'):
+    '''A mock interface for interacting with the Leuschner spectrometer
+    via the command-line script "leusch_helper.py" which makes use of the
+    leuschner python package.'''
+    def __init__(self, ip=HOST_SPECTROMETER):
+        '''ip: the IP address of the spectrometer'''
         self.ip = ip
 
-    def check_connected(self, timeout=10):
+    def check_connected(self):
+        '''Check if the ROACH is connected. Prints connection to
+        stdout, or prints an IOError if client can't reach the ROACH.'''
         cmd = ["leusch_helper.py", "cc", self.ip]
         subprocess.run(cmd)
 
     def read_spec(self, filename, nspec, coords, system='ga'):
+       """Receives data from the Leuschner spectrometer and
+        saves it to a FITS file. The first HDU of the FITS file contains
+        information about the observation, such as the coordinates, the
+        number of integrations accumulated, and attributes about the
+        spectrometer used to collect the data. Each set of spectra is
+        stored in its own FITS table in the FITS file. The columns in
+        each FITS table are ``auto0_real``, ``auto1_real``,
+        ``cross_real``, and ``cross_imag``, and all of the columns
+        contain  double-precision floating-point numbers.
+        Inputs:
+        - ``filename``: Name of the output FITS file.
+        - ``nspec``: Number of spectra to collect.
+        - ``coords``: Coordinates of the target of observation. \
+                Format: (lon/ra, lat/dec). Units: degrees.
+        - ``system``: Coordinate system of ``coords`` (eq, ga).
+        """
         cmd = ["leusch_helper.py", "rs", self.ip, filename,
                 str(nspec), str(coords), system]
         subprocess.run(cmd)
 
     def int_time(self):
+        '''Print the integration time used by the spectrometer.'''
         cmd = ["leusch_helper.py", "it", self.ip]
         return float(subprocess.check_output(cmd)[:-1])
