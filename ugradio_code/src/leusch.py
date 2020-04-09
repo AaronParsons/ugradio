@@ -424,14 +424,14 @@ class Spectrometer:
         self.ip = ip
 
     def check_connected(self, timeout=10):
-        cmd = ["python2.7", "leusch_helper.py", "cc", self.ip]
+        cmd = ["leusch_helper.py", "cc", self.ip]
         subprocess.run(cmd)
 
     def read_spec(self, filename, nspec, coords, system='ga'):
-        cmd = ["python2.7", "leusch_helper.py", "rs", self.ip, filename,
+        cmd = ["leusch_helper.py", "rs", self.ip, filename,
                 str(nspec), str(coords), system]
         subprocess.run(cmd)
 
     def int_time(self):
-        cmd = ["python2.7", "leusch_helper.py", "it", self.ip]
+        cmd = ["leusch_helper.py", "it", self.ip]
         return float(subprocess.check_output(cmd)[:-1])
