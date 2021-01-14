@@ -22,9 +22,7 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
         divisor: (type int)
             Divide the 62.5 MHz sample clock by this number for sampling.
         dual_mode: (type bool)
-            Sample from A and B ports if True. The first half of the output array
-            will be data from port A and the second half will be data from port B,
-            even with nblocks > 1.
+            Sample A and B inputs, rather than just A. Default False.
         nsamples: (type int)
             The number of samples acquired per block.
         nblocks: (type int)
@@ -34,11 +32,15 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
         port: (type int)
             Port number picoserver.py is listening to.
     Returns:
-        numpy array (dtype int16) of all data.
+        numpy array (dtype int16) with dimensons (inputs,nblocks,nsamples)
     '''
     assert(volt_range in VOLT_RANGE)
     assert(nblocks >= 1 and nblocks <= 1000)
-    cmd = b'1 %d %s %d %d %d' % (dual_mode, bytes(volt_range, encoding='utf8'), divisor, nsamples, nblocks)
+    cmd = b'1 %d %s %d %d %d' % (dual_mode,
+                                 bytes(volt_range, encoding='utf8'),
+                                 divisor,
+                                 nsamples,
+                                 nblocks)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(cmd)
@@ -47,24 +49,39 @@ def capture_data(volt_range, divisor=2, dual_mode=False,
     data = b''
     while len(data) < datalen:
         d = s.recv(1024)
-        if not d: break
+        if not d:
+            break
         data += d
     s.close()
-    if verbose: print('Received %d bytes (%d samples)' % (len(data), len(data)/2))
-    return np.fromstring(data, dtype=np.int16)
+    if verbose:
+        print('Received %d bytes (%d samples)' % (len(data), len(data)/2))
+    data = np.fromstring(data, dtype=np.int16)
+    data.shape = (-1, nblocks, nsamples)
+    return data
 
 # Below here is server-side code
 
 def picoserver(host='', port=PORT, verbose=False):
-    '''
-    Provide a TCP Socket interface on the provided port for requesting samples from the picosampler.
+    '''Serve up interface to PicoSampler on TCP Socket interface 
+    at the specified port.
+    Arguments:
+        host: (type str)
+            IP address of picoserver.py host.
+        port: (type int)
+            Port number picoserver.py is listening to.
+        verbose:
+    Returns:
+        None
     '''
     import picopy # Must be installed on computer hosting picosampler
     sampler = picopy.Pico2k()
     def handle_request(conn):
+        '''Function run to handle each connection.'''
         cmd = conn.recv(1024).split()
-        if not cmd: return
-        if verbose: print('Received command:', [cmd])
+        if not cmd:
+            return
+        if verbose:
+            print('Received command:', [cmd])
         usechanA = bool(int(cmd[0]))
         usechanB = bool(int(cmd[1]))
         volt_range = cmd[2]
@@ -73,20 +90,22 @@ def picoserver(host='', port=PORT, verbose=False):
         nblocks = int(cmd[5])
         data = sample_pico(sampler, volt_range, sample_interval, 
                            nsamples, nblocks, usechanA, usechanB)
-        if verbose: print('Sending', data.shape)
+        if verbose:
+            print('Sending', data.shape)
         data = data.tostring()
         header = struct.pack('L',len(data))
         conn.sendall(header+data)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((host, port)) # Errors if binding failed (port in use)
-        s.listen(10) # Start listening to socket
+        s.listen(10) # Start listening to socket, timeout 10 seconds
         # now keep talking with the client
         while True:
-            conn, addr = s.accept() #wait to accept a connection - blocking call
-            if verbose: print('Request from ' + addr[0] + ':' + str(addr[1]))
-            # start new thread takes 1st argument as a function name to be run, 
-            # second is the tuple of arguments to the function.
+            conn, addr = s.accept() #wait for connection, blocking call
+            if verbose:
+                print('Request from ' + addr[0] + ':' + str(addr[1]))
+            # start handle_request function with connection handle
+            # as argument.
             thread.start_new_thread(handle_request,(conn,))
     finally:
         s.close()
