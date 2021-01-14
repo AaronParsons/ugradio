@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 import socket, serial, time, math
+import subprocess
 try: import thread
 except(ImportError): import _thread as thread
 try:
@@ -26,9 +27,11 @@ HOST_ANT = '192.168.1.156' # RPI host for antenna
 HOST_NOISE_SERVER = '192.168.1.90' # RPI host for noise diode
 PORT = 1420
 
-# Offsets to subtract from crd to get encoder value to write
-DELTA_ALT_ANT = 0.165  # (true - encoder) offset
-DELTA_AZ_ANT = -0.34  # (true - encoder) offset
+HOST_SPECTROMETER = '10.0.1.2' # IP address of ROACH spectrometer
+
+# Offsets (in deg) to subtract from crd to get encoder value to write
+DELTA_ALT_ANT = -0.30  # (true - encoder) offset
+DELTA_AZ_ANT  = -0.13  # (true - encoder) offset
 
 class LeuschTelescope:
     '''Interface for controlling the Leuschner Telescope.'''
@@ -49,13 +52,13 @@ class LeuschTelescope:
         s.settimeout(timeout) # seconds
         s.connect(self.hostport)
         if verbose: print('Sending', [cmd])
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf8'))
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
             response.append(r)
             if len(r) < bufsize: break
-        response = ''.join(response)
+        response = b''.join(response)
         if verbose: print('Got Response:', [response])
         return response
 
@@ -76,7 +79,7 @@ class LeuschTelescope:
         # Request encoded alt/az with calibrated offset
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
-        assert((resp1 == 'ok') and (resp2 == 'ok')) # fails if server is down or rejects command
+        assert((resp1 == b'ok') and (resp2 == b'ok')) # fails if server is down or rejects command
         if verbose: print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
 
@@ -92,7 +95,7 @@ class LeuschTelescope:
         None'''
         resp1 = self._command(CMD_WAIT_AZ,  timeout=MAX_SLEW_TIME, verbose=verbose)
         resp2 = self._command(CMD_WAIT_EL, timeout=MAX_SLEW_TIME, verbose=verbose)
-        assert((resp1 == '0') and (resp2 == '0')) # fails if server is down or rejects command
+        assert((resp1 == b'0') and (resp2 == b'0')) # fails if server is down or rejects command
         if verbose: print('Pointing Complete')
 
     def get_pointing(self, verbose=False):
@@ -159,7 +162,7 @@ class LeuschNoise:
             print('LeuschNoise sending command:', [cmd])
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(self.hostport)
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf8'))
 
 AZ_ENC_OFFSET = -3035.0 # -4901
 AZ_ENC_SCALE = 1800.342065
@@ -416,3 +419,43 @@ class LeuschNoiseServer:
             elif cmd == CMD_NOISE_ON:
                 if self.verbose: print('write digital I/O high')
                 GPIO.output(pin, True)   # pin 29
+
+class Spectrometer:
+    '''A mock interface for interacting with the Leuschner spectrometer
+    via the command-line script "leusch_helper.py" which makes use of the
+    leuschner python package.'''
+    def __init__(self, ip=HOST_SPECTROMETER):
+        '''ip: the IP address of the spectrometer'''
+        self.ip = ip
+
+    def check_connected(self):
+        '''Check if the ROACH is connected. Prints connection to
+        stdout, or prints an IOError if client can't reach the ROACH.'''
+        cmd = ["leusch_helper.py", "cc", self.ip]
+        subprocess.run(cmd)
+
+    def read_spec(self, filename, nspec, coords, system='ga'):
+        """Receives data from the Leuschner spectrometer and
+        saves it to a FITS file. The first HDU of the FITS file contains
+        information about the observation, such as the coordinates, the
+        number of integrations accumulated, and attributes about the
+        spectrometer used to collect the data. Each set of spectra is
+        stored in its own FITS table in the FITS file. The columns in
+        each FITS table are ``auto0_real``, ``auto1_real``,
+        ``cross_real``, and ``cross_imag``, and all of the columns
+        contain  double-precision floating-point numbers.
+        Inputs:
+        - ``filename``: Name of the output FITS file.
+        - ``nspec``: Number of spectra to collect.
+        - ``coords``: Coordinates of the target of observation. \
+                Format: (lon/ra, lat/dec). Units: degrees.
+        - ``system``: Coordinate system of ``coords`` (eq, ga).
+        """
+        cmd = ["leusch_helper.py", "rs", self.ip, filename,
+                str(nspec), str(coords), system]
+        subprocess.run(cmd)
+
+    def int_time(self):
+        '''Print the integration time used by the spectrometer.'''
+        cmd = ["leusch_helper.py", "it", self.ip]
+        return float(subprocess.check_output(cmd)[:-1])

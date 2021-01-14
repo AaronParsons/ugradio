@@ -83,13 +83,13 @@ class DelayClient:
         s.settimeout(timeout)
         s.connect(self.hostport)
         if verbose: print('Sending', [cmd])
-        s.sendall(cmd)
+        s.sendall(bytes(cmd, encoding='utf-8'))
         response = []
         while True: # XXX don't like while-True
             r = s.recv(bufsize)
             response.append(r)
             if len(r) < bufsize: break
-        response = ''.join(response)
+        response = b''.join(response)
         if verbose: print('Got Response:', [response])
         return response
  

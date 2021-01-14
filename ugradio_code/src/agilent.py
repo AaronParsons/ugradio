@@ -89,15 +89,22 @@ class SynthDirect(SynthBase):
         try:
             self.dev.close()
         except(AttributeError): pass
-        self.dev = open(self._device, 'r+')
+        self.dev = open(self._device, 'rb+')
         self.validate()
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
-        self.dev.write(cmd)
+        self.dev.write(bytes(cmd, encoding='utf-8'))
         self.dev.flush()
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
-        return self.dev.read()
+        rv = []
+        while True:
+            try:
+                rv.append(self.dev.read(1))
+            except(TimeoutError):
+                break
+        rv = b''.join(rv)
+        return rv.decode('utf-8')
 
 class SynthClient(SynthBase):
     '''Implements a network connection to a synthesizer which is being hosted
@@ -116,7 +123,7 @@ class SynthClient(SynthBase):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(10) # seconds
         self.sock.connect(self.hostport)
-        self.sock.sendall(cmd)
+        self.sock.sendall(bytes(cmd, encoding='utf-8'))
         if not cmd.endswith('?'): self.sock.close()
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
