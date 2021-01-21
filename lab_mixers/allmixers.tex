@@ -5,6 +5,7 @@
 %\usepackage{natbibspacing}
 \usepackage{enumitem}
 \usepackage{url}
+\usepackage{xcolor}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
 %\setlength{\bibspacing}{0pt}
@@ -323,7 +324,8 @@ different sample frequencies for a fixed $\nu_0$, we will do the reverse:
 \begin{itemize} 
 	\item Pick a convenient sampling frequency $\nu_s$, then
 	\item Set the synthesizer to frequency $\nu_0 = (0.1, 0.2,
-	  0.3, \dots, 0.9)~\nu_s$ and take data. 
+	  0.3, \dots, 0.9)~\nu_s$ and take data.
+{\color{red} For the virtual version of this lab, we have instead supplied two signals whose true frequencies you can try to characterize using the sampler.}
 \end{itemize}
 
 \noindent We suggest using a co-axial T joint so
@@ -490,12 +492,12 @@ so the blackbody formula simplifies to:
 \begin{equation}
 B_\nu\approx\frac{2kT}{\lambda^2}. 
 \end{equation}
-Notice, the noise power depends linearly on $T$. 
+Notice how the noise power depends linearly on $T$. 
 
 For a number of good reasons, radio astronomers choose to measure noise
 power in units of temperature and define a brightness temperature
 $T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity,
-even if the radiation source is, say, the galactic synchrotron and not even remotely thermal.
+even if the radiation source (for example, galactic synchrotron emission) is not even remotely thermal.
 
 Using this framework, all sources of power in our measurement can be related to a temperature,
 including the receiver noise that is added to our incoming astronomical signal 
@@ -512,8 +514,10 @@ the properties of digitally sampled noise:
 
 \item Connect the noise generator to a $\sim 6$-MHz wide bandpass
   filter (the MiniCircuits SBP-21.4 filter) and take a 16000-point time
-  series with the ADC. These samples are voltages. What is the
-  mean voltage over this sample?
+  series with the ADC.
+{\color{red} For a virtual class, we will provide you with this data.}
+  These samples are voltages. What is the
+  mean voltage over this data block?
   What is the variance? The standard deviation (which, for a zero-mean signal,
   is the same as the root-mean-square, or rms)?
 
@@ -533,8 +537,9 @@ the properties of digitally sampled noise:
   4, 8, 16)$ What you are doing here is looking at how integration time
   affects the signal-to-noise ratio (SNR): the `signal' is the relatively
   smooth distribution that emerges with long integration times.
-  The `noise' is the scatter you see around that value. How does
-  SNR depend on $N$? (Hint: SNR is proportional to $N^x$ for some value of $x$.)
+  The `noise' is the scatter you see around that value. If the SNR goes as
+  $N^x$, can you characterize what $x$ is? How certain are you about this value, and
+  how does it compare to what central-limit theory suggests?
 
 \item Calculate the ACF (by manually computing Fourier transforms and by using \verb$numpy/scipy$'s version)
   for all
@@ -561,7 +566,7 @@ $E(t)$; the output is a signal versus frequency, $\tilde E(\nu)$,
 which is computed as
 % 
 \begin{equation}
-\tilde E(\nu) = \int_{-T/2}^{T/2} E(t) e^{2 \pi i \nu t} dt \ .
+\tilde E(\nu) = \int_{-T/2}^{T/2} E(t) e^{-2 \pi i \nu t} dt \ .
 \label{eq:dft}
 \end{equation}
 % 
@@ -571,7 +576,7 @@ importance is that the Fourier Transform is {\bf invertible}:
 you can get back to the time domain using the inverse transform
 %
 \begin{equation}
-E(t) = {1 \over B} \int_{-B/2}^{B/2} \tilde E(\nu) e^{-2 \pi i \nu t} d\nu \ .
+E(t) = {1 \over B} \int_{-B/2}^{B/2} \tilde E(\nu) e^{2 \pi i \nu t} d\nu \ .
 \end{equation}
 % 
 This works because (complex) sine waves form a {\bf basis} over the space of functions.
@@ -652,6 +657,41 @@ To find out how to use the DFT, you can type {\tt ugradio.dft.<tab>} to see an
 auto-complete of what is available in the module.  You can also type {\tt ugradio.dft??} to see
 the code, and of course, you can type {\tt ugradio.dft.dft?} to see the documentation for
 the DFT function inside the {\tt dft} module.
+
+{\color{red}
+\subsection{Fourier Filtering and a Secret Message}
+
+As an optional investigation for a virtual class where we don't get as much hands-on experience
+with Fourier filtering, we have provided an audio message encoded as a {\tt numpy} array in the 
+{\tt secret\_message.npz} file. This file holds the waveform ({\tt 'data'}) and the sample
+frequency ({\tt 'fs'}). If you install the python module {\tt sounddevice}:
+\begin{verbatim}
+$ pip install sounddevice
+\end{verbatim}
+you can record:
+\begin{verbatim}
+>>> import sounddevice as sd
+>>> import scipy.io.wavfile
+>>> seconds = 3 # s, recording duration
+>>> fs = 44100 # Hz, sample rate
+>>> recording = sd.rec(int(seconds * fs), samplerate=fs, channels=1) # record from microphone
+>>> sd.wait() # wait for recording to finish
+>>> scipy.io.wavfile.write('output.wav', fs, recording)
+\end{verbatim}
+and play data (from {\tt numpy} arrays!):
+\begin{verbatim}
+>>> fs, data = scipy.io.wavfile.read('output.wav') # read wav file to numpy array
+>>> sd.play(data, fs) # play to speaker
+>>> sd.wait() # wait until finished playing
+\end{verbatim}
+In this case, however, we've stored the data in a {\tt npz} file, not a {\tt wav} file, so you
+don't need to use $\tt scipy$.
+
+The data we have provided contains a secret audio message, but with tons of high-frequency noise
+overlaying it that makes it hard to hear. See if you can use a power spectrum to characterize
+what frequencies cointain the high-frequency noise, then filter the voltage spectrum, transform
+back to a time-domain function (because Fourier transforms are invertible!) and play the secret
+message.}
 
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
