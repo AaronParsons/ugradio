@@ -48,7 +48,7 @@ invest now will pay dividends later in the class.
 This first lab is an excellent time to establish good research and laboratory practices.
 Remember that your grade is determined by the report you turn in
 three weeks from now. All of the exercises that follow are aimed at building your
-understanding and giving you the raw materials (and data) out of which to build that report.
+understanding and giving you the raw materials (and data) from which to build that report.
 You don't have to finish everything, or proceed in the in order presented, but you do have
 to write a quality report that addresses the goals in \S\ref{goals}.
 
@@ -60,25 +60,25 @@ Good notes document how the data are derived from the experimental setup so you 
 If you show your knowledgable GSI a head-scratcher of a plot but cannot remember
 which port of the mixer you plugged the noise into, they may have trouble diagnosing your problem.
 
-\item Back up (or revision control) your data, code, and plots. Nothing is more demoralizing than re-doing work
-or being unable to find the combination of parameters that reproduce a result.
+\item Back up (or revision control) your data, code, and plots. Nothing is more demoralizing than having to redo work
+or being unable to reproduce a result you need.
 
 \item Start your report early. If you plan for which equipment, data, and plots you need
-for your report, your time in the lab will be spent more efficiently and you will avoid the 
-panic that comes from writing up at the last minute.
+for your report, you will spend your time more efficiently and avoid the 
+panic of writing up at the last minute.
 
 \item Formal lectures, the pages linked on AstroBaki, and these lab instructions are 
 resources to help you write a strong report. As in real-life research, there
-is no one text book containing everything you need to know. Explore, take notes, and show
+is no one textbook containing everything you need to know. Explore, take notes, and show
 me what you learned in your report. Remember, I can only grade you on what you write down.
 Make sure what you write down is your own work, in your own words. Cite sources
 external to this class (no need to cite AstroBaki, lecture, or the lab instructions).
 
 \item Your reports will be in the style of scientific publications. They are narratives of explanation and discovery 
-that bring the reader---a science colleague---to the point of being able to understand and have confidence in your results.
-You may be presenting your work, but this report is about the {\it reader's} journey, not yours.
+that bring the reader---a science colleague---to the point of understanding and having confidence in your results.
+You are presenting your work, but this report is about the {\it reader's} journey, not yours.
 It is a presentation of synthesized results with the background and salient details necessary to understand them. 
-It is {\it not} a play-by-play of everything you did, all the plots you made, and all the wrong turns along the way.
+It is {\it not} a play-by-play of everything you did, all the plots you made, and all of the wrong turns along the way.
 
 \end{itemize}
 
@@ -91,30 +91,29 @@ demonstrate you have achieved---are as follows.
 
 \begin{itemize}
 
-\item Learn how to sample electronic signals and convert them into digital signals. Demonstrate
+\item Sample electronic signals and convert them into digital signals. Demonstrate
 the phenomenon of aliasing and quantitatively relate that to the Nyquist criterion.
 
-\item Learn how to correctly use and display Discrete Fourier Transforms (DFTs) to 
+\item Correctly use and display Discrete Fourier Transforms (DFTs) to 
   determine the frequency power spectrum of a time
   series. Correctly calculate and label frequency and power axes in plots and demonstrate
   understanding of how frequency ranges and resolutions are determined from the duration and 
   cadence of samples in a time series.
 
-\item Learn about negative frequencies. Motivate and measure how complex inputs to a Fourier Transform
+\item Demonstrate understanding of negative frequencies. Motivate and measure how complex inputs to a Fourier Transform
 break the positive/negative frequency degeneracy.
 
 %\item Learn about the Fast Fourier Transform (FFT) as a fast
 %  implementation of the DFT.
 
-\item Learn about the origin of noise in electronic measurements and explore how the noise behaves 
+\item Identify and characterize noise in electronic measurements and explore how it behaves 
   under the Fourier Transform.
 
-\item Learn about the convolution/correlation theorem, demonstrate how
+\item Apply the convolution/correlation theorem, explain how
   spectral leakage in a power spectrum can be understood in this framework,
-  and identify the relationship between 
-  autocorrelation functions and power spectra.
+  and test the relationship between autocorrelation functions and power spectra.
 
-\item Learn the basics of mixing for frequency conversion
+\item Derive the basics of mixing for frequency conversion
   (the heterodyne technique) and explore how electronic mixers differ from
   ideal ones. Construct double- and single-sideband mixers and use measurements
   to demonstrate the theoretical and practical differences in their operation.
@@ -122,9 +121,9 @@ break the positive/negative frequency degeneracy.
 \end{itemize}
 
 \noindent
-In order to achieve these goals, you will be developing technical skills that are
-crucial, but need not be written about explicitly in your report. (The quality of
-the report itself will demonstrate your growing proficiency.) These include:
+In order to achieve these goals, you must develop many new technical skills.
+These need not be written about explicitly in your report; the quality of
+the report will itself demonstrate your growing proficiency. These technical skills include:
 
 \begin{itemize}
 
@@ -881,8 +880,12 @@ Engineers call this IQ sampling.
 \end{figure}
 
 From the block diagram in Figure \ref{ssb}, construct an SSB mixer that
-achieves the phase delay with a cable\footnote{Somewhere around the lab
-  we have labelled a cable as being $\lambda/4$ at 21 MHz.}. We will use
+achieves the phase delay with a cable\footnote{In vaccuum, light travels
+1 foot per nanosecond---the only legitimate use of
+imperial units in astronomy. In a cable, light travels about
+70\% slower than in vaccuum. You should be able to use this information
+to get a ballpark estimate of a cable suits your
+needs for a chosen frequency.}. We will use
 it to experiment with no phase delay (a short cable) and a $90^\circ$
 phase delay (a long cable).  For experimentation with this two-output
 mixer, use two frequency synthesizers, as before.
