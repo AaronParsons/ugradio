@@ -664,11 +664,11 @@ the DFT function inside the {\tt dft} module.
 As an optional investigation for a virtual class where we don't get as much hands-on experience
 with Fourier filtering, we have provided an audio message encoded as a {\tt numpy} array in the 
 {\tt secret\_message.npz} file. This file holds the waveform ({\tt 'data'}) and the sample
-frequency ({\tt 'fs'}). If you install the python module {\tt sounddevice}:
+frequency ({\tt 'fs'}). If you install the python module {\tt sounddevice} on {\bf your home computer}:
 \begin{verbatim}
 $ pip install sounddevice
 \end{verbatim}
-you can record:
+you can record (from {\it your home} microphone):
 \begin{verbatim}
 >>> import sounddevice as sd
 >>> import scipy.io.wavfile
@@ -691,7 +691,7 @@ The data we have provided contains a secret audio message, but with tons of high
 overlaying it that makes it hard to hear. See if you can use a power spectrum to characterize
 what frequencies cointain the high-frequency noise, then filter the voltage spectrum, transform
 back to a time-domain function (because Fourier transforms are invertible!) and play the secret
-message.}
+message (again, on {\it your home computer}.}
 
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
@@ -803,6 +803,8 @@ In this section, you will build a double sideband (DSB) mixer (Figure \ref{dsb})
 A mixer is an electronic device that multiplies the two input signals. It is simple: the
 radio frequency (RF) signal goes into one mixer port, the local oscillator (LO) goes into the second
 mixer port, and the intermediate frequency (IF) product is output through the third port.
+{\color{red} In virtual mode, we have wired up a SSB mixer for you with an LO set to 56.25 MHz. However,
+you can sample just one port of this mixer (PicoSampler Port A) to effectively have a DSB mixer.}
 
 \begin{figure}[h!]
 \begin{center}
@@ -906,6 +908,11 @@ together, they produce the real and imaginary components of a complex function
 that can now produce power spectra that contain different information
 at postive and negative frequencies.
 Engineers call this IQ sampling.
+{\color{red} For virtual lab, we have wired up a SSB mixer for you with an LO of 56.25 MHz and
+filters set to 2 MHz. The real (cosine) output is connected to the PicoSampler Port A and the
+imaginary (sine) output is connected to Port B. The $90^\circ$ phase shift of the sine wave
+is produced with a long (26 ft, 40 ns) cable. The value of the RF input signal
+is left for you to determine.}
 
 \begin{figure}[h!]
 \begin{center}
@@ -935,6 +942,8 @@ mixer, use two frequency synthesizers, as before.
 \noindent
 First see what happens when the phase delay cable is short (ideally
 zero), so that the two halves of the SSB are essentially identical.
+{\color{red} For a virtual class, just use the data from port A for both
+the real and imaginary component of your data.}
 Pick a value for $\pm\Delta\nu$ and take time
 series data for the two corresponding values of $\nu_{RF}$ (i.e., the
 upper and lower sidebands). Calculate the power spectra. When taking the
@@ -956,9 +965,23 @@ If you have the time and inclination, verify the phase difference
 between the two mixer outputs.
 Why does it behave this way?  
 
+{\color{red}
+\subsection{Heterodyne Mixing and Another Secret Message}
 
+As another optional virtual investigation ,
+we have provided a second audio message encoded as a {\tt numpy} array in the 
+{\tt mixed\_message.npz} file. As before, this file holds the waveform ({\tt 'data'}) and the sample
+frequency ({\tt 'fs'}). This investigation should be conducted on {\bf your home computer}.
 
-
+If you play the file:
+\begin{verbatim}
+>>> npz = np.load('mixed_message.npz') # read audio from numpy savez
+>>> sd.play(npz['data'], npz['fs']) # play to speaker
+>>> sd.wait() # wait until finished playing
+\end{verbatim}
+it will sound awful. Can you use a combination of Fourier transforms (to identify where the audio signal
+is), mixers (to modulate the signal down to ``baseband"), and Fourier filters (to remove extraneous 
+cross-products) to recover the signal (again, on {\it your home computer})?}
 
 
 
