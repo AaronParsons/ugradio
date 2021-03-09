@@ -4,9 +4,7 @@
 
 from __future__ import print_function
 import socket, serial, time
-try: import thread
-except(ImportError): import _thread as thread
-
+from threading import Thread, Lock
 
 MAX_SLEW_TIME = 60 # seconds
 
@@ -226,21 +224,27 @@ class TelescopeDirect:
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
         self.el_enc_scale = el_enc_scale
+        self._rwlock = Lock() # make sure only one thread accesses
+        self._waitlock = Lock() # box out movement if waiting
         self.init_dish()
     def _read(self, flush=False, bufsize=1024):
         resp = []
+        self._rwlock.acquire() # ensure not mid-sentence before reading
         while len(resp) < bufsize:
             c = self._serial.read(1)
             c = c.decode('ascii')
             if len(c) == 0: break
             if c == b'\r' and not flush: break
             resp.append(c)
+        self._rwlock.release() # finished reading
         resp = b''.join(resp)
         if self.verbose: print('Read:', [resp])
         return resp
     def _write(self, cmd, bufsize=1024):
         if self.verbose: print('Writing', [cmd])
+        self._rwlock.acquire() # ensure not mid-sentence before writing
         self._serial.write(cmd) #Receiving from client
+        self._rwlock.release() # finished writing
         time.sleep(0.1) # Let the configuration command make the change it needs
         return self._read(bufsize=bufsize)
     def init_dish(self):
@@ -261,17 +265,21 @@ class TelescopeDirect:
         self.init_dish()
     def wait_az(self, max_wait=120):
         status = '-1'
+        self._waitlock.acquire() # box out movement
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
             if status == b'0': break
             time.sleep(1)
+        self._waitlock.release() # allow movement again
         return status
     def wait_el(self, max_wait=120):
         status = b'-1'
+        self._waitlock.acquire() # box out movement
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
             if status == b'0': break
             time.sleep(1)
+        self._waitlock.release() # allow movement again
         return status
     def get_az(self):
         az_cnts = float(self._write(b'.a g r0x112\r').split()[1])
@@ -284,7 +292,7 @@ class TelescopeDirect:
         el = (el_cnts - self.el_enc_offset) * DRIVE_DEG_PER_CNT
         return el
     def move_az(self, dishAz):
-        azResponse = self.wait_az()
+        azResponse = self.wait_az() # request movement access
         if azResponse != b'0':
             return b'e 1'
         dishAz = (dishAz + 360.) % 360
@@ -297,7 +305,7 @@ class TelescopeDirect:
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
     def move_el(self, dishEl):
-        elResponse = self.wait_el()
+        elResponse = self.wait_el() # request movement access
         if elResponse != '0':
             return b'e 1'
         # Enforce absolute bounds.  Comment out to override.
@@ -331,8 +339,13 @@ class TelescopeServer(TelescopeDirect):
             while True:
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
-                if self.verbose: print('Request from', (conn,addr))
-                thread.start_new_thread(self._handle_request, (conn,))
+                if self.verbose:
+                    print('Request from', (conn,addr))
+                t = Thread(target=self._handle_request,
+                           args=(conn,), daemon=True)
+                t.start()
+        except Exception as e:
+            print('ERROR\n:', e.message())
         finally:
             s.close()
     def _handle_request(self, conn):
