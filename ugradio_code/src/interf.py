@@ -5,8 +5,6 @@
 from __future__ import print_function
 import socket, serial, time, sys
 from threading import Thread, Lock
-try: import thread
-except(ImportError): import _thread as thread
 
 MAX_SLEW_TIME = 60 # seconds
 
@@ -369,12 +367,9 @@ class TelescopeServer(TelescopeDirect):
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
                 self.log('Request from', (conn,addr))
-                thread.start_new_thread(self._handle_request, (conn,))
-                #t = Thread(target=self._handle_request,
-                #           args=(conn,), daemon=True)
-                #t.start()
-        #except Exception as e:
-        #    print('ERROR\n:', e.message())
+                t = Thread(target=self._handle_request,
+                           args=(conn,), daemon=True)
+                t.start()
         finally:
             s.close()
     def _handle_request(self, conn):
