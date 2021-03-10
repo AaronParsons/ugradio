@@ -367,8 +367,8 @@ class TelescopeServer(TelescopeDirect):
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
                 self.log('Request from', (conn,addr))
-                t = Thread(target=self._handle_request,
-                           args=(conn,), daemon=True)
+                t = Thread(target=self._handle_request, args=(conn,))
+                t.setDaemon(True)
                 t.start()
         finally:
             s.close()
