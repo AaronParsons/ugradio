@@ -221,9 +221,8 @@ DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
 class TelescopeDirect:
     '''Low-level interface for controlling telescope pointing from a Raspberry
     Pi with a direction connection to the telescope.'''
-    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1, verbose=True,
-            az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
-            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+    def __init__(self, serialPort, baudRate, timeout, verbose,
+            az_enc_offset, az_enc_scale, el_enc_offset, el_enc_scale):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
         self.verbose = verbose
         self.az_enc_offset = az_enc_offset
