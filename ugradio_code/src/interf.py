@@ -309,16 +309,25 @@ class TelescopeDirect:
             self.log('Releasing WAIT Lock.')
             self._waitlock.release() # allow movement again
         return status
+    def _get_az_cnt(self):
+        return float(self._write(b'.a g r0x112\r').split()[1])
     def get_az(self):
-        az_cnts = float(self._write(b'.a g r0x112\r').split()[1])
+        az_cnts = self._get_az_cnt()
         az_cnts %= DRIVE_ENCODER_STATES
         az = ((az_cnts - self.az_enc_offset) * DRIVE_DEG_PER_CNT) % 360
         return az
+    def _get_el_cnt(self):
+        return float(self._write(b'.b g r0x112\r').split()[1])
     def get_el(self):
-        el_cnts = float(self._write(b'.b g r0x112\r').split()[1])
+        el_cnts = self._get_el_cnt()
         el_cnts %= DRIVE_ENCODER_STATES
         el = (el_cnts - self.el_enc_offset) * DRIVE_DEG_PER_CNT
         return el
+    def _move_az_cnt(self, delta_cnts):
+        azMoveCmd =  '.a s r0xca ' + str(int(delta_cnts)) + '\r'
+        self._write(azMoveCmd.encode('ascii'))
+        dishResponse = self._write(b'.a t 1\r')
+        return dishResponse
     def move_az(self, dishAz):
         azResponse = self.wait_az() # request movement access
         if azResponse != b'0':
@@ -331,6 +340,11 @@ class TelescopeDirect:
         azMoveCmd =  '.a s r0xca ' + str(int((dishAz / DRIVE_DEG_PER_CNT - az_cnts) * self.az_enc_scale)) + '\r'
         self._write(azMoveCmd.encode('ascii'))
         dishResponse = self._write(b'.a t 1\r')
+        return dishResponse
+    def _move_el_cnt(self, delta_cnts):
+        elMoveCmd =  '.b s r0xca ' + str(int(delta_cnts)) + '\r'
+        self._write(elMoveCmd.encode('ascii'))
+        dishResponse = self._write(b'.b t 1\r')
         return dishResponse
     def move_el(self, dishEl):
         elResponse = self.wait_el() # request movement access
@@ -358,7 +372,7 @@ class TelescopeServer(TelescopeDirect):
     def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
         self.log('Initializing dish...')
-        self.reset_dish()
+        #self.reset_dish()
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host,port))
