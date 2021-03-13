@@ -1,0 +1,7 @@
+#! /bin/bash
+
+pkill picoserver
+sleep 1
+picoserver < /dev/null >& picoserver.log &
+
+exit 0

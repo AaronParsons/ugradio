@@ -3,10 +3,8 @@
 # XXX tracking mode?
 
 from __future__ import print_function
-import socket, serial, time
-try: import thread
-except(ImportError): import _thread as thread
-
+import socket, serial, time, sys
+from threading import Thread, Lock
 
 MAX_SLEW_TIME = 60 # seconds
 
@@ -35,7 +33,8 @@ class TelescopeClient:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(timeout) # seconds
         s.connect(self.hostport)
-        if verbose: print('Sending', [cmd])
+        if verbose:
+            print('Sending', [cmd])
         s.sendall(bytes(cmd, encoding='utf-8'))
         response = []
         while True: # XXX don't like while-True
@@ -43,7 +42,8 @@ class TelescopeClient:
             response.append(r)
             if len(r) < bufsize: break
         response = b''.join(response)
-        if verbose: print('Got Response:', [response])
+        if verbose:
+            print('Got Response:', [response])
         return response
     def point(self, alt, az, wait=True, verbose=False):
         '''Point to the specified alt/az.
@@ -63,7 +63,8 @@ class TelescopeClient:
         resp1 = self._command(CMD_MOVE_AZ+'\n%s\r' % (az - self._delta_az), verbose=verbose)
         resp2 = self._command(CMD_MOVE_EL+'\n%s\r' % (alt - self._delta_alt), verbose=verbose)
         assert((resp1 == b'ok') and (resp2 == b'ok')) # fails if server is down or rejects command
-        if verbose: print('Pointing Initiated')
+        if verbose:
+            print('Pointing Initiated')
         if wait: self.wait(verbose=verbose)
     def wait(self, verbose=False):
         '''Wait until telescope slewing is complete
@@ -78,7 +79,8 @@ class TelescopeClient:
         resp1 = self._command(CMD_WAIT_AZ,  timeout=MAX_SLEW_TIME, verbose=verbose)
         resp2 = self._command(CMD_WAIT_EL, timeout=MAX_SLEW_TIME, verbose=verbose)
         assert((resp1 == b'0') and (resp2 == b'0')) # fails if server is down or rejects command
-        if verbose: print('Pointing Complete')
+        if verbose:
+            print('Pointing Complete')
     def get_pointing(self, verbose=False):
         '''Return the current telescope pointing
 
@@ -127,7 +129,8 @@ PORT = 1420
 DELTA_ALT_ANT_W = -0.5  # (true - encoder) offset
 DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset
 DELTA_ALT_ANT_E =  0.   # (true - encoder) offset
-DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
+DELTA_AZ_ANT_E  = 0     # (true - encoder) offset
+#DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
 
 
 class Interferometer:
@@ -207,7 +210,8 @@ class Interferometer:
         self.ant_e.maintenance(wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
 
-AZ_ENC_OFFSET = 0
+AZ_ENC_OFFSET_W = 0
+AZ_ENC_OFFSET_E = 2921
 AZ_ENC_SCALE = 11.5807213
 EL_ENC_OFFSET = 4096
 EL_ENC_SCALE = 11.566584697
@@ -217,30 +221,49 @@ DRIVE_DEG_PER_CNT = 360. / DRIVE_ENCODER_STATES
 class TelescopeDirect:
     '''Low-level interface for controlling telescope pointing from a Raspberry
     Pi with a direction connection to the telescope.'''
-    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, timeout=1, verbose=True,
-            az_enc_offset=AZ_ENC_OFFSET, az_enc_scale=AZ_ENC_SCALE,
-            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+    def __init__(self, serialPort, baudRate, timeout, verbose,
+            az_enc_offset, az_enc_scale, el_enc_offset, el_enc_scale):
         self._serial = serial.Serial(serialPort, baudRate, timeout=timeout)
         self.verbose = verbose
         self.az_enc_offset = az_enc_offset
         self.az_enc_scale = az_enc_scale
         self.el_enc_offset = el_enc_offset
         self.el_enc_scale = el_enc_scale
+        self._rwlock = Lock() # make sure only one thread accesses
+        self._waitlock = Lock() # box out movement if waiting
         self.init_dish()
+    def log(self, *args):
+        if self.verbose:
+            print(*args)
+            sys.stdout.flush()
     def _read(self, flush=False, bufsize=1024):
         resp = []
-        while len(resp) < bufsize:
-            c = self._serial.read(1)
-            c = c.decode('ascii')
-            if len(c) == 0: break
-            if c == b'\r' and not flush: break
-            resp.append(c)
+        self.log('Acquiring RW Lock...')
+        self._rwlock.acquire() # ensure not mid-sentence before reading
+        self.log('RW Lock acquired.')
+        try:
+            while len(resp) < bufsize:
+                c = self._serial.read(1)
+                c = c.decode('ascii')
+                if len(c) == 0: break
+                if c == b'\r' and not flush: break
+                resp.append(c)
+        finally:
+            self.log('Releasing RW Lock.')
+            self._rwlock.release() # finished reading
         resp = b''.join(resp)
-        if self.verbose: print('Read:', [resp])
+        self.log('Read:', [resp])
         return resp
     def _write(self, cmd, bufsize=1024):
-        if self.verbose: print('Writing', [cmd])
-        self._serial.write(cmd) #Receiving from client
+        self.log('Acquiring RW Lock...')
+        self._rwlock.acquire() # ensure not mid-sentence before writing
+        self.log('RW Lock acquired.')
+        self.log('Writing', [cmd])
+        try:
+            self._serial.write(cmd) #Receiving from client
+        finally:
+            self.log('Releasing RW Lock.')
+            self._rwlock.release() # finished writing
         time.sleep(0.1) # Let the configuration command make the change it needs
         return self._read(bufsize=bufsize)
     def init_dish(self):
@@ -261,30 +284,53 @@ class TelescopeDirect:
         self.init_dish()
     def wait_az(self, max_wait=120):
         status = '-1'
-        for i in range(max_wait):
-            status = self._write(b'.a g r0xc9\r').split()[1]
-            if status == b'0': break
-            time.sleep(1)
+        self.log('Acquiring WAIT Lock...')
+        self._waitlock.acquire() # box out movement
+        self.log('WAIT Lock acquired.')
+        try:
+            for i in range(max_wait):
+                status = self._write(b'.a g r0xc9\r').split()[1]
+                if status == b'0': break
+                time.sleep(1)
+        finally:
+            self.log('Releasing WAIT Lock.')
+            self._waitlock.release() # allow movement again
         return status
     def wait_el(self, max_wait=120):
         status = b'-1'
-        for i in range(max_wait):
-            status = self._write(b'.b g r0xc9\r').split()[1]
-            if status == b'0': break
-            time.sleep(1)
+        self.log('Acquiring WAIT Lock...')
+        self._waitlock.acquire() # box out movement
+        self.log('WAIT Lock acquired.')
+        try:
+            for i in range(max_wait):
+                status = self._write(b'.b g r0xc9\r').split()[1]
+                if status == b'0': break
+                time.sleep(1)
+        finally:
+            self.log('Releasing WAIT Lock.')
+            self._waitlock.release() # allow movement again
         return status
+    def _get_az_cnt(self):
+        return float(self._write(b'.a g r0x112\r').split()[1])
     def get_az(self):
-        az_cnts = float(self._write(b'.a g r0x112\r').split()[1])
+        az_cnts = self._get_az_cnt()
         az_cnts %= DRIVE_ENCODER_STATES
         az = ((az_cnts - self.az_enc_offset) * DRIVE_DEG_PER_CNT) % 360
         return az
+    def _get_el_cnt(self):
+        return float(self._write(b'.b g r0x112\r').split()[1])
     def get_el(self):
-        el_cnts = float(self._write(b'.b g r0x112\r').split()[1])
+        el_cnts = self._get_el_cnt()
         el_cnts %= DRIVE_ENCODER_STATES
         el = (el_cnts - self.el_enc_offset) * DRIVE_DEG_PER_CNT
         return el
+    def _move_az_cnt(self, delta_cnts):
+        azMoveCmd =  '.a s r0xca ' + str(int(delta_cnts)) + '\r'
+        self._write(azMoveCmd.encode('ascii'))
+        dishResponse = self._write(b'.a t 1\r')
+        return dishResponse
     def move_az(self, dishAz):
-        azResponse = self.wait_az()
+        azResponse = self.wait_az() # request movement access
         if azResponse != b'0':
             return b'e 1'
         dishAz = (dishAz + 360.) % 360
@@ -296,8 +342,13 @@ class TelescopeDirect:
         self._write(azMoveCmd.encode('ascii'))
         dishResponse = self._write(b'.a t 1\r')
         return dishResponse
+    def _move_el_cnt(self, delta_cnts):
+        elMoveCmd =  '.b s r0xca ' + str(int(delta_cnts)) + '\r'
+        self._write(elMoveCmd.encode('ascii'))
+        dishResponse = self._write(b'.b t 1\r')
+        return dishResponse
     def move_el(self, dishEl):
-        elResponse = self.wait_el()
+        elResponse = self.wait_el() # request movement access
         if elResponse != '0':
             return b'e 1'
         # Enforce absolute bounds.  Comment out to override.
@@ -321,9 +372,8 @@ class TelescopeServer(TelescopeDirect):
     network requests to point a telescope.'''
     def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
-        if self.verbose:
-            print('Initializing dish...')
-            self.reset_dish()
+        self.log('Initializing dish...')
+        #self.reset_dish()
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host,port))
@@ -331,16 +381,19 @@ class TelescopeServer(TelescopeDirect):
             while True:
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
-                if self.verbose: print('Request from', (conn,addr))
-                thread.start_new_thread(self._handle_request, (conn,))
+                self.log('Request from', (conn,addr))
+                t = Thread(target=self._handle_request, args=(conn,))
+                t.setDaemon(True)
+                t.start()
         finally:
             s.close()
     def _handle_request(self, conn):
         '''Private thread for handling an individual connection.  Will execute
         at most one write and one read before terminating connection.'''
         cmd = conn.recv(1024)
-        if not cmd: return
-        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        if not cmd:
+            return
+        self.log('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
         cmd = cmd.split('\n')
         if cmd[0] == 'simple':
@@ -361,5 +414,37 @@ class TelescopeServer(TelescopeDirect):
             resp = self.reset_dish()
         else:
             resp = ''
-        if self.verbose: print('Returning:', [resp])
+        self.log('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
+
+class TelescopeServerEast(TelescopeServer):
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, 
+            timeout=1, verbose=True,
+            az_enc_offset=AZ_ENC_OFFSET_E, az_enc_scale=AZ_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+        TelescopeServer.__init__(self,
+            serialPort=serialPort,
+            baudRate=baudRate,
+            timeout=timeout,
+            verbose=verbose,
+            az_enc_offset=az_enc_offset,
+            az_enc_scale=az_enc_scale,
+            el_enc_offset=el_enc_offset,
+            el_enc_scale=el_enc_scale,
+        )
+
+class TelescopeServerWest(TelescopeServer):
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, 
+            timeout=1, verbose=True,
+            az_enc_offset=AZ_ENC_OFFSET_W, az_enc_scale=AZ_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+        TelescopeServer.__init__(self,
+            serialPort=serialPort,
+            baudRate=baudRate,
+            timeout=timeout,
+            verbose=verbose,
+            az_enc_offset=az_enc_offset,
+            az_enc_scale=az_enc_scale,
+            el_enc_offset=el_enc_offset,
+            el_enc_scale=el_enc_scale,
+        )

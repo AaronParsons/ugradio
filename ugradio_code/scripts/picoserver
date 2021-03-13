@@ -4,4 +4,4 @@
 # to the picosampler.
 
 import ugradio.pico
-ugradio.pico.picoserver()
+ugradio.pico.picoserver(verbose=True)
