@@ -129,7 +129,8 @@ PORT = 1420
 DELTA_ALT_ANT_W = -0.5  # (true - encoder) offset
 DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset
 DELTA_ALT_ANT_E =  0.   # (true - encoder) offset
-DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
+DELTA_AZ_ANT_E  = 0     # (true - encoder) offset
+#DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
 
 
 class Interferometer:
@@ -209,7 +210,8 @@ class Interferometer:
         self.ant_e.maintenance(wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
 
-AZ_ENC_OFFSET = 0
+AZ_ENC_OFFSET_W = 0
+AZ_ENC_OFFSET_E = 2921
 AZ_ENC_SCALE = 11.5807213
 EL_ENC_OFFSET = 4096
 EL_ENC_SCALE = 11.566584697
@@ -415,3 +417,35 @@ class TelescopeServer(TelescopeDirect):
             resp = ''
         self.log('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
+
+class TelescopeServerEast(TelescopeServer):
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, 
+            timeout=1, verbose=True,
+            az_enc_offset=AZ_ENC_OFFSET_E, az_enc_scale=AZ_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+        TelescopeServer.__init__(self,
+            serialPort=serialPort,
+            baudRate=baudRate,
+            timeout=timeout,
+            verbose=verbose,
+            az_enc_offset=az_enc_offset,
+            az_enc_scale=az_enc_scale,
+            el_enc_offset=el_enc_offset,
+            el_enc_scale=el_enc_scale,
+        )
+
+class TelescopeServerWest(TelescopeServer):
+    def __init__(self, serialPort='/dev/ttyUSB0', baudRate=9600, 
+            timeout=1, verbose=True,
+            az_enc_offset=AZ_ENC_OFFSET_W, az_enc_scale=AZ_ENC_SCALE,
+            el_enc_offset=EL_ENC_OFFSET, el_enc_scale=EL_ENC_SCALE):
+        TelescopeServer.__init__(self,
+            serialPort=serialPort,
+            baudRate=baudRate,
+            timeout=timeout,
+            verbose=verbose,
+            az_enc_offset=az_enc_offset,
+            az_enc_scale=az_enc_scale,
+            el_enc_offset=el_enc_offset,
+            el_enc_scale=el_enc_scale,
+        )
