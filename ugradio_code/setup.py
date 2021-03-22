@@ -31,7 +31,7 @@ setup_args = {
     'install_requires': [
         'astropy>2',
         'numpy',
-        'barycorrpy',
+        #'barycorrpy',
         'serial'],
     'version': '0.0.1',
     #'package_data': {'ugradio': data_files},
