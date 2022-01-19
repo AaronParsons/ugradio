@@ -50,7 +50,7 @@ This first lab is an excellent time to establish good research and laboratory pr
 Remember that your grade is determined by the report you turn in
 three weeks from now. All of the exercises that follow are aimed at building your
 understanding and giving you the raw materials (and data) from which to build that report.
-You don't have to finish everything, or proceed in the in order presented, but you do have
+You don't have to finish everything or proceed in the in order presented, but you do have
 to write a quality report that addresses the goals in \S\ref{goals}.
 
 Here are some specific suggestions for turning these lab instructions into a successful report:
@@ -66,7 +66,8 @@ or being unable to reproduce a result you need.
 
 \item Start your report early. If you plan for which equipment, data, and plots you need
 for your report, you will spend your time more efficiently and avoid the 
-panic of writing up at the last minute.
+panic of writing up at the last minute. If you write descriptions and captions as you go,
+you save yourself the existential horror of the blank page.
 
 \item Formal lectures, the pages linked on AstroBaki, and these lab instructions are 
 resources to help you write a strong report. As in real-life research, there
@@ -122,19 +123,22 @@ break the positive/negative frequency degeneracy.
 \end{itemize}
 
 \noindent
-In order to achieve these goals, you must develop many new technical skills.
+In order to achieve these goals, you must develop many new technical skills. Resources
+on Astrobaki, in these instructions, and on the World Wide Web are all at your disposal.
 These need not be written about explicitly in your report; the quality of
-the report will itself demonstrate your growing proficiency. These technical skills include:
+the report itself demonstrates your growing proficiency. These technical skills include:
 
 \begin{itemize}
 
-\item Using the Python programming language for analysis, signal processing, and plotting,
+\item Using the Python programming language for experimental control, analysis, 
+signal processing, and plotting,
 
 \item Learning enough \LaTeX to write up your results in a formal lab
   report that including an abstract, captioned figures, tables, and citations.
 
 \item Gaining familiarity with configuring laboratory equipment 
-and navigating the computing environment.
+and navigating the computing environment in the lab and (optionally)
+on your Raspberry Pi.
 
 \end{itemize}
 
@@ -173,7 +177,7 @@ of building sound code is broadly referred to as software engineering, and
 it may be one of the most marketable skills you learn in this class.
 
 Learning to engineer good software can take a lifetime, but let us start with a few
-principles in this lab.
+principles for this lab.
 
 \begin{itemize}
 
@@ -192,7 +196,7 @@ re-code it to get the organization and interfaces right. Time spent organizing a
 dividends later.
 
 \item {\it Test your code.} How do you know your code is doing what it should? Yes, it may run
-without raising an exception, but that doesn't mean it did what you intended. In software as in science,
+without raising an exception, but that doesn't necessarily mean it did what you intended. In software as in science,
 you can only trust something to the extent that you have tested it.
 Keep your tests organized so that you know what you have tested, and how. Modular testing (a.k.a 
 {\bf unit testing}) is the key to success in large
@@ -272,17 +276,20 @@ also review the key course content for this week: Nyquist Sampling and the Fouri
 \subsubsection{The {\tt ugradio} Python Package}
 
 \noindent
-{\bf Modules} are a way to distribute and reuse Python code.  They are themselves
-just bundles code that you {\tt import} into your program, where you can
+{\bf Modules} are a way to distribute and reuse Python code.  They are 
+just files containing code that you {\tt import} into your program where you can
 access everything as if you'd written it yourself.  {\bf Packages} are bundles
 of modules that can all be installed together.  For this class, we will be using
 the {\tt ugradio} package to provide supporting code for your labs.  This package
-is already installed on the lab computers (you can test this by opening {\tt ipython}
+is already installed on the lab computers and (once you've cloned your SD Card from
+us) on your Raspberry Pi (you can test this by opening {\tt ipython}
 and typing {\tt import ugradio}).  If you ever need to install it on another computer,
 all of the code is on GitHub and linked to from the course website.  
 
-You will make use of two modules inside of the {\tt ugradio} package: {\tt pico}, and {\tt dft}.
-Take a minute to browse the code in these two modules so that you understand how to use it.
+Depending on the activities you pick below, you will use any of three modules 
+inside of the {\tt ugradio} package:
+{\tt pico}, {\tt dft}, and {\tt sdr}.
+Take a minute to browse the code in these modules so that you understand how to use it.
 
 \begin{itemize}
 
@@ -291,6 +298,9 @@ Take a minute to browse the code in these two modules so that you understand how
 \item {\tt ugradio.dft} --- provides code for doing arbitrary Discrete Fourier Transforms.  This
 contrasts the functionality of {\tt numpy.fft}, which can only do certain kinds of
 Discrete Fourier Transforms, but can do them very fast.
+
+\item {\tt ugradio.sdr} --- provides code for interfacing to the Software-Defined
+Radio (SDR) receiver attached to your Raspberry Pi.
 
 %\item {\tt srs1\_frq.pro} --- sets the frequency of one of the SRS
 %  function generators. If you are lazy, you can set the SRSs by hand. If
@@ -302,9 +312,12 @@ Discrete Fourier Transforms, but can do them very fast.
 \end{itemize}
 
 
-\subsection{Your First Digital Sampling: the Nyquist Criterion}
+\subsection{Digital Sampling and the Nyquist Criterion}
 
 \noindent
+This activity makes use of lab equipment. A adaptation for remote access is
+illustrated in {\color{red} red} below.
+
 In class, we learned about the 
 Nyquist criterion for sampling discretely in time. 
 Sampling too slowly results in a signal being aliased, but oversampling
@@ -314,7 +327,86 @@ and comparing the recovered signal
 to the original for different ratios of the signal frequency ($\nu_0$) and the
 sampling frequency ($\nu_s$).
 
-In the lab, we will sample signals using a PicoSampler 2000 Analog-to-Digital Converter (ADC).
+There are three ways to do this activity, depending on if you have access to a
+Raspberry Pi (RPi) and if you are able to be physically present in the lab. You can,
+\begin{itemize}
+\item use an SDR module on your RPi to sample a fixed signal at different sample
+rates (in person, recommended),
+\item use a laboratory sampler to sample different signals with the same sample rate
+(in person), or
+\item upon request, we will set up two mystery signals into the laboratory sampler and you can use remote access to our lab computers to try to characterize using the sampler (remote).
+\end{itemize}
+\noindent
+We describe each of these options in separate sections below.
+
+The goal of this investigation is to help you produce a section of your report
+that discusses the phenomenon of aliasing. That section should provide both
+theoretical background and laboratory data/analysis demonstrating the
+phenomenon and your understanding of it. Ideally, this section should be framed
+as a targetted question that you pose and then answer.
+
+The more specific the
+question, generally the better your report will read. For example, ``{\it what
+is aliasing}" is too broad of a framing. ``{\it How many Nyquist zones
+can I demonstrate using my RPi SDR module}" is a tighter framing with
+a quantifiable answer that you can provide evidence to support. Even better
+would be ``{\it using aliasing (on purpose), can I characterize
+an analog filter?}" Feel free to create (and answer) your own unique question.
+
+\subsubsection{Option 1: Raspberry Pi with SDR}
+
+\noindent
+We assume you have followed the instructions on AstroBaki for 
+{\it Setting Up Your Raspberry Pi}. If you have imaged your SD Card from a lab copy, you
+should be good to go. Feel free to connect up the keyboard, monitor, and power on the lab
+bench, and then plug in an SDR module 
+(e.g. the Nooelec NESDR SMART) into your RPi's USB port and pull up a terminal on
+your RPi.
+
+A good start is to hook up a cheap antenna to the NESDR input,
+run {\tt gqrx} at the terminal, press the ``Play" button, and then fiddle with the
+settings (e.g., Automatic Gain Control, WFM Stereo). With audio output hooked up, 
+you should be able to listen to Frequency Modulated (FM) 
+radio by setting an appropriate center frequency (in the US, FM spans
+87.8--108 MHz).
+
+Listening to radio broadcasts is fun, but we need to figure out
+what is actually happening between the antenna and the output.
+The SDR modules we have chosen for this
+lab are based off of two chips: the R820T2 (a tuner chip), and the RTL2832U (a digital
+sampling, filtering, and demodulation chip).
+These SDR modules are very versatile and can be coaxed into doing all sorts of
+useful things, but for starters, we would like to bypass most of it
+and just use the ADC samplers
+inside the RTL2832U. This is called {\bf direct sampling}, and is supported
+with the {\tt ugradio.sdr.capture\_data\_direct} function.
+
+Using a function generator, generate a sine wave around $\nu=100$ kHz with a 
+$V_{\rm PP}=100$ mV peak-to-peak
+voltage and send it to the input of the SDR module plugged into your RPi.
+We suggest using a co-axial T joint so
+you can put a copy of the signal you are sampling into an oscilloscope.
+Good science is founded on inspection, verification, and documentation. In that spirit,
+inspect the signal you are sampling at each step with the oscilloscope, verify that it matches that amplitude
+and period you set on the function generator, and document the settings used and files generated
+in your lab notebook.
+
+Now, using python on your RPi (either interactively with {\tt ipython} or by writing
+a script), use {\tt capture\_data\_direct} to collect some data and plot it.
+You can set the {\tt sample\_rate} in the range of $\nu_s=200$--300 kHz, or 1.0--2.2 MHz. Experiment
+with various combinations of $\nu_s$ and input frequency and see what frequency
+sine waves you observe in your data.
+
+You will notice that, for a fixed $\nu_s$, the amplitude
+of the sine wave you measure will change for different values of $\nu$ input. This
+happens as a result of some filters inside of the RTL2832U chip. Try setting $\nu_s=250$ kHz
+and explore different values of $\nu$, using aliasing to probe different Nyquist zones to
+examine the filter response of the RTL2832U.
+
+\subsubsection{Option 2: Using the Laboratory PicoSampler 2000}
+
+\noindent
+In the lab, we can sample signals using a PicoSampler 2000 Analog-to-Digital Converter (ADC).
 The sampling frequency is set during data acquisition with the {\tt capture\_data} function
 in {\tt ugradio.pico} module, but the ADC only samples at
 quantized values of $62.5~{\rm MHz} / N$, where $N$ (set by the {\tt divisor} parameter)
@@ -325,25 +417,40 @@ different sample frequencies for a fixed $\nu_0$, we will do the reverse:
 	\item Pick a convenient sampling frequency $\nu_s$, then
 	\item Set the synthesizer to frequency $\nu_0 = (0.1, 0.2,
 	  0.3, \dots, 0.9)~\nu_s$ and take data.
-{\color{red} For the virtual version of this lab, we have instead supplied two signals whose true frequencies you can try to characterize using the sampler.}
 \end{itemize}
-
-\noindent We suggest using a co-axial T joint so
-you can put a copy of the signal you are sampling into an oscilloscope.
-Good science is about inspection, verification, and documentation. In that spirit,
-inspect the signal you are sampling at each step with the oscilloscope, verify that it matches that amplitude
-and period you set on the function generator, and document the settings used and files generated
-in your lab notebook.
+\noindent As in Option 1, we suggest using a co-axial T joint and
+connecting a copy of the signal to an oscilloscope for inspection.
 
 Use {\tt ugradio.pico.capture\_data} to get your data, which will appear in the form
-of a numpy array.  You should save this array to a file
-with {\tt numpy.save} or {\tt numpy.savez}.  Your analysis scripts can then 
-load data from this file with {\tt numpy.load}.
+of a numpy array.
 The sampler gives you {\tt nsamples=16000} samples, which is to
 say that you can change how many samples you request, but it defaults to 16000. 
 Be sure to set the
 peak-to-peak voltage of the ADC so the input signal does not saturate it, but is much
 bigger than the quantized states of the ADC.
+
+\subsubsection{Option 3: Instructors Set Up Mystery Signals}
+
+If doing this lab virtually, let an instructor know when you plan on conducting an
+``observation."  We will connect two signals to the PicoSampler whose true frequencies 
+you can try to characterize. You will have to log in remotely to a laboratory
+computer ({\tt ssh username@ugastro.berkeley.edu}; see {\it Connecting to Laboratory
+Computers Remotely} on AstroBaki). From there, you may run the same data acquisition
+commands (e.g. {\tt ugradio.pico.capture\_data}) as in Option 2.
+
+\subsubsection{Elements Common to All Options}
+
+Regardless of the option you chose, you should document the approach you are using,
+the hardware involved (brand, part number), and (particularly for Option 3) the
+time of signal acquisition.
+
+Once you have acquired an array of data, you should save it to a file
+with {\tt numpy.savez}.  Your analysis scripts can then 
+load data from this file with {\tt numpy.load}. These files represent the interface
+between your data acquisition code and your analysis code, and good design often
+boils down to good interfaces. In this case, that could mean adding a bunch of meta-data
+to your {\tt numpy.savez} call (it accepts multiple arrays/scalars) so that you have
+all the information you need for analysis and presentation sitting right there with your data.
 
 For each dataset, use the {\tt matplotlib.pyplot} package (typically imported
 as {\tt import matplotlib.pyplot as plt} to plot
@@ -363,7 +470,7 @@ stands alone as a description of the plot and what it demonstrates.
 For each of the datasets you take, derive and plot the Fourier power spectrum
 (e.g. the square magnitude of the voltage spectrum; see \S\ref{dft} and \S\ref{pwrspect}). You can use {\tt numpy.fft} to do the Fourier
 transform, 
-but we suggest using our homegrown {\tt ugradio.dft} version until you have mastered dealing with
+but feel free to use our homegrown {\tt ugradio.dft} version until you have mastered dealing with
 Fourier units and the subtleties of {\tt fftshift}.
 
 Now, examining the results, draw your own conclusion: what is the
