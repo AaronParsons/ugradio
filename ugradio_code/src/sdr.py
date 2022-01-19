@@ -7,7 +7,7 @@ import numpy as np
 
 SAMPLE_RATE_TOLERANCE = 0.1 # Hz
 
-def capture_data(nsamples=2048, sample_rate=2.2e6, gain=1.):
+def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
     '''
     Use the SDR dongle as an ADC to directly capture voltage samples from the
     input. Note that the analog system on these devices only lets through
@@ -18,7 +18,7 @@ def capture_data(nsamples=2048, sample_rate=2.2e6, gain=1.):
         gain (float): gain to apply. Probably unnecessary, as direct sampling
             should bypass the gain stage.
     Returns:
-        numpy array (dtype XXX) with dimensions (A,B,C)
+        numpy array (dtype float64) with dimensions (nsamples,)
     '''
     sdr = RtlSdr()
     sdr.set_direct_sampling('q') # read from RF directly
