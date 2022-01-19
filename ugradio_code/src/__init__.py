@@ -11,6 +11,7 @@ except ImportError as error:
     print(error) # Does not pass silently
     pass
 
+from . import sdr
 from . import pico
 from . import dft
 from . import agilent
