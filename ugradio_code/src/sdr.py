@@ -6,6 +6,7 @@ from rtlsdr import RtlSdr
 import numpy as np
 
 SAMPLE_RATE_TOLERANCE = 0.1 # Hz
+BUFFER_SIZE = 4096
 
 def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
     '''
@@ -27,6 +28,7 @@ def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
     #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
     sdr.set_gain(gain) # adjust input gain XXX does this matter?
     #assert gain == sdr.get_gain()
+    _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
     data = sdr.read_samples(nsamples)
     data = data.real # only real values have meaning
     return data
