@@ -31,10 +31,10 @@ setup_args = {
     'install_requires': [
         'astropy>2',
         'numpy',
-       # 'pyrtlsdr',
         #'barycorrpy',
         'serial',
         'scipy'],
+    'extras_require': {'sdr': ['pyrtlsdr']},
     'version': '0.0.1',
     #'package_data': {'ugradio': data_files},
     'zip_safe': False,
