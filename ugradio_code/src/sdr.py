@@ -1,4 +1,4 @@
-'This module uses the pyrtlsdr package (built on librtlsdr) to interface
+'''This module uses the pyrtlsdr package (built on librtlsdr) to interface
 to SDR dongles based on the RTL2832/R820T2 chipset.'''
 
 from __future__ import print_function
@@ -50,7 +50,7 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
         numpy array (dtype float64) with dimensions (nsamples,)
     '''
     sdr = RtlSdr()
-    sdr.set_direct_sampling(0)
+    sdr.set_direct_sampling(0) # standard I/Q sampling mode
     sdr.set_center_freq(center_freq)
     sdr.set_sample_rate(sample_rate)
     #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
@@ -58,6 +58,6 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
     #assert gain == sdr.get_gain()
     _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
     data = sdr.read_samples(nsamples)
-    data = data.real # only real values have meaning
+    #data = data.real # only real values have meaning
     return data
     
