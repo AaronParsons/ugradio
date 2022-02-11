@@ -16,7 +16,7 @@ def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
     Arguments:
         nsamples (int): number of samples to acquire. Default 2048.
         sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
-        gain (float): gain to apply. Probably unnecessary, as direct sampling
+        gain (float): gain in dB to apply. Probably unnecessary, as direct sampling
             should bypass the gain stage.
     Returns:
         numpy array (dtype float64) with dimensions (nsamples,)
@@ -45,7 +45,7 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
         center_freq (float): center frequency to offset by. 
         nsamples (int): number of samples to acquire. Default 2048.
         sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
-        gain (float): gain to apply.
+        gain (float): gain in dB to apply.
     Returns:
         numpy array (dtype float64) with dimensions (nsamples,)
     '''
