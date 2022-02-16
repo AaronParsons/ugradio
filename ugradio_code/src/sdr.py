@@ -4,6 +4,7 @@ to SDR dongles based on the RTL2832/R820T2 chipset.'''
 from __future__ import print_function
 from rtlsdr import RtlSdr
 import numpy as np
+import time
 try:
     import asyncio
 except ImportError as e:
@@ -43,7 +44,8 @@ def capture_data_mixer(
         nsamples=2048,
         nblocks=1,
         sample_rate=2.2e6,
-        gain=1.
+        gain=1.,
+        sleep=0.1
 ):
     '''
     Use the SDR dongle as an ADC to capture voltage samples from the
@@ -55,8 +57,10 @@ def capture_data_mixer(
         center_freq (float): center frequency to offset by. (LO frequency) 
         nsamples (int): number of samples to acquire. Default 2048.
         nblocks (int): number of blocks of data. Default 1.
-        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
-        gain (float): gain in dB to apply.
+        sample_rate (float): sample rate in Hz to use. Default 2.2e6.
+        gain (float): gain in dB to apply. Default 1.
+        sleep (float): seconds to sleep between blocks to prevent timeout.
+        Default 0.1.
     Returns:
         numpy array (dtype float64) with dimensions (nsamples,)
     '''
@@ -71,6 +75,7 @@ def capture_data_mixer(
     _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
     for i in range(nblocks):
         data[i] = sdr.read_samples(nsamples)
+        time.sleep(sleep)
     return data
     
 async def capture_data_aio(
