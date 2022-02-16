@@ -77,8 +77,9 @@ def capture_data_mixer(
         data[i] = sdr.read_samples(nsamples)
         time.sleep(sleep)
     return data
-    
-async def capture_data_aio(
+     
+
+def capture_data_aio(
         center_freq,
         nsamples=2048,
         nblocks=1,
@@ -107,8 +108,20 @@ async def capture_data_aio(
     #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
     sdr.set_gain(gain)
     #assert gain == sdr.get_gain()
-    data = np.empty((nblocks, nsamples))
-    _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-    for i in range(nblocks):
-        data[i] = sdr.read_samples(nsamples)
-    return data
+    async def streaming():
+        data = np.empty((nblocks, nsamples))
+        _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
+        async for count, samples in enumerate(sdr.stream()):
+            data[count] = samples
+            if count >= nblocks:
+                break
+
+         sdr.stop()
+         await sdr.stop()
+         sdr.close()
+         await sdr.close()
+         return data
+     loop = asyncio.get_event_loop()
+     data = loop.run_until_complete(streaming())
+     return data
+     
