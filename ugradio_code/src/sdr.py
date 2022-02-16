@@ -10,7 +10,7 @@ try:
 except ImportError as e:
     print(e)
 
-SAMPLE_RATE_TOLERANCE = 0.1 # Hz
+SAMPLE_RATE_TOLERANCE = 0.1  # Hz
 BUFFER_SIZE = 4096
 
 
@@ -26,8 +26,9 @@ async def _streaming(nblocks, nsamples):
     stop = sdr.stop()
     await stop
     close = sdr.close()
-    await close 
+    await close
     return data
+
 
 def capture_data(
         direct=True,
@@ -38,8 +39,10 @@ def capture_data(
         gain=0.,
 ):
     """
-    Use the SDR dongle to capture voltage samples from the input. Note that the
-    analog system on these devices only lets through signals from 0.5 to 24 MHz.
+    Use the SDR dongle to capture voltage samples from the input. Note that
+     the analog system on these devices only lets through signals from 0.5 to
+    24 MHz.
+
     There are two modes (corresponding to the value of direct):
     direct = True: the direct sampling is enabled (no mixing), center_freq does
     not matter and gain probably does not matter. Data returned is real.
@@ -57,7 +60,7 @@ def capture_data(
         direct == True. Default: 0.
 
     Returns:
-       numpy.ndarray of type float64 (direct == True) or complex64 
+       numpy.ndarray of type float64 (direct == True) or complex64
        (direct == False). Shape is (nblocks, nsamples) when nblocks > 1 or
        (nsamples,) when nblocks == 1.
     """
