@@ -116,12 +116,12 @@ def capture_data_aio(
             if count >= nblocks:
                 break
 
-         sdr.stop()
-         await sdr.stop()
-         sdr.close()
-         await sdr.close()
-         return data
-     loop = asyncio.get_event_loop()
-     data = loop.run_until_complete(streaming())
-     return data
+        sdr.stop()
+        await sdr.stop()
+        sdr.close()
+        await sdr.close()
+        return data
+    loop = asyncio.get_event_loop()
+    data = loop.run_until_complete(streaming())
+    return data
      
