@@ -4,6 +4,10 @@ to SDR dongles based on the RTL2832/R820T2 chipset.'''
 from __future__ import print_function
 from rtlsdr import RtlSdr
 import numpy as np
+try:
+    import asyncio
+except ImportError as e:
+    print(e)
 
 SAMPLE_RATE_TOLERANCE = 0.1 # Hz
 BUFFER_SIZE = 4096
@@ -34,7 +38,13 @@ def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
     return data
  
 
-def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
+def capture_data_mixer(
+        center_freq,
+        nsamples=2048,
+        nblocks=1,
+        sample_rate=2.2e6,
+        gain=1.
+):
     '''
     Use the SDR dongle as an ADC to capture voltage samples from the
     input. Unlike the capture_data_direct, we do not attempt to capture data
@@ -42,8 +52,9 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
     Note that the analog system on these devices only lets through
     signals from 0.5 to 24 MHz.
     Arguments:
-        center_freq (float): center frequency to offset by. 
+        center_freq (float): center frequency to offset by. (LO frequency) 
         nsamples (int): number of samples to acquire. Default 2048.
+        nblocks (int): number of blocks of data. Default 1.
         sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
         gain (float): gain in dB to apply.
     Returns:
@@ -56,8 +67,43 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
     #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
     sdr.set_gain(gain)
     #assert gain == sdr.get_gain()
+    data = np.empty((nblocks, nsamples))
     _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-    data = sdr.read_samples(nsamples)
-    #data = data.real # only real values have meaning
+    for i in range(nblocks):
+        data[i] = sdr.read_samples(nsamples)
     return data
     
+async def capture_data_aio(
+        center_freq,
+        nsamples=2048,
+        nblocks=1,
+        sample_rate=2.2e6,
+        gain=1.
+):
+    '''
+    Use the SDR dongle as an ADC to capture voltage samples from the
+    input. Unlike the capture_data_direct, we do not attempt to capture data
+    directly but allows downconverting frequencies in the SDR.
+    Note that the analog system on these devices only lets through
+    signals from 0.5 to 24 MHz.
+    Arguments:
+        center_freq (float): center frequency to offset by. (LO frequency) 
+        nsamples (int): number of samples to acquire. Default 2048.
+        nblocks (int): number of blocks of data. Default 1.
+        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
+        gain (float): gain in dB to apply.
+    Returns:
+        numpy array (dtype float64) with dimensions (nsamples,)
+    '''
+    sdr = RtlSdr()
+    sdr.set_direct_sampling(0) # standard I/Q sampling mode
+    sdr.set_center_freq(center_freq)
+    sdr.set_sample_rate(sample_rate)
+    #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
+    sdr.set_gain(gain)
+    #assert gain == sdr.get_gain()
+    data = np.empty((nblocks, nsamples))
+    _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
+    for i in range(nblocks):
+        data[i] = sdr.read_samples(nsamples)
+    return data
