@@ -111,8 +111,10 @@ def capture_data_aio(
     async def streaming():
         data = np.empty((nblocks, nsamples))
         _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-        async for count, samples in enumerate(sdr.stream(num_samples_or_bytes=nsamples)):
+        count = 0
+        async for samples in sdr.stream(num_samples_or_bytes=nsamples):
             data[count] = samples
+            count += 1
             if count >= nblocks:
                 break
 
