@@ -1,5 +1,5 @@
-'''This module uses the pyrtlsdr package (built on librtlsdr) to interface
-to SDR dongles based on the RTL2832/R820T2 chipset.'''
+"""This module uses the pyrtlsdr package (built on librtlsdr) to interface
+to SDR dongles based on the RTL2832/R820T2 chipset."""
 
 from __future__ import print_function
 from rtlsdr import RtlSdr
@@ -13,117 +13,72 @@ except ImportError as e:
 SAMPLE_RATE_TOLERANCE = 0.1 # Hz
 BUFFER_SIZE = 4096
 
-def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
-    '''
-    Use the SDR dongle as an ADC to directly capture voltage samples from the
-    input. Note that the analog system on these devices only lets through
-    signals from 0.5 to 24 MHz.
-    Arguments:
-        nsamples (int): number of samples to acquire. Default 2048.
-        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
-        gain (float): gain in dB to apply. Probably unnecessary, as direct sampling
-            should bypass the gain stage.
-    Returns:
-        numpy array (dtype float64) with dimensions (nsamples,)
-    '''
-    sdr = RtlSdr()
-    sdr.set_direct_sampling('q') # read from RF directly
-    sdr.set_center_freq(0) # essentially turn off the LO
-    sdr.set_sample_rate(sample_rate)
-    #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
-    sdr.set_gain(gain) # adjust input gain XXX does this matter?
-    #assert gain == sdr.get_gain()
-    _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-    data = sdr.read_samples(nsamples)
-    data = data.real # only real values have meaning
-    return data
- 
 
-def capture_data_mixer(
-        center_freq,
+async def _streaming(nblocks, nsamples):
+    data = np.empty((nblocks, nsamples), dtype="complex64")
+    count = 0
+    async for samples in sdr.stream(num_samples_or_bytes=nsamples):
+        data[count] = samples
+        count += 1
+        if count >= nblocks:
+            break
+
+    stop = sdr.stop()
+    await stop
+    close = sdr.close()
+    await close 
+    return data
+
+def capture_data(
+        direct=True,
+        center_freq=1420e6,
         nsamples=2048,
-        nblocks=1,
+        nblocks=1
         sample_rate=2.2e6,
-        gain=1.,
-        sleep=1e-3
+        gain=0.,
 ):
-    '''
-    Use the SDR dongle as an ADC to capture voltage samples from the
-    input. Unlike the capture_data_direct, we do not attempt to capture data
-    directly but allows downconverting frequencies in the SDR.
-    Note that the analog system on these devices only lets through
-    signals from 0.5 to 24 MHz.
-    Arguments:
-        center_freq (float): center frequency to offset by. (LO frequency) 
-        nsamples (int): number of samples to acquire. Default 2048.
-        nblocks (int): number of blocks of data. Default 1.
-        sample_rate (float): sample rate in Hz to use. Default 2.2e6.
-        gain (float): gain in dB to apply. Default 1.
-        sleep (float): seconds to sleep between blocks to prevent timeout.
-        Default 0.1.
-    Returns:
-        numpy array (dtype float64) with dimensions (nsamples,)
-    '''
-    sdr = RtlSdr()
-    sdr.set_direct_sampling(0) # standard I/Q sampling mode
-    sdr.set_center_freq(center_freq)
-    sdr.set_sample_rate(sample_rate)
-    #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
-    sdr.set_gain(gain)
-    #assert gain == sdr.get_gain()
-    data = np.empty((nblocks, nsamples))
-    _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-    for i in range(nblocks):
-        data[i] = sdr.read_samples(nsamples)
-        time.sleep(sleep)
-    return data
-     
+    """
+    Use the SDR dongle to capture voltage samples from the input. Note that the
+    analog system on these devices only lets through signals from 0.5 to 24 MHz.
+    There are two modes (corresponding to the value of direct):
+    direct = True: the direct sampling is enabled (no mixing), center_freq does
+    not matter and gain probably does not matter. Data returned is real.
+    direct = False: use the standard I/Q sampling, center_freq is the LO of the
+    mixer. Returns complex data.
 
-def capture_data_aio(
-        center_freq,
-        nsamples=2048,
-        nblocks=1,
-        sample_rate=2.2e6,
-        gain=1.
-):
-    '''
-    Use the SDR dongle as an ADC to capture voltage samples from the
-    input. Unlike the capture_data_direct, we do not attempt to capture data
-    directly but allows downconverting frequencies in the SDR.
-    Note that the analog system on these devices only lets through
-    signals from 0.5 to 24 MHz.
     Arguments:
-        center_freq (float): center frequency to offset by. (LO frequency) 
-        nsamples (int): number of samples to acquire. Default 2048.
-        nblocks (int): number of blocks of data. Default 1.
-        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
-        gain (float): gain in dB to apply.
-    Returns:
-        numpy array (dtype float64) with dimensions (nsamples,)
-    '''
-    sdr = RtlSdr()
-    sdr.set_direct_sampling(0) # standard I/Q sampling mode
-    sdr.set_center_freq(center_freq)
-    sdr.set_sample_rate(sample_rate)
-    #assert abs(sample_rate - sdr.get_sample_rate()) < SAMPLE_RATE_TOLERANCE
-    sdr.set_gain(gain)
-    #assert gain == sdr.get_gain()
-    async def streaming():
-        data = np.empty((nblocks, nsamples))
-        _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-        count = 0
-        async for samples in sdr.stream(num_samples_or_bytes=nsamples):
-            data[count] = samples
-            count += 1
-            if count >= nblocks:
-                break
+        direct (bool): which mode to use. Default: True.
+        center_freq (float): the center frequency in Hz of the downconverter
+        (LO of mixer). Ignored if direct == True. Default: 1420e6.
+        nsamples (int): number of samples to acquire. Default: 2048.
+        nblocks (int): number of blocks of samples to acquire. Default: 1.
+        sample_rate (float): sample rate in Hz. Default: 2.2e6.
+        gain (float): gain in dB to apply. Probably unnecessary when
+        direct == True. Default: 0.
 
-        sdr.stop()
-        await sdr.stop()
-        sdr.close()
-        await sdr.close()
-        return data
-    loop = asyncio.get_event_loop()
-    data = loop.run_until_complete(streaming())
-    return data
-     
+    Returns:
+       numpy.ndarray of type float64 (direct == True) or complex64 
+       (direct == False). Shape is (nblocks, nsamples) when nblocks > 1 or
+       (nsamples,) when nblocks == 1.
+    """
+    sdr = RtlSdr()
+    if direct:
+        sdr.set_direct_sampling('q')
+        sdr.set_center_freq(0)  # turn off the LO
+    else:
+        sdr.set_direct_sampling(0)
+        sdr.set_center_freq(center_freq)
+    sdr.set_gain(gain)
+    sdr.set_sample_rate(sample_rate)
+    _ = sdr.read_samples(BUFFER_SIZE)  # clear the buffer
+    if nblocks == 1:
+        data = sdr.read_samples(nsamples)
+    else:
+        loop = asyncio.get_event_loop()
+        data = loop.run_until_complete(_streaming(nblocks, nsamples))
+   if direct:
+       return data.real
+   else:
+       return data
+
+
