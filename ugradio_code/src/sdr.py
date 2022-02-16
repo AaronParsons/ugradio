@@ -4,7 +4,6 @@ to SDR dongles based on the RTL2832/R820T2 chipset."""
 from __future__ import print_function
 from rtlsdr import RtlSdr
 import numpy as np
-import time
 try:
     import asyncio
 except ImportError as e:
@@ -14,7 +13,7 @@ SAMPLE_RATE_TOLERANCE = 0.1  # Hz
 BUFFER_SIZE = 4096
 
 
-async def _streaming(nblocks, nsamples):
+async def _streaming(sdr, nblocks, nsamples):
     data = np.empty((nblocks, nsamples), dtype="complex64")
     count = 0
     async for samples in sdr.stream(num_samples_or_bytes=nsamples):
@@ -78,10 +77,9 @@ def capture_data(
         data = sdr.read_samples(nsamples)
     else:
         loop = asyncio.get_event_loop()
-        data = loop.run_until_complete(_streaming(nblocks, nsamples))
+        data = loop.run_until_complete(_streaming(sdr, nblocks, nsamples))
     if direct:
         return data.real
     else:
         return data
-
 
