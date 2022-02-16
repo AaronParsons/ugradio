@@ -25,7 +25,6 @@ async def _streaming(sdr, nblocks, nsamples):
     stop = sdr.stop()
     await stop
     close = sdr.close()
-    await close
     return data
 
 
