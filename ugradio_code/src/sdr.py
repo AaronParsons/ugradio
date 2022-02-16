@@ -34,7 +34,7 @@ def capture_data(
         direct=True,
         center_freq=1420e6,
         nsamples=2048,
-        nblocks=1
+        nblocks=1,
         sample_rate=2.2e6,
         gain=0.,
 ):
