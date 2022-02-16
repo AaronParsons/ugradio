@@ -45,7 +45,7 @@ def capture_data_mixer(
         nblocks=1,
         sample_rate=2.2e6,
         gain=1.,
-        sleep=0.1
+        sleep=1e-3
 ):
     '''
     Use the SDR dongle as an ADC to capture voltage samples from the
@@ -111,7 +111,7 @@ def capture_data_aio(
     async def streaming():
         data = np.empty((nblocks, nsamples))
         _ = sdr.read_samples(BUFFER_SIZE) # clear the buffer
-        async for count, samples in enumerate(sdr.stream()):
+        async for count, samples in enumerate(sdr.stream(num_samples_or_bytes=nsamples)):
             data[count] = samples
             if count >= nblocks:
                 break
