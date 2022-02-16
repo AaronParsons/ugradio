@@ -79,9 +79,9 @@ def capture_data(
     else:
         loop = asyncio.get_event_loop()
         data = loop.run_until_complete(_streaming(nblocks, nsamples))
-   if direct:
-       return data.real
-   else:
-       return data
+    if direct:
+        return data.real
+    else:
+        return data
 
 
