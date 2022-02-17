@@ -118,11 +118,11 @@ def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
     Returns:
         numpy array (dtype float64) with dimensions (nsamples,)
     '''
-   data = capture_data(
-           direct=False,
-           center_freq=center_freq,
-           nsamples=nsamples,
-           sample_rate=sample_rate,
-           gain=gain
+    data = capture_data(
+            direct=False,
+            center_freq=center_freq,
+            nsamples=nsamples,
+            sample_rate=sample_rate,
+            gain=gain
         )
-   return data
+    return data
