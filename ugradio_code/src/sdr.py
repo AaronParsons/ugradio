@@ -82,3 +82,47 @@ def capture_data(
     else:
         return data
 
+def capture_data_direct(nsamples=2048, sample_rate=2.2e6, gain=1.):
+    '''
+    Use the SDR dongle as an ADC to directly capture voltage samples from the
+    input. Note that the analog system on these devices only lets through
+    signals from 0.5 to 24 MHz.
+    Arguments:
+        nsamples (int): number of samples to acquire. Default 2048.
+        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
+        gain (float): gain in dB to apply. Probably unnecessary, as direct sampling
+            should bypass the gain stage.
+    Returns:
+        numpy array (dtype float64) with dimensions (nsamples,)
+    '''
+    data = capture_data(
+            direct=True,
+            nsamples=nsamples,
+            sample_rate=sample_rate,
+            gain=gain
+        )
+    return data
+
+def capture_data_mixer(center_freq, nsamples=2048, sample_rate=2.2e6, gain=1.):
+    '''
+    Use the SDR dongle as an ADC to capture voltage samples from the
+    input. Unlike the capture_data_direct, we do not attempt to capture data
+    directly but allows downconverting frequencies in the SDR.
+    Note that the analog system on these devices only lets through
+    signals from 0.5 to 24 MHz.
+    Arguments:
+        center_freq (float): center frequency to offset by. 
+        nsamples (int): number of samples to acquire. Default 2048.
+        sample_rate (float): sample rate in Hz to use. Defaul 2.2e6.
+        gain (float): gain in dB to apply.
+    Returns:
+        numpy array (dtype float64) with dimensions (nsamples,)
+    '''
+   data = capture_data(
+           direct=False,
+           center_freq=center_freq,
+           nsamples=nsamples,
+           sample_rate=sample_rate,
+           gain=gain
+        )
+   return data
