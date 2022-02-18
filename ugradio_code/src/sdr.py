@@ -31,17 +31,19 @@ def handle_exception(loop, context, sdr):
     '''Handle any exceptions that happen while in the asyncio loop.'''
     msg = context.get("exception", context["message"])
     logging.error(f"Caught exception: {msg}")
-    asyncio.create_task(shutdown(loop, sdr))
+    if loop.is_running():
+        asyncio.create_task(shutdown(loop, sdr))
 
 async def shutdown(loop, sdr, signal=None):
     '''If an interrupt happens, shut down gracefully.'''
     if signal:
         logging.info(f"Received exit signal {signal.name}...")
-    tasks = [t for t in asyncio.all_tasks() if t is not 
-             asyncio.current_task()]
-    await sdr.stop()
-    await asyncio.gather(*tasks, return_exceptions=True)
-    loop.stop()
+    if loop.is_running():
+        tasks = [t for t in asyncio.all_tasks() if t is not 
+                 asyncio.current_task()]
+        await sdr.stop()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        loop.stop()
 
 def capture_data(
         direct=True,
