@@ -4,16 +4,15 @@ to SDR dongles based on the RTL2832/R820T2 chipset."""
 from __future__ import print_function
 from rtlsdr import RtlSdr
 import numpy as np
-try:
-    import asyncio
-except ImportError as e:
-    print(e)
+import logging
+import functools
+import asyncio
+import signal
 
-SAMPLE_RATE_TOLERANCE = 0.1  # Hz
 BUFFER_SIZE = 4096
 
-
 async def _streaming(sdr, nblocks, nsamples):
+    '''Asynchronously read nblocks of data from the sdr.'''
     data = np.empty((nblocks, nsamples), dtype="complex64")
     count = 0
     async for samples in sdr.stream(num_samples_or_bytes=nsamples):
@@ -21,12 +20,28 @@ async def _streaming(sdr, nblocks, nsamples):
         count += 1
         if count >= nblocks:
             break
-
-    stop = sdr.stop()
-    await stop
-    close = sdr.close()
+    try:
+        await sdr.stop()
+    except(AssertionError):
+        logging.warn(f'Only returning {count} blocks.')
+        return data[:count].copy()
     return data
 
+def handle_exception(loop, context, sdr):
+    '''Handle any exceptions that happen while in the asyncio loop.'''
+    msg = context.get("exception", context["message"])
+    logging.error(f"Caught exception: {msg}")
+    asyncio.create_task(shutdown(loop, sdr))
+
+async def shutdown(loop, sdr, signal=None):
+    '''If an interrupt happens, shut down gracefully.'''
+    if signal:
+        logging.info(f"Received exit signal {signal.name}...")
+    tasks = [t for t in asyncio.all_tasks() if t is not 
+             asyncio.current_task()]
+    await sdr.stop()
+    await asyncio.gather(*tasks, return_exceptions=True)
+    loop.stop()
 
 def capture_data(
         direct=True,
@@ -63,21 +78,31 @@ def capture_data(
        (nsamples,) when nblocks == 1.
     """
     sdr = RtlSdr()
-    if direct:
-        sdr.set_direct_sampling('q')
-        sdr.set_center_freq(0)  # turn off the LO
-    else:
-        sdr.set_direct_sampling(0)
-        sdr.set_center_freq(center_freq)
-    sdr.set_gain(gain)
-    sdr.set_sample_rate(sample_rate)
-    _ = sdr.read_samples(BUFFER_SIZE)  # clear the buffer
-    if nblocks == 1:
-        data = sdr.read_samples(nsamples)
-        sdr.close()
-    else:
-        loop = asyncio.get_event_loop()
+    # Make a new event loop and set it as the default
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        if direct:
+            sdr.set_direct_sampling('q')
+            sdr.set_center_freq(0)  # turn off the LO
+        else:
+            sdr.set_direct_sampling(0)
+            sdr.set_center_freq(center_freq)
+        sdr.set_gain(gain)
+        sdr.set_sample_rate(sample_rate)
+        _ = sdr.read_samples(BUFFER_SIZE)  # clear the buffer
+        # Add signal handlers
+        for s in (signal.SIGHUP, signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(
+                s, lambda: asyncio.create_task(shutdown(loop,sdr,signal=s)))
+        # splice sdr handle into handle_exception arguments
+        h = functools.partial(handle_exception, sdr=sdr)
+        loop.set_exception_handler(h)
         data = loop.run_until_complete(_streaming(sdr, nblocks, nsamples))
+    finally:
+        sdr.close()
+        loop.close()
+
     if direct:
         return data.real
     else:
