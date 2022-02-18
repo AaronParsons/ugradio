@@ -74,6 +74,7 @@ def capture_data(
     _ = sdr.read_samples(BUFFER_SIZE)  # clear the buffer
     if nblocks == 1:
         data = sdr.read_samples(nsamples)
+        sdr.close()
     else:
         loop = asyncio.get_event_loop()
         data = loop.run_until_complete(_streaming(sdr, nblocks, nsamples))
