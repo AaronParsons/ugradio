@@ -3,7 +3,7 @@
 """Module for controlling the Leuschner radio telescope."""
 
 from __future__ import print_function
-import socket, serial, time, math
+import socket, serial, time, math, sys
 import subprocess
 try: import thread
 except(ImportError): import _thread as thread
@@ -194,6 +194,11 @@ class TelescopeDirect:
         self.drive_clength = drive_clength
         self.init_dish()
 
+    def log(self, *args):
+        if self.verbose:
+            print(*args)
+            sys.stdout.flush()
+
     def _read(self, flush=False, bufsize=1024):
         resp = []
         while len(resp) < bufsize:
@@ -203,20 +208,21 @@ class TelescopeDirect:
             if c == '\r' and not flush: break
             resp.append(c)
         resp = ''.join(resp)
-        if self.verbose: print('Read:', [resp])
+        self.log('Read:', [resp])
         return resp
 
     def _write(self, cmd, bufsize=1024):
-        if self.verbose: print('Writing', [cmd])
+        self.log('Writing', [cmd])
         self._lock.acquire()
         self._serial.write(cmd) #Receiving from client
-        time.sleep(0.1) # Let the configuration command make the change it needs
+        time.sleep(0.1) # Let the config command make the change it needs
         rv = self._read(bufsize=bufsize)
         self._lock.release()
         return rv
 
-    def init_dish(self): # The following definitions are specific to the Copley BE2 model
+    def init_dish(self):
         self._read(flush=True)
+        # The following definitions are specific to the Copley BE2 model
         self._write(b'.a s r0xc8 257\r')
         self._write(b'.a s r0xcb 1500000\r')
         self._write(b'.a s r0xcc 2500\r')
@@ -237,9 +243,10 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.a g r0xc9\r').split()[1]
-            if self.verbose: print ("wait_az status=", status)
+            self.log("wait_az status=", status)
             # sometimes status = 16384: set when move is aborted, see Copley Parameter Dictionary pg 45
-            if int(status) >= 0: break
+            if int(status) >= 0:
+                break
             time.sleep(1)
         return status
 
@@ -247,9 +254,10 @@ class TelescopeDirect:
         status = '-1'
         for i in range(max_wait):
             status = self._write(b'.b g r0xc9\r').split()[1]
-            if self.verbose: print("wait_el status=", status)
+            self.log("wait_el status=", status)
             # sometimes status = 16384: set when move is aborted, see Copley Parameter Dictionary pg 45
-            if int(status) >= 0: break
+            if int(status) >= 0:
+                break
             time.sleep(1)
         return status
 
@@ -327,9 +335,8 @@ CMD_GET_EL = 'getEl'
 class TelescopeServer(TelescopeDirect):
     def run(self, host='', port=PORT, verbose=True, timeout=10):
         self.verbose = verbose
-        if self.verbose:
-            print('Initializing dish...')
-            self.reset_dish()
+        self.log('Initializing dish...')
+        self.reset_dish()
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host,port))
@@ -337,7 +344,7 @@ class TelescopeServer(TelescopeDirect):
             while True:
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
-                if self.verbose: print('Request from', (conn,addr))
+                self.log('Request from', (conn,addr))
                 thread.start_new_thread(self._handle_request, (conn,))
         finally:
             s.close()
@@ -345,11 +352,12 @@ class TelescopeServer(TelescopeDirect):
         '''Private thread for handling an individual connection.  Will execute
         at most one write and one read before terminating connection.'''
         cmd = conn.recv(1024)
-        if not cmd: return
-        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        if not cmd:
+            return
+        self.log('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
         cmd = cmd.split('\n')
-        if self.verbose: print ("the cmd is: ", cmd)
+        self.log("the cmd is: ", cmd)
         if cmd[0] == 'simple':
             resp = self._write(cmd[1].encode('ascii'))
         elif cmd[0] == CMD_MOVE_AZ:
@@ -368,7 +376,7 @@ class TelescopeServer(TelescopeDirect):
             resp = self.reset_dish()
         else:
             resp = ''
-        if self.verbose: print('Returning:', [resp])
+        self.log('Returning:', [resp])
         conn.sendall(resp.encode('ascii'))
 
 CMD_NOISE_OFF = 'off'
@@ -377,13 +385,18 @@ CMD_NOISE_ON = 'on'
 class LeuschNoiseServer:
     '''Class for providing remote control over the noise diode on Leuschner dish.
     Runs on a RPI with a direct connection to the noise diode via GPIO pins.'''
-    def __init__(self):
-        self.prev_cmd = None
-    def run(self, host='', port=PORT, verbose=True, timeout=10):
-        '''Begin hosting server allowing remote control of noise diode on specified port.'''
+    def __init__(self, verbose=True):
         self.verbose = verbose
+        self.prev_cmd = None
+
+    def log(self, *args):
         if self.verbose:
-            print('Initializing noise_server..')
+            print(*args)
+            sys.stdout.flush()
+
+    def run(self, host='', port=PORT, timeout=10):
+        '''Begin hosting server allowing remote control of noise diode on specified port.'''
+        self.log('Initializing noise_server..')
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host,port))
@@ -391,16 +404,18 @@ class LeuschNoiseServer:
             while True:
                 conn, addr = s.accept()
                 conn.settimeout(timeout)
-                if self.verbose: print('Request from', (conn,addr))
+                self.log('Request from', (conn,addr))
                 thread.start_new_thread(self._handle_request, (conn,))
         finally:
             s.close()
+
     def _handle_request(self, conn):
         '''Private thread for handling an individual connection.  Will execute
         at most one write and one read before terminating connection.'''
         cmd = conn.recv(1024)
-        if not cmd: return
-        if self.verbose: print('Enacting:', [cmd], 'from', conn)
+        if not cmd:
+            return
+        self.log('Enacting:', [cmd], 'from', conn)
         cmd = cmd.decode('ascii')
         # only execute digital I/O write code if a change of state
         # command is received over the socket.  I will avoid multiple of
@@ -413,11 +428,11 @@ class LeuschNoiseServer:
             GPIO.setup(pin, GPIO.OUT) # pin 29
             # switch pin 29 of Raspberry Pi to TTL level low
             if cmd == CMD_NOISE_OFF:
-                if self.verbose: print('write digital I/O low')
+                self.log('write digital I/O low')
                 GPIO.output(pin, False)   # pin 29
             # switch pin 29 of Raspberry Pi to TTL level high
             elif cmd == CMD_NOISE_ON:
-                if self.verbose: print('write digital I/O high')
+                self.log('write digital I/O high')
                 GPIO.output(pin, True)   # pin 29
 
 class Spectrometer:

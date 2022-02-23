@@ -1,12 +1,17 @@
 try:
     from . import timing # ImportError if astropy not installed
-    from . import doppler # ImportError if astropy,barycorrpy not installed
-    from . import coord # ImportError if astropy,barycorrpy not installed
+    from . import doppler # ImportError if astropy not installed
+    from . import coord # ImportError if astropy not installed
 except ImportError as error:
     print(error) # Does not pass silently
     pass
 try:
     from . import gauss # ImportError if scipy not installed
+except ImportError as error:
+    print(error) # Does not pass silently
+    pass
+try:
+    from . import sdr # ImportError if rtlsdr not installed
 except ImportError as error:
     print(error) # Does not pass silently
     pass

@@ -4,9 +4,19 @@ whose serial port is connected to the drive encoders for the
 UGRadio Interferometer.'''
 
 from __future__ import print_function
-from ugradio.interf import TelescopeServer
 import time
 import traceback
+import os
+
+EAST = '/home/ugastro/east'
+WEST = '/home/ugastro/west'
+
+if os.path.exists(EAST):
+    from ugradio.interf import TelescopeServerEast as TelescopeServer
+elif os.path.exists(WEST):
+    from ugradio.interf import TelescopeServerWest as TelescopeServer
+else:
+    raise RuntimeError('No east/west file found in home directory.')
 
 while True:
     try:

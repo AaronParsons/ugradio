@@ -302,10 +302,60 @@ profile measurement.
 \subsection{The Receiving System}
 
 \noindent
-We will use a double-heterodyne system for the 21-cm line at 1420.4 MHz.
+There are two options for receiving a signal from our horn antenna. The
+first option, which is probably the easiest, is to use the 
+Raspberry Pi / SDR system with its built-in digital downconverter. The
+second option is to build the downconverter yourself out of analog
+components, and then use the PicoSampler to acquire the I/Q data. We
+will describe both below:
+
+\subsubsection{Digital Down-Conversion}
+
+\noindent
+Having mastered the intricacies of DSB/SSB mixers and filters in the
+first lab, we are now in a position to jump to a higher level of 
+abstraction with dedicated hardware for down conversion.
+
+The NeSDR SMART modules we have in the lab are based on two chips:
+the R820T2, which contains a voltage-controlled oscillator and mixer
+(i.e. a DSB with a tuneable LO), and the RTL2832U, which contains
+a 28.8 Msps ADC, two multipliers (mixers) fed with digital sine/cosine
+waves, and on-board FIR filters (convolution filters). 
+In other words, the RTL2832U contains an all-digital SSB mixer/filter
+down-converter.
+
+Using the {\tt rtlsdr} driver that has already been installed on your
+RPi and the {\tt pyrtlsdr} bindings for Python control, you can set
+the LO frequency of the R820T2 DSB mixer and the RTL2832U SSB mixer.
+You can also (as you may have discovered in the first lab) adjust the
+sample rate at the output of the RTL2832U, which controls how many of
+the 28.8 Msps samples get through. This is called down-sampling, and
+it is necessary to get the data bandwidth down far enough that a
+USB interface can carry it over to the RPi.
+
+For this lab, we have used the {\tt pyrtlsdr} module to create a
+function for you, {\tt ugradio.sdr.capture\_data\_mixer}, which can be
+used to control both the gain, the LO frequency and the output sample rate of
+the NeSDR module. You are welcome to use this function to acquire data,
+or you can read the code it uses underneath (or the documentation of
+the {\tt pyrtlsdr} module) to write something that runs faster to
+get {\it all} of the data coming across the USB interface to build
+sensitivity faster.
+
+We suggest setting your LO off to the side of the 1420.405 MHz line,
+since the 0-frequency bin in your spectrum almost always has an
+artificial spike in it. How far you can tune your LO away from the
+rest frequency depends on the sample rate (read: Nyquist cutoff) you
+choose.
+
+\subsubsection{Analog Down-Conversion}
+
+\noindent
+We can alternately build a a double-heterodyne system 
+for the 21-cm line in analog.
 {\bf Double heterodyne} means we have two mixing stages.
 
-the first mixer, we use the DSB technique. Suppose we
+For the first mixer, we use the DSB technique. Suppose we
   use an LO (the first local oscillator) at 1230.0 MHz so that the
   difference frequency is 190.4 MHz and the sum frequency is 2650.4 MHz.
   We use a 20 MHz-wide bandpass filter centered at 190 MHz to excise
@@ -330,7 +380,14 @@ For the second mixer, we use the SSB technique. The second
 \noindent
 Before taking data, do basic system
 checks: (1) make sure the signal levels are okay and (2) experimentally
-determine which way frequency increases on your power spectra.
+determine which way frequency increases on your power spectra. In order
+to test that you are seeing data through an active (and powered!) signal
+chain, you can use the tone-injection system to broadcast a known
+signal at RF frequencies that you can receive and cross-check the
+frequency of. Make sure you are seeing the actual signal by moving
+it around in frequency, turning it on/off, or changing its amplitude
+to make sure the ``birdie" you put in is where you expect it in
+your spectrum.
 
 Once you are convinced your signal is getting through,
 set the system up as you will be using it to observe. Point the
@@ -340,12 +397,12 @@ data.  How fast must you sample?
 Look at the range of sample values using, e.g.,
   {\tt numpy.histogram}.  As in Lab 1, check that you are not overly quantized or clipping.
   Adjust {\tt volt\_range} in the call to {\tt pico.capture\_data}
-  accordingly.
+  accordingly (or use analog attenuators and/or 
+digital gain in {\tt sdr.capture\_data\_mixer}).
   The histogram shape should look like a well-known function. Which
   function? Does it?
 
-Next, insert a test signal (at a low level; $\sim -40$ dBm) so that it 
-appears in the upper sideband and
+Again, insert a test signal so that it appears in the upper sideband and
 take some data; then change the test signal frequency so it's in the
 lower sideband.  You'll use this to make sure that the SSB mixer is
 doing its job properly and to determine whether the frequency axis
@@ -431,7 +488,13 @@ file. Suppose you decide to obtain 10000 spectra. You might be tempted
 to do it in one fell swoop by setting {\tt nblocks=10000}. That
 may work, but be aware that it will take about 5 minutes or more. You
 might want to instead take ten sets with {\tt nblocks=1000} so you can do a
-sanity check on your data without waiting forever. 
+sanity check on your data without waiting forever. Similarly, if
+you are using {\tt sdr.capture\_data\_mixer}, you'll want to grab many
+chunks of data. If you write well-optimized code (which may involve
+using the streaming capability that {\tt pyrtlsdr} provides), it is
+possible to retrieve all of the data from the NeSDR without missing a
+sample; this will enable to you build sensitivity as fast as theoretically
+possible for the analog system you are using.
 
 \subsubsection{Two Frequency-Switched Reference Measurements}
 
