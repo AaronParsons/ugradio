@@ -126,11 +126,10 @@ HOST_ANT_E = '10.32.92.118' # RPI host for eastern interferometer antenna
 PORT = 1420
 
 # Offsets to subtract from crd to get encoder value to write
-DELTA_ALT_ANT_W = -0.5  # (true - encoder) offset
-DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset
-DELTA_ALT_ANT_E =  0.   # (true - encoder) offset
-DELTA_AZ_ANT_E  = 0     # (true - encoder) offset
-#DELTA_AZ_ANT_E  = -8.5  # (true - encoder) offset
+DELTA_ALT_ANT_W =  1.0  # (true - encoder) offset, updated 2/23/22
+DELTA_AZ_ANT_W  = -9.2  # (true - encoder) offset, updated 2/23/22
+DELTA_ALT_ANT_E =  0.5  # (true - encoder) offset, updated 2/23/22
+DELTA_AZ_ANT_E  =  1.2  # (true - encoder) offset, updated 2/23/22
 
 
 class Interferometer:
