@@ -209,7 +209,7 @@ class Interferometer:
         self.ant_e.maintenance(wait=False, verbose=verbose)
         if wait: self.wait(verbose=verbose)
 
-AZ_ENC_OFFSET_W = 0
+AZ_ENC_OFFSET_W = 8700
 AZ_ENC_OFFSET_E = 2921
 AZ_ENC_SCALE = 11.5807213
 EL_ENC_OFFSET = 4096

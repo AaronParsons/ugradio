@@ -12,7 +12,7 @@ except ImportError as error:
     pass
 try:
     from . import sdr # ImportError if rtlsdr not installed
-except ImportError as error:
+except (SyntaxError,ImportError) as error:
     print(error) # Does not pass silently
     pass
 
