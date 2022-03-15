@@ -8,7 +8,7 @@ from threading import Thread, Lock
 
 MAX_SLEW_TIME = 60 # seconds
 
-ALT_MIN, ALT_MAX = 5., 175. # Pointing bounds, degrees
+ALT_MIN, ALT_MAX = 6., 174. # Pointing bounds, degrees
 AZ_MIN, AZ_MAX  = 90., 300. # Pointing bounds, degrees
 
 ALT_STOW = 90. # Position for stowing antenna
