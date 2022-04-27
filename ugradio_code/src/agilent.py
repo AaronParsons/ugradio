@@ -1,11 +1,13 @@
 '''Module for interaction with Agilent N9310a Frequency Synthesizer.'''
 
 import socket
+import time
 try: import thread
 except(ImportError): import _thread as thread
 
 DEVICE = '/dev/usbtmc0' # default mounting point
 HOST, PORT = '10.32.92.95', 1341
+WAIT = 0.3 # s
 
 FREQ_UNIT = ['GHz','MHz','kHz']
 AMP_UNIT = ['dBm','mV','uV']
@@ -88,13 +90,15 @@ class SynthDirect(SynthBase):
         '''Open low-level device interface.  Not intended direct use.'''
         try:
             self.dev.close()
-        except(AttributeError): pass
+        except(AttributeError):
+            pass
         self.dev = open(self._device, 'rb+')
         self.validate()
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
         self.dev.write(bytes(cmd, encoding='utf-8'))
         self.dev.flush()
+        time.sleep(WAIT) # slow down writing to avoid spam attacks
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
         rv = []
