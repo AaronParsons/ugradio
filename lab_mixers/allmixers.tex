@@ -269,7 +269,7 @@ write modules that you can import into either.
 \noindent
 Your work this first week will require you to navigate
 the Linux operating system, using a (Vi/Emacs/3rd party) text editor to write Python. 
-On Astrobaki\footnote{\url{https://casper.astro.berkeley.edu/astrobaki/index.php/Undergraduate\_Radio\_Lab}}
+On Astrobaki\footnote{\url{https://casper.astro.berkeley.edu/astrobaki/index.php/Undergraduate_Radio_Lab}}
 we have linked primers on
 Linux/Unix, Python Installation and Basic Programming, Unix Text Editors, and Revision Control.  You can
 also review the key course content for this week: {\it Nyquist Sampling}
@@ -321,7 +321,10 @@ course website.
 For the activities below, you will want to use several modules 
 inside the {\tt ugradio} package, particularly {\tt ugradio.sdr},
 and {\tt ugradio.dft}.
-Take a minute to browse the code in these modules.
+Take a minute to browse the code in these modules, which you can do
+on GitHub, in the {\tt ugradio/ugradio\_code/src} directory on
+your Raspberry Pi, or within Jupyter/IPython using {\tt ??} after
+any module, function, or class name.
 
 \begin{itemize}
 
@@ -408,7 +411,7 @@ sampling, filtering, and demodulation chip).
 These SDR modules are quite versatile and can be 
 coaxed into doing all sorts of useful things. 
 For starters, we would like to bypass most everything
-and just use the ADC sampler
+and just use the analog-to-digital (ADC) sampler
 inside the RTL2832U. This is called {\bf direct sampling}, and is one
 of the modes supported in the 
 {\tt ugradio.sdr} module.
@@ -424,19 +427,38 @@ Inspect the signal you are sampling with the oscilloscope, verify that it matche
 and period you set on the function generator, and document the settings used.
 
 Now, using python on your RPi (either interactively with {\tt ipython} or by writing
-a script), use {\tt capture\_data\_direct} to collect some data and plot it.
-You can set the {\tt sample\_rate} in the range of $\nu_s=200$--300 kHz, or 1.0--2.2 MHz. Experiment
+a script), make an {\tt SDR} object (e.g. {\tt sdr = ugradio.sdr.SDR(...)})
+and use {\tt sdr.capture\_data} to collect some data and plot it.
+You can set the {\tt sample\_rate} in the range of $\nu_s=1.0$--3.2 MHz. Experiment
 with various combinations of $\nu_s$ and input frequency and see what frequency
 sine waves you observe in your data.
 
 You will notice that, for a fixed $\nu_s$, the amplitude
 of the sine wave you measure will change for different values of $\nu$ input. This
-happens as a result of some filters inside of the RTL2832U chip. Try setting $\nu_s=250$ kHz
-and explore different values of $\nu$, using aliasing to probe different Nyquist zones to
+happens as a result of some filters inside of the RTL2832U chip. A
+major role of these filters is to suppress aliasing! In other words,
+these SDR modules are smarter than we want them to be. In order to better
+illustrate aliasing, it helps to override the default filter, which
+took your intrepid instructor some amount of hacking (and bugfixing
+in the SDR driver!) to accomplish. Suffice it to say, your ability
+to see aliasing will be dramatically improved if you provide
+{\tt fir\_coeffs=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 
+0, 0, 0, 0, 0, 0, 2047])} as
+an argument to your {\tt SDR} object. (That is an array of length 16,
+with the last number set to $2^{12}-1$) \footnote{If you are curious, 
+I expanded the {\tt librtsdr} driver and {\tt pyrtlsdr} Python wrapper
+to support setting the coefficients of a Finite Impulse Response
+(FIR) filter. FIR filters implement convolutional filters, which we will
+learn about next week.}
+
+For a given sample frequency,
+explore different values of $\nu$, using aliasing to probe different Nyquist zones to
 examine the filter response of the RTL2832U.
 Document the approach you are using,
 the hardware involved (brand, part number), and the
-time of signal acquisition.
+time of signal acquisition. If you want, you can also explore the
+difference in aliased amplitudes you get for {\tt fir\_coeffs=None}
+(default) versus the above suggested value for enhanced aliasing.
 
 Once you have acquired an array of data, you should save it to a file
 with {\tt numpy.savez}.  Your analysis scripts can then 
@@ -446,7 +468,7 @@ boils down to good interfaces. In this case, that could mean adding a bunch of m
 to your {\tt numpy.savez} call (it accepts multiple arrays/scalars) so that you have
 all the information you need for analysis and presentation sitting right there with your data.
 
-For each dataset, use the {\tt matplotlib.pyplot} package (typically imported
+For each dataset, use the {\tt matplotlib} package (typically imported
 as {\tt import matplotlib.pyplot as plt} to plot
 the digitally sampled waveform versus
 time.  
@@ -627,8 +649,7 @@ What sample rate would you need to avoid aliasing this output?
 
 \item Connect the noise generator to a 
   filter and take several tens of thousands of samples
-  with the ADC.
-{\color{red} For a virtual class, we will provide you with this data.}
+  with the SDR's ADC.
   These samples are voltages. What is the
   mean voltage over this data block?
   What is the variance? The standard deviation (which, for a zero-mean signal,
@@ -774,7 +795,8 @@ the DFT function inside the {\tt dft} module.
 {\color{red}
 \subsection{Fourier Filtering and a Secret Message}
 
-As an optional investigation for a virtual class where we don't get as much hands-on experience
+As an optional (fun) side investigation you can do on your own at
+home 
 with Fourier filtering, we have provided an audio message encoded as a {\tt numpy} array in the 
 {\tt secret\_message.npz} file. This file holds the waveform ({\tt 'data'}) and the sample
 frequency ({\tt 'fs'}). If you install the python module {\tt sounddevice} on {\bf your home computer}:
