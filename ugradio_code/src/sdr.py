@@ -74,6 +74,8 @@ class SDR(RtlSdr):
             self.set_center_freq(0)  # turn off the LO
         else:
             self.set_direct_sampling(0)
+            assert center_freq >= 25e6  # minimum supported freq
+            assert center_freq < 1750e6  # maximum supported freq
             self.set_center_freq(center_freq)
         self.set_gain(gain)
         self.set_sample_rate(sample_rate)
