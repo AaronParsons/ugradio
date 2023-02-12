@@ -2,12 +2,17 @@
 to SDR dongles based on the RTL2832/R820T2 chipset."""
 
 from __future__ import print_function
-from rtlsdr import RtlSdr
 import numpy as np
 import logging
 import functools
 import asyncio
 import signal
+
+try:
+    from rtlsdr import RtlSdr
+except(AttributeError):
+    logging.warn('Likely missing dependency librtlsdr')
+
 
 BUFFER_SIZE = 4096
 
