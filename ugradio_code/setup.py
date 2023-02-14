@@ -1,6 +1,6 @@
 try:
     from setuptools import setup
-except ImportError:
+except (ImportError,ModuleNotFoundError):
     from distutils.core import setup
 import glob
 import os
