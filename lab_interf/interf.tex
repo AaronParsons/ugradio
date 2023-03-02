@@ -33,8 +33,9 @@
 
 \noindent
 The purpose of this lab is, broadly speaking, to learn radio
-interferometry---the basis for most of modern radio astronomy and, we
-predict, forefront future IR and optical astronomy. We'll cover the
+interferometry---the basis for most of modern radio astronomy and
+the method by which the event horizon of a black hole has been imaged. 
+We'll cover the
 basic principles, the interferometric fringe, the response to a point
 source, and the response to an extended source (which is the basis of
 high-angular resolution mapping with interferometry). We will employ
@@ -52,10 +53,10 @@ your report should address.
 
 \begin{itemize}
 
-\item Learn how diffraction theory applies to a real radio
+\item Learn how diffraction theory applies to a radio
   interferometer. Fringes, their amplitudes and phases. The fringe as a
   `giant sine wave in the sky; the fringe as a `giant DSB mixer in
-  the sky'; and the fringe as the autocorrelation function of the
+  the sky'; and the fringe as the correlation function of the
   interferometer pair.
 
 \item Fourier transforming the fringe; Fourier filtering the fringe.
@@ -89,8 +90,8 @@ behind, so try to get ahead early. Below is a suggested schedule.
   requires writing an observing script to run automatically.
 
 Each {\it person} calculates Fourier power spectra of the Sun data and
-also the point-source data. She/He calculates the range of expected
-local fringe frequencies (equation \ref{fringefreq}) and compares the
+point-source data, calculating the range of expected
+local fringe frequencies (equation \ref{fringefreq}) and comparing the
 observed spectra with these expectations. Be ready for show and tell!
 
 \item {\it Week 2:} Each {\it group} observes
@@ -104,7 +105,7 @@ observed spectra with these expectations. Be ready for show and tell!
   Sun and Moon using least-squares fitting as outlined in \S \ref{mun}.
 
 \item {\it Week 4:} Each {\it person} finishes all
-  calculations and writes (and hands in!) the lab report.
+  calculations and writes (and hands in) the lab report.
 
 \end{enumerate}
 
@@ -113,7 +114,14 @@ observed spectra with these expectations. Be ready for show and tell!
 \noindent
 As usual, we have attempted to provide you a batteries-included experience with
 the {\tt ugradio} Python module. In this lab, we will be focusing on the
-{\tt interf} and {\tt hp\_multi} submodules.
+{\tt interf} and {\tt coord} submodules, as well as a second package,
+{\tt snap\_spec}, which is installed on the RPi attached to the SNAP spectrometer
+board. You can work directly on this RPi via the provided monitor and keyboard,
+but you may also log in remotely:
+\begin{verbatim}
+ssh <username>@ugastro.berkeley.edu
+ssh pi@10.32.92.201
+\end{verbatim}
 
 \begin{itemize}
 \item \verb+ifm = ugradio.interf.Interferometer()+ provides an interface for controlling 
@@ -133,20 +141,28 @@ facilitate working on the feed. \verb+alt=20, az=180+.
 It can take bit for the telescopes to move, so be patient until this
 command returns.
 
-\item \verb+hpm = ugradio.hp_multi.HP_Multimeter()+ provides an interface for reading
-the voltage output of the interferometer.
+\item \verb+spec = snap_spec.snap.UGRadioSnap()+ provides an interface for reading
+the visibility spectra from of the digital correlator. After instantiating this
+interface (by creating the object), you'll want to call \verb+spec.initialize(mode='corr')+
+to configure the SNAP to cross-correlate our dish signals.
 
-\item \verb+hpm.read_voltage()+ reads once from the HP Multimeter.
+\item \verb+spec.read_data()+ reads a spectrum from the SNAP Spectrometer. You'll
+want to work this into a (preferably threaded, see the {\tt threading} module)
+loop that buffers integrated correlations and periodically writes them to disk,
+just in case your observing script errors out. Integrations are enumerated by {\tt acc\_cnt},
+so you can make sure you don't miss one. If you provide the previous {\tt acc\_cnt} to
+\verb+spec.read_data()+, it will wait until the next {\tt acc\_cnt} before reading and returning
+data, to ensure you don't re-read data.
 
-\item \verb+hpm.start_recording(dt)+ reads from the voltage every dt seconds, indefinitely.
-Data are stored in a buffer inside of hpm.
+%\item \verb+hpm.start_recording(dt)+ reads from the voltage every dt seconds, indefinitely.
+%Data are stored in a buffer inside of hpm.
 
-\item \verb+hpm.get_recording_data()+ reads out all the voltages (and timestamps) that
-have been acquired since start recording was called.  NOTE: to avoid losing
-your data for a long observation, you should periodically call this function
-and save the data to disk, just in case your observing script errors out.
+%\item \verb+hpm.get_recording_data()+ reads out all the voltages (and timestamps) that
+%have been acquired since start recording was called.  NOTE: to avoid losing
+%your data for a long observation, you should periodically call this function
+%and save the data to disk, just in case your observing script errors out.
 
-\item \verb+hpm.end_recording()+ terminates the recording.  
+%\item \verb+hpm.end_recording()+ terminates the recording.  
 
 \item \verb+ugradio.coord.sunpos(jd)+ returns the ra/dec of the Sun at the specified jd.
 
@@ -165,47 +181,48 @@ system on the input ra/dec parameters.
 for the ra/dec catalog coordinate with given 'equinox' specifing the coordinate
 system on the input ra/dec parameters.
 
-\item \verb+d = ugradio.interf_delay.DelayClient()+ provides an interface for controlling the delay line from a lab computer.
+%\item \verb+d = ugradio.interf_delay.DelayClient()+ provides an interface for controlling the delay line from a lab computer.
 
-\item \verb+d.delay_ns(time_ns)+ will set the delay to \verb+time_ns+, i.e. \verb+d.delay_ns(0)+
+%\item \verb+d.delay_ns(time_ns)+ will set the delay to \verb+time_ns+, i.e. \verb+d.delay_ns(0)+
 
 \end{itemize}
 
 \section{Our X-Band Interferometer}
 
 \noindent
-	With our interferometer, which operates at about 10.7 GHz, our
+With our interferometer, which operates at about 10.5 GHz, our
 attention focuses on small sources.  Our interferometer has a relatively
 short baseline and the fringe spacing is larger than the size of all
-sources (except the Sun and Moon).  So for our interferometer all of
+sources except the Sun and Moon.  So for our interferometer all of
 these sources look like ``point sources'', for which all the radiation
 appears to come from a single point---just like a star in optical
 astronomy.  The output of the interferometer is a sinusoidal-like signal
 called the ``fringe''. All of the information resides in the frequency,
 amplitude and phase of the fringe.
 
- If you know the baseline, the fringe properties are direct indicators
- of the point-source declination.  With our $\sim 20$-m baseline $B$ we
- can get a fringe spacing ${\lambda \over B}\sim 5'$, and with a
- horizon-to-horizon measurement we can measure the declination 100 times
- more accurately (depending...).  In addition, we can achieve partial
- angular resolution on the Sun and Moon and measure their diameters to a
- fraction of a percent---this turns out to be more interesting than it
- sounds!
+If you know the baseline, the fringe properties are direct indicators
+of the point-source declination.  With our $\sim 20$-m baseline $B$ we
+can get a fringe spacing ${\lambda \over B}\sim 5'$, and with a
+horizon-to-horizon measurement we can measure the declination 100 times
+more accurately (depending...).  In addition, we can achieve partial
+angular resolution on the Sun and Moon and measure their diameters to a
+fraction of a percent---this turns out to be more interesting than it
+sounds!
 
-We have a {\it multiplying} interferometer: the signals from the two
-telescopes (that's $E_1$ and $E_2$) are multiplied together, using one
-of the mixers you used in the previous lab, producing the product
-$E_1E_2$.\footnote{This multiplication is equivalent to adding the
-signals, squaring [$(E_1 + E_2)^2 = E_1^2 + E_2^2 + 2E_1E_2$], and then
-subtracting the two self-products $E_1^2$ and $E_2^2$.} We repeatedly
-measure and record the time average $\langle E_1E_2 \rangle$ over a
-suitable interval (a few seconds). Using the cross product is important
-because its average value is zero unless there's a source, so any
-detected signal has to come from the sky instead of the instrument.  So
-when we look at a source, the fringe amplitude has no zero offset and
-the amplitude is directly proportional to the source flux (if it's a
-point source).
+To compute interferometric visibilities, we 
+have an FX (Fourier transform, cross-multiply) correlator implemented on a
+SNAP signal processing board. This board (designed here at UCB!) is versatile 
+and reprogrammable. For this lab, it has been configured to digitize two signals ($v_1(t)$ and $v_2(t)$)
+at 500 Msps each, compute the real Fourier transform of 2048 time samples into 1024 channels for each
+input, and to cross-multiply
+the resulting complex voltage spectra ($\tilde v_1(\nu)$ and $\tilde v_2(\nu)$).
+ This spectral product is
+averaged for 305200 spectra, corresponding to $305200\times2048\times2$ ns $=1.25$ s of integration
+in $\langle V_{12}(\nu, t)=\tilde v_1(\nu) \tilde v_2^*(\nu)\rangle$.
+Each frequency channel of these visibility spectra (inside the bandpass filters) is a complex number
+that will exhibit an oscillating fringe pattern in both real and imaginary components versus time.
+The phase slope of these visibility spectra versus frequency tell us about the relative time delay
+between the correlated signals passing through each dish to arrive at the SNAP correlator inputs.
 
 
 \section {Continuum (Point) Sources}
@@ -215,7 +232,7 @@ For the first part of the lab we will concentrate on 'point' sources
 that lie outside the Solar system. Our telescopes are small, so there
 are only a few sources that are powerful enough for us; they are listed
 below.  You'll need to precess the coordinates to the current
-equinox. If you don't, the incorrect r.a.'s will affect your fits. To do
+equinox. If you don't, the incorrect RAs will affect your fits. To do
 the precession, use {\tt ugradio.coord.precess}.
 
 %$$\vbox{\halign{ \hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ &    
@@ -223,7 +240,7 @@ the precession, use {\tt ugradio.coord.precess}.
 $$\vbox{\halign{ \hfil#\hfil\ \ & #\hfil\ \ & #\hfil\ \ &    
 \hfil#\ \ \ \cr
 
-{\bf name} & {\bf r.a.(2000)} & {\bf dec(2000)} & {\bf S$_{Jy}$} \cr
+{\bf name} & {\bf RA (J2000)} & {\bf DEC (J2000)} & {\bf S$_{Jy}$} \cr
 
 %W3$^a$              & $02^h 27^m 04.10s$ &$+61^\circ 52' 27.1'$ & $\sim 105$ \cr
 3C144 (Crab Nebula) & $05^h 34^m 31.95s$ &$+22^\circ 00' 52.1''$ & $\sim 496$ \cr
@@ -244,10 +261,10 @@ accurately as possible. As geologists, our goal is to measure the
 interferometer baseline as accurately as possible (to see, for example,
 the displacement of tectonic plates by earthquake activity). If you look
 at equations \ref{nutau} and \ref{fringeresponse}, you see that we don't
-measure these quantities separably, but rather the products $B_{ew}
-\cos(\delta)$ and $B_{ns} \cos(\delta)$, where $B_{ew}$ and $B_{ns}$ are
+measure these quantities separably, but rather the products $b_{ew}
+\cos(\delta)$ and $b_{ns} \cos(\delta)$, where $b_{ew}$ and $b_{ns}$ are
 the east-west and north-south components of the interferometer
-baseline. These products can be measured on an absolute basis with
+baseline, $\vec b$. These products can be measured on an absolute basis with
 interferometry by least-squares fitting the fringe phase to the hour
 angle; see \S\ref{declinations} and equation \ref{fringeresponse} below.  We
 already know the source positions accurately, from previous
@@ -271,7 +288,7 @@ We'll want {\it each person} to measure the source's
 declination by least-squares fitting the horizon-to-horizon track of
 fringe phase and amplitude.  Compare your results with other members of
 your group.  Help each other out, but {\it each person should write
-  her/his own software}.
+ their own software}.
 
 \section{The Sun and Moon}
 
@@ -345,19 +362,20 @@ about its surface properties from the polarization of the radiation and
 also from its time variability as the surface heats up from sunlight and
 cools off from darkness---just like the Sahara.
 
-\section {Measuring $B \cos \delta$} \label{declinations}
+\section {Measuring $b \cos \delta$} \label{declinations}
 
 \noindent
-We measure the product $B \cos \delta$ from the fringe frequency, which
+We measure the product $b \cos \delta$ from the fringe frequency, which
 depends on the baseline orientation, baseline length, declination, and
-hour angle (all these go into the {\it projected baseline}). If we
+hour angle (all these go into the {\it projected baseline}), as well
+as the observing frequency (from which you have many to choose from). If we
 observe a source horizon-to-horizon, the projected baseline changes a
 lot, and so does the fringe frequency. We first do a `sanity check',
 taking the Fourier transform of the data to see if we see the fringe and
 measure its range of frequencies. If it all looks good, we take those
 data, together with the known declination, and do a least-squares fit to
 derive the most accurate baseline components
-from our data.
+from our data, first one frequency at a time, and then across the whole band.
 
 \subsection{Getting the Data}
 
@@ -400,17 +418,17 @@ independent of time (unless somebody changes the cable setup\dots).
 	We don't know $\tau_c$ (but the least-squares process can tell
 us what it is).  However, we do know $\tau_g$ because it's just
 geometry---the geometry discussed in the reading.  For the east-west
-baseline component with length $B_{ew}$, we have
+baseline component with length $b_{ew}$, we have
 %
 \begin{equation}
- \tau_{g, ew}(h_s) = \left[{B_{ew} \over c} \cos \delta \right] \sin h_s \; . 
+ \tau_{g, ew}(h_s) = \left[{b_{ew} \over c} \cos \delta \right] \sin h_s \; . 
 \end{equation}
 %
 and for the north-south component
 %
 \begin{equation}
- \tau_{g,ns}(h_s) = \left[{B_{ns} \over c} \sin L \cos \delta \right] \cos h_s
- - \left[{B_{ns} \over c} \cos L \sin \delta \right]  \; , 
+ \tau_{g,ns}(h_s) = \left[{b_{ns} \over c} \sin L \cos \delta \right] \cos h_s
+ - \left[{b_{ns} \over c} \cos L \sin \delta \right]  \; , 
 \end{equation}
 %
 where $L$ is the terrestrial latitude. This  has two terms. The first is
@@ -420,14 +438,14 @@ dependence; since it is independent of $h$, we'll lump it into the cable
 delay $\tau_c$. Accordingly, we define
 %
 \begin{equation}
-\tau_g'(h_s) = \left[{B_{ew} \over c} \cos \delta \right] \sin h_s 
-  + \left[{B_{ns} \over c} \sin L \cos \delta \right] \cos h_s
+\tau_g'(h_s) = \left[{b_{ew} \over c} \cos \delta \right] \sin h_s 
+  + \left[{b_{ns} \over c} \sin L \cos \delta \right] \cos h_s
 \end{equation}
 %
-and the $B_{ns}$-modified cable delay as
+and the $b_{ns}$-modified cable delay as
 %
 \begin{equation}
-\tau_c' = \tau_c  - \left[{B_{ns} \over c} \cos L \sin \delta \right]  \; . 
+\tau_c' = \tau_c  - \left[{b_{ns} \over c} \cos L \sin \delta \right]  \; . 
 \end{equation}
 %
 	The output of the interferometer is the product of what the two
@@ -491,8 +509,8 @@ the standard least-squares process. Also, it's convenient and intuitive
 to make the substitution 
 %
 \begin{equation} \label{nutau}
-\nu \tau_g'(B_{ew}, B_{ns}, \delta, h_s) = \left[{B_{ew} \over \lambda} \cos \delta \right] \sin h_s 
-  + \left[{B_{ns} \over \lambda} \sin L \cos \delta \right] \cos h_s
+\nu \tau_g'(b_{ew}, b_{ns}, \delta, h_s) = \left[{b_{ew} \over \lambda} \cos \delta \right] \sin h_s 
+  + \left[{b_{ns} \over \lambda} \sin L \cos \delta \right] \cos h_s
 \end{equation}
 %
 \noindent which expresses the delay in units of wavelength, and thus the
@@ -535,8 +553,8 @@ because, for a small region around $h_{s,0}$ in equation
 local fringe frequency $f_f$ is
 
 \begin{equation} \label{fringefreq} \fbox{$
-f_f = \left[{B_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
-- \left[{B_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
+f_f = \left[{b_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
+- \left[{b_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
 $}
 \end{equation}
 
@@ -545,7 +563,7 @@ sky. If you want to turn it into cycles per hour coming out of the
 interferometer's multiplier, multiply by ${dh_s \over dt} = {2\pi \over
   24}$; or cycles per minute, multiply by $2\pi \over 60 \times 24$;
 etc. Our interferometer is almost (but not quite) east-west
-with $B_{ew}\approx 20$ m, $B_{ns} \sim 0$, and $\lambda \approx 2.5$
+with $b_{ew}\approx 20$ m, $b_{ns} \sim 0$, and $\lambda \approx 2.5$
 cm. At the meridian ($h_{s,0}=0$), 
   the period is ${1 \over f_f} \approx
 {18 \over \cos \delta}$ seconds. ; {\it check these numbers} to make sure you understand this
@@ -559,8 +577,8 @@ of your data to check! And try Fourier filtering!
 
 \noindent
 Now let's return to the least-squares solution of equation
-\ref{fringeresponse} for the unknown quantities $Q_{ew} = \left[{B_{ew}
-    \over \lambda} \cos \delta \right]$ and $Q_{ns}= \left[{B_{ns} \over
+\ref{fringeresponse} for the unknown quantities $Q_{ew} = \left[{b_{ew}
+    \over \lambda} \cos \delta \right]$ and $Q_{ns}= \left[{b_{ns} \over
     \lambda} \sin L \cos \delta \right]$.
 This is a nonlinear least-squares problem because these quantities sit
 inside nonlinear functions. There are two ways to attack this: the
@@ -569,7 +587,7 @@ conventional way and the `brute-force' way. We'll do the latter first.
 \subsubsection{The Brute-Force Technique}
 
 \noindent
-We'll first assume that $B_{ns}=0$, which is not unreasonable because
+We'll first assume that $b_{ns}=0$, which is not unreasonable because
 our interferometer baseline is close to east-west, and solve for
 $Q_{ew}$. Make a guess at the proper value of $Q_{ew}$ and, if you don't
 know the right ascension $\alpha$ accurately, adopt a reasonably
@@ -620,7 +638,7 @@ the results, in particular the uncertainties.
 
 \noindent
 {\bf Disclaimer} {\it This section assumes an east-west
-interferometer. Generalizing to the case of $B_{ns} \ne 0$ can be
+interferometer. Generalizing to the case of $b_{ns} \ne 0$ can be
 regarded either as an `exercise for the student' or as an unnecessary complication.}
 
 	When we think of a time-variable signal, we think of frequency
@@ -922,7 +940,7 @@ MOON                &   varies       &   varies \cr
 *************************
 -------------
 
-Now write $U = \left( {B_y \over \lambda} \cos\delta \right)$ ($U$ is
+Now write $U = \left( {b_y \over \lambda} \cos\delta \right)$ ($U$ is
 the east-west projected baseline expressed in
 wavelenths)\footnote{Conventionally, the letters $[U,\, V,\, W]$ represent
   the projection of the baseline in the EW, NS, and vertical directions,
