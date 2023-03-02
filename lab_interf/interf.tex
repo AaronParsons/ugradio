@@ -137,14 +137,15 @@ facilitate working on the feed. \verb+alt=20, az=180+.
 
 \item \verb+ifm.get_pointing()+ returns both telescopes' current \verb+alt, az+.
 
-\item \verb+ifm.point(alt,az)+ points telescopes to specified \verb+alt, az+.
+\item \verb+ifm.point(alt,az)+ points telescopes to specified \verb+alt, az+
 It can take bit for the telescopes to move, so be patient until this
 command returns.
 
 \item \verb+spec = snap_spec.snap.UGRadioSnap()+ provides an interface for reading
 the visibility spectra from of the digital correlator. After instantiating this
 interface (by creating the object), you'll want to call \verb+spec.initialize(mode='corr')+
-to configure the SNAP to cross-correlate our dish signals.
+to configure the SNAP to cross-correlate our dish signals. (Don't worry about
+warnings printed out; they're normal).
 
 \item \verb+spec.read_data()+ reads a spectrum from the SNAP Spectrometer. You'll
 want to work this into a (preferably threaded, see the {\tt threading} module)
