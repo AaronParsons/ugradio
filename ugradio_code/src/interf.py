@@ -1,7 +1,5 @@
 """Module for controlling the X-band antennas in the interferometer."""
 
-# XXX tracking mode?
-
 from __future__ import print_function
 import socket, serial, time, sys
 from threading import Thread, Lock

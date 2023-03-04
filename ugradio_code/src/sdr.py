@@ -46,12 +46,14 @@ async def shutdown(loop, sdr, signal=None):
         loop.stop()
 
 class SDR(RtlSdr):
-    def __init__(self, direct=True, center_freq=1420e6, sample_rate=2.2e6,
-        gain=0., fir_coeffs=None):
+    def __init__(self, device_index=0, direct=True, center_freq=1420e6,
+                 sample_rate=2.2e6, gain=0., fir_coeffs=None):
         """
         Initialize SDR dongle to capture voltage samples from the input.
 
         Arguments:
+            device_index (int): index of sdr, if multiple are plugged in.
+                Default = 0.
             direct (bool): sampling mode to use. If True, use direct 
                 sampling (no mixing, center_freq and gain ignored) and
                 return real-valued data. If False, mix with LO=center_freq
@@ -67,7 +69,7 @@ class SDR(RtlSdr):
         Returns:
            initialized SDR object
         """
-        RtlSdr.__init__(self)
+        RtlSdr.__init__(self, device_index=device_index)
         self.direct = direct
         if direct:
             self.set_direct_sampling('q')
