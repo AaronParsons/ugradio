@@ -13,9 +13,10 @@ BUFFER_SIZE = 4096
 
 async def _streaming(sdr, nblocks, nsamples):
     '''Asynchronously read nblocks of data from the sdr.'''
-    data = np.empty((nblocks, nsamples), dtype="complex64")
+    data = np.empty((nblocks, nsamples), dtype="int8")
     count = 0
-    async for samples in sdr.stream(num_samples_or_bytes=nsamples):
+    async for samples in sdr.stream(num_samples_or_bytes=nsamples, format='bytes'):
+        samples = (np.frombuffer(data, dtype='uint8') - 128).view('int8')
         data[count] = samples
         count += 1
         if count >= nblocks:
@@ -95,12 +96,13 @@ class SDR(RtlSdr):
 
         Arguments:
             nsamples (int): number of samples to acquire. Default: 2048.
-            nblocks (int): number of blocks of samples to acquire. Default: 1.
+            nblocks (int): number of blocks of samples to acquire. Default:1
 
         Returns:
-           numpy.ndarray of type float64 (direct == True) or complex64
-           (direct == False). Shape is (nblocks, nsamples) when nblocks > 1 or
-           (nsamples,) when nblocks == 1.
+           numpy.ndarray of type int8 with shape (nblocks, nsamples)
+           (direct == True) or (nblocks, nsamples//2, 2) (direct == False). 
+           Shape is (nblocks, nsamples) when nblocks > 1 or (nsamples,) when 
+           nblocks == 1.
         """
         # Make a new event loop and set it as the default
         loop = asyncio.new_event_loop()
@@ -123,6 +125,7 @@ class SDR(RtlSdr):
             loop.close()
 
         if self.direct:
-            return data.real
+            return data
         else:
+            data.shape = (data.shape[0], -1, 2)
             return data
