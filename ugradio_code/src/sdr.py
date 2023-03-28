@@ -16,7 +16,7 @@ async def _streaming(sdr, nblocks, nsamples):
     data = np.empty((nblocks, nsamples), dtype="int8")
     count = 0
     async for samples in sdr.stream(num_samples_or_bytes=nsamples, format='bytes'):
-        samples = (np.frombuffer(data, dtype='uint8') - 128).view('int8')
+        samples = (np.frombuffer(samples, dtype='uint8') - 128).view('int8')
         data[count] = samples
         count += 1
         if count >= nblocks:
@@ -84,7 +84,7 @@ class SDR(RtlSdr):
         self.set_sample_rate(sample_rate)
         if fir_coeffs is not None:
             self.set_fir_coeffs(fir_coeffs)
-        _ = self.read_samples(BUFFER_SIZE)  # clear the buffer
+        #_ = self.read_samples(BUFFER_SIZE)  # clear the buffer
 
     def __del__(self):
         self.close()
@@ -100,13 +100,13 @@ class SDR(RtlSdr):
 
         Returns:
            numpy.ndarray of type int8 with shape (nblocks, nsamples)
-           (direct == True) or (nblocks, nsamples//2, 2) (direct == False). 
-           Shape is (nblocks, nsamples) when nblocks > 1 or (nsamples,) when 
-           nblocks == 1.
+           (direct == True) or (nblocks, nsamples, 2) (direct == False). 
         """
         # Make a new event loop and set it as the default
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
+        if not self.direct:
+            nsamples *= 2
         try:
             # Add signal handlers
             for s in (signal.SIGHUP, signal.SIGTERM, signal.SIGINT):
@@ -127,5 +127,5 @@ class SDR(RtlSdr):
         if self.direct:
             return data
         else:
-            data.shape = (data.shape[0], -1, 2)
+            data.shape = (nblocks, nsamples // 2, 2)
             return data
