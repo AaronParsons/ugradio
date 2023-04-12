@@ -298,7 +298,7 @@ spectrometer is controlled by the {\tt leuschner} module outside of {\tt ugradio
 As a work-around, we made a {\tt ugradio.leusch.Spectrometer} object that
 interacts with the Python 2 interface via the command line:
 \begin{enumerate}
-\item {\tt ugradio.leusch.Spectrometer(} instantiates an interface to the spectrometer
+\item {\tt ugradio.leusch.Spectrometer()} instantiates an interface to the spectrometer
 at the default IP address.
 \item {\tt Spectrometer.int\_time} tells you how long each spectrum is integrated for.
 \item {\tt Spectrometer.read\_spec('out.fits', N, (ra,dec), 'eq')} will read N spectra and
