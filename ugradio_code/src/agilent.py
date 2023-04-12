@@ -6,7 +6,7 @@ try: import thread
 except(ImportError): import _thread as thread
 
 DEVICE = '/dev/usbtmc0' # default mounting point
-HOST, PORT = '10.32.92.95', 1341
+HOST, PORT = '192.168.1.90', 1341
 WAIT = 0.3 # s
 
 FREQ_UNIT = ['GHz','MHz','kHz']
