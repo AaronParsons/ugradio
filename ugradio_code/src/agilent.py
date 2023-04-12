@@ -17,10 +17,10 @@ class SynthBase:
     Its attributes are inherited by SynthDirect, SynthServer, and SynthClient.'''
     def validate(self):
         '''Make sure this is the device we think it is.'''
-        self._write('*IDN?') # query ID
+        self._write(b'*IDN?') # query ID
         resp = self._read().strip()
-        resp = resp.split(',')
-        assert(resp[0] == 'Agilent Technologies')
+        resp = resp.split(b',')
+        assert(resp[0] == b'Agilent Technologies')
     def get_frequency(self):
         '''Get the current frequency setting for the CW (continuous wave) output
         mode of the synthesizer.
@@ -29,10 +29,10 @@ class SynthBase:
         -------
         fq   : float, numerical frequency setting
         unit : string, units of fq (GHz, MHz, or kHz)'''
-        self._write(':FREQuency:CW?')
+        self._write(b':FREQuency:CW?')
         resp = self._read()
         fq,unit,_ = resp.split()
-        return float(fq), unit
+        return float(fq), unit.decode('utf-8')
     def set_frequency(self, val, unit):
         '''Set the frequency of the CW (continuous wave) output
         mode of the synthesizer.
@@ -46,7 +46,8 @@ class SynthBase:
         -------
         None'''
         assert(unit in FREQ_UNIT)
-        cmd = ':FREQuency:CW %f %s' % (val, unit)
+        unit = bytes(unit, encoding='utf-8')
+        cmd = b':FREQuency:CW %f %s' % (val, unit)
         self._write(cmd)
     def get_amplitude(self):
         '''Get the current amplitude setting for the CW (continuous wave) output
@@ -56,10 +57,10 @@ class SynthBase:
         -------
         amp  : float, numerical amplitude setting
         unit : string, units of amp (dBm, mV, or uV)'''
-        self._write(':AMPLitude:CW?')
+        self._write(b':AMPLitude:CW?')
         resp = self._read()
         amp,unit,_ = resp.split()
-        return float(amp), unit
+        return float(amp), unit.decode('utf-8')
     def set_amplitude(self, val, unit):
         '''Set the amplitude of the CW (continuous wave) output
         mode of the synthesizer.
@@ -73,7 +74,8 @@ class SynthBase:
         -------
         None'''
         assert(unit in AMP_UNIT)
-        cmd = ':AMPLitude:CW %f %s' % (val, unit)
+        unit = bytes(unit, encoding='utf-8')
+        cmd = b':AMPLitude:CW %f %s' % (val, unit)
         self._write(cmd)
 
 class SynthDirect(SynthBase):
@@ -96,7 +98,9 @@ class SynthDirect(SynthBase):
         self.validate()
     def _write(self, cmd):
         '''Low-level writing interface to device.  Not intended direct use.'''
-        self.dev.write(bytes(cmd, encoding='utf-8'))
+        if type(cmd) is str:
+            cmd = bytes(cmd, encoding='utf-8')
+        self.dev.write(cmd)
         self.dev.flush()
         time.sleep(WAIT) # slow down writing to avoid spam attacks
     def _read(self):
@@ -108,7 +112,7 @@ class SynthDirect(SynthBase):
             except(TimeoutError):
                 break
         rv = b''.join(rv)
-        return rv.decode('utf-8')
+        return rv
 
 class SynthClient(SynthBase):
     '''Implements a network connection to a synthesizer which is being hosted
@@ -127,8 +131,10 @@ class SynthClient(SynthBase):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(10) # seconds
         self.sock.connect(self.hostport)
-        self.sock.sendall(bytes(cmd, encoding='utf-8'))
-        if not cmd.endswith('?'): self.sock.close()
+        if type(cmd) is str:
+            cmd = bytes(cmd, encoding='utf-8')
+        self.sock.sendall(cmd)
+        if not cmd.endswith(b'?'): self.sock.close()
     def _read(self):
         '''Low-level reading interface to device.  Not intended direct use.'''
         resp = self.sock.recv(1024)
@@ -177,6 +183,6 @@ class SynthServer(SynthDirect):
         except(IOError):
             self._device_failure = True
             return
-        if cmd.endswith('?'):
+        if cmd.endswith(b'?'):
             resp = self._read()
             conn.sendall(resp)
