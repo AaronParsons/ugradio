@@ -23,242 +23,98 @@
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 \def\wLO{\omega_0}
 
-\title {LAB 1: Exploring Digital Sampling, Fourier Filtering, and Heterodyne Mixers}
+\title{LAB 1: Digital Sampling, Fourier Filtering, and Heterodyne Mixers in Radio Astronomy}
 
 \tableofcontents
-
 
 \section{Introduction}
 
 \noindent
-In this lab, we experimentally investigate digital
-samplers, discrete Fourier Transforms, and mixers. These are 
-tools of the trade in radio astronomy, and
-you use them every day when you use a cell phone, listen to the radio,
-or watch television. Did you know that WiFi was invented by a radio
+In this lab, we delve into digital samplers, discrete Fourier Transforms, and
+mixers---key tools in radio astronomy and everyday technologies like cell
+phones, radios, and televisions. Did you know WiFi was developed by a radio
 astronomer?
 
-To get firm footing in the methods of radio astronomy, you will perform a series of
-experiments illustrating the utility and hazards of these various techniques. 
-You will configure equipment in the lab, acquire and analyze data, and store and illustrate the results.
-The signal processing pipeline you build in this lab will be re-used in Lab 2 to
-observe 21-cm line emission from hydrogen in the Milky Way, so 
-put in the time to understand it and make it work. The effort you
-invest now will pay dividends later in the class.
+This series of experiments will introduce you to the practical aspects of radio
+astronomy. You'll configure lab equipment, collect and analyze data, and
+present your findings. The skills and pipeline you develop here are crucial for
+Lab 2, where you'll observe hydrogen's 21-cm line emission in the Milky Way.
+Save yourself \textbf{technical debt} by investing in your understanding and your code base.
 
-This first lab is an excellent time to establish good research and laboratory practices.
-Remember that your grade is determined by the report you turn in
-three weeks from now. All of the exercises that follow are aimed at building your
-understanding and giving you the raw materials (and data) from which to build that report.
-You don't have to finish everything or proceed in the order presented, but you do have
-to write a quality report that addresses the goals in \S\ref{goals}.
+Success in this lab hinges on establishing good research practices. Your grade depends on the report due three weeks from now, crafted from the exercises and data you'll gather. While completing every task isn't mandatory, your report should thoroughly address the goals outlined in \S\ref{goals}.
 
-Here are some specific suggestions for turning these lab instructions into a successful report:
+To enhance your lab experience and report:
+
 \begin{itemize}
-
-\item Keep notes in a {\bf lab notebook} as you hook things up.
-Good notes document the experimental setup corresponding to your data with sufficient
-detail to allow you to describe it accurately and track down mistakes.
-If you show your knowledgable GSI a head-scratcher of a plot but cannot remember
-which port of the mixer you plugged the noise into, how can they diagnose your problem?
-
-\item Back up (or revision control) your data, code, and plots. Nothing is more demoralizing than redoing work
-or being unable to reproduce a key result the night before a deadline.
-
-\item Start your report early. If you plan for which equipment, data, and plots you need
-for your report, you will spend your lab time more efficiently and avoid 
-panic later. Write descriptions and captions as you go to
-save yourself the existential horror of the blank page.
-
-\item Formal lectures, the pages linked on AstroBaki, and these lab instructions are 
-all resources for helping you write a strong report. As in real-life research, there
-is no one textbook containing everything you need to know. Explore, take notes, and show
-me what you learned in your report. Remember, I can only grade you on what you write down.
-Make sure what you write down is your own work, in your own words. Cite sources
-external to this class (no need to cite AstroBaki, lecture, or the lab instructions).
-
-\item Your reports will be in the style of scientific publications. They are narratives of explanation and discovery 
-that bring the reader---a science colleague---to the point of understanding and having confidence in your results.
-You are presenting your work, but this report is about the {\it reader's} journey, not yours.
-It is a presentation of synthesized results with the background and salient details necessary to understand them. 
-It is {\it not} a play-by-play of everything you did, all the plots you made, and all of the wrong turns along the way.
-
+    \item Maintain a \textbf{lab notebook}. Detailed notes on your experimental setup are vital for interpreting data and troubleshooting. We can't help you if you can't remember your experimental configuration!
+    \item \textbf{Revision control} your data, code, and plots. This safeguards against data loss and facilitates reproducibility.
+    \item Begin your report early. Planning for the data and plots you need helps optimize lab time and reduces last-minute stress. Write incrementally to avoid facing a blank page.
+    \item Use lectures, AstroBaki, the internet, and these instructions as resources. When it comes to research and making things work, you have to move beyond the textbook to find trustworthy resources. Exploration and note-taking are key.
+    \item Aim for the style of scientific publications. Your report should guide the reader to understand and trust your results, focusing on the synthesis of findings rather than a detailed chronicle of your process. Ensure all words and plots in your report are original. Cite external sources.
 \end{itemize}
 
 
 \section{Goals} \label{goals}
 
 \noindent
-The goals of this lab---the results your report should
-demonstrate you have achieved---are as follows.
+The objectives of this lab, which your report should demonstrate, include:
 
 \begin{itemize}
-
-\item Sample electronic signals and convert them into digital signals. Demonstrate
-the phenomenon of aliasing and quantitatively relate your results to the Nyquist criterion.
-
-\item Correctly use and display Discrete Fourier Transforms (DFTs) to 
-  determine the frequency power spectrum of time-ordered voltage data.
-  Correctly calculate and label frequency and power axes in plots and demonstrate
-  understanding of how frequency ranges and resolutions are determined by 
-  the duration and cadence of samples in a time series.
-
-\item Demonstrate understanding of negative frequencies. Motivate and measure how complex inputs to a Fourier Transform
-break the positive/negative frequency degeneracy.
-
-%\item Learn about the Fast Fourier Transform (FFT) as a fast
-%  implementation of the DFT.
-
-\item Identify and characterize noise in electronic measurements and explore how it behaves 
-  under the Fourier Transform.
-
-\item Apply the convolution/correlation theorem to explain
-  spectral leakage in power spectra
-  and test the relationship between power spectra and autocorrelation functions.
-
-\item Apply heterodyne mixing for frequency conversion
-  and quantify how electronic mixers differ from
-  ideal ones. Construct double- and single-sideband mixers and use measurements
-  to demonstrate the theoretical and practical differences in their operation.
-
+    \item Sampling electronic signals and converting them to digital format. Show aliasing effects and quantitatively link them to the Nyquist criterion.
+    \item Effective use of Discrete Fourier Transforms (DFTs) for analyzing frequency power spectra from voltage data. Ensure correct calculation and labeling of frequency and power axes, understanding frequency ranges and resolutions in relation to sample duration and cadence.
+    \item Understanding negative frequencies and how complex inputs in Fourier Transforms to distinguish positive/negative frequencies.
+    \item Identifying and analyzing noise in electronic measurements, including its behavior under Fourier Transform.
+    \item Applying the convolution/correlation theorem to explain spectral leakage in power spectra and to explore the relationship between power spectra and autocorrelation functions.
+    \item Using heterodyne mixing for frequency conversion, assessing the differences between real and ideal mixers. Experiment with double- and single-sideband mixers, demonstrating their theoretical and practical variations.
 \end{itemize}
 
 \noindent
-Your report will be judged on the basis of your presentation of the
-theoretical background, experimental setup, data analysis, and
-quantitative interpretation of results for each of these areas.
-Along the way, you will develop many new technical skills which
-need not be written about explicitly in your report; the quality of
-the report itself will demonstrate your growing proficiency.
-These technical skills include:
+Your report will be evaluated based on your presentation of theoretical background, experimental setup, data analysis, and the quantitative interpretation of results in these areas.
+
+Additionally, the report will reflect your proficiency in the following technical skills, which do not need explicit discussion:
 
 \begin{itemize}
-
-\item configuring laboratory equipment 
-and navigating the Linux computing environment 
-on your Raspberry Pi,
-
-\item using the Python programming language for experimental control,
-data acquisition, analysis, signal processing, and plotting, and
-
-\item writing a technical report, including an abstract, captioned 
-figures, tables, and citations, typeset in \LaTeX.
-
+    \item Configuring lab equipment and operating Linux on Raspberry Pi.
+    \item Using Python for experimental control, data acquisition, analysis, signal processing, and plotting.
+    \item Writing a technical report in \LaTeX, including abstracts, figures, tables, and citations.
 \end{itemize}
+
 
 \section{Schedule}
 
 \noindent
 This is an ambitious lab with a steep learning curve.
 Do not to get behind or backload your work schedule.
-Writing the report takes a lot longer than you might think.
+Students always underestimate how long it takes to write a report.
+
 \begin{enumerate}
-
-\item {\it Week 1.} Finish \S
-  \ref{nyquist} and read the accompanying
-  material in \S \ref{pwrspectrum}. {\it Be prepared to show work, 
-  software, and results to the class.}
-
-\item {\it Week 2.} Finish \S
-  \ref{mixersect} and read \S \ref{hetereo}. Again, be prepared
-  to present to the class.
-
-\item {\it Week 3.} Read the handouts in \S
-  \ref{report} and write your formal report.  Refer to
-  our handouts and linked material for tips on how to structure
-  a scientific paper. You will be graded on the degree to which your
-  report addresses the specific goals in \S\ref{goals} and conforms to
-  standards of a quality scientific publication.
-
+    \item {\it Week 1:} Complete \S \ref{nyquist} and review \S \ref{pwrspectrum}. Be ready to demonstrate your work, software, and results in class.
+    \item {\it Week 2:} Finish \S \ref{mixersect} and go through \S \ref{hetereo}. Prepare to present your findings and progress to the class.
+    \item {\it Week 3:} Consult \S \ref{report} for report-writing guidance. Focus on crafting a formal report that effectively addresses the objectives in \S\ref{goals} and adheres to the norms of scientific writing. Your report will be graded on its quality and adherence to scientific publication standards.
 \end{enumerate}
+
+
 
 \section{Software Engineering}
 
 \noindent
-The programming required to complete these labs increases in scale throughout the semester.
-As it does, you will need to learn to organize, document, test, and stabilize your code.  The process
-of building sound code (software engineering)
-may be one of the most marketable skills you can take from this class.
-Learning to engineer good software can take a lifetime, but let us start with a few
-principles for this lab.
+The programming complexity of these labs increases throughout the semester.
+You will need to develop good practices in organizing, documenting, testing, and
+stabilizing your code. Software engineering is a vital (and highly marketable) skill, and we begin with
+these principles:
 
 \begin{itemize}
-
-\item {\it Package your code}.
-Many students these days only have experience coding inside of a Jupyter 
-notebook. Jupyter, while a fantastic resource for developmental coding,
-has many drawbacks when it comes to software engineering, particularly as
-you start changing code and running cells out of order.
-Build infrastructure code (e.g. functions and
-classes) and store it in {\bf modules} and
-{\bf packages}\footnote{See 
-\url{https://docs.python.org/3/tutorial/modules.html}}.
-Python modules are simply text files containing code. Put them in
-a directory and add a {\tt setup.py} file out front, and you have a
-package.
-Modules separate the definition of the code from the scripts and notebooks 
-used to execute code with particular parameters. Packages bundle modules,
-scripts, and tests into installable bundles. {\tt numpy}, {\tt scipy},
-and {\tt ugradio} are all examples of packages.
-Packaging code vastly improves
-organization, testability, and code reusability.
-
-\item {\it Code (at least) twice}. It is nearly impossible to write 
-well-organized code while figuring
-things out for the first time. You need room to hack at the problem, to try and fail, to learn and iterate.
-Code once to figure out how your program should work, then
-re-code it to get the organization and interfaces right. Good software
-engineers think carefully about interfaces (the boundaries between
-functions, classes, and modules, along with the information that flows
-across them). Time spent organizing and testing code pays
-dividends later as you are debugging.
-
-\item {\it Test your code.} How do you know your code is doing what it should? Running
-without raising an exception doesn't necessarily mean it did what you intended. In software as in science,
-you can only {\it expect} what you {\it inspect}, which is to say that
-you should only trust something work to the extent that you have 
-tested that it does so.
-Once you write a test, keep it with your code so that if you change your
-code, you can verify it still works.
-Modular testing (a.k.a {\bf unit testing}) is the key to success in large
-software projects, particularly ones involving multiple people.
-The {\tt unittest} module is 
-commonly used in Python, but other modules have their own merits.
-
-\item{\it Control your revisions}. {\bf Revision control} uses a specialized program ({\tt git} is popular) to
-track the changes made to your code. They allow you to edit code with 
-impunity, knowing that you can always backtrack to a previously committed
-state of the code if you screw something up.
-Open a (free) GitHub account, initialize a project
-for this class, and commit to it regularly. GitHub works with 
-{\tt git} to back up your work remotely, and it also 
-allows you to easily synchronize your work across multiple computers,
-and with collaborating members of your group.  It is 100\% worth the 
-learning curve.
-
+    \item {\it Package your code}: Move beyond Jupyter notebooks by building infrastructure code (functions and classes) into {\bf modules} and {\bf packages}. This separation enhances organization, testability, and reusability. See \url{https://docs.python.org/3/tutorial/modules.html} for guidance.
+    \item {\it Code (at least) twice}: First, code to understand your program's functionality. Then, recode for better organization. Thoughtful interface design is crucial to good coding, as it limits complex dependencies, enhances usability, and speeds debugging.
+    \item {\it Test your code}: How do you know your code works? What defines success?  In software as in science, you can only {\it expect} what you {\it inspect}, which is to say that you can only trust something work to the extent that you have tested that it does so.
+Modular testing, or {\bf unit testing}, is key in large projects. Python's {\tt unittest} module presents a good starting point.
+    \item {\it Control your revisions}: Use revision control tools like {\tt git} to track code changes. A GitHub account can facilitate code backup, synchronization across devices, and collaboration. Embrace the learning curve---it's worth it.
 \end{itemize}
 
 \noindent
-Advanced software engineering combines the steps above, 
-using online repositories to hold 
-branches of a software project. A community of coders push their changes, 
-a continuous integration system runs unit tests on the code to make sure 
-nothing breaks, that new code is covered by tests, and
-that all the code conforms to reasonable documentation and 
-legibility standards.  Code reviews examine changes 
-proposed in pull requests, after which changes are merged into the 
-main branch of the project.
+In advanced software engineering, online repositories host branches of a project, with continuous integration systems running unit tests. While we won't use these advanced methods in this class, understanding them is beneficial.
 
-We don't need this advanced machinery for this class, but it is good 
-to be aware of how coding communities work and
-to start down the path of good coding practices yourself.
-
-{\it At a minimum, firmly separate data acquisition (code
-controlling equipment in the lab and at the telescope) 
-from data analysis}.  For data acquisition, scripts that run from the 
-command line are most appropriate. For data analysis, {\tt jupyter}
-notebooks are a fantastic tool. For code needed in scripts and notebooks,
-write modules that you can import into either.
+Separate data acquisition (lab and telescope control) from data analysis. Use command line scripts for acquisition and Jupyter notebooks for analysis. For shared code, create modules importable in both environments.
 
 
 \section{Digitally Sampling a Sine Wave (Lab Activity, Week 1)}
@@ -268,42 +124,13 @@ write modules that you can import into either.
 
 \noindent
 Your work this first week will require you to navigate
-the Linux operating system, using a (Vi/Emacs/3rd party) text editor to write Python. 
+the Linux operating system, using a text editor to write Python. 
 On Astrobaki\footnote{\url{https://casper.astro.berkeley.edu/astrobaki/index.php/Undergraduate_Radio_Lab}}
 we have linked primers on
-Linux/Unix, Python Installation and Basic Programming, Unix Text Editors, and Revision Control.  You can
+Linux/Unix, Python Installation and Basic Programming, Unix Text Editors (ViM/Emacs), and Revision Control.  You can
 also review the key course content for this week: {\it Nyquist Sampling}
  and {\it The Fourier Transform}.
 
-%\subsubsection{Handouts}
-%\begin{enumerate}
-%\item Learning Linux: {\tt unixprimer.pdf} ``A SHORT UNIX PRIMER'' Basic
-%  commands for Linux/Unix operating systems. Eventually you'll want to
-%  know all of the commands in here because they are so useful.
-%
-%\item Learning the EMACS editor: {\tt emacs-beg.pdf} {\it ``A Beginners
-%  Guide to Emacs''} and the related {\tt emacskeyops.pdf} ``Common
-%  Editing Tasks and Their EMACS Keystroke Counterparts''. Emacs is
-%  excellent for everything, including editing writing computer
-%  code. Efficient editing means using the keyboard instead of the mouse;
-%  the second handout gives keystroke commands for the most commonly
-%  needed editing sequences.
-%
-%\item Getting into Python: {\tt idltut1\_ay121.pdf} {\it ``Quick Python
-%  Tutorial Number One for AY121''} Gives you the basics of Python.
-%
-%\item Plotting in Python: {\tt bpidl.pdf} {\it ``BPPython---BASIC PLOTTING IN
-%  Python: PLOTS, MULTIPLE PLOTS, COLORS, MAKING POSTSCRIPT FILES''} Sections
-%  1 and 2 are enough for now.
-%
-%\item {\it This handout is optional}, because for this lab you can get
-%  along with just the material below in \S \ref{pwrspectrum}. This handout
-%  is more detailed, 28 pages of all you need to know about Discrete
-%  Fourier transforms.  {\tt fourierc.pdf} {\it ``DISCREETLY FINE TIMES
-%    with DISCRETE FOURIER TRANSFORMS (DFT’s with DFT’s) or “WHY DOES
-%    THAT FFT OUTPUT LOOK SO sWEIRD???” ''}.
-%\end{enumerate}
-%
 \subsubsection{The {\tt ugradio} Python Package}
 
 \noindent
@@ -336,7 +163,6 @@ Radio (SDR) receiver attached to your Raspberry Pi.
 \item {\tt ugradio.dft} --- provides code for doing arbitrary Discrete Fourier Transforms.  This
 contrasts the functionality of {\tt numpy.fft}, which can only do certain kinds of
 Discrete Fourier Transforms, but can do them very fast.
-
 
 %\item {\tt srs1\_frq.pro} --- sets the frequency of one of the SRS
 %  function generators. If you are lazy, you can set the SRSs by hand. If
