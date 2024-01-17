@@ -123,394 +123,192 @@ Separate data acquisition (lab and telescope control) from data analysis. Use co
 \subsection{Handouts and Software}
 
 \noindent
-Your work this first week will require you to navigate
-the Linux operating system, using a text editor to write Python. 
-On Astrobaki\footnote{\url{https://casper.astro.berkeley.edu/astrobaki/index.php/Undergraduate_Radio_Lab}}
-we have linked primers on
-Linux/Unix, Python Installation and Basic Programming, Unix Text Editors (ViM/Emacs), and Revision Control.  You can
-also review the key course content for this week: {\it Nyquist Sampling}
- and {\it The Fourier Transform}.
+Your first week's tasks involve exploring digital sampling and spectral
+analysis while using Linux and Python programming. Refer to
+Astrobaki\footnote{\url{https://casper.astro.berkeley.edu/astrobaki/index.php/Undergraduate_Radio_Lab}}
+to review key course topics ({\it Nyquist Sampling} and {\it The Fourier
+Transform}), and for primers on Linux/Unix, Python Installation and Basic
+Programming, Unix Text Editors (ViM/Emacs), and Revision Control.
 
 \subsubsection{The {\tt ugradio} Python Package}
 
 \noindent
-As mentioned above, modules and packages help us distribute and reuse 
-Python code.
-For this class, we will use
-the {\tt ugradio} package to provide supporting code for your labs.
-This package is already installed on the SD card we provide you for
-your Raspberry Pi (you can test this by opening {\tt ipython} or
-a {\tt jupyter notebook}
-and typing {\tt import ugradio}). If you need to install it on 
-another computer, all of the code is on GitHub and linked to from the 
-course website.  
-
-For the activities below, you will want to use several modules 
-inside the {\tt ugradio} package, particularly {\tt ugradio.sdr},
-and {\tt ugradio.dft}.
-Take a minute to browse the code in these modules, which you can do
-on GitHub, in the {\tt ugradio/ugradio\_code/src} directory on
-your Raspberry Pi, or within Jupyter/IPython using {\tt ??} after
-any module, function, or class name.
+The {\tt ugradio} package contains supporting code for the labs. It is pre-installed on the provided SD card for your Raspberry Pi. To verify, open {\tt ipython} or a {\tt jupyter notebook} and try {\tt import ugradio}. Installation on other computers is possible via GitHub, linked on the course website.
+Focus on {\tt ugradio.sdr} and {\tt ugradio.dft} modules.
 
 \begin{itemize}
-
-%\item {\tt ugradio.pico} --- runs the PicoSampler Analog-to-Digital Converter to digitally sample signals. This is essential.
-
-\item {\tt ugradio.sdr} --- provides code for interfacing to the Software-Defined
-Radio (SDR) receiver attached to your Raspberry Pi.
-
-\item {\tt ugradio.dft} --- provides code for doing arbitrary Discrete Fourier Transforms.  This
-contrasts the functionality of {\tt numpy.fft}, which can only do certain kinds of
-Discrete Fourier Transforms, but can do them very fast.
-
-%\item {\tt srs1\_frq.pro} --- sets the frequency of one of the SRS
-%  function generators. If you are lazy, you can set the SRSs by hand. If
-%  you are creatively lazy, you will want to use {\tt srs1\_frq.pro}.
-
-%\item {\tt srs1\_dbm.pro}, {\tt srs1\_vpp.pro} --- sets the output level
-%  of the same SRS. 
-
+    \item {\tt ugradio.sdr} --- For interfacing with the Software-Defined Radio (SDR) receiver on your Raspberry Pi.
+    \item {\tt ugradio.dft} --- Offers functionality for arbitrary Discrete Fourier Transforms, in contrast to {\tt numpy.fft}, which is limited to specific types but operates (much) faster.
 \end{itemize}
+
+\noindent
+Explore these modules on GitHub, in the {\tt ugradio/ugradio\_code/src} directory on your Raspberry Pi, or within Jupyter/IPython using {\tt ??} after a module, function, or class name.
+
+
 
 
 \subsection{Digital Sampling and the Nyquist Criterion}
 
 \noindent
-%This activity makes use of lab equipment. A adaptation for remote access is
-%illustrated in {\color{red} red} below.
-%
-In class, we learned about the 
-Nyquist criterion for sampling discretely in time. 
-Sampling too slowly results in a signal being aliased, but oversampling
-is inefficient and often impossible because of hardware limitations.
-Investigate the phemenon using an SDR module connected to a 
-Raspberry Pi, and numerical simulations in Python.
-In both cases, try different ratios of 
-signal frequency ($\nu_0$) and sampling frequency ($\nu_s$) and compare
-the result to theoretical expectations.
-
-Remember, your goal is to write a section of your report on aliasing
-that includes theory, data analysis, and (optionally) numerical
-simulation.
-This is best done by posing and quantitatively answering a question.
-Generally, the more specific the
-question, the better your report will read. For example, ``{\it what
-is aliasing}" is too broad. ``{\it How many Nyquist zones
+Explore the Nyquist criterion for discrete sampling by using a Software-Defined Radio (SDR) module with a Raspberry Pi, and through Python simulations. Vary the signal frequency ($\nu_0$) and sampling frequency ($\nu_s$), comparing results with theoretical expectations. Your report should include a focused analysis of aliasing that integrates theory, data analysis, and simulations.
+Try to pose and quantitatively answering a specific question.
+``{\it What is aliasing}" is too broad. ``{\it How many Nyquist zones
 can I demonstrate using my RPi SDR module}" is a tighter framing with
 a quantifiable answer that you can provide evidence to support. Even better
 would be ``{\it using (purposeful) aliasing, can I characterize
-the spectral response of my SDR module?}"
-Feel free to pose and answer your own unique question.
+the bandpass filter inside my SDR module?}"
 
 \subsubsection{Sampling with an SDR and a Raspberry Pi}
 
-\noindent
-We assume you have followed the instructions on AstroBaki for 
-{\it Setting Up Your Raspberry Pi}.
-If you imaged your SD Card from a lab copy, you should be good to go.
-Connect a keyboard, monitor, and power cable,
-bench, and plug in an SDR module 
-(e.g. the Nooelec NESDR SMART) into your RPi's USB port and pull up a 
-terminal on your RPi.
-Remember to update and reinstall {\tt ugradio} periodically 
-to ensure it is up to date. To do this:
+Get a prepared SD card or follow the setup instructions on AstroBaki for {\it Setting Up Your Raspberry Pi}. Once set up, connect an SDR (like Nooelec NESDR SMART) to the USB (blue = 3.0 = faster) port. Regularly update the {\tt ugradio} package to ensure its latest version:
 \begin{enumerate}
-\item {\tt cd ~/ugradio/ugradio\_code}
-\item {\tt git pull}
-\item {\tt pip install .}
+    \item {\tt cd ~/ugradio/ugradio\_code}
+    \item {\tt git pull}
+    \item {\tt pip install .}
 \end{enumerate}
 
-For a fun demo, hook up a cheap antenna to the SDR SMA input,
-run {\tt gqrx} at the terminal, press the ``Play" button, and then fiddle with the
-settings (e.g., use Hardware Automatic Gain Control, WFM Stereo demodulation). 
-With audio output hooked up, 
+For an optional demonstration that uses the capabilities of the R820T2 tuner chip and the RTL2832U quadrature digital sampler chip, connect an antenna to the SDR input and use {\tt gqrx} to listen to FM radio broadcasts. 
+Under {\tt Configuration}, remove the {\tt soapy=0} clause and replace {\tt XXX} with {\tt uhd}, then press {\tt Play}. 
+Fiddle with the settings (e.g., use Hardware Automatic Gain Control, WFM Stereo demodulation), and
 you should be able to listen to Frequency Modulated (FM) 
 radio by setting an appropriate center frequency (in the US, FM spans
 87.8--108 MHz).
 
-Listening to FM radio broadcasts is fun, but we need to figure out
-what is actually happening between the antenna and the output.
-The SDR modules we have chosen for this
-lab are based off of two chips: the R820T2 (a tuner chip), and the RTL2832U (a digital
-sampling, filtering, and demodulation chip).
-These SDR modules are quite versatile and can be 
-coaxed into doing all sorts of useful things. 
-For starters, we would like to bypass most everything
-and just use the analog-to-digital (ADC) sampler
-inside the RTL2832U. This is called {\bf direct sampling}, and is one
-of the modes supported in the 
-{\tt ugradio.sdr} module.
+Listening to FM radio broadcasts is fun, but we need to figure out what actually happens between the antenna and the speaker.
+For starters, we will bypass most everything and just use the analog-to-digital converter (ADC) inside the RTL2832U.
+This mode is called {\bf direct sampling} in the {\tt ugradio.sdr} module.
+Use a signal generator to produce a $<500$ kHz sine wave with a $<100$ mV peak-to-peak voltage.
+Verify the signal with an oscilloscope (i.e. mistrust everything!) and document your settings before plugging it into your SDR.
 
-Using a function generator, generate a sine wave around $\nu=500$ kHz with a 
-$V_{\rm PP}=100$ mV peak-to-peak
-voltage and send it to the input of the SDR module plugged into your RPi.
-We suggest using a co-axial T joint so
-you can put a copy of the signal you are sampling into an oscilloscope.
-Good science is founded on inspection, verification, and documentation.
-"Mistrust everything," is one of the mantras of this class.
-Inspect the signal you are sampling with the oscilloscope, verify that it matches that amplitude
-and period you set on the function generator, and document the settings used.
-
-Now, using python on your RPi (either interactively with {\tt ipython} or by writing
-a script), make an {\tt SDR} object (e.g. {\tt sdr = ugradio.sdr.SDR(...)})
-and use {\tt sdr.capture\_data} to collect some data and plot it.
-You can set the {\tt sample\_rate} in the range of $\nu_s=1.0$--3.2 MHz. Experiment
-with various combinations of $\nu_s$ and input frequency and see what frequency
-sine waves you observe in your data.
-
-You will notice that, for a fixed $\nu_s$, the amplitude
-of the sine wave you measure will change for different values of $\nu$ input. This
-happens as a result of some filters inside of the RTL2832U chip. A
-major role of these filters is to suppress aliasing! In other words,
-these SDR modules are smarter than we want them to be. In order to better
-illustrate aliasing, it helps to override the default filter, which
-took your intrepid instructor some amount of hacking (and bugfixing
-in the SDR driver!) to accomplish. Suffice it to say, your ability
-to see aliasing will be dramatically improved if you provide
-{\tt fir\_coeffs=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 
-0, 0, 0, 0, 0, 0, 2047])} as
-an argument to your {\tt SDR} object. (That is an array of length 16,
-with the last number set to $2^{12}-1$) \footnote{If you are curious, 
+Write Python code to create an {\tt ugradio.sdr.SDR} object and capture data with varying sample rates ($\nu_s = 1.0$--3.2 MHz).
+Plot your captured data (which is a {\it multidimensional} {\tt numpy} array) to make sure it looks sinusoidal.
+{\it Your first data capture can sometimes contain a stale (old) buffer, so inspect your data carefully.}
+Observe how the sine wave's amplitude changes with frequency due to internal filters in the RTL2832U, which are designed to suppress aliasing.
+You can override these filter settings
+\footnote{If you are curious, 
 I expanded the {\tt librtsdr} driver and {\tt pyrtlsdr} Python wrapper
 to support setting the coefficients of a Finite Impulse Response
 (FIR) filter. FIR filters implement convolutional filters, which we will
 learn about next week.}
+to illustrate aliasing more clearly using
+{\tt fir\_coeffs=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2047])}.
 
-For a given sample frequency,
-explore different values of $\nu$, using aliasing to probe different Nyquist zones to
-examine the filter response of the RTL2832U.
-Document the approach you are using,
-the hardware involved (brand, part number), and the
-time of signal acquisition. If you want, you can also explore the
-difference in aliased amplitudes you get for {\tt fir\_coeffs=None}
-(default) versus the above suggested value for enhanced aliasing.
+Investigate different Nyquist zones and the RTL2832U's filter response by experimenting with various $\nu$ values. Document your methods, equipment details, and signal settings. Compare aliased amplitudes with default and enhanced aliasing settings.
 
-Once you have acquired an array of data, you should save it to a file
-with {\tt numpy.savez}.  Your analysis scripts can then 
-load data from this file with {\tt numpy.load}. These files represent the interface
-between your data acquisition code and your analysis code, and good design often
-boils down to good interfaces. In this case, that could mean adding a bunch of meta-data
-to your {\tt numpy.savez} call (it accepts multiple arrays/scalars) so that you have
-all the information you need for analysis and presentation sitting right there with your data.
+Write plain text scripts to collect and save data arrays (and metadata) using {\tt numpy.savez}. Load files into Jupyter notebooks with {\tt numpy.load} and use {\tt matplotlib} to interactively plot and inspect the sampled waveforms. 
+Explore the Fourier spectrum of your signals with either {\tt numpy.fft} or {\tt ugradio.dft} and compute the power spectrum (see \S\ref{dft} and \S\ref{pwrspect}).
+For Fourier plots, pay particular attention to data order (e.g. {\tt numpy.fft.fftshift}) and units, both in frequency and amplitude.
 
-For each dataset, use the {\tt matplotlib} package (typically imported
-as {\tt import matplotlib.pyplot as plt} to plot
-the digitally sampled waveform versus
-time.  
-For plotting, it is easier to visualize fewer samples, so if you load a waveform from file into
-a variable {\tt data}, you can slice off the first, say, 200 samples with the command {\tt data = data[:200]}.
-Make the plot informative by putting the $x$ axis in time units (e.g. {\tt plt.plot(times, data)} instead of {\tt plt.plot(data)}). 
-Does the period match what you expected?
-
-If you would like to use this (or any) plot in your report, make sure you label both axes (with
-appropriate units to avoid tiny or huge numbers)
-give it a title, and restrict the range to an appropriate scale where you can clearly see
-the signal shape and frequency. You will also need to come up with an appropriate caption that
+When you have plots you like in your Jupyter notebook, graduate them to revision controlled, plain-text scripts that you can use to reliably reproduce them from raw data for your report.
+Make sure to label all axes (with appropriate units to avoid tiny or huge numbers)
+give it a title, and restrict the range to clearly illustrate
+the signal shape and frequency.
+Your report will need include an appropriate caption that
 stands alone as a description of the plot and what it demonstrates.
 
-For each of the datasets you take, derive and plot the Fourier power spectrum
-(e.g. the square magnitude of the voltage spectrum; see \S\ref{dft} and \S\ref{pwrspect}). You can use {\tt numpy.fft} to do the Fourier
-transform, 
-but feel free to use our homegrown {\tt ugradio.dft} version until you have mastered dealing with
-Fourier units and the subtleties of {\tt fftshift}.
+Try producing a plot that synthesizes several data runs to illustrate aliasing and Nyquist's criterion.
+You will produce and plot more data than you should put in your report.
+Make sure the ones in your report are focused on quantitatively illustrating a point.
+One good plot is worth more than many vague ones.
 
-Now, examining the results, draw your own conclusion: what is the
-minimum sampling rate ($\nu_{s,min}$) that accurately reproduces the spectral frequency $\nu_0$ in
-the sampled data?  That is {\bf Nyquist's criterion}. 
 
 \subsection{Voltage Spectra and Power Spectra}
 
 \noindent
-Power spectra tell us about the frequency content of our signal with
-the magnitudes of the complex numbers in the Fourier transform.  Voltage
-spectra, by contrast, give us phase information,
-with real and imaginary parts.
+Understanding the difference between power and voltage spectra is vital.
+Power spectra summarize the frequency content of our signal, while voltage spectra provide additional phase information with real and imaginary components.
+Why might power spectra be preferred over voltage spectra, or vice versa?
 
-What does it mean, that the voltage spectra are complex? What do the real
-and imaginary parts represent? Is the imaginary part less `real'
-than the real part?
-What does it mean, for frequencies to be negative versus
-positive? These are questions your lab report could try to answer.
+Consider the complex nature of voltage spectra. What do the real and imaginary numbers signify? What are negative frequencies, and how are they realized in your data? These concepts can be explored in your lab report.
 
-For one of your data captures in the previous section, plot the real and imaginary parts
-(e.g. {\tt spec.real} and {\tt spec.imag})
-of the voltage spectrum on the same panel in different colors.
-Do the plotted points 
-exhibit any symmetry between negative and positive
-frequencies?
+From your previous data, plot both real ({\tt spec.real}) and imaginary ({\tt spec.imag}) components of the voltage spectrum. Observe any symmetry between negative and positive frequencies. Repeat this with independent data to verify consistency. Analyze why the real and imaginary parts vary in amplitude and sign.
 
-Repeat this process on independent data
-streams to ensure the result is not a fluke.
-When you compare the plots for several independent data captures of the same sine wave, do the
-voltage spectra repeat identically?  Why not? What is happening when
-sometimes the real portions are positive or negative? When the imaginary
-portions have more amplitude than the real ones?
+Select a power spectrum and perform its inverse Fourier transform using {\tt dft.idft} or {\tt numpy.fft.ifft}. Ensure correct frequency inference for each bin in your power spectrum array. Also, compute the autocorrelation function (ACF) from the voltage time series using {\tt numpy.correlate} and {\tt scipy.signal.correlate}. 
 
-For the power spectra, repeat this symmetry examination and the test for
-repeatability. What kind of symmetry do the power spectral points
-exhibit? Why might we use power spectra instead of voltage spectra, and vice versa?
+According to the correlation theorem, the Fourier transform of the power spectrum should match the ACF. Compare them and explain any discrepancies.
 
-Choose a power spectrum and take its inverse Fourier transform.
-For this to work, you need to make sure {\tt dft.idft} correctly infers
-the frequencies corresponding to each bins in your power spectrum array,
-Separately, calculate the autocorrelation function (ACF) directly from 
-the voltage time series manually with {\tt dft/idft}, with \verb$numpy.correlate$, and with \verb$scipy.signal.correlate$.
-According to the correlation theorem, the Fourier transform
-of the power spectrum should equal the ACF. Does it? Explain any differences.
 
 \subsection{Leakage Power} \label{subleakage}
 
 \noindent
-By default, \verb$dft$ calculates a power spectrum at $N$ frequencies for a signal with 
-$N$ time samples, each frequency sepearated by $\Delta\nu = \nu_s/N$. (For Fast Fourier Transform (FFT)
-operations like \verb$numpy.fft$, this correspondence between time and frequency samples is hard-coded.) 
-For some of the waveforms you captured above, calculate
-the power spectrum with $N_{\rm freq}\gg N$, contrary to the
-recommendations in \S \ref{dft}. Use \verb$dft$ and choose 
-frequency increments much smaller than $\Delta \nu = \nu_s/N$.
-Use a logrithmic vertical axis to see if there is nonzero power at
-frequencies other than $\nu_0$.  This
-is evidence of {\bf spectral leakage}, which affects all power spectra 
-calculated using Fourier techniques. 
+When using {\tt dft}, the default setting calculates a power spectrum at $N$ frequencies for a signal with $N$ time samples, where each frequency is separated by $\Delta\nu = \nu_s/N$. 
+For Fast Fourier Transform (FFT) operations like {\tt numpy.fft}, this time/frequency sample correspondence is hard-coded.
 
-Can you explain mathematically why you might find power at $\nu\ne\nu_0$ using a Discrete Fourier Transform?
+For this exercise, calculate the power spectrum of some captured waveforms with $N_{\rm freq}\gg N$, diverging from the guidelines in \S \ref{dft}.
+Use {\tt dft} with frequency increments $\Delta \nu \ll \nu_s/N$. Employ a logarithmic vertical axis to identify if there is non-zero power at frequencies other than $\nu_0$. The presence of power at $\nu\ne\nu_0$ indicates \textbf{spectral leakage}, a common phenomenon in Fourier-based power spectra calculations. 
+
+Take a look at the Convolution Theorem. Can you explain mathematically why you might find power at $\nu\ne\nu_0$ using a Discrete Fourier Transform?
+
 
 \subsection{Frequency Resolution} \label{freqres}
 
 \noindent
-If you had two spectral lines (sine waves), how closely spaced in frequency
-could they be and still be resolvable? Investigate this experimentally by
-combining the output of two function generators in a power splitter. (A splitter
-run backward is a combiner.) Use two 
-frequencies very close together and plot the power spectrum again
-using points more closely spaced in frequency
-than the $\Delta \nu = \nu_s/N$.
+Determine how closely spaced two spectral lines (sine waves) can be while still being distinguishable.
 
-How close together can the two frequencies be for you to still 
-distinguish them? This is called the {\bf frequency resolution.} How
-does it depend on the number of samples used in the DFT? In
-particular, how does it compare to time interval that
-those samples span?
+Combine the outputs of two function generators using a power splitter (used in reverse as a combiner). Select two frequencies very close together and plot their power spectrum, ensuring the frequency points are more densely spaced than the standard $\Delta \nu = \nu_s/N$.
 
-Can you explain your findings mathematically?
+Experiment, for a fixed number of time samples, to find the minimum frequency separation where the two signals remain resolvable---this gap is the \textbf{frequency resolution}. Examine how this resolution is affected by the number of samples in the Discrete Fourier Transform (DFT). How does it relate to the time interval spanned by those samples?
 
-\subsection{Nyquist Windows}
+Conclude by providing a mathematical explanation for your experimental findings regarding frequency resolution.
+Again, can you interpret this result using the Convolution Theorem?
+
+
+\subsection{Power Spectra in other Nyquist Windows}
 
 \noindent
-Above, we calculated spectra for frequencies in the range $\pm
-\nu_s/2$. What happens if we increase this range?
+This exercise extends the exploration of power spectra beyond the standard frequency range of $\pm \nu_s/2$. 
 
-Explore by
-taking a Nyquist-sampled time series and calculating the power
-spectrum for a much larger frequency range, $\pm W \nu_s/2$, where
-$W$ is at least 4, centered on the original frequency interval. Each value
-of $W$ gives you a spectrum in a different {\bf Nyquist window}. How do
-the spectra in different Nyquist windows compare? Note that, for $W>1$,
-you are calculating power spectra for frequencies that violate the
-Nyquist criterion, yet the results are sensible, in their way. 
-In Lab 4, we will use a digital spectrometer that samples the
-12$^{th}$ Nyquist window.
+Use a Nyquist-sampled time series to calculate power spectra over an expanded frequency range of $\pm W \nu_s/2$, where $W$ is at least 4, focusing on the original frequency interval.
+Each value of $W$ represents a different \textbf{ Nyquist window}.
+Compare the power spectra obtained across these various Nyquist windows.
+For $W > 1$, the power spectra include frequencies that seemingly violate the Nyquist criterion, yet they produce interpretable results. In Lab 4, for instance, our digital spectrometer will operate in the 12$^{\rm th}$ Nyquist window.
 
-This shows that the strictly correct statement of the Nyquist criterion
-is that the bandwidth---the frequency range of the
-signal {\it including negative frequencies}---must not exceed $\nu_s$. For the first Nyquist window this
-is equivalent to the simpler statement of the Nyquist criterion we first
-explored.
+This investigation illustrates a more nuanced interpretation of the Nyquist criterion: it is the signal's {\it bandwidth}, inclusive of negative frequencies, that must not exceed $\nu_s$.
+
 
 \subsection{Fourier Transforms of Noise}
 
 \noindent
-Noise comes into our data from a variety of sources. 
-Here, we restrict the term noise to refer to random fluctuations with a known statistical distribution (in
-our cases, this is almost always a Gaussian with mean zero). We are careful to distinguish
-this from such things as: systematic contributions to error, bias, ambiguity, and posterior likelihood.
+Noise, in scientific data, refers to random fluctuations with a known statistical distribution, typically Gaussian.
+This is distinct from systematic errors, bias, ambiguity, or posterior likelihood.
 Unlike how we use the term colloquially, noise has a specific meaning in science, so be careful with it.
 
-Many of the astronomical signals we observe are, in fact, noise. 
-Blackbodies are noise sources: a blackbody at temperature $T$ emits statistically 
-random electromagnetic waves
-with specific intensity (power per area per Hz per solid angle) given by the 
-Planck function
+Many astronomical signals are essentially noise. Consider blackbodies, which emit electromagnetic waves with intensities described by the Planck function:
 \begin{equation}
-B_\nu = \frac{2h\nu^3}{c^2}\frac{1}{e^{h\nu/kT}-1}. 
+B_\nu = \frac{2h\nu^3}{c^2}\frac{1}{e^{h\nu/kT}-1}.
 \end{equation}
-As radio astronomers, we
-operate in the regime where $h\nu/kT \ll 1$ (the Rayleigh-Jeans limit), 
-so the blackbody formula simplifies to:
+In radio astronomy's Rayleigh-Jeans limit ($h\nu/kT \ll 1$), this simplifies to:
 \begin{equation}
-B_\nu\approx\frac{2kT}{\lambda^2}. 
+B_\nu\approx\frac{2kT}{\lambda^2},
 \end{equation}
-Notice how the noise power depends linearly on $T$. 
+highlighting the linear dependence of noise power on temperature $T$.
 
-For a number of good reasons, radio astronomers choose to measure noise
-power in units of temperature and define a brightness temperature
-$T_B$ such that $I\equiv2kT_B/\lambda^2$ for an observed specific intensity,
-even if the radiation source (for example, galactic synchrotron emission) is not even remotely thermal.
+Radio astronomers often express noise power in terms of temperature, using brightness temperature $T_B$ such that $I\equiv2kT_B/\lambda^2$. This applies even if the radiation source, like galactic synchrotron emission, is not thermal.
 
-Using this framework, all sources of power in our measurement can be related to a temperature,
-including the receiver noise that is added to our incoming astronomical signal 
+All power sources in measurements can thus be related to a temperature, including receiver noise.
+Receiver noise, for example, is added to our incoming astronomical signal 
 by the thermal motion of electrons in our amplifiers and resistors 
 (otherwise known as {\bf Johnson} noise).  This noise (which,
 by the Central Limit Theorem, is almost always Gaussian) has a variance that
 is characterized by receiver temperature, $T_{rx}$, and adds onto the brightness temperature, $T_B$, 
 that characterizes the variance of signal coming through the antenna feed of the telescope.
 
-For calibration and testing, we have laboratory sources of noise. Below, we outline
-several options for exploring
-the properties of digitally sampled noise.
+Our lab has various noise sources that can be used to explore the properties of digitally sampled noise.
 
-\subsubsection{Option 1: Use the Laboratory Noise Generator}
+
+\subsubsection{Use the Laboratory Noise Generator}
 
 \noindent
-We have a noise generator in the lab that uses a diode to generate broadband,
-statistically random voltages. In order to avoid aliasing, you should connect
-a filter to the output to limit the noise to a band that you can sample either
-with the SDR module on your RPi. The 
-Minicircuits SBP-21.4 filter, for example, passes a $\sim 6$-MHz wide band centered
-at 21.4 MHz. We have another custom one that might be more suited for the SDR.
-What sample rate would you need to avoid aliasing this output? 
+The lab's noise generator produces broadband, random voltages using a diode. To prevent aliasing, connect a band-pass filter before performing direct sampling with your SDR module. Determine an appropriate sample rate to avoid aliasing.
 
 \begin{itemize}
-
-\item Connect the noise generator to a 
-  filter and take several tens of thousands of samples
-  with the SDR's ADC.
-  These samples are voltages. What is the
-  mean voltage over this data block?
-  What is the variance? The standard deviation (which, for a zero-mean signal,
-  is the same as the root-mean-square, or rms)?
-
-\item Plot a histogram of the sampled voltages (see {\tt
-  numpy.histogram}---for documentation, type {\tt numpy.histogram?} in IPython).
-  The histogram
-  should look Gaussian, with a width equal to the rms
-  voltage. Overplot this theoretically-expected Gaussian. Does it look
-  like your observed distribution?
-
-\item Take many (tens to hundreds) blocks of thousands of samples with the ADC. 
-  Compute the power spectrum
-  of each block, as well as the average power spectrum over all blocks.
-
-\item Plot the power spectrum for a single block and compare to the
-  above average. Do the same for the average of $N$ blocks, where $N=(2,
-  4, 8, 16)$ What you are doing here is looking at how integration time
-  affects the signal-to-noise ratio (SNR): the `signal' is the relatively
-  smooth distribution that emerges with long integration times.
-  The `noise' is the scatter you see around that value. If the SNR goes as
-  $N^x$, can you characterize what $x$ is? How certain are you about this value, and
-  how does it compare to what central-limit theory suggests?
-
-\item Calculate the ACF (by manually computing Fourier transforms and by using \verb$numpy/scipy$'s version)
-  for all
-  16000 samples in a block. Zoom in on delays of $\le 2000$ samples. Also derive the power
-  spectrum from this ACF and compare with the Fourier-transform-derived power
-  spectrum for the same block.  Are they identical?
-  Compare the width (full-width half-max, or FWHM) of the ACF ($\Delta
-  \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta
-  F_{FWHM}$). Are they related?
-
+    \item Connect the noise generator to a filter and capture tens of thousands of samples with the SDR's ADC. Analyze the mean and variance of these voltage samples.
+    \item Create a histogram of the sampled voltages using {\tt numpy.histogram}. It should approximate a Gaussian distribution with a width equal to the rms voltage. Overplot a theoretical Gaussian for comparison. Explain any differences.
+    \item Collect multiple data blocks (tens to hundreds), each containing thousands of samples. Compute the power spectrum for each block and the average power spectrum across all blocks.
+    \item Compare the power spectrum of a single block to the average over $N$ blocks where $N=(2, 4, 8, 16)$. Investigate how time averaging influences the signal-to-noise ratio (SNR). Determine if SNR scales with $N^x$ and how this compares to predictions from the Central Limit Theorem.
+    \item Calculate the Autocorrelation Function (ACF) for a 16000 sample block, both manually and using {\tt numpy/scipy}. Focus on delays of $\le 2000$ samples. How does the power spectrum computed from the ACF compare with that obtained via Fourier transform? Assess their similarity, and compare the full-width half-max (FWHM) of the ACF ($\Delta \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta F_{FWHM}$). Are they related?
 \end{itemize}
+
 
 %=============================================================
 \section{Fourier Transforms, Analytic and Discrete (At Home, Week 1)} 
