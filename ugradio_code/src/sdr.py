@@ -84,7 +84,7 @@ class SDR(RtlSdr):
         self.set_sample_rate(sample_rate)
         if fir_coeffs is not None:
             self.set_fir_coeffs(fir_coeffs)
-        #_ = self.read_samples(BUFFER_SIZE)  # clear the buffer
+        _ = self.read_samples(BUFFER_SIZE)  # clear the buffer
 
     def __del__(self):
         self.close()
@@ -105,8 +105,6 @@ class SDR(RtlSdr):
         # Make a new event loop and set it as the default
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        if not self.direct:
-            nsamples *= 2
         try:
             # Add signal handlers
             for s in (signal.SIGHUP, signal.SIGTERM, signal.SIGINT):
@@ -119,13 +117,13 @@ class SDR(RtlSdr):
             h = functools.partial(handle_exception, sdr=self)
             loop.set_exception_handler(h)
             data = loop.run_until_complete(
-                        _streaming(self, nblocks, nsamples)
+                        _streaming(self, nblocks, 2*nsamples)
                     )
         finally:
             loop.close()
 
+        data.shape = (nblocks, nsamples, 2)
         if self.direct:
-            return data
+            return data[...,0]
         else:
-            data.shape = (nblocks, nsamples // 2, 2)
             return data
