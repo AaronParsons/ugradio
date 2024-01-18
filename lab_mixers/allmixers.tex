@@ -1,11 +1,15 @@
 \documentclass[11pt,preprint]{aastex}
-\usepackage{amsmath}
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 %\usepackage{natbib}
 %\usepackage{natbibspacing}
 \usepackage{enumitem}
 \usepackage{url}
 \usepackage{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+%\graphicspath{{figures/}}
+\usepackage{amsmath, amssymb}
+%\usepackage{subcaption}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
 %\setlength{\bibspacing}{0pt}
@@ -17,6 +21,12 @@
 \setlength{\topsep}{6pt}
 \setlength{\partopsep}{0pt}
 \setlength{\footnotesep}{8pt}
+\usepackage{titlesec}
+
+\titlespacing*{\section}{11pt}{11pt}{3pt}
+\titlespacing*{\subsection}{22pt}{6pt}{3pt}
+\titlespacing*{\subsubsection}{33pt}{3pt}{3pt}
+
 
 \begin{document}
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
@@ -168,17 +178,22 @@ Get a prepared SD card or follow the setup instructions on AstroBaki for {\it Se
 \end{enumerate}
 
 For an optional demonstration that uses the capabilities of the R820T2 tuner chip and the RTL2832U quadrature digital sampler chip, connect an antenna to the SDR input and use {\tt gqrx} to listen to FM radio broadcasts. 
-Under {\tt Configuration}, remove the {\tt soapy=0} clause and replace {\tt XXX} with {\tt uhd}, then press {\tt Play}. 
+Under {\tt I/O Devices} set {\tt Device String} to 
+
+\noindent
+{\tt default\_input=True,default\_output=True,device\_id=0,driver=audio}, 
+
+\noindent
+then press {\tt Play}. 
 Fiddle with the settings (e.g., use Hardware Automatic Gain Control, WFM Stereo demodulation), and
 you should be able to listen to Frequency Modulated (FM) 
-radio by setting an appropriate center frequency (in the US, FM spans
-87.8--108 MHz).
+radio, which in the US spans 87.8--108 MHz, by setting an appropriate center frequency.
 
-Listening to FM radio broadcasts is fun, but we need to figure out what actually happens between the antenna and the speaker.
+Listening to FM broadcasts is fun, but we need to know what happens between the antenna and the speaker.
 For starters, we will bypass most everything and just use the analog-to-digital converter (ADC) inside the RTL2832U.
 This mode is called {\bf direct sampling} in the {\tt ugradio.sdr} module.
-Use a signal generator to produce a $<500$ kHz sine wave with a $<100$ mV peak-to-peak voltage.
-Verify the signal with an oscilloscope (i.e. mistrust everything!) and document your settings before plugging it into your SDR.
+Use a signal generator to produce a $<500$ kHz sine wave with a $<3$ mV peak-to-peak voltage (using an attenuator if necessary).
+Verify the signal with an oscilloscope (mantra: mistrust everything!) and document your settings before plugging it into your SDR.
 
 Write Python code to create an {\tt ugradio.sdr.SDR} object and capture data with varying sample rates ($\nu_s = 1.0$--3.2 MHz).
 Plot your captured data (which is a {\it multidimensional} {\tt numpy} array) to make sure it looks sinusoidal.
@@ -223,7 +238,8 @@ Consider the complex nature of voltage spectra. What do the real and imaginary n
 
 From your previous data, plot both real ({\tt spec.real}) and imaginary ({\tt spec.imag}) components of the voltage spectrum. Observe any symmetry between negative and positive frequencies. Repeat this with independent data to verify consistency. Analyze why the real and imaginary parts vary in amplitude and sign.
 
-Select a power spectrum and perform its inverse Fourier transform using {\tt dft.idft} or {\tt numpy.fft.ifft}. Ensure correct frequency inference for each bin in your power spectrum array. Also, compute the autocorrelation function (ACF) from the voltage time series using {\tt numpy.correlate} and {\tt scipy.signal.correlate}. 
+Using {\tt dft.idft} or {\tt numpy.fft.ifft}, perform an inverse Fourier Transform of a {\it power} spectrum .
+Ensure correct frequency inference for each bin in your power spectrum array. Also, compute the autocorrelation function (ACF) from the voltage time series using {\tt numpy.correlate} and {\tt scipy.signal.correlate}. 
 
 According to the correlation theorem, the Fourier transform of the power spectrum should match the ACF. Compare them and explain any discrepancies.
 
@@ -343,18 +359,16 @@ Any function can be expressed exactly and uniquely by its Fourier coefficients
 the integration limits $B$ and $T$ are defined above. In the proper
 analytic formulation, they are both infinity. We emphasize their
 boundedness here because, in practice, 
-neither can be infinity, and this necessarily introduces spectral leakage. Also note that,
+neither can be infinity, and this unavoidably introduces spectral leakage. Also note that,
 according to the Fourier conventions we've written here, our forward FT does not divide
 by the integration interval, but the inverse FT does.  These conventions match 
-the {\tt numpy.fft}
-and {\tt ifft} conventions.}
+the {\tt numpy.fft}/{\tt ifft} conventions.}
 
-For those of you looking for applications of that linear algebra class you took,
-the Fourier transform (FT) is a linear matrix operation akin to a rotation. 
+For those of you looking to apply that linear algebra class you took,
+the Fourier transform (FT) is a linear matrix operator akin to a rotation. 
 As such, it has nice properties like:
 \begin{enumerate}
-\item linearity: the FT
-of a sum is the sum of the FTs, 
+\item linearity: the FT of a sum is the sum of the FTs, 
 \item invertibility: there is no information loss in the FT; it can be undone, and 
 \item unitarity: the FT is power-preserving.
 \end{enumerate}
@@ -364,8 +378,8 @@ of a sum is the sum of the FTs,
 
 \noindent
 The difference between an analytic Fourier transform and a discrete Fourier transform is
-that signals sampled at discrete intervals are no longer continuous. This means that
-integrals become somes, and the Nyquist criterion applies.
+that signals sampled at discrete intervals are no longer continuous. 
+Integrals become sums, and the Nyquist criterion applies.
 
 You have multiple discrete Fourier transform implementations at your disposal.  Eventually, we would like you
 to use \verb$numpy.fft$, which is fast (it can handle millions of points), but does not allow you to choose
@@ -375,17 +389,17 @@ switches in the middle to the most negative frequency and continues counting in 
 toward zero.  The inverse Fourier transform \verb$numpy.fft.ifft$ requires the input spectrum to be in this
 order to work properly.
 
-However sensible, this arrangement of frequencies is not ideal for plotting. There is a function \verb$fftshift$
-that will swap the order to a plot-friendly negative-to-positive order. However, once you apply this shift to
-your array, \verb$ifft$ no longer works as you expect.  For this reason, {\it I suggest only using 
-\verb$fftshift$ in plotting calls to avoid confusion.}
+However sensible, this arrangement of frequencies is not ideal for plotting. The function \verb$fftshift$
+will swap the order to a plot-friendly negative-to-positive order. However, once you apply this shift to
+your array, \verb$ifft$ no longer works as you expect.  For this reason, {\it I strongly suggest only using 
+\verb$fftshift$ in plotting calls.}
 See our ``DFT's with DFT's'' handout for details.
 
 You should also take a look at \verb$fftfreq$, which calculates the frequencies of the \verb$numpy.fft$ output.
 
 For this class, we also provide the \verb$ugradio.dft$ module.  It is slow, but it allows you to manually specify
 which output frequencies are desired, and it accepts and returns coordinate arrays (time and frequency, respectively)
-to facilitate clarity and transparency. We recommend using this module in the first week and for applications where
+to facilitate clarity and transparency. You can use this module in the first week and for applications where
 you need to oversample the output frequencies. Otherwise, migrate to \verb$numpy.fft$.
 
 To use \verb$ugradio.dft$, here are some recommendations:
@@ -416,8 +430,7 @@ auto-complete of what is available in the module.  You can also type {\tt ugradi
 the code, and of course, you can type {\tt ugradio.dft.dft?} to see the documentation for
 the DFT function inside the {\tt dft} module.
 
-{\color{red}
-\subsection{Fourier Filtering and a Secret Message}
+\subsection{(Optional) Fourier Filtering and a Secret Message}
 
 As an optional (fun) side investigation you can do on your own at
 home 
@@ -444,13 +457,13 @@ and play data (from {\tt numpy} arrays!):
 >>> sd.wait() # wait until finished playing
 \end{verbatim}
 In this case, however, we've stored the data in a {\tt npz} file, not a {\tt wav} file, so you
-don't need to use $\tt scipy$.
+don't need to use $\tt scipy$ to read it.
 
-The data we have provided contains a secret audio message, but with tons of high-frequency noise
+The data we have provided contains a secret audio message, but with high-frequency noise
 overlaying it that makes it hard to hear. See if you can use a power spectrum to characterize
 what frequencies cointain the high-frequency noise, then filter the voltage spectrum, transform
 back to a time-domain function (because Fourier transforms are invertible!) and play the secret
-message (again, on {\it your home computer}).}
+message.
 
 
 \subsection{Power Spectra and Discrete Fourier Transforms} 
@@ -565,10 +578,8 @@ mixer port, and the intermediate frequency (IF) product is output through the th
 
 \begin{figure}[h!]
 \begin{center}
-%\vspace{-0.7in}
   \includegraphics[height=2in]{dsbmixer.png}
 \end{center}
-%\vspace{-0.8in}
 \caption{\footnotesize A DSB mixer. In the text, we sometimes refer to
   the RF input as the `signal'. \label{dsb}}
 \end{figure}
@@ -602,9 +613,8 @@ for each of two cases:
 $\nu_{RF} = \nu_{LO} + \Delta \nu$ and $\nu_{RF} = \nu_{LO} - \
 \nu$.  Make $\Delta \nu$ small ($\sim5$\%) compared to $\nu_{LO}$.
 For the input power level, a good choice is 0
-dBm\footnote{What does this ``dBm'' mean? It is the power relative to 1
-  milliwatt, expressed in decibels (dB).}
-  for both synthesizers. The output consists of both the
+dBm\footnote{``dBm'' is the power relative to 1 milliwatt, expressed in decibels (dB).}
+for both synthesizers. The output consists of both the
 sum and difference frequencies, so choose the ports appropriately.
 
 Digitally sample the mixer output and identify the
