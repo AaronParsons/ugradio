@@ -1,5 +1,0 @@
-This folder contains software used to find pointing corrections for the 12 GHz dishes.
-
-Please see the documentation, pointing.ps, which can be found either from the radio lab -> mounts/pointing section of the ugastro web page, or using the pointing.ps link in this directory.
-
-Software began by Curtis Frank, ~1997.  Major changes by Erik Shirokoff, summer 2001.
