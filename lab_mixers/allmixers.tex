@@ -666,15 +666,15 @@ stronger ones originate as harmonics of the main lines.
 \label{sectssb}
 
 \noindent
-A single sideband (SSB) mixer (Figure \ref{ssb}) is a
-little more complicated than the DSB mixer. It consists of two identical
+A single sideband (SSB) mixer (Figure \ref{ssb}) 
+consists of two identical
 DSB mixers fed by an LO that is $90^\circ$ phase shifted in the right-hand mixer.
 Hence, we can regard the left-hand output as being mixed with a cosine while
 the right-hand side extracts the sine component.
-together, they produce the real and imaginary components of a complex function
-that can now produce power spectra that contain different information
+Together, they produce the real and imaginary components of a complex waveform
+whose power spectrum now contains different information
 at postive and negative frequencies.
-Engineers call this IQ sampling. For now, connect the two inputs
+Engineers call this IQ sampling. Connect the two inputs
 (I and Q) to an oscilloscope that can display both simultaneously.
 
 \begin{figure}[h!]
@@ -693,12 +693,12 @@ From the block diagram in Figure \ref{ssb}, construct an SSB mixer that
 achieves the phase delay with a cable\footnote{In vaccuum, light travels
 1 foot per nanosecond---the only legitimate use of
 imperial units in astronomy. In a cable, light travels about
-70\% slower than in vaccuum. You should be able to use this information
-to get a ballpark estimate of a cable suits your
+70\% slower than in vaccuum. You can use this information
+to estimate which cable suits your
 needs for a chosen frequency.}. We will use
 it to experiment with no phase delay (a short cable) and a $90^\circ$
 phase delay (a long cable).  For experimentation with this two-output
-mixer, use two frequency synthesizers, as before.
+mixer, use two frequency synthesizers (one for the RF, one for the LO), as before.
 
 \subsubsection{Reverting to a DSB Mixer} \label{dsbmixer}
 
@@ -708,13 +708,13 @@ zero), so that the two halves of the SSB are essentially identical.
 Pick a value for $\pm\Delta\nu$ and take time
 series data for the two corresponding values of $\nu_{RF}$ (i.e., the
 upper and lower sidebands). Examine the phase of the I and Q components
-for mixing settings that should yield positive and negative IF
+for mixing settings that yield positive and negative IF
 frequencies. Do you see any difference?
 
 \subsubsection{The SSB Mixer}
 
 \noindent
-Now see what happens when the phase delay cable introduces a 
+Now investigate what happens when the phase delay cable introduces a 
 phase delay of $90^\circ$ in the LO going to the right mixer.
 Repeating the steps in \S \ref{dsbmixer},
 can you distinguish between positive and negative
@@ -725,7 +725,7 @@ Why does it behave this way?
 
 As it turns out, our SDR module has a built-in mixer in front
 of the sampling chip, and you can tune the LO in software,
-provided you turn of {\tt direct} sampling.
+provided you {\bf turn off} {\tt direct} sampling.
 This should allow you to sample I and Q data and store the
 results as {\tt numpy} arrays.
 Calculate power spectra for your sampled data. When taking the
