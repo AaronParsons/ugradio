@@ -64,6 +64,6 @@ def get_projected_velocity(ra, dec, jd, obs_lat=nch.lat, obs_lon=nch.lon,
     location = EarthLocation.from_geodetic(lat=obs_lat*u.deg, lon=obs_lon*u.deg, height=obs_alt*u.m)
     sc = SkyCoord(ra=ra*u.deg, dec=dec*u.deg)
     barycorr = sc.radial_velocity_correction(obstime=Time(jd, format="jd"), location=location)
-    v = barycorr.to(u.m/u.s)
+    v = barycorr.to(u.m/u.s).value
     return v
     
