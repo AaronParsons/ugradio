@@ -667,9 +667,9 @@ measurements!
 
 \subsection{Estimating Receiver Noise and Gain}
 
-Our receiver system consists of a horn antenna, a pair of amplifiers,
+Our receiver system consists of a horn antenna, three amplifiers,
 a long length of 50$\Omega$
-coaxial cable down from the roof, and then the additional amplifiers and 
+coaxial cable down from the roof, and then the additional two amplifiers and 
 filters you see in the rack. In order to obtain a trustworthy calibration,
 we must account for the signal loss, gain, and noise
 contributions of these various components.
@@ -786,9 +786,9 @@ that isn't enough to calibrate our telescope the sky signal passes through
 amplifiers, filters, and a long cable on the way to our SDR. We need
 to calibrate those as well.
 
-Up at the horn, there are 4 amplifiers: three Cougar AC3064C, followed by
-one Cougar AC1586C. Look up the gain (in dB) on their respective datasheets
-online.
+Up at the horn, there are 3 amplifiers (two in the box at the base,
+and one up near the back of the horn). All three are the same type.
+Look up the gain (in dB) on their respective datasheets online.
 
 Next, you are going to need to estimate how much signal is lost in the
 cable running down from the roof to the 5th floor lab. Fortunately, you
@@ -824,7 +824,7 @@ calibration. If you are clever (and careful), you may also be able to use
 the tone injection system to further constrain the aperture efficiency.
 
 If you wish to disconnect or rewire anything at the antenna (to, for example
-cross-check the Cougar amplifier gains from the datasheet), you may, but make
+cross-check the amplifier gains from the datasheet), you may, but make
 sure you leave the system working for the next group.
 
 \section {Statistical Error Analysis (Individually At Home, Week 2)} \label{secondweek}
