@@ -4,6 +4,8 @@ import astropy.units as u
 from . import nch
 import time
 
+FRAME = 'icrs'
+
 def moonpos(jd=None, lat=nch.lat, lon=nch.lon, alt=nch.alt):
     """ Return (ra,dec) of the moon at the given Julian Date 
     when observed from the given location.
@@ -46,7 +48,7 @@ def sunpos(jd=None):
     sun = astropy.coordinates.get_sun(time=t)
     return sun.ra.deg, sun.dec.deg
 
-def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt,equinox='J2000'):
+def get_altaz(ra, dec, jd=None, lat=nch.lat, lon=nch.lon, alt=nch.alt, equinox='J2000'):
     """
     Return the altitude and azimuth of an object whose right ascension 
     and declination are known.
@@ -67,16 +69,21 @@ def get_altaz(ra,dec,jd=None,lat=nch.lat,lon=nch.lon,alt=nch.alt,equinox='J2000'
     az : float, azimuth in degrees
         
     """
-    if jd: t = astropy.time.Time(jd,format='jd')
-    else: t = astropy.time.Time(time.time(),format='unix')
-    l = astropy.coordinates.EarthLocation(lat=lat*u.deg,
-                        lon=lon*u.deg,height=alt*u.m)
-    f = astropy.coordinates.AltAz(obstime=t,location=l)
-    c = astropy.coordinates.SkyCoord(ra, dec, frame='fk5',unit='deg',equinox=equinox)
+    if jd:
+        t = astropy.time.Time(jd, format='jd')
+    else:
+        t = astropy.time.Time(time.time(), format='unix')
+    obs = astropy.coordinates.EarthLocation(
+        lat=lat * u.deg,
+        lon=lon * u.deg,
+        height=alt * u.m,
+    )
+    f = astropy.coordinates.AltAz(obstime=t, location=obs)
+    c = astropy.coordinates.SkyCoord(ra, dec, frame=FRAME, unit='deg', equinox=equinox)
     altaz = c.transform_to(f)
     return altaz.alt.deg, altaz.az.deg
 
-def precess(ra,dec,jd=None,equinox='J2000'):
+def precess(ra, dec, jd=None, equinox='J2000'):
     """
     Precess the given right ascension and declination to 
     the current equinox.
@@ -93,9 +100,11 @@ def precess(ra,dec,jd=None,equinox='J2000'):
     dec : float, declination in degrees
         
     """
-    c = astropy.coordinates.SkyCoord(ra,dec,unit='deg',frame='fk5',equinox=equinox)
-    if jd: t = astropy.time.Time(jd,format='jd')
-    else: t = astropy.time.Time(time.time(),format='unix')
-    gcrs_now = astropy.coordinates.GCRS(obstime=t)
-    c_now = c.transform_to(gcrs_now)
+    c = astropy.coordinates.SkyCoord(ra, dec, unit='deg', frame=FRAME, equinox=equinox)
+    if jd:
+        t = astropy.time.Time(jd, format='jd')
+    else:
+        t = astropy.time.Time(time.time(), format='unix')
+    icrs_now = astropy.coordinates.ICRS(obstime=t)
+    c_now = c.transform_to(icrs_now)
     return c_now.ra.deg, c_now.dec.deg
