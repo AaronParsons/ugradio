@@ -551,19 +551,25 @@ source $h_{s,0}$. For example, for the $\sin(h_s)$ term we have
 \noindent The local fringe frequency is contained in the second term
 because, for a small region around $h_{s,0}$ in equation
 \ref{fringeresponse}, $F(h_s)$ varies as $f_f \ \Delta h_s$, where  the
-local fringe frequency $f_f$ is
+local fringe frequency $f_{f,rad}$ is
+
+\begin{equation} \label{fringefreq} $
+f_{f,rad} = \left[{b_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
+- \left[{b_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
+$
+\end{equation}
+
+\noindent This is the local fringe frequency in cycles per radian on the
+sky. If you want to turn it into cycles per second coming out of the
+interferometer's multiplier, multiply by ${dh_s \over dt} = \omega_\oplus = {2\pi \over 24 \times 60 \times 60}$.
 
 \begin{equation} \label{fringefreq} \fbox{$
-f_f = \left[{b_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
+f_{f,Hz}/\omega_\oplus = \left[{b_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
 - \left[{b_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
 $}
 \end{equation}
 
-\noindent This is the local fringe frequency in cycles per radian on the
-sky. If you want to turn it into cycles per hour coming out of the
-interferometer's multiplier, multiply by ${dh_s \over dt} = {2\pi \over
-  24}$; or cycles per minute, multiply by $2\pi \over 60 \times 24$;
-etc. Our interferometer is almost (but not quite) east-west
+\noindent Our interferometer is almost (but not quite) east-west
 with $b_{ew}\approx 20$ m, $b_{ns} \sim 0$, and $\lambda \approx 2.5$
 cm. At the meridian ($h_{s,0}=0$), 
   the period is ${1 \over f_f} \approx
