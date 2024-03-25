@@ -77,6 +77,26 @@ class SynthBase:
         unit = bytes(unit, encoding='utf-8')
         cmd = b':AMPLitude:CW %f %s' % (val, unit)
         self._write(cmd)
+    def get_RFout_status(self):
+        '''Get the RFout status of the synthesizer. 
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        A '1' if the RFout is on; a '0' if the RFout is off.'''
+        self._write(':RFOutput:STATe?')
+        status = self._read()[0] # read first bit
+        if status == '1': return 1
+        elif status == '0': return 0
+    def RFout_on(self):
+        '''Turn RFout on.'''
+        self._write(':RFOutput:STATe ON')
+    def RFout_off(self):
+        '''Turn RFout off.'''
+        self._write(':RFOutput:STATe OFF')
 
 class SynthDirect(SynthBase):
     '''Implements a direct connection to the synthesizer via a
