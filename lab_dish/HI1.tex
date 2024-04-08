@@ -35,45 +35,27 @@
 \section{Introduction}
 
 \noindent
-Diffuse atomic gas permeates all corners of interstellar space.
-On the largest scales, its distribution reveals a lot about Galactic
-structure and dynamics. On smaller scales, its morphology is dominated
-by shocks from energetic stellar winds and supernovae. On still smaller
-scales, magnetic fields, pressure differences, and thermal instability
-shape the gas into thin filaments and sheets. On still smaller scales,
-the densities get large from self-gravitation; the gas turns molecular
-and stars form. 
-The dense regions where Star formation occurs occupy a
-small fraction of the interstellar volume. In contrast, the atomic gas
-(HI) resides in less-dense regions that occupy large fractions of
-interstellar space and you see Galactic HI wherever you point the
-telescope. 
+Interstellar space is filled with diffuse atomic gas, displaying
+structures that vary greatly in size---from large-scale spiral arms to tiny
+self-gravitating clouds.
+The morphology of gas in the Milky Way is influenced
+by shocks from supernovae, by
+magnetic fields, pressure gradients, and thermal instabilities driven by stellar winds and
+starlight, and by line cooling in dense, shielded molecular clouds where new stars from.
+The densest regions contain molecular hydrogen (H$_2$), and ionized plasma surrounds
+recent supernova remnants, but almost everywhere else in the galaxy,
+atomic hydrogen (HI) is prevalent, making the 21-cm line a rich resource for
+learning about galactic dynamics, star formation, and the evolution of our galaxy as a whole.
 
-For this lab, we outline several projects to map interesting structures
-in HI using our 4.5-m diameter Leuschner dish. The HI projects
-fall into two categories. One explores large-scale Galactic structure
-and dynamics by obtaining HI spectra along great circles, presenting the
-data as position-velocity images, and interpreting those maps as
-discussed below. The other category maps specific interstellar
-structures (e.g., expanding shells produced by multi-supernovae) by
-sampling a grid of spectra over a large area, presenting the data as
-grey-scale images of velocity-integrated line intensity (i.e., antenna
-temperature $T_A$) or as images in which image brightness indicates
-velocity-integrated $T_A$ and color indicates velocity.
+In this lab, using the 4.5-m Leuschner dish, you'll embark on projects to map HI structures within our galaxy. The projects are divided into two main categories:
+\begin{itemize}
+    \item Large-scale Galactic structure and dynamics: These involve obtaining HI spectra along great circles, presenting data as position-velocity images, and analyzing the maps to understand Galactic structure.
+    \item Specific interstellar structures: This involves mapping areas like supernova-produced shells by sampling a grid of spectra, presenting data either as grey-scale images showing velocity-integrated line intensity or as images where brightness indicates integrated intensity and color indicates velocity.
+\end{itemize}
+\noindent
+Each group is expected to select one project for completion, focusing on mapping and image processing techniques, including the use of color in images.
 
-We'd like each group to pick a single project and carry it through to
-completion by the time the lab reports are due, which is the last day of
-class. All of the HI projects involve making maps and
-images. One of the features of this lab is to learn about image
-processing and using colors in images.
-
-For the great-circle projects (\S \ref{galacticplane} and \S
-\ref{galacticpoles}), we gain large angular scale information
-in the sky by observing on great circles. Getting nice results
-requires data over the largest portions of the great circles you can
-get. For a full 360-degree circle, that's 180 pointings at $2^\circ$
-spacings.  Mostly, though, we can't cover a full great circle because
-some of the circle lies too far south, so we do as much as we can. 
+For great-circle projects, extensive coverage of great circles is essential for comprehensive data, although geographical limitations may restrict complete coverage. Aim for as broad a coverage as possible to achieve meaningful results.
 
 \section{Goals and Instructions for Your Report}
 
@@ -112,13 +94,13 @@ schedule.
 \begin{enumerate}
 
 \item Week 1: Pick a group project. Figure out the RA and
-  Dec boundaries of your object, when the object is up, and how you
-  sample the area with telescope pointings. Coordinate with other groups
-  to figure out how you can share telescope time.
+  Dec boundaries of your field, how you want to sample the area
+  with telescope pointings, and when each pointing is up.
+  Coordinate with other groups to share telescope time.
 Devise a scheme for scheduling observations of all the points in your
 map.  Begin the process of obtaining and reducing your map data. 
 
-Obtain some frequency-switched test spectra, in
+Obtain frequency-switched test spectra, in
 particular at our canonical comparison position at Galactic coordinates
 $(\ell, b) = (120^\circ, 0^\circ)$.  We will compare the spectra of all
 groups in class the second week, and if your group doesn't have a
@@ -134,58 +116,68 @@ spectrum to show this will be considered poor form.
   how you want to present the data as images. Make some first-try
   images. 
 
-\item Week 4: Finalize data. Make final images. Write
-report. Report is due the last day of class.
+\item Week 4: Finalize data. Make final images. Write your report.
 
 \end{enumerate}
 
 \section{Software for Controlling the Leuschner Telescope}
 
 \noindent
-At this point in the semeser, we assume you are familiar with
-the standard software used in this class. The major difference
+At this point in the semester, we assume you are familiar with
+the software used in this class. The major difference
 for this lab is that, instead of connecting to the {\tt ugastro}
-subnet on campus, we must log in to a computer at the  remote 
-Leuschner observatory and use screen to create a persistent
+subnet on campus, we must log in to a computer at the remote 
+Leuschner observatory and use \texttt{screen} to create a persistent
 session that you can use to conduct your observations, even
 if your {\tt ssh} connection gets broken.
 
-\subsection {Connecting to the {\it heiles} Computer at Leuschner}
+\subsection {Connecting to the {\it Pi} at Leuschner}
 
 \noindent
-Use {\tt ssh} to connect to Leuschner:
+The gateway computer at Leuschner can be accessed with {\tt ssh}:
 \begin{verbatim}
-   ssh -XY radiolab@leuschner.berkeley.edu -p 31
+   ssh radiolab@leuschner.berkeley.edu -p 31
 \end{verbatim}
 \noindent
-Use the password we give you in class. The {\tt -XY} flag is optional; it forwards windows displays across the network so that you can plot
-things on {\it heiles} and see the display on your local computer.
-Unfortunately, this is usually very slow, so use this feature sparingly.
+Use the standard class password.
+%An {\tt -XY} flag is optional; it forwards windows displays across the network so that you can plot
+%things on {\it heiles} and see the display on your local computer.
+%Unfortunately, this is usually very slow, so use this feature sparingly.
 The {\tt -p 31} flag forwards {\tt ssh} traffic over a non-standard port
-for security reasons. You'll need to use this port also when you copy
-your data off of {\it heiles} to your local computer (or the ugastro
-computers, if you are using them for data analysis):
+for security reasons.
+You'll need to use this port also when you {\tt scp}
+your data:
 \begin{verbatim}
     $ scp -P 31 radiolab@leuschner.berkeley.edu:path/to/file .
 \end{verbatim}
 \noindent
-Note that {\tt scp} inexplicably uses a capital P where {\tt ssh} uses
-lowercase.
+Note how {\tt scp} inexplicably uses a capital P where {\tt ssh} uses lowercase.
 
-All external users use the {\tt radiolab} account. You don't
-want a subdirectory that contains files of other users, so immediately
-after logging in create a subdirectory for yourself and do all of your
-work there. For example, if your group is named DREAMTEAM: 
+From there, you can access the Raspberry Pi connected to the SNAP Spectrometer via:
 \begin{verbatim}
-   radiolab@heiles:~> mkdir dreamteam
-   radiolab@heiles:~> cd dreamteam
-   radiolab@heiles:~/dreamteam> 
+    $ ssh pi@192.168.1.154
 \end{verbatim}
-The prompt tells you what subdirectory you're in; if in doubt, type {\tt
-  pwd}. All of the canonical editors\footnote{When using {\tt emacs}, using the
-  {\tt -nw} option will eliminate latency and delays, and your
-  associated frustrations.} and Python/IPython are available to you, just as on the
-{\tt ugastro} network.
+This computer (and password) is identical to the one you used to control the interferometer.
+
+If you, like me, get tired of multi-hopping through computers to get to the one you want,
+you can streamline the process by editing \texttt{.ssh/config} with something like the following:
+\begin{verbatim}
+    host leuschner
+    HostName leuschner.berkeley.edu
+    User radiolab
+    ServerAliveInterval 120 
+    Port 31
+
+    host leuschpi
+    HostName 192.168.1.154
+    User pi
+    ProxyJump leuschner
+    ServerAliveInterval 120 
+\end{verbatim}
+Then you can ssh (and scp) to \texttt{leuschpi} directly. You'll have to enter multiple passwords
+(unless you set up ssh keys), but otherwise you can act like you are talking directly to the Pi
+and ignore the intermediary computer.
+
 
 \subsection {Using \texttt{screen} at Leuschner}
 
@@ -274,7 +266,7 @@ class you used in the previous lab.
 If you find you need the coordinates of the Leuschner Educational Observatory, they are stored in
 {\tt ugradio.leo}.
 
-\subsection{Python Procedures for Taking Data}
+\subsection{Collecting Autocorrelation Spectra}
 
 \noindent
 The Leuschner dish has a noise diode at the front that you can turn on/off for
@@ -295,91 +287,17 @@ You can control it remotely with {\it ugradio.agilent}.
 \end{enumerate}
 
 Next, we need to read data from the spectrometer attached to the Leuschner dish.  This
-spectrometer is controlled by the {\tt leuschner} module outside of {\tt ugradio}. Unfortunately, this module is deeply incompatible with Python 3.
-As a work-around, we made a {\tt ugradio.leusch.Spectrometer} object that
-interacts with the Python 2 interface via the command line:
-\begin{enumerate}
-\item {\tt ugradio.leusch.Spectrometer()} instantiates an interface to the spectrometer
-at the default IP address.
-\item {\tt Spectrometer.int\_time} tells you how long each spectrum is integrated for.
-\item {\tt Spectrometer.read\_spec('out.fits', N, (ra,dec), 'eq')} will read N spectra and
-store the output in a FITS file, writing the ra/dec coordinates into the header of the file.  Note that
-this does {\bf not} point the telescope; it just documents where it is pointed in the file.  You
-could also provide {\it read\_spec('out.fits, N, (glat,glon), 'ga')} to write galactic coordinates
-into the FITS header, if you'd like.
-\item {\tt Spectrometer.check\_connected()} allows you to check that you are talking to the spectrometer to take data.
-\end{enumerate}
-
-Once you have a saved FITS file (which are a standard file format in astronomy), you need to get your data out of it.  For this,
-we use the standard module {\tt astropy.io.fits}, typically imported as
-{\tt from astropy.io import fits}.
-\begin{enumerate}
-\item {\tt f = fits.open('out.fits')} opens your file and returns you a handle to it.
-\item {\tt f[0].header} holds lots of metadata about your observation.  Your can {\tt print f[0].header},
-or you can convert it to a dictionary with {\tt dict(f[0].header}.
-\item {\tt f[1].data['auto0\_real']} returns the first spectrum for the first polarization, {\tt f[1].data['auto1\_real']} returns the first spectrum for the second polarization, and {\tt f[N].data['auto0\_real']} returns the N$^{\rm th}$
-spectrum for the first polarization.
-\end{enumerate}
-
-%\begin{enumerate}
-%\item {\tt getspect} sets the LO\ and the noise diode, then averages a
-%  specified number of spectra from the ROACH box and optionally plots or
-%  saves the result in an IDL save file, which contain ancillary info
-%  such as Julian day. ra, dec, etc.
-%\item {\tt mk\_strin} makes an input strucure containing various
-%  parameters such as the source position and name, the LO\ frequency,
-%  whether the noise diode was turned on, off, or was unchanged.
-%\item {\tt set\_lhp} sets the frequency and level of the LO
-%\item {\tt rxpwr} returns the channel-integrated spectral power from the
-%  ROACH box as input.
-%\item {\tt startchart1} runs a `chart recorder' using the
-%  channel-integrated spectral power from the ROACH box as input. 
-%\item {\tt leuschner\_rx} Take and record spectra with the ROACH box.
-%\item {\tt filename} generate a filename of the form:
-%  {\tt jjjjjjj.jjjjjj\_sn0000\_nd1\_1270123456}
-%\item {\tt fits\_to\_sav} converts a fits file, which contains nrspectra
-%  spectra, into a sav file with a single spectrum equal to the avg,
-%  also the median. Also lots of ancillary info, all in a structure
-%\item {\tt frq} calculate the array of IF or RF freqs from the tags in
-%  the standard output structure.
-%\end{enumerate}
-%Normally, you will use only {\tt getspect} and {\tt mk\_strin} from the
-%  above list.
-
-%\subsection{Our Standard Output Structure}
-%If you use our recommended commands for mapping, and in particular if
-%you create the input structure {\tt strin} for {\tt getspec} (\S
-%\ref{mappingcommands}), then you will use {\tt fits\_to\_sav} to write
-%your datafiles. It saves your data in the following structure:
-%\begin{verbatim}
-%   SRCNR           INT           9999           you choose the source number
-%   SRCNAME         STRING    '-9999'            you choose the source name
-%   JD              DOUBLE           2457483.5   Julian day
-%   RA              FLOAT          0.430058      RA
-%   DEC             FLOAT           62.7256      Dec
-%   SPCT_AVG        FLOAT     Array[8192, 4]     Average spectrum
-%   PWR_AVG         FLOAT     Array[4]           chnl-avg of spct_avg
-%   SPCT_MED        FLOAT     Array[8192, 4]     median spectrum
-%   PWR_MED         FLOAT     Array[4]           chnl-avg of spct_med
-%   NRSPECTRA       LONG               100       nrspectra in avg/med
-%   FREQ_IF_CHNL0   DOUBLE       1.4400000e+08   IF freq chnl 0
-%   FREQ_IF_CHNL8191
-%                   DOUBLE       1.5599854e+08   IF freq chnl 8191
-%   FREQ_RF_CHNL0   DOUBLE       1.4144000e+09   RF freq chnl 0
-%   FREQ_RF_CHNL8191
-%                   DOUBLE       1.4263985e+09   RF freq chnl 8191
-%   LO1             DOUBLE       1.2704000e+09   LO freq
-%   SB              DOUBLE           1.0000000   sideband
-%   ND              INT              0           noise diode on/off
-%   UGDOPP          FLOAT     Array[4]           ugdoppler output
-%   PANGLE          DOUBLE           97.123027   parallactic angle
-%   LST             DOUBLE           4.3368460   LST
-%   AZ              DOUBLE           324.82700   Az
-%   ALT             DOUBLE           47.232719   Alt
-%   GL              DOUBLE           120.00000   Galactic longitude
-%   GB              DOUBLE       5.9575176e-05   Galactic latitude
-%   FREQARR         STRING    '=  fst.freq_if_chnl0 + (dindgen(8192)*'...
-%\end{verbatim}
+spectrometer is the same FPGA design as the interferometer correlator, but we will initialize it with
+\texttt{mode='spec'} to deliver us two auto-correlations instead of the cross-correlation, e.g.:
+\begin{verbatim}
+    >>> import snap_spec
+    >>> spec = snap_spec.snap.UGRadioSnap(is_discover=True)
+    >>> spec.initialize(mode='spec')
+\end{verbatim}
+\noindent
+The only difference from the interferometer will be that \texttt{spec.read\_data()} returns
+a dictionary with different keys, and your IF frequencies will correspond to different
+RF frequencies, depending on how you set your LO.
  
 \section{Mapping: How to Spatially Sample} \label{sampling} 
 
@@ -406,7 +324,7 @@ between two points is $\Delta \ell \cdot \cos(b)$; there's a
 foreshortening for $b \neq 0^\circ$ (e.g.: when you're at the Earth's
 North Pole, you can go completely around a small circle of constant $b$
 with just a few steps.). So you can save lots of observing time by
-observing at $\Delta \ell = {2^\circ \over \cos(b)}$ instead of $\Delta
+observing at $\Delta \ell = \frac{2^\circ}{\cos(b)}$ instead of $\Delta
 \ell = 2^\circ$.
 
 The true angular area is not the total extent in $\ell$ times the total
@@ -432,28 +350,22 @@ through the procedure for each pointing:
 
 \item Select the (ra, dec) of your position. You can use {\tt astropy} if you wish.
 
-\item Decide the number of 0.7-sec spectra to obtain.
-
-\item Compare the length of your observation to the crossing-time of your
-beam to decide if you need to track your (ra, dec) position, or if you can
-simply choose the (az, alt) corresponding to the temporal midpoint of
-your observation and leave the pointing there.
+\item Decide the number of spectra to obtain, based on the desired integration time.
 
 \item Plan how often to take calibration data (with the noise diode on) and
 any LO frequency shifts you want to use to separate the astrophysical
 signal from the instrumental response.
 
-\item Choose a {\tt filename = jjjjjjj.jjjjjj\_pt0000\_nd1.fits} or something
-similar that encodes enough useful information (JD, pointing, LO, noise diode,
+\item Choose a filename and metadata format that encodes enough useful information 
+(JD, pointing, LO, noise diode,
 etc.) that you can find what you need after making many observations.
 
 \item Use {\tt telescope.point(alt,az)} to point (and track, if necessary).
 
-\item Use spectrometer.read\_spec(filename, Nspectra, (ra,dec), 'eq') to take and record data for each pointing/observing mode.
+\item Use \texttt{spec.read\_data(...)} to take and record data for each pointing/observing mode.
 
 \end{enumerate}
 
-\noindent You are advised to look at the documentation of these procedures before using them.
 
 \subsection{Beware Operating near Azimuth 0/360}
 
@@ -461,9 +373,7 @@ etc.) that you can find what you need after making many observations.
 If the azimuth of the current position is $6^\circ$ and of the next one
 is $354^\circ$, the telescope has to rotate nearly $360^\circ$ in azimuth,
 which takes a long time. You don't want to make this transition more
-than once (or at all, if you can manage it). Note: the telescope will
-reliably point in the $370^\circ$-wide azimuth range $-5^\circ$ to
-$365^\circ$---but not outside this range.
+than once (or at all, if you can manage it).
 
 \subsection{Beware Operating Above Altitude 85 and Below/Near 14}
 
@@ -478,7 +388,7 @@ seeing the ground.
 \noindent
 	Point the telescope at a series of Galactic longitudes ($\ell$)
 along the Galactic plane (Galactic latitude $b = 0^\circ$), over the
-full longitude range that is observable for our telescope.  Getting nice
+full longitude range that is observable from Leuschner.  Getting nice
 results requires data over the largest section of the Galactic plane you
 can get, which is roughly (or somewhat less than) $\sim -10^\circ \simlt
 \ell \simlt 250^\circ$. This observation has two science goals:
@@ -488,7 +398,7 @@ can get, which is roughly (or somewhat less than) $\sim -10^\circ \simlt
 curve of the Galaxy for the portion of the Galaxy inside the Sun and use
 the result to estimate the {\it gravitational} mass $M_{grav}$ of the
 Galaxy that lies inside the Solar circle; for this, you just assume the
-usual $v^2 = {G M_{grav} \over R}$.  In fact, you can even get the
+usual $v^2 = \frac{G M_{grav}}{R}$.  In fact, you can even get the
 radial dependence $M_{grav}(R)$. Also, use your observations to estimate
 the {\it gaseous} mass $M_{gas}(R)$ of the Galaxy.  What fraction of the
 total Galactic mass comes from interstellar gas? For this you'll need to
@@ -709,8 +619,8 @@ atoms in a 1 cm$^2$ column along the line of sight; $T_{B}(v)$ is the
 brightness temperature of the 21-cm line, which is a function of 
 velocity $v$; and $v$ is the velocity in km s$^{-1}$. The velocity $v$
 is produced by the Doppler effect, so a frequency shift $\Delta \nu$
-from line center corresponds to velocity $v = - c {\Delta \nu \over
-\nu}$ or, for the 21-cm line, $v = -{\Delta \nu \over 4.73 {\rm kHz}}$ km/s.
+from line center corresponds to velocity $v = - c \frac{\Delta \nu}{\nu}$
+or, for the 21-cm line, $v = -\frac{\Delta \nu}{4.73 {\rm kHz}}$ km/s.
 Note the minus sign. It means that positive velocities are receding---a
 very convenient convention for astronomy, because of the expansion of
 the Universe. 
@@ -735,7 +645,7 @@ the source and the beam. This is equation (9) in the ``Fount of All
 Knowledge!'' handout, namely 
 
 \begin{equation} \label{taeqn}
-T_A \approx T_B {\Omega_s \over \Omega_s + \Omega_b} \ ,
+T_A \approx T_B \frac{\Omega_s}{\Omega_s + \Omega_b} \ ,
 \end{equation}
 
 \noindent where $\Omega_s$ and $\Omega_b$ are the solid angles of the
@@ -743,7 +653,7 @@ source and beam, respectively. From this, we see that if the source
 fills the beam ($\Omega_s \gtrsim \Omega_b$) then $T_A \approx \langle
 T_B\rangle$ (the brackets denote the average over solid angle);
 while if it is much smaller ($\Omega_s \ll \Omega_b$) then $T_A \approx
-{\langle T_B \Omega_s\rangle \over \Omega_b}$, i.e.\ $T_A$ is smaller by the ratio of
+\frac{\langle T_B \Omega_s\rangle}{\Omega_b}$, i.e.\ $T_A$ is smaller by the ratio of
 the solid angles. 
 
 	To get the mass of HI from the column density, you need to know
@@ -782,7 +692,7 @@ angle $\Omega_b$, so the product $\langle T_B \Omega\rangle = T_A
 \Omega_b$ because angular area seen by the telescope is limited by its
 beam size.  In contrast, if the HI emission is limited to a small
 region---a small source with $\Omega_s \ll \Omega_b$---then $T_A \approx
-{\langle T_B \Omega_b\rangle \over \Omega_s}$ so the product $\langle
+\frac{\langle T_B \Omega_b\rangle}{\Omega_s}$ so the product $\langle
 T_B \Omega_s\rangle = T_A \Omega_b$; the telescope sees the whole
 source.  
 
@@ -825,7 +735,7 @@ observed LSR velocity), $V(R)$ be the Galactic rotation velocity at
 Galactocentric distance $R$, and let the subscript $\odot$ denote values
 at the Solar circle.  Then we have
 \begin{equation} \label{vdopp}
-V_{Dopp} = \left[ {V(R) \over R} - {V(R_\odot) \over R_\odot}\right]
+V_{Dopp} = \left[ \frac{V(R)}{R} - \frac{V(R_\odot)}{R_\odot}\right]
 R_\odot \sin(\ell)
 \end{equation}
 \noindent The values at the solar circle are $V(R_\odot) \approx 220$
@@ -838,8 +748,7 @@ Before actually working with images on the computer, you may need to
 familiarize yourself with our imaging handouts:
 \begin{enumerate}
 
-\item MAP PROJECTIONS: REPRESENTING A SPHERICAL SURFACE ON A COMPUTER
-  SCREEN.
+\item Map Projections: Representing a Spherical Surface on a Flat Screen
 
 \item {\tt jupyter\_tutorials/lab4} has examples of making images, colorbars, and map projections.
 \end{enumerate}
@@ -850,7 +759,7 @@ familiarize yourself with our imaging handouts:
 Computer screens consist of an array of dots that can glow in various
 colors. The dots are arranged in a square array and are called {\it
   pixels}. Images are the same, with the added feature that
-the pixels need not be square; that is, then horizontal distance can
+the pixels need not be square; the horizontal distance can
 differ from the vertical one. To display our data as an image on the
 screen, we must populate these pixels with observed data. 
 
@@ -862,8 +771,7 @@ a flat piece of paper. There are innumerable ways to do this
 desirable properties. No projection is perfect; each is a compromise 
 among various desirable and undesirable properties. 
 
-Our handout MAP PROJECTIONS describes the most common projections. Two
-examples:
+Here are two examples:
 \begin{enumerate}
 
 \item The simplest is the {\it cylindrical
@@ -886,21 +794,14 @@ severity because of foreshortening.
    R = \tan[ 0.5 \times (90.-lat)] 
 \end{equation}
 \begin{equation}
-   x= R \; \cos(long) 
+   x= R \; \cos(lon) 
 \end{equation}
 \begin{equation}
-   y= R \; \sin(long) 
+   y= R \; \sin(lon) 
 \end{equation}
 \end {mathletters}
-%
-% XXX Basemap?
-You can use the procedures we developed to create a stereographic or
-gnomic projection; see our `How to create a perspective projection'
-on the web page. It tells how to define a 
-new coordinate system by specifying the pole of the projection, which ideally
-is near the center of the supershell being mapped, how to convert
-$(ra,dec)$ or $(\ell,b)$ to the $(long,lat)$ of that new system, and how
-to populate the projection map plane.
+\noindent
+For other options, we refer you to the \texttt{cartopy} package.
 
 \end{enumerate}
 
@@ -941,7 +842,7 @@ follows: \begin{enumerate}
 \subsection{Displaying Your Data---The Exploratory Phase}
 
 \noindent
-For public presentation, you may want to display your data cube in its
+For live presentations, you may want to display your data cube in its
 full 3d glory with a 2d image where brightness represents `amount'
 (e.g., the integrated area of the HI line) and color the mean
 velocity. Or by describing each pixel by 3 numbers (e.g., the integrated
@@ -956,18 +857,18 @@ $360 \times 180 \times 256$ data cube, a quick and dirty way
 is: 
 
 \begin{verbatim}
-plt.ion() # makes pylab interactive, so you can replot data in the same figure
+plt.ion() # makes matplotlib interactive, so you can replot data in the same figure
 fig = plt.imshow(data[...,0], vmax=max, vmin=min, cmap=cmap)
 plt.draw() # not necessary if run within IPython
 for i in xrange(1, data.shape[-1]):
     time.sleep(1) # change data every 1 second
-    fig.set_data(data[...i])
+    fig.set_data(data[...,i])
     plt.draw()
 \end{verbatim}
 
 Here, colors are chosen from the {\tt cmap} (there are bazillions of options).
-The keywords {\tt (min, max)} mean a data value of {\tt
-  min} gives the minimum color and {\tt max} gives the maximum.
+The keywords {\tt (vmin, vmax)} mean a data value of {\tt
+  vmin} gives the minimum color and {\tt vmax} gives the maximum.
 
 \end{document}
 
