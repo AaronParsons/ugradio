@@ -36,12 +36,12 @@
 
 \noindent
 Interstellar space is filled with diffuse atomic gas, displaying
-structures that vary greatly in size---from large-scale spiral arms to tiny
-self-gravitating clouds.
+structures that vary greatly in size---from tiny self-gravitating clouds
+to galactic-scale spiral arms.
 The morphology of gas in the Milky Way is influenced
 by shocks from supernovae, by
 magnetic fields, pressure gradients, and thermal instabilities driven by stellar winds and
-starlight, and by line cooling in dense, shielded molecular clouds where new stars from.
+starlight, and by line cooling in dense, shielded molecular clouds where new stars form.
 The densest regions contain molecular hydrogen (H$_2$), and ionized plasma surrounds
 recent supernova remnants, but almost everywhere else in the galaxy,
 atomic hydrogen (HI) is prevalent, making the 21-cm line a rich resource for
@@ -49,8 +49,8 @@ learning about galactic dynamics, star formation, and the evolution of our galax
 
 In this lab, using the 4.5-m Leuschner dish, you'll embark on projects to map HI structures within our galaxy. The projects are divided into two main categories:
 \begin{itemize}
-    \item Large-scale Galactic structure and dynamics: These involve obtaining HI spectra along great circles, presenting data as position-velocity images, and analyzing the maps to understand Galactic structure.
-    \item Specific interstellar structures: This involves mapping areas like supernova-produced shells by sampling a grid of spectra, presenting data either as grey-scale images showing velocity-integrated line intensity or as images where brightness indicates integrated intensity and color indicates velocity.
+    \item Large-scale galactic structure and dynamics: These involve obtaining HI spectra along great circles, presenting data as position-velocity images, and analyzing the maps to understand Galactic structure.
+    \item Specific interstellar structures: These involve mapping areas like supernova-produced shells by sampling a grid of spectra, presenting data either as grey-scale images showing velocity-integrated line intensity or as images where brightness indicates integrated intensity and color indicates velocity.
 \end{itemize}
 \noindent
 Each group is expected to select one project for completion, focusing on mapping and image processing techniques, including the use of color in images.
@@ -136,22 +136,22 @@ if your {\tt ssh} connection gets broken.
 \noindent
 The gateway computer at Leuschner can be accessed with {\tt ssh}:
 \begin{verbatim}
-   ssh radiolab@leuschner.berkeley.edu -p 31
+   ssh radiolab@leuschner.berkeley.edu
 \end{verbatim}
 \noindent
 Use the standard class password.
 %An {\tt -XY} flag is optional; it forwards windows displays across the network so that you can plot
 %things on {\it heiles} and see the display on your local computer.
 %Unfortunately, this is usually very slow, so use this feature sparingly.
-The {\tt -p 31} flag forwards {\tt ssh} traffic over a non-standard port
-for security reasons.
-You'll need to use this port also when you {\tt scp}
-your data:
-\begin{verbatim}
-    $ scp -P 31 radiolab@leuschner.berkeley.edu:path/to/file .
-\end{verbatim}
-\noindent
-Note how {\tt scp} inexplicably uses a capital P where {\tt ssh} uses lowercase.
+%The {\tt -p 31} flag forwards {\tt ssh} traffic over a non-standard port
+%for security reasons.
+%You'll need to use this port also when you {\tt scp}
+%your data:
+%\begin{verbatim}
+%    $ scp -P 31 radiolab@leuschner.berkeley.edu:path/to/file .
+%\end{verbatim}
+%\noindent
+%Note how {\tt scp} inexplicably uses a capital P where {\tt ssh} uses lowercase.
 
 From there, you can access the Raspberry Pi connected to the SNAP Spectrometer via:
 \begin{verbatim}
@@ -159,14 +159,13 @@ From there, you can access the Raspberry Pi connected to the SNAP Spectrometer v
 \end{verbatim}
 This computer (and password) is identical to the one you used to control the interferometer.
 
-If you, like me, get tired of multi-hopping through computers to get to the one you want,
+If you, like me, get tired of manually multi-hopping through computers to get to the one you want,
 you can streamline the process by editing \texttt{.ssh/config} with something like the following:
 \begin{verbatim}
     host leuschner
     HostName leuschner.berkeley.edu
     User radiolab
     ServerAliveInterval 120 
-    Port 31
 
     host leuschpi
     HostName 192.168.1.154
@@ -178,14 +177,14 @@ Then you can ssh (and scp) to \texttt{leuschpi} directly. You'll have to enter m
 (unless you set up ssh keys), but otherwise you can act like you are talking directly to the Pi
 and ignore the intermediary computer.
 
-
 \subsection {Using \texttt{screen} at Leuschner}
 
 \noindent
 For observing sessions that run automatically for long periods of
-time, we will use \texttt{screen} to serve up a remote desktop. \texttt{screen} is a command that allows us to maintain a persistent session on a remote machine even when everyone is logged out. If everyone uses the same \texttt{screen} session, we avoid having more than one group observing at a time. We have set up a \texttt{screen} window on the heiles computer at Leuschner.  
+time, we will use \texttt{screen} to serve up a remote desktop. \texttt{screen} is a command that allows us to maintain a persistent session on a remote machine even when everyone is logged out. If everyone uses the same \texttt{screen} session, we avoid having more than one group observing at a time.
+We have set up a \texttt{screen} window on the Pi at Leuschner.  
 
-To attach to this window, on heiles run 
+To attach to this window, run 
 \begin{verbatim}
     screen -r
 \end{verbatim} 
@@ -266,36 +265,71 @@ class you used in the previous lab.
 If you find you need the coordinates of the Leuschner Educational Observatory, they are stored in
 {\tt ugradio.leo}.
 
-\subsection{Collecting Autocorrelation Spectra}
-
-\noindent
 The Leuschner dish has a noise diode at the front that you can turn on/off for
 calibration purposes. It is slightly polarized, so it increments 
 polarization 0 by 79 K and polarization 1 by 58 K.
 \begin{enumerate}
-\item {\tt ugradio.leusch.LeuschNoise()} instantiates an interface to the noise diode (it's controlled
+\item {\tt ugradio.leusch.LeuschNoise()} instantiates an interface to the noise diode (controlled
 by a Raspberry Pi).
 \item {\tt LeuschNoise.on()} turns the noise source on.
 \item {\tt LeuschNoise.off()} turns the noise source off.
 \end{enumerate}
 
-We also have an LO that you can shift around for calibration purposes.
-You can control it remotely with {\it ugradio.agilent}. 
+\subsection{Collecting Autocorrelation Spectra}
+
+\subsubsection{Option 1 (preferred): Using SDRs}
+
+Because we are using the Leuschner dish to observe the 21-cm line, we don't need much spectral bandwidth,
+which means we can use the same SDRs you used in Lab 2. We have plugged two separate SDRs into the same Pi,
+so if you would like to observe with both feed polarizations, you can build two separate SDR interfaces.
+Use the \texttt{device\_index} keyword to select which SDR to target:
+\begin{verbatim}
+    >>> sdr0 = SDR(device_index=0)
+    >>> sdr1 = SDR(device_index=1)
+\end{verbatim}
+
+Recording raw time samples will quickly use up a lot of disk space, so we suggest that,
+after setting an appropriate \texttt{gain}, \texttt{center\_freq} and \texttt{sample\_rate}, you compute and record
+averaged power spectra. Choose an appropriate number of samples to FFT to give yourself plenty of frequency resolution
+for fitting Gaussian profiles to your HI spectra, but not so much that you waste disk space/sensitivity.
+Remember that each SDR must be configured separately, and that they are running off of separate
+oscillators, so they will be slightly out of synchronization. This is okay, because we are not cross-correlating them.
+
+\subsubsection{Option 2: Using the SNAP}
+
+A second option is to use the same SNAP board we used in Lab 3, but as a spectrometer.
+This spectrometer is the same FPGA design as the interferometer correlator, but we will initialize it with
+\texttt{mode='spec'} to deliver us two auto-correlations instead of a cross-correlation. First, though, we need
+wo mix the 21-cm line down to be sampled by the SNAP. We have provided an LO you can control
+remotely with {\it ugradio.agilent}. 
 \begin{enumerate}
 \item {\tt ugradio.agilent.SynthClient()} instantiates an interface to the LO
 \item {\tt SynthClient.set\_frequency} changes the LO frequency.
 \end{enumerate}
+\noindent
+The output of this LO goes through a 30-MHz bandpass filter centered at 327 MHz, so set your LO frequency accordingly.
 
-Next, we need to read data from the spectrometer attached to the Leuschner dish.  This
-spectrometer is the same FPGA design as the interferometer correlator, but we will initialize it with
+Next, we need configure the spectrometer to operate with a slower sample clock, so that we can spread our 1024
+channels over a narrow bandwidth to get better (but still probably too coarse) frequency resolution.
+This is done as follows:
 \texttt{mode='spec'} to deliver us two auto-correlations instead of the cross-correlation, e.g.:
 \begin{verbatim}
     >>> import snap_spec
-    >>> spec = snap_spec.snap.UGRadioSnap(is_discover=True)
-    >>> spec.initialize(mode='spec')
+    >>> spec = snap_spec.snap.UGRadioSnap(is_discover=True, acc_len=6000)
+    >>> target_sample_rate = 77 # MHz
+    >>> spec.initialize(mode='spec', sample_rate=target_sample_rate)
+    >>> actual_sample_rate = spec.adc.lmx.getFreq()
 \end{verbatim}
 \noindent
-The only difference from the interferometer will be that \texttt{spec.read\_data()} returns
+You will see, running the commands above, that the actual sample rate is not quite equal to the target sample rate. Make
+sure to use the actual one in you frequency calculations. Note that, for a $\sim77$ MHz sample rate, we will be sampling a
+312--342 MHz band in the {\it 9th Nyquist Zone}. We are aliasing our signal on purpose, and you will need to use the actual sample
+rate to accurately calculate the edges of the Nyquist window you are operating in.
+
+Above, w also lowered the accumuation length in the SNAP spectrometer with \texttt{acc\_len}
+so that, with samples coming less frequently relative to the 500-MHz sampling we used in Lab 3, we aren't waiting for too long for new
+accumulations to show up.
+After initialization, the only difference from the code you used in Lab 3 will be that \texttt{spec.read\_data()} returns
 a dictionary with different keys, and your IF frequencies will correspond to different
 RF frequencies, depending on how you set your LO.
  
@@ -362,7 +396,9 @@ etc.) that you can find what you need after making many observations.
 
 \item Use {\tt telescope.point(alt,az)} to point (and track, if necessary).
 
-\item Use \texttt{spec.read\_data(...)} to take and record data for each pointing/observing mode.
+\item Use \texttt{sdr.capture\_data(...)} or \texttt{spec.read\_data(...)} to take and record data to a file for each pointing/observing mode,
+along with all of the appropriate metadata for this position. Make sure you can easily reconstruct which pointing this file
+corresponds to, along with all of the relevant LO/noise settings you used.
 
 \end{enumerate}
 
