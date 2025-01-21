@@ -71,11 +71,11 @@ The objectives of this lab, which your report should demonstrate, include:
 
 \begin{itemize}
     \item Sampling electronic signals and converting them to digital format. Show aliasing effects and quantitatively link them to the Nyquist criterion.
-    \item Effective use of Discrete Fourier Transforms (DFTs) for analyzing frequency power spectra from voltage data. Ensure correct calculation and labeling of frequency and power axes, understanding frequency ranges and resolutions in relation to sample duration and cadence.
-    \item Understanding negative frequencies and how complex inputs in Fourier Transforms to distinguish positive/negative frequencies.
+    \item Effective use of Discrete Fourier Transforms (DFTs) for analyzing frequency power spectra from voltage data. Ensure correct calculation and labeling of frequency and power axes, understanding frequency ranges and resolutions in relation to sampling duration and cadence.
+    \item Understanding negative frequencies and how complex inputs in Fourier Transforms distinguish positive/negative frequencies.
     \item Identifying and analyzing noise in electronic measurements, including its behavior under Fourier Transform.
     \item Applying the convolution/correlation theorem to explain spectral leakage in power spectra and to explore the relationship between power spectra and autocorrelation functions.
-    \item Using heterodyne mixing for frequency conversion, assessing the differences between real and ideal mixers. Experiment with double- and single-sideband mixers, demonstrating their theoretical and practical variations.
+    \item Using heterodyne mixing for frequency conversion, assessing the differences between real and ideal mixers. Experiment with double- and single-sideband mixers to demonstrate theoretical and practical advantages.
 \end{itemize}
 
 \noindent
@@ -115,9 +115,9 @@ these principles:
 
 \begin{itemize}
     \item {\it Package your code}: Move beyond Jupyter notebooks by building infrastructure code (functions and classes) into {\bf modules} and {\bf packages}. This separation enhances organization, testability, and reusability. See \url{https://docs.python.org/3/tutorial/modules.html} for guidance.
-    \item {\it Code (at least) twice}: First, code to understand your program's functionality. Then, recode for better organization. Thoughtful interface design is crucial to good coding, as it limits complex dependencies, enhances usability, and speeds debugging.
-    \item {\it Test your code}: How do you know your code works? What defines success?  In software as in science, you can only {\it expect} what you {\it inspect}, which is to say that you can only trust something work to the extent that you have tested that it does so.
-Modular testing, or {\bf unit testing}, is key in large projects. Python's {\tt unittest} module presents a good starting point.
+    \item {\it Code (at least) twice}: Write code the first time to understand your program's functionality. Then, recode it for better organization. Thoughtful interface design is crucial to good coding, as it limits complex dependencies, enhances (re)usability, and speeds debugging.
+    \item {\it Test your code}: How do you know your code works? What defines success?  In software as in science, you can only {\it expect} what you {\it inspect}, which is to say that you can only trust something work to the degree that you have tested that it does so.
+Modular testing, or {\bf unit testing}, is key in large projects. Python's {\tt unittest} or {\it pytest} modules present a good starting point.
     \item {\it Control your revisions}: Use revision control tools like {\tt git} to track code changes. A GitHub account can facilitate code backup, synchronization across devices, and collaboration. Embrace the learning curve---it's worth it.
 \end{itemize}
 
@@ -144,7 +144,7 @@ Programming, Unix Text Editors (ViM/Emacs), and Revision Control.
 
 \noindent
 The {\tt ugradio} package contains supporting code for the labs. It is pre-installed on the provided SD card for your Raspberry Pi. To verify, open {\tt ipython} or a {\tt jupyter notebook} and try {\tt import ugradio}. Installation on other computers is possible via GitHub, linked on the course website.
-Focus on {\tt ugradio.sdr} and {\tt ugradio.dft} modules.
+Focus on the {\tt ugradio.sdr} and {\tt ugradio.dft} modules.
 
 \begin{itemize}
     \item {\tt ugradio.sdr} --- For interfacing with the Software-Defined Radio (SDR) receiver on your Raspberry Pi.
@@ -152,7 +152,7 @@ Focus on {\tt ugradio.sdr} and {\tt ugradio.dft} modules.
 \end{itemize}
 
 \noindent
-Explore these modules on GitHub, in the {\tt ugradio/ugradio\_code/src} directory on your Raspberry Pi, or within Jupyter/IPython using {\tt ??} after a module, function, or class name.
+Explore these modules on GitHub, in the {\tt ugradio/ugradio\_code/src} directory on your Raspberry Pi, or within Jupyter/IPython by entering {\tt ?} or {\tt ??} after a module, function, or class name.
 
 
 
@@ -160,7 +160,7 @@ Explore these modules on GitHub, in the {\tt ugradio/ugradio\_code/src} director
 \subsection{Digital Sampling and the Nyquist Criterion}
 
 \noindent
-Explore the Nyquist criterion for discrete sampling by using a Software-Defined Radio (SDR) module with a Raspberry Pi, and through Python simulations. Vary the signal frequency ($\nu_0$) and sampling frequency ($\nu_s$), comparing results with theoretical expectations. Your report should include a focused analysis of aliasing that integrates theory, data analysis, and simulations.
+Explore the Nyquist criterion for discrete sampling by using a Software-Defined Radio (SDR) module with a Raspberry Pi, and through Python simulations. Vary the signal frequency ($\nu_0$) and sampling frequency ($\nu_s$), and compare results with theoretical expectations. Your report should include a focused analysis of aliasing that integrates theory, data analysis, and simulations.
 Try to pose and quantitatively answering a specific question.
 ``{\it What is aliasing}" is too broad. ``{\it How many Nyquist zones
 can I demonstrate using my RPi SDR module}" is a tighter framing with
@@ -193,7 +193,7 @@ Listening to FM broadcasts is fun, but we need to know what happens between the 
 For starters, we will bypass most everything and just use the analog-to-digital converter (ADC) inside the RTL2832U.
 This mode is called {\bf direct sampling} in the {\tt ugradio.sdr} module.
 Use a signal generator to produce a $<500$ kHz sine wave with a $<3$ mV peak-to-peak voltage (using an attenuator if necessary).
-Verify the signal with an oscilloscope (mantra: mistrust everything!) and document your settings before plugging it into your SDR.
+Verify the signal with an oscilloscope (course mantra: mistrust everything!) and document your settings before plugging it into your SDR.
 
 Write Python code to create an {\tt ugradio.sdr.SDR} object and capture data with varying sample rates ($\nu_s = 1.0$--3.2 MHz).
 Plot your captured data (which is a {\it multidimensional} {\tt numpy} array) to make sure it looks sinusoidal.
@@ -203,7 +203,7 @@ You can override these filter settings
 \footnote{If you are curious, 
 I expanded the {\tt librtsdr} driver and {\tt pyrtlsdr} Python wrapper
 to support setting the coefficients of a Finite Impulse Response
-(FIR) filter. FIR filters implement convolutional filters, which we will
+(FIR) filter. FIR filters implement convolutions, which we will
 learn about next week.}
 to illustrate aliasing more clearly using
 {\tt fir\_coeffs=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2047])}.
@@ -224,7 +224,7 @@ stands alone as a description of the plot and what it demonstrates.
 Try producing a plot that synthesizes several data runs to illustrate aliasing and Nyquist's criterion.
 You will produce and plot more data than you should put in your report.
 Make sure the ones in your report are focused on quantitatively illustrating a point.
-One good plot is worth more than many vague ones.
+One good plot is worth much more than many vague ones.
 
 
 \subsection{Voltage Spectra and Power Spectra}
@@ -261,7 +261,7 @@ Take a look at the Convolution Theorem. Can you explain mathematically why you m
 \noindent
 Determine how closely spaced two spectral lines (sine waves) can be while still being distinguishable.
 
-Combine the outputs of two function generators using a power splitter (used in reverse as a combiner). Select two frequencies very close together and plot their power spectrum, ensuring the frequency points are more densely spaced than the standard $\Delta \nu = \nu_s/N$.
+Combine the outputs of two function generators using a power splitter in reverse as a combiner. Select two frequencies very close together and plot their power spectrum, ensuring the frequency points are more densely spaced than the standard $\Delta \nu = \nu_s/N$.
 
 Experiment, for a fixed number of time samples, to find the minimum frequency separation where the two signals remain resolvable---this gap is the \textbf{frequency resolution}. Examine how this resolution is affected by the number of samples in the Discrete Fourier Transform (DFT). How does it relate to the time interval spanned by those samples?
 
@@ -272,24 +272,24 @@ Again, can you interpret this result using the Convolution Theorem?
 \subsection{Power Spectra in other Nyquist Windows}
 
 \noindent
-This exercise extends the exploration of power spectra beyond the standard frequency range of $\pm \nu_s/2$. 
+Extend the exploration of power spectra beyond the standard frequency range of $\pm \nu_s/2$. 
 
-Use a Nyquist-sampled time series to calculate power spectra over an expanded frequency range of $\pm W \nu_s/2$, where $W$ is at least 4, focusing on the original frequency interval.
+Use a Nyquist-sampled time series to calculate power spectra over an expanded frequency range of $\pm W \nu_s/2$, where $W$ is at least 4, focusing on the same standard frequency interval.
 Each value of $W$ represents a different \textbf{ Nyquist window}.
 Compare the power spectra obtained across these various Nyquist windows.
-For $W > 1$, the power spectra include frequencies that seemingly violate the Nyquist criterion, yet they produce interpretable results. In Lab 4, for instance, our digital spectrometer will operate in the 12$^{\rm th}$ Nyquist window.
+For $W > 1$, the power spectra include frequencies that seemingly violate the Nyquist criterion, yet they produce interpretable results. In Lab 4, for instance, our digital spectrometer will operate in the 12$^{\rm th}$ Nyquist window. Why does this work?
 
-This investigation illustrates a more nuanced interpretation of the Nyquist criterion: it is the signal's {\it bandwidth}, inclusive of negative frequencies, that must not exceed $\nu_s$.
+This investigation illustrates a more nuanced interpretation of the Nyquist criterion: it is the signal's {\it bandwidth}, inclusive of negative frequencies, that must not exceed $\nu_s$---not the frequency itself. What happens if the bandwidth violates the Nyquist criterion?
 
 
 \subsection{Fourier Transforms of Noise}
 
 \noindent
-Noise, in scientific data, refers to random fluctuations with a known statistical distribution, typically Gaussian.
-This is distinct from systematic errors, bias, ambiguity, or posterior likelihood.
-Unlike how we use the term colloquially, noise has a specific meaning in science, so be careful with it.
+In scientific data, noise refers to random fluctuations drawn from a known statistical distribution, typically Gaussian.
+This is distinct from systematic errors, bias, ambiguity, or posterior likelihoods.
+Unlike how we use the term colloquially, noise has a specific meaning in science, so use it carefully in your report!
 
-Many astronomical signals are essentially noise. Consider blackbodies, which emit electromagnetic waves with intensities described by the Planck function:
+Many astronomical signals are essentially noise if you look at the electric field received by your detector. The ``signal" we try to measure is usually the power ($P=IV\propto V^2$) of that noise. Consider blackbodies, which emit electromagnetic waves with intensities described by the Planck function:
 \begin{equation}
 B_\nu = \frac{2h\nu^3}{c^2}\frac{1}{e^{h\nu/kT}-1}.
 \end{equation}
@@ -297,7 +297,7 @@ In radio astronomy's Rayleigh-Jeans limit ($h\nu/kT \ll 1$), this simplifies to:
 \begin{equation}
 B_\nu\approx\frac{2kT}{\lambda^2},
 \end{equation}
-highlighting the linear dependence of noise power on temperature $T$.
+which highlights the linear dependence of noise power on temperature $T$.
 
 Radio astronomers often express noise power in terms of temperature, using brightness temperature $T_B$ such that $I\equiv2kT_B/\lambda^2$. This applies even if the radiation source, like galactic synchrotron emission, is not thermal.
 
@@ -306,7 +306,7 @@ Receiver noise, for example, is added to our incoming astronomical signal
 by the thermal motion of electrons in our amplifiers and resistors 
 (otherwise known as {\bf Johnson} noise).  This noise (which,
 by the Central Limit Theorem, is almost always Gaussian) has a variance that
-is characterized by receiver temperature, $T_{rx}$, and adds onto the brightness temperature, $T_B$, 
+is characterized by receiver temperature, $T_{rx}$, which adds to the brightness temperature, $T_B$, 
 that characterizes the variance of signal coming through the antenna feed of the telescope.
 
 Our lab has various noise sources that can be used to explore the properties of digitally sampled noise.
@@ -321,8 +321,8 @@ The lab's noise generator produces broadband, random voltages using a diode. To 
     \item Connect the noise generator to a filter and capture tens of thousands of samples with the SDR's ADC. Analyze the mean and variance of these voltage samples.
     \item Create a histogram of the sampled voltages using {\tt numpy.histogram}. It should approximate a Gaussian distribution with a width equal to the rms voltage. Overplot a theoretical Gaussian for comparison. Explain any differences.
     \item Collect multiple data blocks (tens to hundreds), each containing thousands of samples. Compute the power spectrum for each block and the average power spectrum across all blocks.
-    \item Compare the power spectrum of a single block to the average over $N$ blocks where $N=(2, 4, 8, 16)$. Investigate how time averaging influences the signal-to-noise ratio (SNR). Determine if SNR scales with $N^x$ and how this compares to predictions from the Central Limit Theorem.
-    \item Calculate the Autocorrelation Function (ACF) for a 16000 sample block, both manually and using {\tt numpy/scipy}. Focus on delays of $\le 2000$ samples. How does the power spectrum computed from the ACF compare with that obtained via Fourier transform? Assess their similarity, and compare the full-width half-max (FWHM) of the ACF ($\Delta \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta F_{FWHM}$). Are they related?
+    \item Compare the power spectrum of a single block to the average over $N$ blocks where $N=(2, 4, 8, 16)$. Investigate how time averaging influences the signal-to-noise ratio (SNR) of the power. Determine if SNR scales with $N^x$ and how this compares to predictions from the Central Limit Theorem.
+    \item Calculate the Autocorrelation Function (ACF) for a 16000 sample block, both manually and using {\tt numpy/scipy}. Focus on signal shifts (delays) of $\le 2000$ samples. How does the power spectrum computed from the ACF compare with that obtained via Fourier transform? Assess their similarity, and compare the full-width half-max (FWHM) of the ACF ($\Delta \tau_{FWHM}$) with the FWHM of the power spectrum ($\Delta F_{FWHM}$). Are they related?
 \end{itemize}
 
 
@@ -486,7 +486,7 @@ imaginary part of \verb$P$ be zero? (answer: yes! Why is this?) Is it?
 (answer: not always! Why not?) To get rid of this annoying and extraneous
 imaginary part, try casting your array as a float.
  
-The other (more convenient and suggested) way is to square the length of
+The other (more convenient and suggested) way is to square the magnitude of
 the complex vector, i.e.\ \verb$P = numpy.abs(E)**2$. The result is
 automatically real.
 
@@ -592,7 +592,7 @@ Both the ZAD-1 and the ZFM-15 are
 balanced mixers, so the R and L ports are identical but
 {\it will not couple to DC or very low frequencies}.  To find out
 the frequency ranges these mixers support on each input, 
-look up the datasheet online. 
+look up their datasheets online. 
 
 %In contrast,
 %the ``I'' port is coupled differently and will handle voltages all the
@@ -607,8 +607,8 @@ Use a mixer to build a DSB.
 Assign a signal generator to
 be your LO with frequency $\nu_{LO}$ and
 another to be your RF signal with frequency $\nu_{RF} = \nu_{LO} \pm
-\Delta \nu$.  Here, you choose the frequency difference $\Delta \nu$ and
-you set the two signal generators 
+\Delta \nu$.  Choose the frequency difference $\Delta \nu$ and
+set the two signal generators 
 for each of two cases:
 $\nu_{RF} = \nu_{LO} + \Delta \nu$ and $\nu_{RF} = \nu_{LO} - \
 \nu$.  Make $\Delta \nu$ small ($\sim5$\%) compared to $\nu_{LO}$.
@@ -645,7 +645,7 @@ what you see.
 \noindent
 An ideal mixer multiplies two input
 signals, but real mixers are not ideal. Inside,
-nonlinear diodes are used to perform an approximate multiplication, but
+nonlinear diodes are used to perform an approximate analog multiplication, but
 deviations from ideal behavior 
 produce harmonics of the input signals and harmonics of the sum, and harmonics
 of harmonics.
@@ -691,7 +691,7 @@ Engineers call this IQ sampling. Connect the two inputs
 
 From the block diagram in Figure \ref{ssb}, construct an SSB mixer that
 achieves the phase delay with a cable\footnote{In vaccuum, light travels
-1 foot per nanosecond---the only legitimate use of
+about 1 foot per nanosecond---the only legitimate use of
 imperial units in astronomy. In a cable, light travels about
 70\% slower than in vaccuum. You can use this information
 to estimate which cable suits your
@@ -763,8 +763,8 @@ is music at audio (kHz) frequencies.
 A mixer is used to shift the frequencies of
 the AM station down to the audio region, where they are filtered off, amplified, and
 sent to a speaker that converts the voltage fluctuations into pressure-wave fluctuations
-that your ear is sensitive to.  When you tune in to a station, you are simply changing
-the LO frequency; the rest of the signal chain can stay the same.
+that your ear picks up.  When you tune in to a station, you are simply changing
+the LO frequency; the rest of the signal chain stays the same.
 
 Such receivers are called {\bf heterodyne} receivers, and they are used 
 in consumer radios, television (even modern digital ones), and cellphones, as well
@@ -841,15 +841,15 @@ between the $A$ and $B$ signal components by whether they appear at positive or 
 frequencies.  This ability to distinguish between positive and negative {\bf sidebands}
 is why we call this a single-sideband mixer: we can look at each sideband separately.
 If we didn't have both the cosine and sine components, we would not be able to distinguish
-positive and negative frequencies. Signals $A$ and $B$ would then sit on top
+positive and negative frequencies. Signals $A$ and $B$ would sit on top
 of each other, and we would have no choice but to look at both sidebands simultaneously.
 
 Figure\ \ref{ssb} shows a block diagram of the SSB mixer.  The RF input
 and the LO are each split by a power splitter so that we have two
 identical mixers, one on the left and one on the right, whose outputs
 are labelled {\bf Re(IF)} and {\bf Im(IF)}, respectively. The one on
-the left is identical to the DSB mixer in figure \ref{dsb}. The one on
-the right differs in only one way, which is crucial: its LO is delayed
+the left is identical to the DSB mixer in Figure \ref{dsb}. The one on
+the right differs in one curical way: its LO is delayed
 by $90^\circ$ relative to that on the left. With this, the {\bf Im(IF)}
 output lags the {\bf Re(IF)}, becoming a sine wave to the {\bf Re(IF)}'s 
 cosine.
@@ -872,10 +872,10 @@ cosine.
 \subsection {Double Sideband (DSB) Mixer Theory}
 %
 \noindent
-We now turn to the theory of the DSB mixer, which
-is very straightforward to build (the LO is just a real-valued sine wave, as is the RF, so we only
-require one mixing circuit),
-but is more complicated to understand.
+DSB mixers are
+straightforward to build (both the LO and the RF are real-valued sine waves, so we only
+require one mixer),
+but they are more complicated to understand.
 
 Let us repeat the SSB derivation, but instead of
 using $e^{-i\wLO t}$ as our LO, we will use $\sin \wLO t$.
@@ -892,8 +892,8 @@ E(t)\cdot \sin\wLO t &= A\sin (\wLO +\Delta\omega)t\cdot \sin (\wLO t)\\
 As in the SSB, the mixer output has two components: a beat frequency (our
 desired output) and a component near $2\wLO $ (which we remove using a LPF).
 
-The unfortunate part about the DSB mixer becomes obvious if we consider the
-case we used for the SSB mixer, where $E(t)=A\sin(\wLO +\Delta\omega)t + B\sin(\wLO -\Delta\omega)t$.
+The shortcomings of the DSB mixer become obvious if we reconsider the
+case where $E(t)=A\sin(\wLO +\Delta\omega)t + B\sin(\wLO -\Delta\omega)t$.
 Repeating our algebra above, we find that
 \begin{equation}
 E(t)\cdot \sin\wLO t = 
@@ -905,13 +905,12 @@ we end up with
 \begin{equation}
 {\rm LPF}\left[E(t)\cdot \sin\wLO t\right] = (A+B)\cos\Delta\omega t,
 \end{equation}
-which has signals that were at two different frequencies 
+which has signals at two different frequencies 
 ($\wLO +\Delta\omega$ and $\wLO -\Delta\omega$)
 stacked on top of each other.
 
-The DSB mixer, though simpler to build, cannot distinguish between positive and negative deviations around
-the LO frequency.  It stacks them right on top of each other, so that any frequency you look at in the output
-can be the sum of two different signals.  This is what lends it the name ``double sideband".
+The DSB mixer, though simpler to build, cannot distinguish positive and negative deviations around
+the LO frequency.  It stacks them on top of each other, so that any frequency in the output is the sum of two different input signals.  Hence the name ``double sideband".
 
 
 \begin{figure}[p!]
@@ -953,39 +952,37 @@ separate. \label{sideband}}
 %\end{enumerate}
 %
 %\noindent
-Figure \ref{sideband} illustrates the result. The top panel shows the
-original RF spectrum, which consists of signals above the LO (the upper
+The top panel of Figure \ref{sideband} illustrates an
+RF spectrum consisting of signals above the LO (the upper
 sideband; USB
 signal) and below (the lower sideband; LSB). Suppose you use a filter to
 eliminate the LSB, leaving only the USB. The second panel
 shows the IF spectrum after DSB mixing: the USB appears at both negative
 and positive frequencies and the spectrum is symmetric, meaning that the
 negative frequencies give exactly the same result as the positive ones.
+The third panel shows the resulting IF spectrum if we use a filter to eliminate the USB, leaving only the LSB.
 
-Now use a filter to eliminate the USB, leaving only the LSB;
-the third panel shows the resulting IF spectrum.
-
-Without any filters, then both the LSB and the USB
+Without filters, both the LSB and the USB
 would appear in the IF spectrum, as in the fourth panel. 
 With a DSB mixer, you can't distinguish between LSB and
 USB. They are inextricably
-mixed into a sum in the power spectrum.
+summed in the power spectrum.
 However, the bottom panel shows that SSB 
 mixing retains the sideband separation.
 
 \section{Writing the Lab Report (Week 3)} \label{report}
 
 \noindent
-Please review the resources linked on AstroBaki and the guidelines
+Review the resources linked on AstroBaki and the guidelines
 offered in class for generating your report. Remember that your write-up
-is the basis for the majority of your grade in this class; make sure to
-include high-quality plots and description, providing adequate background
-and discussion such that one of your peers who has not taken this class would
+is the basis for the majority of your grade in this class. Make sure to
+include high-quality plots and descriptive captions, providing adequate background
+and discussion so that one of your peers who has not taken this class would
 be able to understand your findings and conclusions. Take the opportunity to
 show off what you have learned so far!
 
 Your report should directly address the goals listed in \S\ref{goals}, but
-please ensure that you do so in a narrative that is directed toward the goal
+do so with a narrative that is directed toward the goal
 of conveying high-level results.  It would be a mistake to make this report a
 laundry-list of the things you did during the last couple of weeks. Not every
 plot you made needs to be in this report, nor should every wrong turn be documented.
