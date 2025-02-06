@@ -1,10 +1,14 @@
 \documentclass[11pt,preprint]{aastex}
-\usepackage{amsmath}
 \usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 %\usepackage{natbib}
 %\usepackage{natbibspacing}
 \usepackage{enumitem}
 \usepackage{url}
+\usepackage{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+%\graphicspath{{figures/}}
+\usepackage{amsmath, amssymb}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
 %\setlength{\bibspacing}{0pt}
@@ -17,12 +21,18 @@
 \setlength{\partopsep}{0pt}
 \setlength{\footnotesep}{8pt}
 
+\usepackage{titlesec}
+\titlespacing*{\section}{11pt}{11pt}{3pt}
+\titlespacing*{\subsection}{22pt}{6pt}{3pt}
+\titlespacing*{\subsubsection}{33pt}{3pt}{3pt}
+
+
 \begin{document}
 \tolerance=10000
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
-\title {LAB 2: Astronomy with the 21-cm Line and Waveguides}
+\title {LAB 2: Astronomy with the 21-cm Line and a Horn Antenna}
 
 \tableofcontents
 
@@ -53,27 +63,28 @@ suggestions of the previous lab:
 
 \item Develop (version-controlled) scripts for taking data from the command line.
 Have these scripts save data files with {\bf all the necessary metadata} for
-reconstructing your observation. Omitting critical information could
-mean you have to redo observations later.
+reconstructing your observation. What information will you need later? It's
+better to record too much, rather than too little, and omitting critical information could
+mean you have to redo observations.
 
 \item Test your reality. How do you know your rotation matrices give you the
 right pointing? How do you know if your gain calibration is right? To build
 your confidence, you need internal consistency checks, which means deriving
-solutions to things you already know the answer to. Find every opportunity
+solutions to things you already know the answer to. Find opportunities
 to test things you think you know. It will save you time later.
 
 \item As you conduct observations, think critically about your assumptions and
 approximations.  How well have you pointed the horn? How completely did
-you cover the aperture for the calibration run? The more you can capture
+you cover the aperture for the load calibration? The more you can assess
 as you do the work, the more resources you will have for critically analyzing your
 results and procedures in your report.
 
-\item By the end, you should have empirical numerical results to report. Remember
-that values without errors are meaningless. As you estimate errors, think about how 
+\item By the end, you should have empirical numerical results to report, but
+values without error bars are meaningless. As you estimate errors, think about how 
 well your model matches the data. How can you estimate the
 accuracy of your results? Are you confident enough in your analysis to
 bet money on your reported accuracy? If not, think about the sources of error
-(systematic and otherwise) that may be undermining your confidence.
+(systematic and otherwise) that may be undermining your confidence, and quantify them.
 
 \end{itemize}
 
@@ -95,30 +106,30 @@ Below is a list of learning goals that your report should demonstrate mastery of
 
 \begin{itemize}
 
-\item Learn about time. Demonstrate accurate conversion between UTC, PST, LST,
+\item Time. Demonstrate accurate conversion between UTC, PST, LST,
 and Julian Day.
 
-\item Learn about telescope pointing and use rotation matrices to convert among spherical
+\item Telescope pointing and the use of rotation matrices to convert among spherical
   coordinate systems.
 
-\item Measure a 21-cm line power spectrum from atomic hydrogen in the
+\item Measuring the 21-cm line power spectrum from atomic hydrogen in the
   Milky Way at a defined and reproducible location.
 
-\item Calibrate your telescope observations to an absolute scale, remove
-systematic instrumental effects in your spectra, and apply noise-reduction
+\item Calibrating your telescope observations to an absolute scale, removing
+systematic instrumental effects in your spectra, and applying noise-reduction
 techniques.
 
-\item Learn about Doppler correction and produce spectra with velocities 
+\item Doppler corrections to produce spectra with velocities 
 calibated relative a standard frame of reference.
 
-\item Fit spectra with Gaussian components to localize celestial structures.
+\item Fitting spectra with Gaussian components to localize celestial structures.
 
-\item Demonstrate undestanding of transmission lines to 
+\item Impedances. Terminate transmission lines to 
 minimize reflections with impedance matching.
 
-\item Derive propagation velocities for radio waves traveling down coaxial cables.
+\item Deriving propagation velocities for radio waves traveling down coaxial cables.
 
-\item Use linear and non-linear least-squares methods to fit models to data and
+\item Using linear and non-linear least-squares methods to fit models to data and
 estimate error.
 
 \end{itemize}
@@ -126,7 +137,7 @@ estimate error.
 \section{Schedule}
 
 \noindent
-This lab covers a lot of new territory, particularly in the realm of data
+Despite building directly on Lab 1, this lab covers a lot of new territory, particularly in the realm of data
 analysis. Work hard to get good observations early, reserving plenty of
 time for analysis and, if necessary, re-observation. A suggested schedule
 follows.
@@ -182,8 +193,8 @@ shorter than the 24-hour Solar time period: $1/356.24$ less, to
 be nearly exact. The difference, which corresponds to slightly 
 less than 4 minutes per day, comes from how much the Earth's orbit around the
 Sun changes the position of the Sun in the sky.
-Sidereal time depends on the Earth's spin. The
-Earth is constantly slowing owing to tidal friction produced by the
+Sidereal time depends on the Earth's spin, which
+is constantly slowing owing to tidal friction produced by the
 Moon. (Where does the angular momentum go?) The conversion between Civil Time and LST has to be adjusted
 periodically by inserting {\it leap seconds}.
 
@@ -221,7 +232,8 @@ your convenience. {\it However}, the times you use for input are only as good
 as the synchronization between the clock you are using (e.g. on your Raspberry
 Pi) and our national-standard atomic clocks, so before observing,
 you are going to want to use a Network Time Protocol
-(NTP) daemon to discipline your local clock to an external reference.
+(NTP) daemon to discipline your local clock to an external reference, and it case it
+isn't clear from the name, you will have to have an active network connection.
 
 Calculating LST requires knowing your
 longitude. New Campbell Hall (NCH) is at 
@@ -270,7 +282,7 @@ Our website has topical handouts that may be of use to you:
 \label{radioastro}
 
 \noindent
-This week we will use the techniques we explored in Lab 1 to observe the
+Use the techniques we explored in Lab 1 to observe the
 21-cm line of neutral hydrogen (colloquially, {\bf
   HI}, pronounced ``H-one''), measuring its line
 shape, velocity, and intensity using the big horn on the New Campbell Hall roof.
@@ -279,11 +291,11 @@ line.  It's often called noise, and we need to calibrate out this
 instrumental contribution and the responses of our amplifiers and filters to
 obtain the correct line shape and intensity.
 
-We'll measure the 21-cm line twice. The first time, the goal is to master
-the technical aspects and familiarize ourselves with the system and
-procedures, so instead of worrying about where to point the horn, we'll
+Measure the 21-cm line twice. The first time, the goal is to master
+the technical aspects of the system and
+procedures, so instead of worrying about where to point the horn,
 just use whatever sky position happens to be overhead. The second time (\S
-\ref{meas2}), we'll manually point the horn to a designated position and
+\ref{meas2}), manually point the horn to a designated position and
 make a calibrated profile to compare with a well-established standard
 profile measurement.
 
@@ -293,7 +305,7 @@ profile measurement.
 After analog amplification and filtering, we need to use our
 Raspberry Pi / SDR system with its built-in digital downconverter.
 Having already mastered the intricacies of DSB/SSB mixers and filters in the
-first lab, we are now in a position to jump to a higher level of 
+first lab, we are ready to jump to a higher level of 
 abstraction with dedicated hardware for down conversion.
 
 \subsubsection{Digital Down-Conversion}
@@ -325,8 +337,8 @@ rate appropriately (and use the fast USB-3.0 ports)
 it is possible to stream data through your RPi without losing any samples.
 
 Ultimately, you are going to need to acquire many samples in order
-to reduce the noise in an integrated spectrum far enough to see
-the HI line. How long that takes depends somewhat on the efficiency
+to reduce the noise in an integrated spectrum enough to see
+the HI line. How long that takes depends on the efficiency
 of your code, so pay attention to block size, sample size,
 and how often you save data to disk. Avoid re-initializing software 
 interfaces where possible, but also mitigate the risk of losing your
@@ -337,15 +349,15 @@ exception gets thrown.
 
 \noindent
 Before taking data, do basic system
-checks: (1) using oscilloscopes and captured voltage waveforms,
-make sure signal levels set appropriately, and (2) experimentally
+checks: (1) use oscilloscopes and captured voltage waveforms to
+set signal levels appropriately, and (2) experimentally
 verify that you are looking at the frequencies you intend to. In order
 to test that you are seeing data through an active (and powered!) signal
 chain, you can use the tone-injection system to broadcast a known
 RF signal into the front of the horn. 
 Make sure you are seeing the actual signal by moving
 it around in frequency, turning it on/off, or changing its amplitude
-to make sure the ``birdie" you put in is where you expect it in
+to make sure the ``birdie" you put in is where you expect in
 your spectrum.  You should notice that your birdie amplitude can be quite low;
 we have a fairly sensitive receiver system.
 
@@ -355,12 +367,12 @@ set the system up as you will be using it to observe. Point the
 data.  How fast must you sample? 
 
 Look at the range of sample values using, e.g.,
-  {\tt numpy.histogram}.  As in Lab 1, check that you are not heavily 
+  {\tt np.histogram}.  As in Lab 1, check that you are not heavily 
 quantized or clipping.  Use analog attenuators and/or 
-digital gain in {\tt sdr.capture\_datar} to get the levels right.
+digital gain in {\tt sdr.capture\_data} to get the levels right.
   The histogram shape should look like a familiar function. Does it?
 
-As a final note, remember that if it rains, the horn is a gigantic bucket. 
+As a final note, remember that in inclement weather, the horn is a gigantic rain bucket. 
 You won't see any astronomical signal unless you dump it!
 
 \subsubsection{Planning Observations}
@@ -368,90 +380,87 @@ You won't see any astronomical signal unless you dump it!
 \noindent
 Having determined that the system basics work, it's time to do
 astronomy! For this first measurement the main goal is to master the
-technical aspects, so use whatever position happens to be overhead and
-point the horn straight up. The line will be strongest---strong enough
+technical aspects, so point the horn to whatever piece of sky happens to be overhead.
+The line will be strongest---strong enough
 to see visually---in the range LST = 19 -- 6 hr.
 
-It is most convenient to use temperature units for the power
-that we measure. Accordingly, the power that we measure is called the
-{\bf system temperature} $T_{\rm sys}$. It's a function of frequency and has two
-kinds of behavior: the {\bf continuum}, which is devoid of spectral features
-and changes very slowly with frequency; and the {\bf line}, which in this
-case is the 21-cm line and it changes relatively rapidly with frequency---hence our
+It is convenient to use temperature units for the power
+that we measure. The power we measure is called the
+{\bf system temperature} $T_{\rm sys}$, and it is a function of frequency.
+It contains two components:
+the {\bf continuum}, which is devoid of spectral features
+and changes slowly with frequency; and the {\bf line}, which in this
+case is from hydrogen, and changes relatively rapidly with frequency---hence our
 desire to obtain the line shape.
 
-The system temperature has two contributions: the dominant contribution
-  from our electronics, which we call the {\bf receiver temperature} $T_{\rm rx}$;
-  and the contribution our antenna picks up from the sky, the {\bf sky temperature}
+The continuum system temperature has two contributions: the dominant contribution
+from our electronics, which we call the {\bf receiver temperature} $T_{\rm rx}$;
+and a contribution entering our antenna from the sky, the {\bf sky temperature}
   $T_{\rm sky}$.  (This is also sometimes called the {\bf antenna temperature}).  
  Thus $T_{\rm sys}= T_{\rm rx} + T_{\rm sky}$, and above 300 MHz, usually $T_{\rm rx} \gg T_{\rm sky}$. 
 
-Our horn is equipped with a room-temperature first amplifier so $T_{\rm rx} \sim
-300$ K; in contrast, our Leuschner telescope is much better, with $T_{\rm rx}
-\sim 50$ K. The sky temperature comes from the Cosmic Microwave Background,
-with brightness temperature ($T_{\rm CMB} = 2.7$ K); from
+Our horn is equipped with an ambient-temperature first amplifier so $T_{\rm rx} \sim
+300$ K. (For Lab 4, our Leuschner telescope is much better, with $T_{\rm rx}
+\sim 50$ K). The sky temperature comes from the Cosmic Microwave Background
+($T_{\rm CMB}\approx 2.7$ K); from
 interstellar/intergalactic space, with brightness temperature
-$T_{\rm IGM}$ (usually no more than a few K in the continuum and up to
+$T_{\rm IGM}$ (usually no more than a few K in the L-band continuum and up to
 about 100 K in the HI line); and the Earth's atmosphere with brightness
 temperature $T_{\rm atm}$, perhaps a few K at the HI line frequency. So
 off of the HI line we have $T_{\rm sky} \sim 10$ K, while on the HI line, in the
-Galactic plane where it is strongest, we have $T_{\rm sky} \sim 100$ K.
-
-We'll take two sets of data:
-\begin{enumerate}
-\item a long integration to measure the HI line profile, and 
-\item a short integration so we can calibrate the absolute
-{\it intensity.}
-\end{enumerate}
+Galactic plane where it is strongest, we can have $T_{\rm sky} \sim 100$ K.
 
 \subsubsection{Two Frequency-Switched Line Measurements}
 
 \noindent
-The measured power spectrum shape is dominated by the
-frequency-limiting filters acting on the system temperature. To see the
-line, which is weak, we need to correct for these filter shapes, which
-we do by obtaining a spectrum containing no line. Accordingly, to get
-the shape we take two spectra: one with the line present (the on-line
-spectrum $s_{\rm on}$) and one with the line not present (the off-line
-spectrum $s_{\rm off}$).
+The measured power spectrum shape is dominated by
+filters acting on the system temperature. To see the
+line, which is weak, we need to correct for these filter shapes, which can
+be characterized by taking data away from the spectral line.
+Take two sets of data:
+\begin{enumerate}
+\item a long integration to measure the HI line profile (the on-line spectrum $s_{\rm on}$), and 
+\item a short integration with the line not present (the off-line spectrum $s_{\rm off}$) to calibrate the absolute {\it intensity.}
+\end{enumerate}
 
-We could obtain the on-line
-  spectrum by centering the line and making a measurement; then changing
-  the first LO frequency so that the line shifts either completely
-  outside the band (this is called {\bf frequency switching}), or partway
-  over but is still in the band (in-band frequency
-  switching). The latter is better because you are always looking at
-  the line; you end up with more measurements and better signal/noise.
+You can obtain the on-line
+spectrum by centering the line and making a measurement; then changing
+the first LO frequency so that the line shifts either completely
+outside the band (this is called {\bf frequency switching}), or partway
+over but is still in the band (in-band frequency
+switching). The latter is better because you are always looking at
+the line; you end up with more measurements and better signal/noise.
 
-To accomplish this, take a spectrum with the line roughly in the upper
-half of the baseband spectrum, and another with it centered roughly in
+To accomplish this, take a spectrum with the line in the upper
+half of the downconverted (baseband) spectrum, and another with it centered roughly in
 the lower half. Use the first as the on-line and the second as the
 off-line spectrum for the upper half. Similarly, for the lower half,
 use the second as the on-line and the first for the off-line.  (The HI
 line frequency is 1420.4058 MHz).
 
-The line is weak, so you'll need to take lots of spectra. Recall that
+The line is weak, so take lots of spectra. Recall that
 {\tt sdr.capture\_data} obtains a specified number of blocks ({\tt nblocks}),
 each of which has {\tt nsamples} datapoints.
 You might be tempted
 to do a deep observation by setting {\tt nblocks} to a large number. That
 may work, or you may run into memory or stability issues, and if Python throws
-an error, you might lose all of your data.
-Plan accordingly. I strongly recommend writing exception handling into your code.
+an error, you could lose all of your data. Maybe you would prefer to spread
+your eggs over more baskets.
+Either way, I strongly recommend writing exception handling into your code.
 
 \subsubsection{Two Frequency-Switched Reference Measurements}
 \label{sec:blackbody}
 
 \noindent
 Intensity calibration requires a second set of (short) measurements
-  with your telescope aimed toward a source of known temperature.
-  Easiest is probably to take one with the horn
-  looking at a known blackbody and one looking at the cold sky. What's a
-  convenient blackbody? You and your friends! So take one short
-  measurement with the horn pointing straight up at the cold sky and the
-  other with as many people as you can find standing in front of it to
-  fill the aperture. Call these spectra
-  $s_{\rm cold}$ and $s_{\rm cal}$, respectively.
+with your telescope aimed toward a source of known temperature.
+Easiest is probably to take one with the horn
+looking at a known blackbody and one looking at the cold sky. What's a
+convenient blackbody? You and your friends! Take one short
+measurement with the horn pointing straight up at the cold sky and the
+other with as many people as you can fit standing in front of it to
+fill the aperture. Call these spectra
+$s_{\rm cold}$ and $s_{\rm cal}$, respectively.
 
 
 \section{Analysis (Individually at Home, Week 1)} \label{analysis}
@@ -460,51 +469,51 @@ Intensity calibration requires a second set of (short) measurements
 
 \noindent
 Consider, first, the $s_{\rm on}$ and $s_{\rm off}$ spectra, from which
-you can find the line shape. There are many individual spectra, 10000 in
-our above example. You need to combine these to make a single spectrum
+you can find the line shape. There are many individual spectra, which
+you need to combine these to make a single spectrum
 for each measurement. You can do this by averaging the power spectra
 (use {\tt numpy}'s {\tt mean} function) or by taking the medians (use {\tt numpy}'s
 {\tt median} function). The former gives a less noisy result, but the
 latter handles time-variable interference better; use both and compare
 the results.
 
-Even after combining the 10000 spectra, the resulting
+Even after combining many spectra, the resulting
 spectrum will look noisy.  You can reduce the noise by averaging
-over channels---by `smoothing' the spectrum. This reduces the noise, but
-degrades the spectral resolution, so you have to make a compromise on
-how many channels to smooth over. To decide, realize that the HI line is
-never narrower than about 1 km/s, so it's OK to degrade the frequency
-resolution to, say, 1 or 2 kHz. Again, you do the smoothing by averaging
-(by using {\tt numpy.mean} ) or medianing (by using {\tt
-  numpy.median}), and again try both to see what happens.
+over channels, but
+degrades the spectral resolution. Find a compromise on
+how many channels to smooth over, assuming that the HI line is
+never narrower than about 1 km/s.
+Again, try both {\tt np.mean}) and {\tt np.median}) to see what happens.
 
-In the smoothed $s_{\rm on}$ spectrum you might not be able to see the
-HI line, because the instrumental bandpass dominates the spectrum
-shape. The instrumental bandpass is determined mainly by the low-pass
-filter, which should fall smoothly to zero as the frequency
-increases. Does it? If not, should you worry about aliasing?
+In the smoothed $s_{\rm on}$ spectrum, you might not be able to see the
+HI line because the instrumental bandpass dominates the spectrum
+shape. The instrumental bandpass is determined mainly by the SDR's FIR
+filter, which should fall smoothly away from zero frequency.
+Does it reach zero at the band edge? If not, should you worry about aliasing?
+What does that tell you about where to place the HI line?
 
 \subsection{Get the Line Shape}
 
 You can remove the instrumental bandpass to get the shape
-of the line $s_{\rm line}$ (but not the intensity), by taking the ratio 
+of the line $r_{\rm line}$ (but not the intensity), by taking the ratio 
 
 \begin{equation}
-s_{\rm line} = \frac{s_{\rm on}}{s_{\rm off}} \ .
+r_{\rm line} = \frac{s_{\rm on}}{s_{\rm off}} \ .
 \end{equation}
 %
 This is the first factor (i.e., the shape) in equation
-(13) in the spectral-line handout.
+(13) in the spectral-line handout. Note that the power units of $s$ (and any calibration constants) divide out in $r$, which is
+unitless.
 %
 \subsection{Get the Line Intensity}
 
 \noindent
-To get the line intensity in temperature units, we need to multiply terms of the calibration noise source,
-multiply the shape spectrum by the {\bf gain}---the second factor in
+To get the line intensity in temperature units, we need to use a calibration noise source
+to determine the {\bf gain}---the second factor in
 the handout's equation (13). We obtain the gain, $G$, by using a known
 difference in system temperature between the 
-the calibration ($T_{\rm sys,cal}$) and the cold sky ($T_{\rm sys,cold})$
-measurements, and seeing how much that known temperature difference changes
+the calibration ($T_{\rm sys,cal}$) and the cold sky ($T_{\rm sys,cold})$,
+and seeing how much that known temperature difference changes
 the measured values in your spectra,  as per equation (15)
 in the handout:
 %
@@ -513,47 +522,41 @@ G =
 \frac{T_{\rm sys,cal} - T_{\rm sys,cold}}{\sum(s_{\rm cal} - s_{\rm cold})} 
 \sum s_{\rm cold} 
 \end{equation}
-\noindent Here, a sum is over all channels in a spectrum. All this
-equation does is to convert measured units, which are digital numbers
-from the system, into physically meaningful units, i.e.\ Kelvin. Here,
+\noindent Here, a sum is over all channels in a power spectrum. This
+equation converts measured units, which are proportional to power,
+into physically meaningful units, i.e.\ Kelvin. Assume
 $T_{\rm sys,cal} = 300$ K, because that's the thermal power you injected by
 standing in front of the horn. Since $T_{\rm sys,cold} \ll
-T_{\rm sys,cal}$, to a first approximation you can neglect it (which is what we
+T_{\rm sys,cal}$, you can, to a reasonable approximation, neglect it (which is what we
 did in the handout). Then the final, intensity-calibrated spectrum is
 equation (16) in the handout, namely
 \begin{equation}
-T_{\rm line} = s_{\rm line} \times G
+T_{\rm line} = r_{\rm line} \times G
 \end{equation}
+Note how $G$ carries the units of temperature.
 %
 \subsection{Plotting Intensity vs.\ Frequency---and Velocity}
 
 \noindent
-First,
-plot your final calibrated spectrum versus the RF frequency. Next,
+Plot your calibrated spectrum versus RF frequency. Next,
 plot it versus the Doppler velocity\footnote{Astronomers usually express
   velocities in km s$^{-1}$.}.  Remember that, by astronomical
-convention, positive velocity means motion away (remember the expansion
-of the Universe!), so
-
+convention, we have placed ourselves in the center of the universe, so positive velocity means motion away from us:
 \begin{equation}
-\frac{v}{c} \approx -\frac{\Delta \nu}{\nu_0},
+\frac{v}{c}=\frac{\Delta\lambda}{\lambda_0} \approx -\frac{\Delta \nu}{\nu_0},
 \end{equation}
-
-\noindent where $c$ is the speed of light and $\Delta \nu$ is the frequency
-offset from the line frequency $\nu_0$\footnote{Radio astronomers, being
-  frequency-oriented, use this equation; optical astronomers, of course,
-  use something different: $\frac{v}{c} = \frac{\Delta \lambda}{\lambda_0}$
-   At high redshifts the difference becomes significant;
-  the optical definition is the usual standard.}. 
+where $c$ is the speed of light and $\Delta \nu$ is the frequency
+offset from the line frequency $\nu_0$.
 
 \subsection{Finally, Choose a Reference Frame}
 
 \noindent
-You may think we've done it all by this point, but we haven't! We need
-to correct the observed velocity for the orbital velocity of the Earth,
-and also the Earth's spin. And when observing the Galaxy, it is
+The velocity you just derived depends on time of year, and your position on Earth.
+To make a reproduceable measurement, we need
+to correct the observed velocity for the orbital velocity of the Earth
+and the Earth's spin. When observing the Galaxy, it is
 customary to express velocities with respect to the {\bf Local Standard of
-Rest (LSR)}, so that's yet another correction.
+Rest (LSR)}.
 
 Calculate the Doppler correction using {\tt ugradio.doppler.get\_projected\_velocity} 
 Correct the velocities and compare the spectrum for the observing frame
@@ -562,20 +565,17 @@ around the Galaxy in a circular orbit.  Correcting to the LSR involves many comp
 including primarily: the rotation of the observatory around the center of the Earth, the
 orbit of the Earth around the barycenter of the solar system, and the peculiar velocity
 of our Sun with respect to other stars in the neighborhood.  There are higher-order
-corrections (which are in the {\tt barycorrpy} package we are using in {\tt ugradio.doppler},
-see (Wright \& Eastman, 2014), including 1) special relativistic treatment of velocity,
+corrections (which are in the {\tt barycorrpy} package, 
+see (Wright \& Eastman, 2014)), including 1) special relativistic treatment of velocity,
 2) general relativistic effects from the influence of the gravitational fields of all bodies
 in the solar system, and 3) the proper motion of the target source.
 
 {\it Notes on \verb$ugradio.doppler$}: \begin{enumerate}
 
-\item You need the celestial coordinates of the source, $(ra, dec)$. How
-  to find these for the horn pointing straight up? You could use
-  rotation matrices. However, when looking straight up you don't need
-  this powerful technique because, quite simply, the Dec is equal to the
-  Latitude and RA=LST.
+\item You need the celestial coordinates of your target $(ra, dec)$. How
+  to find these for the horn pointing straight up?
 
-\item You need the Julian day of the observation; see \S \ref{jultime}.
+\item You need the Julian day of your observation; see \S \ref{jultime}.
 
 \item You need the observatory coordinates (north latitude and west
   longitude) in degrees; you could enter them with the pair of optional
@@ -591,7 +591,7 @@ in the solar system, and 3) the proper motion of the target source.
 \noindent
 Obtain a fully-calibrated spectrum for the horn pointing at Galactic
 coordinates $(l,b)=(120^\circ, 0^\circ)$. How do you know where to point
-the horn? You definitely do need to use rotation matrices!  See the
+the horn? You should use rotation matrices (which you can check against {\tt astropy}.  See the
 handout ``Spherical Coordinate Transformation''
 (\S \ref{handouts}). Plot your spectrum versus both the observed and
 the LSR velocity. 
@@ -607,12 +607,12 @@ the LSR velocity.
   multiple velocity components. \label{rawspect}}
 \end{figure}
 
-Your spectrum will probably look something like that in the top panel of
-Figure \ref{rawspect}. There is a zero offset, a curvy baseline, and
-one or more spectral peaks. The curvy baseline comes from nonflat
+Your spectrum might look something like that in the top panel of
+Figure \ref{rawspect}. There is a vertical offset, a curvy baseline, and
+one or more spectral peaks. The curvy baseline comes from our
 instrumental response, and can be removed with (in order of rigor)
-a low-order polynomial fit, an interpolated Fourier fit, or a
-covariant eigenmode pseudoinverse, to the 
+a low-order polynomial fit, an interpolated Fourier fit, or by fitting a
+covariant eigenmode pseudoinverse to the 
 off-line channels (the approximate
 frequency ranges $-1.2 \rightarrow -0.6$ and $ 0.6 \rightarrow 1.2$
 MHz).
@@ -628,16 +628,17 @@ need not be particularly accurate. For example, in the bottom panel of Figure
 (FWHM) could be [20, 50], [-0.3, 0.2] MHz, and [0.01, 0.03] MHz.
 
 After
-fitting, check to see if the result looks good: if it does not, then
-it's usually because you need one or more additional components. It is
+fitting, check the quality of the result. If it is struggling,
+that is usually because you need one or more additional components. It is
 common to require a low-level, broad component that produces no obvious
 peak; here, the initial guesses might be [20, 50, 10], [-0.3, 0.2, 0.]
 MHz, and [0.01, 0.03, 0.07] MHz. 
 
 These procedures may help you for these least-squares fits, but also
-feel free to roll your own data-reduction techniques.
+feel free to roll your own data-reduction techniques. Some people in past years have
+applied Markov Chain Monte Carlo fitters to generate posterior parameter probabilities.
 \begin{enumerate}
-\item For the polynomial fit, use {\tt numpy.polyfit}
+\item For the polynomial fit, use {\tt np.polyfit}
 
 \item For fitting multiple Gaussians, use our home-grown {\tt gaussfit}; for
   evaluating the Gaussians from the parameters produced by {\tt gaussval}, 
@@ -667,70 +668,72 @@ measurements!
 
 \subsection{Estimating Receiver Noise and Gain}
 
+\noindent
 Our receiver system consists of a horn antenna, three amplifiers,
 a long length of 50$\Omega$
-coaxial cable down from the roof, and then the additional two amplifiers and 
+coaxial cable down from the roof, and then whatever additional amplifiers and 
 filters you see in the rack. In order to obtain a trustworthy calibration,
 we must account for the signal loss, gain, and noise
-contributions of these various components.
+contributions of these components.
 
 In \S\ref{sec:blackbody} we performed an end-to-end calibration by pointing the antenna into
 a known load (you, a $\sim$300 K blackbody). Our goal here is to derive an 
 independent cross-check on that calibration by building up 
-a model of what is happening to our signal.
+a model of our signal path.
 To do this, we need to think about the individual components in our system,
 as well as the transmission lines that separate them.
 
-Let's start at the end (your SDR) and work backwards.
+Start at the end (your SDR) and work backwards.
 
 \subsection{Characterizing the Gain Scale of the SDR}
 \label{sec:termination}
 
+\noindent
 As described in class, coaxial cables propagate waves by
 providing a uniform (50$\Omega$, ideally frequency-independent) impedance 
 along their length, so that each
 section of cable receives the outgoing wave from its upstream neighbor
 with the same impedance with which it was transmitted. This prevents reflections
-from occur along the length of the cable, but they can still arise 
+from occuring along the length of the cable, but they can still arise 
 if you do not terminate the cable with the same characteristic impedance.
 
 The end of the line in our receiving system is our SDR module, and we need to
-check its input impedance to know how to relate the voltages we measure
+check its input impedance to relate the voltages we measure
 to signal power. 
 This allows us to calibrate our digitized data.
 
 Inject a signal of known power into the SDR. If you are worried about
 cable losses (which are particularly important on long cables), you
-might want to use an oscilloscope to measure the signal that your SDR
+can use an oscilloscope to measure the signal that your SDR
 sees, but beware. The oscilloscope uses 1 M$\Omega$ termination, effectively
 acting like you've left the end unconnected. To terminate properly, you will
 need to use a T junction to put a $50\Omega$ terminator in parallel with
 the oscilloscope.
 
-Next, we need to check the SDR termination to
-ensure we are making an apples-to-apples voltage comparison with the
+Next, check the SDR termination to
+ensure you are making an apples-to-apples voltage comparison with the
 oscilloscope. The easiest way to measure if a cable is properly terminated
 is to send a signal in one end and measure if a reflection of that signal
 comes back out the same end. Connect
-the oscilloscope and a function generator (outputing a square wave) 
+the oscilloscope and a function generator (outputting a square wave) 
 to one end of a long cable. For the moment, leave the far end of the cable
 unconnected (``floating'').
 
-Zooming in with your oscilloscope, you should be able to see a reflection of the square wave
+Zooming in on time with your oscilloscope, you should see a reflection of the square wave
 interfering with the input wave. Notice the time lag between the input and
-reflected waves? That tells you about the time it takes to traverse
-the cable twice. From that, you can calculate the speed of light
-in a cable, which will be helpful later.
+reflected waves? That lag corresponds to the time it takes to traverse
+the cable twice. We will use this later to calculate the speed of light
+in a cable.
 Now try terminating the far end of the cable. Did the interference pattern
 go away? It should have, because that's the job of termination: to prevent
 reflections.
 
-Now repeat this experiment, but with your SDR on the far end
+Repeat this experiment, but with your SDR on the far end
 of the cable. Does it properly terminate the cable, or should you
 add your own 50$\Omega$ terminator? Does it change if you plug the SDR
-in to your RPi? Be aware that termination can change versus frequency,
+in to your RPi? Be aware that impedance can change versus frequency,
 so you may find that low-frequency signals exhibit a different termination
-than high frequencies. How would that affect the waveform you see
+than high frequencies. What frequency should you use? How would that affect the waveform you see
 on the oscilloscope?
 
 Using everything you know about termination, calculate (with error bars!)
@@ -756,7 +759,7 @@ $$
 (Note the mirror symmetry.) You can change these if you choose.
 The 16 numbers you enter are mirrored to generate the full FIR filter.
 
-The Convolution Theorem dicates that the expected (voltage-spectrum)
+The Convolution Theorem implies that the expected (voltage-spectrum)
 frequency response is the Fourier transform of these coefficients.
 That means you can use {\tt ugradio.dft} to sample the 
 filter response at the frequencies
@@ -782,22 +785,22 @@ well your coefficients flatten out a white-noise signal.
 \subsection{Characterizing Amplifiers, Filters, and Cable Loss}
 
 Following the above steps, we calibrated the input to the SDR, but
-that isn't enough to calibrate our telescope the sky signal passes through
+that isn't enough to calibrate our telescope. The sky signal passes through
 amplifiers, filters, and a long cable on the way to our SDR. We need
 to calibrate those as well.
 
-Up at the horn, there are 3 amplifiers (two in the box at the base,
-and one up near the back of the horn). All three are the same type.
-Look up the gain (in dB) on their respective datasheets online.
+Up at the horn, there are 3 or 4 amplifiers (some in the box at the base,
+and one up near the back of the horn). Find their part numbers and
+look up the gain (in dB) on their respective datasheets online.
 
-Next, you are going to need to estimate how much signal is lost in the
+Next, you need to estimate how much signal is lost in the
 cable running down from the roof to the 5th floor lab. Fortunately, you
-have already characterized the loss in BNC cables per length. Algl you need
+have already characterized the loss in BNC cables per length. All you need
 to do is figure out how long the cable is, which you can do using the
 same square-wave reflectometry you used in \S\ref{sec:termination}.
 
-Finally, you should characterize the gain/loss through the bandpass
-filter and mystery ampifiers in the lab. This can be done by injecting a
+Finally, characterize the gain/loss through the bandpass
+filter and homebrew ampifiers in the lab. This can be done by injecting a
 known signal amplitude and measuring the output with your newly calibrated
 SDR module.
 
@@ -807,7 +810,7 @@ We've characterized the gain in almost every element of our system, except
 for one: the antenna. Antennas can be thought of as an impedance-matching
 circuit that connects the transmission line of free space (with a characteristic
 impedance of 377$\Omega$) to a coaxial transmission line, usually with the
-help of an additional balun impedance matching circuit.
+help of a balun matching circuit.
 
 In practice, the impedance match of an antenna is imperfect and highly 
 frequency-dependent. As a result, not all of an incoming sky signal makes its
@@ -818,7 +821,7 @@ scales how much flux collected over that area actually enters our electronics.
 Typical well-matched antennas have efficiencies of 0.6 to 0.7, but poorly matched
 antennas can be much lower than this.
 
-For starters, let's assume a well-matched antenna, but be prepared
+Let's assume we have a well-matched antenna, but be prepared
 to revisit this assumption using the results of your end-to-end blackbody load
 calibration. If you are clever (and careful), you may also be able to use
 the tone injection system to further constrain the aperture efficiency.
@@ -837,8 +840,8 @@ of the spiral arms we observed.
 Using your blackbody load calibration and your receiver characterization
 to quantify the aperture efficiency of our horn antenna. Estimate the error
 in your calibration multiple ways and check for consistency between them.
-Estimate the error in your removal of the baseline system temperature.
-These are all systematic errors that contribute to our uncertainty.
+Estimate the error associated with your removal of the baseline system temperature.
+All of these systematic errors contribute to our uncertainty.
 
 We also have random (thermal) noise contributing to our uncertainty.
 Quantify the noise levels in each individual spectral measurement, per frequency
@@ -850,9 +853,9 @@ to use fewer or more Gaussian components in your model?
 Finally, estimate the error in your parameter fits using any of the tools
 we presented in class. You may do an MCMC fit, per the notebook example,
 or quantify a 2-sigma chi-square interval, or use the covariance matrices
-of a parameter fitting package. Crucially, include systematic errors on
-top of the statistical errors, and make sure, at the end of the day, you believe
-your result. Test some numerical simulations to check
-your ability to recover true answers.
+of a parameter-fitting package. Crucially, include systematic errors on
+top of the statistical errors, and make sure, at the end of the day, that you believe
+your result. Where possible, test 
+your ability to recover true answers in numerical simulations to validate your process.
 
 \end{document}
