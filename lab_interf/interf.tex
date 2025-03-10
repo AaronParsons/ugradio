@@ -39,10 +39,12 @@ We'll cover the
 basic principles, the interferometric fringe, the response to a point
 source, and the response to an extended source (which is the basis of
 high-angular resolution mapping with interferometry). We will employ
-least-squares fitting and Fourier transforms to measure accurate
-positions for a few sources and also accurate angular diameters for the
-Sun and Moon. This lab runs for four weeks and clearly there's a lot of new
-material!
+least-squares fitting and Fourier transforms to solve for the positions
+of our antennas to high precision, and measure 
+the angular diameters of the Sun using Bessel functions.
+This lab runs for four weeks, but with robotic telescopes to control,
+threaded data collection to code, and fringes to tame, this is perhaps
+the hardest lab of the course. Don't fall behind!
 
 \section{Goals and Instructions for Your Report}
 
@@ -61,14 +63,13 @@ your report should address.
 
 \item Fourier transforming the fringe; Fourier filtering the fringe.
 
-\item Obtain horizon-to-horizon data on our various astronomical
-  sources---point sources, and the Sun and Moon.
+\item Obtain horizon-to-horizon data on the Sun.
 
 \item VLBI nonlinear least-squares fringe fitting to determine the most
   accurate source declination and/or baseline projected lengths.
 
-\item Use nonlinear least-squares fitting to obtain accurate diameters
-  for the Sun and Moon. This illustrates the general Fourier transform
+\item Use nonlinear least-squares fitting to obtain an accurate diameter
+  for the Sun. This illustrates the general Fourier transform
   relationship between interferometer response and sky brightness.
 
 \end{itemize}
@@ -85,31 +86,32 @@ behind, so try to get ahead early. Below is a suggested schedule.
 
 \item {\it Week 1:} Each {\it group} uses rotation
   matrices to calculate when objects of interest are up. It observes the
-  Sun for a short time to confirm that it sees fringes. Each {\it group}
-  does a horizon-to-horizon observation of a point source, which
+  Sun for a short time to confirm that it sees fringes,
+  and then does a horizon-to-horizon observation, which
   requires writing an observing script to run automatically.
 
-Each {\it person} calculates Fourier power spectra of the Sun data and
-point-source data, calculating the range of expected
+Each {\it person} calculates Fourier power spectra of the Sun data,
+calculating the range of expected
 local fringe frequencies (equation \ref{fringefreq}) and comparing the
 observed spectra with these expectations. Be ready for show and tell!
 
-\item {\it Week 2:} Each {\it group} observes
-  horizon-to-horizon the Sun and, if possible, the Moon with the
-  interferometer.  Each {\it person} derives accurate declinations for
-  the point-source data using least-squares fitting as outlined in \S
-  \ref{declinations}.
+\item {\it Week 2:} Each {\it group} (re)observes
+  horizon-to-horizon the Sun with the
+  interferometer.  Each {\it person} derives accurate antenna positions
+  from the data using least-squares fitting.
 
-\item {\it Week 3:} Finish the Moon observations. Spring
-  break. Each {\it person} derives accurate angular diameters for the
-  Sun and Moon using least-squares fitting as outlined in \S \ref{mun}.
+\item {\it Spring Break}
+
+\item {\it Week 3:} Finish the Sun observations.
+  Each {\it person} derives angular diameters for the
+  Sun using least-squares fitting as outlined in \S \ref{mun}.
 
 \item {\it Week 4:} Each {\it person} finishes all
   calculations and writes (and hands in) the lab report.
 
 \end{enumerate}
 
-\section{Software for Precession, Tracking, and Finding the Sun and Moon}
+\section{Software for Precession, Tracking, and Finding the Sun}
 
 \noindent
 As usual, we have attempted to provide you a batteries-included experience with
@@ -206,7 +208,7 @@ of the point-source declination.  With our $\sim 20$-m baseline $B$ we
 can get a fringe spacing ${\lambda \over B}\sim 5'$, and with a
 horizon-to-horizon measurement we can measure the declination 100 times
 more accurately (depending...).  In addition, we can achieve partial
-angular resolution on the Sun and Moon and measure their diameters to a
+angular resolution on the Sun and measure its diameter to a
 fraction of a percent---this turns out to be more interesting than it
 sounds!
 
@@ -229,7 +231,8 @@ between the correlated signals passing through each dish to arrive at the SNAP c
 \section {Continuum (Point) Sources}
 
 \noindent
-For the first part of the lab we will concentrate on 'point' sources
+Although our sensitivity is limited, it is sometimes possible to 
+measure 'point' sources
 that lie outside the Solar system. Our telescopes are small, so there
 are only a few sources that are powerful enough for us; they are listed
 below.  You'll need to precess the coordinates to the current
@@ -291,7 +294,7 @@ fringe phase and amplitude.  Compare your results with other members of
 your group.  Help each other out, but {\it each person should write
  their own software}.
 
-\section{The Sun and Moon}
+\section{The Sun (and Moon)}
 
 \noindent
 	The Sun and Moon are special cases, for two reasons. First, 
@@ -553,10 +556,9 @@ because, for a small region around $h_{s,0}$ in equation
 \ref{fringeresponse}, $F(h_s)$ varies as $f_f \ \Delta h_s$, where  the
 local fringe frequency $f_{f,rad}$ is
 
-\begin{equation} \label{fringefreq} $
+\begin{equation} \label{fringefreq}
 f_{f,rad} = \left[{b_{ew} \over \lambda} \cos \delta \right] \cos h_{s,0} 
 - \left[{b_{ns} \over \lambda} \sin L \cos \delta \right] \sin h_{s,0}
-$
 \end{equation}
 
 \noindent This is the local fringe frequency in cycles per radian on the
@@ -679,14 +681,14 @@ map the sky.
 effective baseline length changes as the source rises higher in the sky,
 and if the source is away from declination $\delta = 0^\circ$ the
 orientation of the baseline also changes, at least to some degree. We
-will map the Sun and Moon, which never get very far from $\delta =
+will map the Sun, which never gets very far from $\delta =
 0^\circ$, so effectively we have only a 1-d sampling of the source with
 a range of baseline lengths. 
 
 	Figure \ref{interf_fig} illustrates this 1-d concept. It presents a generic
 circular  source of uniform brightness in the sky, which we call the
 MUN---a bastardization of the MOON and the SUN\footnote{In truth, it
-represents neither, because neither the Sun nor the Moon has uniform
+represents neither, because neither the Sun does not have uniform
 surface brightness.}. The top panel shows the MUN in the sky as it
 really is: the fringes cover the 2-d object. At the bottom, we integrate
 along vertical strips to get the 1-d brightness distribution---the
@@ -822,8 +824,8 @@ the fringe and the net integral is zero.
 \section{Measuring the Diameter of a Circular Source}
 
 \noindent
-Our goal is to measure and compare the diameters of the Sun and
-Moon. We'll make the assumption that the sources are uniformly-bright
+Our goal is to measure the diameter of the Sun.
+We'll make the assumption that the sources are uniformly-bright
 disks of radius $R$, which means
 
 \begin{equation}
