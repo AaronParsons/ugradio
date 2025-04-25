@@ -15,12 +15,14 @@ AMP_UNIT = ['dBm','mV','uV']
 class SynthBase:
     '''This base class is not intended to be instantiated by itself.
     Its attributes are inherited by SynthDirect, SynthServer, and SynthClient.'''
+
     def validate(self):
         '''Make sure this is the device we think it is.'''
         self._write(b'*IDN?') # query ID
         resp = self._read().strip()
         resp = resp.split(b',')
         assert(resp[0] == b'Agilent Technologies')
+
     def get_frequency(self):
         '''Get the current frequency setting for the CW (continuous wave) output
         mode of the synthesizer.
@@ -33,6 +35,7 @@ class SynthBase:
         resp = self._read()
         fq,unit,_ = resp.split()
         return float(fq), unit.decode('utf-8')
+
     def set_frequency(self, val, unit):
         '''Set the frequency of the CW (continuous wave) output
         mode of the synthesizer.
@@ -49,6 +52,7 @@ class SynthBase:
         unit = bytes(unit, encoding='utf-8')
         cmd = b':FREQuency:CW %f %s' % (val, unit)
         self._write(cmd)
+
     def get_amplitude(self):
         '''Get the current amplitude setting for the CW (continuous wave) output
         mode of the synthesizer.
@@ -61,6 +65,7 @@ class SynthBase:
         resp = self._read()
         amp,unit,_ = resp.split()
         return float(amp), unit.decode('utf-8')
+
     def set_amplitude(self, val, unit):
         '''Set the amplitude of the CW (continuous wave) output
         mode of the synthesizer.
@@ -77,6 +82,19 @@ class SynthBase:
         unit = bytes(unit, encoding='utf-8')
         cmd = b':AMPLitude:CW %f %s' % (val, unit)
         self._write(cmd)
+
+    def get_rfout(self):
+        cmd = b':RFOutput:STATe?'
+        self._write(cmd)
+        return int(self._read())
+
+    def set_rfout(self, on=True):
+        if on:
+            cmd = bf':RFOutput:STATe ON'
+        else:
+            cmd = bf':RFOutput:STATe OFF'
+        self._write(cmd)
+        return self.get_rfout()
 
 class SynthDirect(SynthBase):
     '''Implements a direct connection to the synthesizer via a
