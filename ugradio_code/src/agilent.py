@@ -86,7 +86,7 @@ class SynthBase:
     def get_rfout(self):
         cmd = b':RFOutput:STATe?'
         self._write(cmd)
-        return int(self._read())
+        return int(self._read()[0])
 
     def set_rfout(self, on=True):
         if on:
