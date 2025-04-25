@@ -90,9 +90,9 @@ class SynthBase:
 
     def set_rfout(self, on=True):
         if on:
-            cmd = bf':RFOutput:STATe ON'
+            cmd = b':RFOutput:STATe ON'
         else:
-            cmd = bf':RFOutput:STATe OFF'
+            cmd = b':RFOutput:STATe OFF'
         self._write(cmd)
         return self.get_rfout()
 
