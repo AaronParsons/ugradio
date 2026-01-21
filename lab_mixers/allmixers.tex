@@ -51,13 +51,13 @@
 
 \noindent
 This lab explores digital samplers, discrete Fourier Transforms, and mixers.
-These tools are essential in radio astronomy and also for technologies like cell phones and WiFi
-(which was invented by a radio astronomer)!
+These are tools at the core of radio astronomy and technologies like cell phones and WiFi
+(which was invented by a radio astronomer).
 
 These experiments introduce practical radio astronomy.
 You will configure lab equipment, collect and analyze data, and present findings.
-Avoid \textbf{technical debt} by investing in your understanding and code base now,
-because these skills are crucial for Lab 2, where you will observe hydrogen's 21-cm
+Avoid \textbf{technical debt} by investing {\it now} in your understanding and code base;
+everything you build will be crucial for Lab 2, where you will observe hydrogen's 21-cm
 line emission in the Milky Way.
 
 Success requires good research practices.
@@ -73,15 +73,16 @@ To enhance your lab experience and report:
     We cannot help you if you forget your experimental configuration.
 
     \item \textbf{Version control} your data, code, and plots.
-    This safeguards against data loss and facilitates reproducibility.
+    This safeguards against data loss and facilitates reproducibility,
+    particularly when paired with code generators.
 
     \item Begin your report early.
-    Plan the data and plots needed for your report to optimize lab time.
+    Plan out the data and plots needed for your report to optimize lab time.
     Write incrementally to avoid facing a blank page at the deadline.
 
-    \item Use lectures, AstroBaki, the internet, and these instructions.
+    \item Use lectures, AstroBaki, datasheets, and these instructions.
     Real lab work requires finding trustworthy resources.
-    Exploration and note-taking are key.
+    Take notes.
 
     \item Write in the style of scientific publications.
     Guide the reader to trust your results.
@@ -94,7 +95,7 @@ To enhance your lab experience and report:
 We evaluate your report on your theoretical background, experimental setup,
 data analysis, and quantitative interpretation.
 
-We also assess your proficiency in these technical skills (no explicit
+Your report will also implicitly showcase your proficiency in these technical skills (no explicit
 discussion required):
 
 \begin{itemize}
@@ -240,10 +241,12 @@ Vary the signal frequency ($\nu_0$) and sampling frequency ($\nu_s$).
 Compare your results with theory.
 Your report must analyze aliasing by integrating theory, data, and simulations.
 Pose and quantitatively answer a specific question.
-``{\it What is aliasing?}'' is too broad.
-``{\it How many Nyquist zones can I demonstrate?}'' is better.
-``{\it Can I characterize the SDR bandpass filter using purposeful aliasing?}''
+\begin{itemize}
+    \item ``{\it What is aliasing?}'' is too broad.
+    \item ``{\it How many Nyquist zones can I demonstrate?}'' is better.
+    \item ``{\it Can I characterize the SDR bandpass filter using purposeful aliasing?}''
 is better still.
+\end{itemize}
 
 \subsubsection{Sampling with an SDR and a Raspberry Pi}
 
@@ -270,13 +273,13 @@ Plot the data to ensure it looks sinusoidal.
 {\it Inspect your data carefully; the first capture may contain stale buffers.}
 Observe how the amplitude changes with frequency due to internal anti-aliasing filters.
 You can override these filters to illustrate aliasing:%
-\footnote{I expanded the {\tt librtsdr} driver to support FIR filter coefficients.
+\footnote{I expanded (hacked) the {\tt librtsdr} driver to support FIR filter coefficients.
 FIR filters implement convolutions, discussed next week.}
 {\tt fir\_coeffs=np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2047])}.
 
 Investigate Nyquist zones and filter responses by varying $\nu$.
 Document your methods and settings.
-Compare amplitudes with default and enhanced aliasing settings.
+Compare amplitudes with default and aliasing FIR coefficient settings.
 
 Write scripts to save data using {\tt numpy.savez}.
 Load files in Jupyter with {\tt numpy.load} for interactive plotting.
@@ -287,12 +290,13 @@ Mind your data order (e.g., {\tt numpy.fft.fftshift}) and units.
 Convert your best notebook plots into revision-controlled scripts.
 Label all axes with appropriate units.
 Restrict ranges to clearly illustrate signal shape and frequency.
-Write self-contained captions for every plot destined for your report.
+Write self-contained captions---usually three sentences at minimum---for every plot destined for your report.
 
 Synthesize several data runs into a single plot to illustrate Nyquist's criterion.
-Do not include every plot you produce in your report.
-Select only those that quantitatively illustrate a point.
-One good plot is worth ten vague ones.
+You will produce many plots while exploring your data,
+but your report should only include those that quantitatively 
+illustrate specific points.
+One good plot is much better than ten vague ones.
 
 
 \subsection{Voltage Spectra and Power Spectra}
@@ -315,20 +319,20 @@ Verify consistency with independent data.
 Explain amplitude and sign variations.
 
 Use {\tt dft.idft} or {\tt numpy.fft.ifft} to 
-perform an inverse Fourier Transform of a {\it power} spectrum.
-Ensure correct frequency inference.
+perform the inverse Fourier Transform of a {\it power} spectrum.
+Ensure correct data ordering for correct frequency inference.
 Compute the autocorrelation function (ACF) from the voltage time series using
 {\tt numpy.correlate} and {\tt scipy.signal.correlate}.
 
 The correlation theorem states the Fourier transform of the power spectrum
 matches the ACF.
-Compare them (and explore padding your data with zeros) to find similar
-features and explain discrepancies.
+Compare them (and explore padding your data with zeros) to find similarities
+and discrepancies.
+Explain them.
 
 
 \subsection{Leakage Power}
 \label{subleakage}
-
 
 \noindent
 The {\tt dft} by default calculates a Fourier spectrum at $N$ frequencies for $N$ samples,
@@ -428,7 +432,7 @@ Use a band-pass filter to prevent aliasing before direct sampling.
 
     \item Compare a single block's spectrum to the average of $N$ blocks
     ($N=2, 4, 8, 16$).
-    How does time averaging affect Signal-to-Noise Ratio (SNR)?
+    How does time averaging affect signal-to-noise ratio (SNR)?
     Does SNR scale as $N^x$ for some $x$?
     Compare with Central Limit Theorem predictions.
 
@@ -490,19 +494,6 @@ The \verb$ugradio.dft$ module allows manual frequency specification.
 It is slow but transparent to understand.
 Use it when you need to oversample output frequencies.
 
-In practice, given the Nyquist criterion and fixed bandwidth of each channel,
-algorithmic shortcuts allow DFTs to be computed
-extremely efficiently.
-\verb$numpy.fft$ is fast but (even over millions of samples), but mandates
-equally spaced output frequencies.
-It also orders output frequencies strangely: 0 to positive max, then negative max to 0.
-\verb$numpy.fft.ifft$ requires this order.
-
-\verb$fftshift$ reorders frequencies for plotting (negative to positive).
-\textbf{Only use \verb$fftshift$ for plotting.}
-It breaks \verb$ifft$.
-Use \verb$fftfreq$ to calculate output frequencies.
-
 Recommendations for \verb$ugradio.dft$:
 \begin{itemize}
 \item Use even $N$ so the zero frequency falls in a bin center.
@@ -516,6 +507,19 @@ This makes $\Delta \nu = \nu_s/N$.
 \end{itemize}
 
 Use {\tt ugradio.dft.<tab>} or {\tt ugradio.dft??} to explore the module.
+
+In practice, given the Nyquist criterion and fixed bandwidth of each channel,
+algorithmic shortcuts allow DFTs to be computed
+extremely efficiently.
+\verb$numpy.fft$ is fast but (even over millions of samples), but assumes
+equally spaced input time samples and output frequencies.
+It also orders output frequencies strangely: 0 to positive max, then negative max to 0.
+\verb$numpy.fft.ifft$ requires this order as input.
+
+The function \verb$fftshift$ reorders frequencies for plotting (negative to positive).
+\textbf{Only use {\tt fftshift} for plotting.}
+It breaks \verb$ifft$.
+Use \verb$fftfreq$ to calculate output frequencies.
 
 
 \subsection{Power Spectra and Discrete Fourier Transforms}
@@ -695,7 +699,7 @@ Can you distinguish positive and negative $\Delta \nu$?
 Compare the internal mixer waveforms to your external mixer results.
 
 
-\section {On Mixers and the Heterodyne Process (At Home, Week 2)}
+\section{On Mixers and the Heterodyne Process (At Home, Week 2)}
 \label{hetereo}
 
 \subsection{The Heterodyne Process}
@@ -747,7 +751,7 @@ The right mixer uses a $90^\circ$ delayed LO.
 Its output (Im(IF)) becomes the sine component to the left's cosine (Re(IF)).
 
 
-\subsection {Double Sideband (DSB) Mixer Theory}
+\subsection{Double Sideband (DSB) Mixer Theory}
 
 \noindent
 DSB mixers are simpler to build but harder to interpret.
