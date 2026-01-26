@@ -15,8 +15,9 @@
 \usepackage{graphicx}
 
 % --- LAYOUT & SPACING ---
-\setlength{\parskip}{0pt}
+\setlength{\parskip}{6pt}
 \setlength{\parsep}{0pt}
+\setlength{\parindent}{0pt}
 \setlength{\headsep}{6pt}
 \setlength{\topskip}{0pt}
 \setlength{\topmargin}{0pt}
@@ -708,14 +709,13 @@ Compare the internal mixer waveforms to your external mixer results.
 %
 \noindent
 Mixers shift the entire input spectrum by a uniform amount.
-They multiply the signal by a Local Oscillator (LO) sine wave ($\nu_{LO}$).
-
-This allows antennas to tune to incoming radiation while filters and samplers
+They multiply the signal by a Local Oscillator (LO) sine wave ($\nu_{LO}$)
+to tune to a band of incoming radiation while filters and samplers
 operate at lower fixed frequencies.
 AM radios, for example, shift MHz signals to audio (kHz) frequencies.
-Tuning a station changes the LO frequency; the chain remains static.
+Tuning a station changes the LO frequency; 
+the rest of the {\bf heterodyne} receiver remains static.
 
-This is a {\bf heterodyne} receiver.
 
 \subsection{Single Sideband (SSB) Mixer Theory}
 
