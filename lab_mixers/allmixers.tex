@@ -86,8 +86,9 @@ To enhance your lab experience and report:
 
     \item Write in the style of scientific publications.
     Guide the reader to trust your results.
-    Focus on synthesizing findings rather than chronicling your process.
-    Ensure all text and plots are original and cite external sources.
+    Focus on synthesizing findings rather than chronicling the process.
+    Ensure all text and plots are original and your {\it individual} work.
+    Cite external sources.
     Follow our AI policy regarding the use of generative AI in your work.
 \end{itemize}
 
@@ -102,8 +103,9 @@ discussion required):
     \item Configuring lab equipment and operating Linux on Raspberry Pi.
     \item Using Python for experimental control, data acquisition, analysis,
     signal processing, and plotting.
-    \item Writing a technical report in \LaTeX, including abstracts, figures,
-    tables, and citations.
+    \item Writing a technical report in \LaTeX
+    (or for Lab 1, Jupyter markdown),
+    including figures and captions.
 \end{itemize}
 
 
@@ -118,10 +120,11 @@ Your report should address the following main objectives:
     \item Use and accurately describe power and voltage spectra.
     \item Investigate spectral leakage and frequency resolution.
     \item Analyze the properties of noise and the radiometer equation.
-    \item Demonstrate the operation of DSB and SSB mixers.
-    \item Explain the heterodyne process and its importance in radio astronomy.
+    \item Demonstrate the operation of DSB and SSB mixers and explain their importance.
     \item Accurately present quantitative results in the context of expectations,
-    theory, tests, and diagnostics that build confidence the correctness of the analysis.
+    theory, tests, and diagnostics that demonstrate the correctness of the analysis.
+    \item Build an installable Python package, with revision control and unit tests,
+    that supports your report. Provide the link in your report.
 \end{enumerate}
 
 \section{Schedule}
@@ -138,9 +141,8 @@ Students consistently underestimate the time required to write a report.
     \item {\it Week 2:} Finish \S \ref{mixersect} and review \S \ref{hetereo}.
     Prepare to present your findings and progress.
 
-    \item {\it Week 3:} Consult \S \ref{report} for writing guidance.
-    Craft a formal report that addresses the objectives in \S\ref{goals}.
-    Adhere to scientific publication standards.
+    \item {\it Week 3:} Consult \S \ref{report} for guidance on writing and figures.
+    Craft a clean Jupyter notebook that addresses the objectives in \S\ref{goals}.
 \end{enumerate}
 
 
@@ -789,14 +791,27 @@ SSB mixing retains separation.
 \section{Writing the Lab Report (Week 3)} \label{report}
 
 \noindent
+For the first lab \textbf{only}, your submission will be a Jupyter notebook
+consisting of code, equations, detailed explanations, high-quality plots, 
+and detailed captions.
 Review the report guidelines on AstroBaki.
-Your write-up is the primary basis for your grade.
-Include high-quality plots with descriptive captions.
-Provide enough context for a peer to understand your results.
+{\it Your notebook must use functions/classes created by you in a
+publicly viewable, revision controlled, installable package
+hosted on GitHub.}
+This package should also include any scripts used to take data.
+Identify the url of your package and include the installation command 
+at the top of your notebook.
+
+The notebook you turn in should be a polished product.
+All cells must run sequentially, with final plots produced inline.
+Provide enough description for a peer to understand (and reproduce) your results.
+Choose axis limits and scales carefully.
+Don't include old/broken code, pages of numerical output,
+or anything else that makes your notebook hard to read.
+As discussed in class, all code, write-ups, and analysis must be your own.
 
 Address the goals in \S\ref{goals} directly.
-Focus on conveying high-level results.
-Do not create a laundry list of tasks.
+Focus on conveying high-level results, not a laundry list of tasks you performed.
 Document process only as necessary to support your results.
 
 Writing takes time.

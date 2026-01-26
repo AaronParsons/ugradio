@@ -59,7 +59,7 @@ def setup_axis(ax, title):
     ax.minorticks_on()
     
     # Center Dotted Line
-    ax.axvline(0, color='gray', linestyle=':', linewidth=1.5)
+    ax.axvline(0, color='black', linestyle=':', linewidth=1.5)
     
     # Horizontal line at 0
     ax.axhline(0, color='black', linewidth=0.8)
@@ -165,9 +165,9 @@ draw_spectral_block(ax, abs(USB_OFFSET), USB_WIDTH, combined_box_h,
 # Draw the Box
 left = abs(USB_OFFSET) - USB_WIDTH/2
 right = abs(USB_OFFSET) + USB_WIDTH/2
-ax.hlines(combined_box_h, left, right, linewidth=0.8)
-ax.vlines(left, 0, combined_box_h, linewidth=0.8)
-ax.vlines(right, 0, combined_box_h, linewidth=0.8)
+ax.hlines(combined_box_h, left, right, colors='black', linewidth=0.8)
+ax.vlines( left, 0, combined_box_h, colors='black', linewidth=0.8)
+ax.vlines(right, 0, combined_box_h, colors='black', linewidth=0.8)
 
 # Draw Positive Spikes (USB + LSB)
 # USB Spikes
@@ -188,9 +188,9 @@ ax.text(abs(USB_OFFSET), max(USB_SPIKE_H) + LSB_BOX_H + 0.2, "LSB+USB",
 # Negative Side Stack (Mirrored)
 left = -abs(USB_OFFSET) - USB_WIDTH/2
 right = -abs(USB_OFFSET) + USB_WIDTH/2
-ax.hlines(combined_box_h, left, right, linewidth=0.8)
-ax.vlines(left, 0, combined_box_h, linewidth=0.8)
-ax.vlines(right, 0, combined_box_h, linewidth=0.8)
+ax.hlines(combined_box_h, left, right, colors='black', linewidth=0.8)
+ax.vlines( left, 0, combined_box_h, colors='black', linewidth=0.8)
+ax.vlines(right, 0, combined_box_h, colors='black', linewidth=0.8)
 
 # Draw Negative Spikes (Mirrored)
 # USB Spikes (Mirrored)
