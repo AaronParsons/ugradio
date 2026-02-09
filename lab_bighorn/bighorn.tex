@@ -3,15 +3,18 @@
 %\usepackage{natbib}
 %\usepackage{natbibspacing}
 \usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+%\setlength{\bibspacing}{0pt}
+
+\usepackage{amsmath, amssymb}
 \usepackage{url}
 \usepackage{xcolor}
 \usepackage{wrapfig}
 \usepackage{float}
-%\graphicspath{{figures/}}
-\usepackage{amsmath, amssymb}
-\setlist[itemize]{noitemsep, topsep=0pt}
-\setlist[enumerate]{noitemsep, topsep=0pt}
-%\setlength{\bibspacing}{0pt}
+\usepackage{titlesec}
+\usepackage{graphicx}
+
 \setlength{\parskip}{0pt}
 \setlength{\parsep}{0pt}
 \setlength{\headsep}{6pt}
@@ -27,198 +30,156 @@
 \titlespacing*{\subsubsection}{33pt}{3pt}{3pt}
 
 
-\begin{document}
 \tolerance=10000
 \def\simlt{\lower.5ex\hbox{$\; \buildrel < \over \sim \;$}}
 \def\simgt{\lower.5ex\hbox{$\; \buildrel > \over \sim \;$}}
 
 \title {LAB 2: Astronomy with the 21-cm Line and a Horn Antenna}
+\date{}
 
+\begin{document}
+
+\maketitle
 \tableofcontents
 
 \section{Introduction}
 
 \noindent
-In this lab, we build upon the signal processing techniques of the previous lab,
-applying them to making astronomical measurements with a horn antenna
-tuned to frequencies around 1.4 GHz where we can measure 21-cm hyperfine
-emission from neutral hydrogen in the Milky Way.  With luck, we should be able
-to see evidence of the spiral-arm structure of gas in our galaxy.
+This lab extends the signal processing techniques from Lab 1 to astronomical
+measurements using a horn antenna.
+We will tune to frequencies around 1.4 GHz to measure 21-cm hyperfine emission
+from neutral hydrogen in the Milky Way.
+With luck, we will see evidence of the spiral-arm structure of gas in our galaxy.
 
-In the second half of this lab, we expand our understanding of how signals
-propagate through transmission lines to characterize the
-cables and reflections in our receiver system, all in service of calibrating
-our measurements.
+In the second half, we will study signal propagation through transmission lines.
+We will characterize the cables and reflections in our receiver system to
+calibrate our measurements.
 
-As before, your work should be oriented around producing a high-quality report that
-addresses the goals in \S\ref{sec:goals}. From your previous report, you will
-be familiar with the need to succintly describe your experimental setup and hardware.
-New to this report will be sections describing how you obtained your observations,
-the calibration and analysis that went into producing your key results, and the
-statistical error in your measurements.
+Organize your work to produce a high-quality \LaTeX report addressing the goals in
+\S\ref{sec:goals}.
+Succinctly describe your experimental setup and hardware.
+Include new sections describing your observations, calibration, analysis,
+and statistical error estimation.
 
-We have a few more suggestions for how to organize your work, building on the 
-suggestions of the previous lab:
+Suggestions for organizing your work:
+
 \begin{itemize}
 
-\item Develop (version-controlled) scripts for taking data from the command line.
-Have these scripts save data files with {\bf all the necessary metadata} for
-reconstructing your observation. What information will you need later? It's
-better to record too much, rather than too little, and omitting critical information could
-mean you have to redo observations.
+    \item Develop version-controlled command-line scripts for data acquisition.
+    Save data files with {\bf all necessary metadata} to reconstruct observations.
+    Err on the side of recording too much to avoid re-observing.
 
-\item Test your reality. How do you know your rotation matrices give you the
-right pointing? How do you know if your gain calibration is right? To build
-your confidence, you need internal consistency checks, which means deriving
-solutions to things you already know the answer to. Find opportunities
-to test things you think you know. It will save you time later.
+    \item Test your reality.
+    Verify that rotation matrices yield correct pointings and that gain
+    calibration is accurate.
+    Build confidence through internal consistency checks.
 
-\item As you conduct observations, think critically about your assumptions and
-approximations.  How well have you pointed the horn? How completely did
-you cover the aperture for the load calibration? The more you can assess
-as you do the work, the more resources you will have for critically analyzing your
-results and procedures in your report.
+    \item Think critically about assumptions and approximations.
+    How do pointing accuracy and aperture coverage affect your calibration?
+    Critically analyze these and other factors in your report.
 
-\item By the end, you should have empirical numerical results to report, but
-values without error bars are meaningless. As you estimate errors, think about how 
-well your model matches the data. How can you estimate the
-accuracy of your results? Are you confident enough in your analysis to
-bet money on your reported accuracy? If not, think about the sources of error
-(systematic and otherwise) that may be undermining your confidence, and quantify them.
+    \item Report empirical results with error bars.
+    (Values without confidence intervals are meaningless.)
+    Estimate accuracy by comparing your model to the data.
+    Quantify systematic and statistical sources of error.
+    Would you bet money on your reported accuracy?
+    If not, what sources of error (systematic or statistical) are undermining your confidence?
 
 \end{itemize}
 
 
 \section{Goals and Instructions for Your Report} \label{sec:goals}
 
+
 \noindent
-As always, lab reports and analysis code must be written {\it individually}. 
+Lab reports and analysis code must be written {\it individually}.
+Include a block diagram of the telescope receiver in your report.
+You may draw this by hand and scan it, or use (old-school) software like {\tt xfig} or
+another drawing tool.
 
-The electronic components are such an important part of this
-lab that you should include a block diagram of the telescope receiver
-in your lab report. You can prepare this either by either hand or
-computer. If by hand, you'll have to scan your drawing to get a file you can
-insert into your report's tex file. If by computer, you can use your
-favorite software for making line drawings.  Although it is dated, {\tt xfig}
-comes installed on Linux, so that's an option.
-
-Below is a list of learning goals that your report should demonstrate mastery of.
+Your report should demonstrate mastery of these learning goals:
 
 \begin{itemize}
-
-\item Time. Demonstrate accurate conversion between UTC, PST, LST,
-and Julian Day.
-
-\item Telescope pointing and the use of rotation matrices to convert among spherical
-  coordinate systems.
-
-\item Measuring the 21-cm line power spectrum from atomic hydrogen in the
-  Milky Way at a defined and reproducible location.
-
-\item Calibrating your telescope observations to an absolute scale, removing
-systematic instrumental effects in your spectra, and applying noise-reduction
-techniques.
-
-\item Doppler corrections to produce spectra with velocities 
-calibated relative a standard frame of reference.
-
-\item Fitting spectra with Gaussian components to localize celestial structures.
-
-\item Impedances. Terminate transmission lines to 
-minimize reflections with impedance matching.
-
-\item Deriving propagation velocities for radio waves traveling down coaxial cables.
-
-\item Using linear and non-linear least-squares methods to fit models to data and
-estimate error.
-
+    \item {\bf Time}: Accurate conversion between UTC, PST, LST, and Julian Day.
+    \item {\bf Pointing}: Use rotation matrices to convert among spherical
+    coordinate systems.
+    \item {\bf Measurement}: Measure the 21-cm line power spectrum from
+    Milky Way hydrogen at a defined location.
+    \item {\bf Calibration}: Calibrate observations to an absolute scale,
+    remove systematic instrumental effects, and apply noise-reduction techniques.
+    \item {\bf Doppler Correction}: Produce spectra with velocities calibrated
+    relative to a standard reference frame.
+    \item {\bf Fitting}: Fit spectra with Gaussian components to localize
+    celestial structures.
+    \item {\bf Impedance}: Terminate transmission lines to minimize reflections.
+    \item {\bf Propagation}: Derive propagation velocities for radio waves
+    in coaxial cables.
+    \item {\bf Error Analysis}: Use linear and non-linear least-squares methods
+    to fit models and estimate errors.
 \end{itemize}
+
 
 \section{Schedule}
 
+
 \noindent
-Despite building directly on Lab 1, this lab covers a lot of new territory, particularly in the realm of data
-analysis. Work hard to get good observations early, reserving plenty of
-time for analysis and, if necessary, re-observation. A suggested schedule
-follows.
+This lab covers significant new territory in data analysis.
+Work hard to obtain good observations early.
+Reserve plenty of time for analysis and re-observation.
+
 \begin{enumerate}
+    \item {\it Week 1:} Finish \S\ref{radioastro} and \S \ref{analysis}.
+    Understand \S \ref{jultime}.
+    Show your work, software, and results in class.
 
-\item {\it Week 1.}
-Finish \S\ref{radioastro} and \S \ref{analysis}, and understand \S
-  \ref{jultime}. Be prepared to show work, software, and results in class.
+    \item {\it Week 2:} Finish \S \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}.
+    Produce candidate plots and analysis results.
 
-\item {\it Week 2.}
-Finish \S \ref{meas2}, \S \ref{expt}, and \S \ref{secondweek}. Produce
-candidate plots and analysis results for class.
-
-\item {\it Week 3.} Finish any re-observations needed for the first
-two weeks, then write your formal
-  report. Remember to follow the report guidelines and address the specific
-goals in \S\ref{sec:goals}.
-
+    \item {\it Week 3:} Finish re-observations.
+    Write your formal report following the guidelines and addressing
+    \S\ref{sec:goals}.
 \end{enumerate}
 
 
 \section{What Time Is It?} \label{jultime}
 
 \noindent
-From relativity, we know that time depends on
-reference frame. Nothing drives this home like sitting on the surface
-of an orbiting, spinning sphere.
-To deal with this, humans have invented a surfeit of time standards.
-We will restrict our attention to those most useful for astronomy.
+Relativity dictates that time depends on the reference frame.
+Nothing drives this home like trying to point a telescope from the surface of an orbiting, spinning sphere.
+Humans have invented a surfeit of time standards; we focus on those useful for astronomy.
 
-{\bf Coordinated Universal Time (UTC)} is the Civil Time\footnote{You use
-  Civil Time when you set your alarm clock for getting up in the
-  morning.} in Greenwich, England, which is 8 hours ahead of 
-Pacific Standard Time (PST). In the middle of this course, we switch from
-PST to Pacific Daylight Time (PDT); 
-${\rm PST}={\rm UTC} - 8$ hr, while ${\rm PDT}={\rm UTC} - 7$ hr). UTC measures
-solar time; 24 hours is the time it takes for the Sun to appear
-in the same position in the sky on neighboring days.
+{\bf Coordinated Universal Time (UTC)} is the Civil Time in Greenwich, England.
+It is 8 hours ahead of Pacific Standard Time (PST).
+${\rm PST}={\rm UTC} - 8$ hr; ${\rm PDT}={\rm UTC} - 7$ hr.
+(Warning: we switch to Pacific Daylight Time (PDT) mid-semester.)
+UTC measures solar time (24 hours per solar day).
 
-Another standard, common since the computer era, is {\bf Unix Standard Time}, which measures the
-number of seconds since midnight 1 Jan., 1970, UTC. 
-This clock is how your computer keeps track of time. All other computer times
-are derived from this one; it
-is what you get if you call {\tt time.time()}.
-You phone/computer uses a quartz crystal oscillator to keep track of 
-this time over short intervals.  Over longer intervals, a time-exchange protocol called 
-Network Time Protocol (NTP) is used to discipline the on-board clock to 
-atomic clocks in timing centers around the world.
+{\bf Unix Standard Time} measures seconds since midnight Jan 1, 1970, UTC.
+This is the internal clock for computers (e.g., {\tt time.time()}).
+Computers use Network Time Protocol (NTP) to synchronize local quartz
+oscillators with atomic clocks.
 
-{\bf Sidereal Time} is ``star time''; it tells when
-distant stars (i.e. not the Sun) rise and set. The sidereal time period is
-shorter than the 24-hour Solar time period: $1/356.24$ less, to
-be nearly exact. The difference, which corresponds to slightly 
-less than 4 minutes per day, comes from how much the Earth's orbit around the
-Sun changes the position of the Sun in the sky.
-Sidereal time depends on the Earth's spin, which
-is constantly slowing owing to tidal friction produced by the
-Moon. (Where does the angular momentum go?) The conversion between Civil Time and LST has to be adjusted
+{\bf Sidereal Time} is ``star time.''
+It tracks the rise and set of distant stars.
+The sidereal day is $1/365.24$ shorter than the solar day (about 4 minutes).
+This difference arises from Earth's orbit around the Sun.
+Sidereal time depends on Earth's spin, which slows due to tidal friction.
+(Where does the angular momentum go?) The conversion between Civil Time and LST has to be adjusted
 periodically by inserting {\it leap seconds}.
 
-{\bf Local Sidereal Time} (LST)
-adjusts sidereal time by longitude so that a star of a given {\bf right ascension} 
-(RA; the ``longitude" coordinate for celestial sources) transits the local meridian
-(the line of longitude that goes right overhead) at the moment
-that ${\rm LST}={\rm RA}$. 
+{\bf Local Sidereal Time (LST)} adjusts sidereal time by longitude.
+A star with Right Ascension (RA) transits the local meridian when
+${\rm LST}={\rm RA}$.
 
-The {\bf Julian Day} is a sequential numbering of Solar days since 1 Jan. --4713. 
-It
-uniquely specifies the date and time (as a fraction of a day) without 
-involving 
-months (with their nonsensical definitions\footnote{``Thirty days
-  hath September\dots''}), leap years, etc. It begins at noon 
-in Greenwich. This makes it 12 hours out of phase with UTC, but the
-international date line is 12 hours away from UTC, so JD is in sync
-with humankind's definition of `when the day begins'. 
-On computers, the Julian day is represented as double-precision
-float.
+The {\bf Julian Day (JD)} is a sequential count of solar days since
+Jan 1, --4713.
+It specifies date and time as a double-precision float without months or leap years.
+JD begins at noon, UTC.
 
-The {\bf Modified Julian Day} is a shorter version of Julian Day. MJD is (sigh) 12
-hours out of sync with JD, so it is in sync with UTC.
+The {\bf Modified Julian Day (MJD)} is a shortened JD.
+MJD is 12 hours offset from JD to align with UTC.
 MJD=0 corresponds to 0 hr UT on 17 Nov 1858.
+
 
 \subsection{ Useful Python Procedures for Time Conversion}
 
