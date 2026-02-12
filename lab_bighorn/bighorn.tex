@@ -184,81 +184,65 @@ MJD=0 corresponds to 0 hr UT on 17 Nov 1858.
 \subsection{ Useful Python Procedures for Time Conversion}
 
 \noindent
-Python has several built-in modules for dealing with time, including {\tt time} 
-and {\tt datetime}.
-Astronomers, however, have historically been the best time-keepers on the planet.  For
-astronomy-quality time routines, {\tt astropy.time}, part of the {\tt astropy} package, is
-the industry standard.  We have wrapped some of them into {\tt ugradio.timing} for
-your convenience. {\it However}, the times you use for input are only as good
-as the synchronization between the clock you are using (e.g. on your Raspberry
-Pi) and our national-standard atomic clocks, so before observing,
-you are going to want to use a Network Time Protocol
-(NTP) daemon to discipline your local clock to an external reference, and it case it
-isn't clear from the name, you will have to have an active network connection.
+Python {\tt time} and {\tt datetime} modules, but
+astronomers have historically been the best time-keepers on the planet.
+The {\tt astropy.timing} package has astronomy-quality time routines.
+We have wrapped some routines into {\tt ugradio.timing} for your convenience.
+Ensure your local (Raspberry Pi) clock is synchronized to national standard
+atomic clocks using a Network Time Protocol
+(NTP) daemon.
 
-Calculating LST requires knowing your
-longitude. New Campbell Hall (NCH) is at 
-{\tt (lat,lon) = (37.8732, -122.2573)},  Note that {\tt lon = -122.2573 = (360 - 122.2573) = 237.7427}. 
-This information is stored in the {\tt ugradio.nch} module.
-For all procedures mentioned below, this location is default
+Calculating LST requires your longitude.
+New Campbell Hall (NCH) is at {\tt (lat,lon) = (37.8732, -122.2573)}.
+Note: {\tt lon = -122.2573 = (360 - 122.2573) = 237.7427}. 
+This is set in {\tt ugradio.nch}, which is the default location for the routines below.
 
 \begin{verbatim}
-local_now = ugradio.timing.local_time() # current local time as a string
-ut_now = ugradio.timing.utc() # current UTC as a string
-ut_now = ugradio.timing.unix_time() # seconds since 1 January 1970
-julian_now = ugradio.timing.julian_date() # current julian day (which \
-        contains the current time, too--it's not just an integer \
-        number. 
-lst_now = ugradio.timing.lst() # current LST at NCH
-lst_julian = ugradio.timing.lst(jd) # LST for the specified Julian day                       
-ut_julian = ugradio.timing.unix_time(jd) # seconds since 1/1/1970 for given JD
-julian_ut = ugradio.timing.julian_date(ut) # julian day for given unix time
+local_now = ugradio.timing.local_time()  # current local time string
+ut_now = ugradio.timing.utc()            # current UTC string
+ut_now = ugradio.timing.unix_time()      # seconds since 1 January 1970
+jd_now = ugradio.timing.julian_date()    # current JD
+lst_now = ugradio.timing.lst()           # current LST at NCH
+lst_jd = ugradio.timing.lst(jd)          # LST for specified JD
+ut_jd = ugradio.timing.unix_time(jd)     # s since 1/1/1970 for given JD
+jd_ut = ugradio.timing.julian_date(ut)   # JD for given Unix time
 \end{verbatim}
+
 
 \section{Handouts} \label{handouts}
 
 \noindent
-Our website has topical handouts that may be of use to you:
+The website provides optional topical handouts:
+
 \begin{enumerate}
+    \item {\it CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL LINES}:
+    Detailed calibration steps.
 
-\item The complete story of producing calibrated spectral line shapes
-  and intensities: {\it CALIBRATING THE INTENSITY AND SHAPE OF SPECTRAL
-  LINES}. This handout is optional because the steps discussed in
-  the lab instructions are sufficient, but
-  if they are unclear or you want to know more, this writeup has it all.
+    \item {\it SPECIFIC INTENSITY}:
+    Relates received power to the source.
 
-\item How does the power we receive with a telescope relate to a source being
-  observed? It's all about specific intensity, usually denoted $I$:
-  ``SPECIFIC INTENSITY: THE FOUNT OF ALL KNOWLEDGE!''. 
-  You need to understand these topics to interpret your measurements.
-
-\item Astronomical coordinate transformations with Rotation Matrices:
-  ``SPHERICAL/ASTRONOMICAL COORDINATE
-  TRANSFORMATION''. converting among Az/El, Ha/Dec, Ra/Dec, L/B. 
-    You need to know coordinates for all the remaining labs.
-
+    \item {\it SPHERICAL/ASTRONOMICAL COORDINATE TRANSFORMATION}:
+    Coordinate transformations with Rotation Matrices.
+    Essential for future labs.
 \end{enumerate}
+
 
 \section{Your First 21-cm Measurement (Group Lab Activity, Week 1)}
 \label{radioastro}
 
 \noindent
-Use the techniques we explored in Lab 1 to observe the
-21-cm line of neutral hydrogen (colloquially, {\bf
-  HI}, pronounced ``H-one''), measuring its line
-shape, velocity, and intensity using the big horn on the New Campbell Hall roof.
-Most of the measured power comes from noise in our own electronics, not the HI
-line.  It's often called noise, and we need to calibrate out this
-instrumental contribution and the responses of our amplifiers and filters to
-obtain the correct line shape and intensity.
+Use Lab 1 techniques to observe the 21-cm line of neutral hydrogen ({\bf HI}).
+Measure its line shape, velocity, and intensity using the horn antenna on
+New Campbell Hall.
+Most measured power is electronic noise.
+Calibrate out this instrumental contribution to obtain the correct line
+shape and intensity.
 
-Measure the 21-cm line twice. The first time, the goal is to master
-the technical aspects of the system and
-procedures, so instead of worrying about where to point the horn,
-just use whatever sky position happens to be overhead. The second time (\S
-\ref{meas2}), manually point the horn to a designated position and
-make a calibrated profile to compare with a well-established standard
-profile measurement.
+Measure the 21-cm line twice.
+First, point to zenith to master the technical aspects of observing.
+Second (\S \ref{meas2}), point to a designated position and compare your
+calibrated profile to a standard.
+
 
 \subsection{The Receiving System}
 
@@ -310,7 +294,7 @@ exception gets thrown.
 
 \noindent
 Before taking data, do basic system
-checks: (1) use oscilloscopes and captured voltage waveforms to
+checks: (1) use captured voltage waveforms to
 set signal levels appropriately, and (2) experimentally
 verify that you are looking at the frequencies you intend to. In order
 to test that you are seeing data through an active (and powered!) signal
