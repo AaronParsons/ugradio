@@ -228,71 +228,71 @@ The phase slope of these visibility spectra versus frequency tell us about the r
 between the correlated signals passing through each dish to arrive at the SNAP correlator inputs.
 
 
-\section {Continuum (Point) Sources}
-
-\noindent
-Although our sensitivity is limited, it is sometimes possible to 
-measure 'point' sources
-that lie outside the Solar system. Our telescopes are small, so there
-are only a few sources that are powerful enough for us; they are listed
-below.  You'll need to precess the coordinates to the current
-equinox. If you don't, the incorrect RAs will affect your fits. To do
-the precession, use {\tt ugradio.coord.precess}.
-
-%$$\vbox{\halign{ \hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ &    
-%\hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ \cr
-$$\vbox{\halign{ \hfil#\hfil\ \ & #\hfil\ \ & #\hfil\ \ &    
-\hfil#\ \ \ \cr
-
-{\bf name} & {\bf RA (J2000)} & {\bf DEC (J2000)} & {\bf S$_{Jy}$} \cr
-
-%W3$^a$              & $02^h 27^m 04.10s$ &$+61^\circ 52' 27.1'$ & $\sim 105$ \cr
-3C144 (Crab Nebula) & $05^h 34^m 31.95s$ &$+22^\circ 00' 52.1''$ & $\sim 496$ \cr
-Orion Nebula        & $05^h 35^m 17.3s$ & $-05^\circ 23' 28''$ & $\sim 340$ \cr
-%3C274 (Virgo A)     & $12^h 30^m 49.423s$ & $+12^\circ 23' 28.04''$ & $\sim 34$ \cr
-M17                 & $18^h 20^m 26s$ & $-16^\circ 10.6'$ & $\sim 500$ \cr
-%W43                 & $18^h 47^m 58.0s$ & $-01^\circ 56' 43''$ & $\sim 200$ \cr
-%W49$^a$             & $19^h 10^m 17s$ & $+09^\circ 06.0'$ & $\sim 80$ \cr
-%W51$^a$             & $19^h 23^m 42.0s$ & $14^\circ 30' 33''$ & $\sim 116$ \cr
-3C405 (Cygnus A)    & $19^h 59^m 28.357s$ & $+40^\circ 44' 02.10''$ & $\sim 120$ \cr  
-3C461 (Cas A)       & $23^h 23^m 24s$ & $+58^\circ 48.9'$ & $\sim 320$ \cr 
-SUN                 &   varies       &   varies \cr
-MOON                &   varies       &   varies \cr
-}}$$
-
-As astronomers, our goal is to measure the absolute declinations as
-accurately as possible. As geologists, our goal is to measure the
-interferometer baseline as accurately as possible (to see, for example,
-the displacement of tectonic plates by earthquake activity). If you look
-at equations \ref{nutau} and \ref{fringeresponse}, you see that we don't
-measure these quantities separably, but rather the products $b_{ew}
-\cos(\delta)$ and $b_{ns} \cos(\delta)$, where $b_{ew}$ and $b_{ns}$ are
-the east-west and north-south components of the interferometer
-baseline, $\vec b$. These products can be measured on an absolute basis with
-interferometry by least-squares fitting the fringe phase to the hour
-angle; see \S\ref{declinations} and equation \ref{fringeresponse} below.  We
-already know the source positions accurately, from previous
-interferometric measurements; that's where the positions in the above
-table come from. So, for this lab, we'll emphasize the geologic aspect
-and measure baselines. We should be able to measure baseline components
-to better than $1\%$.
-
-Coverage for southern sources may be interrupted by the
-Campanile---check (by going up to the roof periodically and looking)!
-And coverage for northern sources, especially Cas A, is interrupted by
-Evans Hall.
-
-We'll want {\it each group} to pick a source and obtain a
-horizon-to-horizon observation of the fringes. Each group should pick a
-different source. Observing a source takes at least half a day. With
-four groups and less than a week to do the measurements, you need to
-cooperate in scheduling the interferometer. Organize yourselves!
-
-We'll want {\it each person} to measure the source's
-declination by least-squares fitting the horizon-to-horizon track of
-fringe phase and amplitude.  Compare your results with other members of
-your group.  Help each other out, but {\it each person should write
- their own software}.
+%\section {Continuum (Point) Sources}
+%
+%\noindent
+%Although our sensitivity is limited, it is sometimes possible to 
+%measure 'point' sources
+%that lie outside the Solar system. Our telescopes are small, so there
+%are only a few sources that are powerful enough for us; they are listed
+%below.  You'll need to precess the coordinates to the current
+%equinox. If you don't, the incorrect RAs will affect your fits. To do
+%the precession, use {\tt ugradio.coord.precess}.
+%
+%%$$\vbox{\halign{ \hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ &    
+%%\hfil#\hfil\ \ & \hfil#\hfil\ \ & \hfil#\hfil\ \ \cr
+%$$\vbox{\halign{ \hfil#\hfil\ \ & #\hfil\ \ & #\hfil\ \ &    
+%\hfil#\ \ \ \cr
+%
+%{\bf name} & {\bf RA (J2000)} & {\bf DEC (J2000)} & {\bf S$_{Jy}$} \cr
+%
+%%W3$^a$              & $02^h 27^m 04.10s$ &$+61^\circ 52' 27.1'$ & $\sim 105$ \cr
+%3C144 (Crab Nebula) & $05^h 34^m 31.95s$ &$+22^\circ 00' 52.1''$ & $\sim 496$ \cr
+%Orion Nebula        & $05^h 35^m 17.3s$ & $-05^\circ 23' 28''$ & $\sim 340$ \cr
+%%3C274 (Virgo A)     & $12^h 30^m 49.423s$ & $+12^\circ 23' 28.04''$ & $\sim 34$ \cr
+%M17                 & $18^h 20^m 26s$ & $-16^\circ 10.6'$ & $\sim 500$ \cr
+%%W43                 & $18^h 47^m 58.0s$ & $-01^\circ 56' 43''$ & $\sim 200$ \cr
+%%W49$^a$             & $19^h 10^m 17s$ & $+09^\circ 06.0'$ & $\sim 80$ \cr
+%%W51$^a$             & $19^h 23^m 42.0s$ & $14^\circ 30' 33''$ & $\sim 116$ \cr
+%3C405 (Cygnus A)    & $19^h 59^m 28.357s$ & $+40^\circ 44' 02.10''$ & $\sim 120$ \cr  
+%3C461 (Cas A)       & $23^h 23^m 24s$ & $+58^\circ 48.9'$ & $\sim 320$ \cr 
+%SUN                 &   varies       &   varies \cr
+%MOON                &   varies       &   varies \cr
+%}}$$
+%
+%As astronomers, our goal is to measure the absolute declinations as
+%accurately as possible. As geologists, our goal is to measure the
+%interferometer baseline as accurately as possible (to see, for example,
+%the displacement of tectonic plates by earthquake activity). If you look
+%at equations \ref{nutau} and \ref{fringeresponse}, you see that we don't
+%measure these quantities separably, but rather the products $b_{ew}
+%\cos(\delta)$ and $b_{ns} \cos(\delta)$, where $b_{ew}$ and $b_{ns}$ are
+%the east-west and north-south components of the interferometer
+%baseline, $\vec b$. These products can be measured on an absolute basis with
+%interferometry by least-squares fitting the fringe phase to the hour
+%angle; see \S\ref{declinations} and equation \ref{fringeresponse} below.  We
+%already know the source positions accurately, from previous
+%interferometric measurements; that's where the positions in the above
+%table come from. So, for this lab, we'll emphasize the geologic aspect
+%and measure baselines. We should be able to measure baseline components
+%to better than $1\%$.
+%
+%Coverage for southern sources may be interrupted by the
+%Campanile---check (by going up to the roof periodically and looking)!
+%And coverage for northern sources, especially Cas A, is interrupted by
+%Evans Hall.
+%
+%We'll want {\it each group} to pick a source and obtain a
+%horizon-to-horizon observation of the fringes. Each group should pick a
+%different source. Observing a source takes at least half a day. With
+%four groups and less than a week to do the measurements, you need to
+%cooperate in scheduling the interferometer. Organize yourselves!
+%
+%We'll want {\it each person} to measure the source's
+%declination by least-squares fitting the horizon-to-horizon track of
+%fringe phase and amplitude.  Compare your results with other members of
+%your group.  Help each other out, but {\it each person should write
+% their own software}.
 
 \section{The Sun (and Moon)}
 
@@ -319,7 +319,7 @@ tricky, but we'll ignore that detail for now.
 \section{Some Astrophysics}
 
 \noindent
-Here's a bit of physical information.  M17 (``M'' for Messier) and Orion
+Sources of cm-wave radiation.  M17 (``M'' for Messier) and Orion
 are HII regions---places where hot stars have produced warm ($T \sim
 10^4$ K) ionized gas, where the electrons flying past the protons get
 deflected and produce {\it free-free (bremsstrahlung)} radiation.  The
@@ -384,14 +384,14 @@ from our data, first one frequency at a time, and then across the whole band.
 \subsection{Getting the Data}
 
 \noindent
-	Before doing the weak sources in the Table, do
-the Sun for a much shorter time, say an hour. This will give you
+Observe
+the Sun for a short time---say an hour. This will give you
 confidence that the system works (or so we hope). There should be an
 easily-recognizable signal that you can look at visually, think about,
 and derive the approximate declination with pencil and paper. Then later
 you can write software to do the same, and make sure you get the right
-answer.  Also, during this first week, do the horizon-to-horizon track
-of one of the sources from the Table.
+answer.
+%Also, during this first week, do the horizon-to-horizon track of one of the sources from the Table.
 
 \subsection{The Fringe} \label{details}
 
@@ -922,7 +922,8 @@ chapter 4, and the most important sections are chapter 4.2 and
 With the longer baselines of research-class interferometers/arrays comes
 increased angular resolution, and all of our sources become finite in
 angular size, which means that the telescope arrays can map the sources
-using Fourier techniques. Some types of source are so small that mapping
+using Fourier techniques. Some types of sources (like the event
+horizon of nearby supermassive black holes!) are so small that mapping
 them requires interferometers with baseline lengths comparable to the
 Earth's diameter, a technique called ``Very Long Baseline
 Interferometry'' (VLBI). And some sources, such as pulsars, are even too
@@ -931,100 +932,100 @@ small for VLBI!
 
 \end{document}
 
-3C144 (Crab Nebula) & $05^h31^m30^s$ & $21^\circ 58'$
-                    & $05^h34^m23^s$ & $22^\circ 00'$ & $\sim 496$ \cr
-Orion Nebula        & $05^h32^m44^s$ & $-05^\circ 25'$
-                    & $05^h35^m05^s$ & $-05^\circ 23'$ & $\sim 340$ \cr
-3C274 (Virgo A)     & $12^h28^m18^s$ & $12^\circ 40'$
-                    & $12^h30^m44^s$ & $12^\circ 24'$ & $\sim 34$ \cr
-M17                 & $18^h17^m33^s$ & $-16^\circ 12'$
-                    & $18^h20^m19^s$ & $-16^\circ 11'$ & $\sim 500$ \cr
-3C405 (Cygnus A)    & $19^h57^m45^s$ & $40^\circ 36'$
-                    & $19^h59^m24^s$ & $40^\circ 44'$ & $\sim 120$ \cr  
-3C461 (Cas A)       & $23^h21^m07^s$ & $58^\circ 34'$
-                    & $23^h23^m17^s$ & $58^\circ 50'$ & $\sim 320$ \cr 
-SUN                 &   varies       &   varies \cr
-MOON                &   varies       &   varies \cr
-
-*************************
--------------
-
-Now write $U = \left( {b_y \over \lambda} \cos\delta \right)$ ($U$ is
-the east-west projected baseline expressed in
-wavelenths)\footnote{Conventionally, the letters $[U,\, V,\, W]$ represent
-  the projection of the baseline in the EW, NS, and vertical directions,
-  respectively.} and use
-equation \ref {fringeresponse} to write
-
-\begin{equation} \label{r0}
-R(h_s) = A \int I(h-h_s) \cos( 2\pi U \sin h) \ dh +  
-	B \int I(h-h_s) \sin( 2\pi U \sin h) \ dh
-\end{equation} 
-
-	Our source occupies a small angle, so we can expand $h$ around $h_s$
-by writing $[\Delta h = h-h_s]$. We use equation \ref{taylorexpansion} to
-expand $\sin h$ as $\sin h \approx \sin( h_s) + \Delta h \cos( h_s)$.
-Things are getting algebraically cumbersome, so let's eliminate
-clutter by defining 
-
-\begin{mathletters}
-\begin{equation}
-\alpha(h_s) = 2 \pi U \sin(h_s) 
-\end{equation}
-\begin{equation}
-\beta(h_s, \Delta h) = 2 \pi U \cos(h_s) \  \Delta h = 2 \pi f_f \Delta h
-\end{equation}
-\end{mathletters}
-
-\noindent [where $U = \left( {B \over \lambda} \cos\delta \right)$] so that equation \ref{r0} becomes
-
-\begin{equation} \label{r1}
-R(h_s) = A \int I(h-h_s) \cos( \alpha + \beta) \ dh +  
-	B \int I(h-h_s) \sin( \alpha + \beta) \ dh
-\end{equation} 
-
-\noindent Now, as usual, we use trig identities [$\cos(\alpha + \beta) =
-  \cos(\alpha) \cos(\beta) - \sin(\alpha) \sin(\beta)$ and $\sin(\alpha
-  + \beta) = \sin(\alpha) \cos(\beta) + \cos(\alpha) \sin(\beta)$]. The
-  first (cosine) term of equation \ref{r1} becomes
-
-\begin{equation}
-R^{\cos}(h_s) = A \; \cos(\alpha) \int I(\Delta h) \cos( \beta) \ d \Delta h 
--A \; \sin(\alpha) \int I(\Delta h) \sin( \beta) \ d \Delta h 
-\end{equation}
-
-\noindent with an equivalent, similar expression for $R^{\sin}(h_s)$. We
-imagine $I(\Delta h)$ as being composed of little slices in hour angle,
-with each little slice of the source characterized by its position
-offset $\Delta h$ and its intensity $I(\Delta h)$. 
-*****************************
-
-\begin{equation} \label{interfeqn}
-R(h_s) = 
-\underbrace{ \left\{ A \; \cos[\alpha(h_s)]
-\ + B \; \sin[\alpha(h_s)]
-\right\}}_{Point-source\ 
-Fringe} \times 
-\underbrace{\int I(\Delta h) \cos[ \beta(h_s,\Delta h)] \ d \Delta h}_{Fringe \ Modulator} 
-\end{equation}
-
-Now at any one time (hour angle $h_s$) the fringe pattern in the
-vicinity of the source is a sine wave with frequency $f_f(h_s)$ cycles
-per radian and has the functional form $F(f_f,\Delta h) = [A' \cos( 2
-\pi f_f \Delta h) + \sin( 2 \pi f_f \Delta h)]$, where $A'$ and $B'$ are
-constants that tell the fringe amplitude and phase with respect to
-$\Delta h = 0$, i.e.\ with respect to $h_s$.  $F(f_f,\Delta h)$ covers
-the source with fringes of angular frequency $f_f$, and the
-interferometer response $R(h_s)$ is the integral of this local fringe
-pattern times the source intensity distribution, so we have
-
-\begin{equation}
-R(h_s) = \int F(f_f,\Delta h) I(\Delta h) \ d \Delta h
-\end{equation}
-
-\noindent (Recall $f_f(h_s)$ depends on $h_s$, so $R$ is a function of $h_s$.)
-This equation is physically intuitive because it expresses the fringe
-response at any particular hour angle as depending on the fringe
-frequency and the source structure; the source is small, so it covers a
-small range of hour angle, i.e.\ a small range of $\Delta h$. 
+%3C144 (Crab Nebula) & $05^h31^m30^s$ & $21^\circ 58'$
+%                    & $05^h34^m23^s$ & $22^\circ 00'$ & $\sim 496$ \cr
+%Orion Nebula        & $05^h32^m44^s$ & $-05^\circ 25'$
+%                    & $05^h35^m05^s$ & $-05^\circ 23'$ & $\sim 340$ \cr
+%3C274 (Virgo A)     & $12^h28^m18^s$ & $12^\circ 40'$
+%                    & $12^h30^m44^s$ & $12^\circ 24'$ & $\sim 34$ \cr
+%M17                 & $18^h17^m33^s$ & $-16^\circ 12'$
+%                    & $18^h20^m19^s$ & $-16^\circ 11'$ & $\sim 500$ \cr
+%3C405 (Cygnus A)    & $19^h57^m45^s$ & $40^\circ 36'$
+%                    & $19^h59^m24^s$ & $40^\circ 44'$ & $\sim 120$ \cr  
+%3C461 (Cas A)       & $23^h21^m07^s$ & $58^\circ 34'$
+%                    & $23^h23^m17^s$ & $58^\circ 50'$ & $\sim 320$ \cr 
+%SUN                 &   varies       &   varies \cr
+%MOON                &   varies       &   varies \cr
+%
+%*************************
+%-------------
+%
+%Now write $U = \left( {b_y \over \lambda} \cos\delta \right)$ ($U$ is
+%the east-west projected baseline expressed in
+%wavelenths)\footnote{Conventionally, the letters $[U,\, V,\, W]$ represent
+%  the projection of the baseline in the EW, NS, and vertical directions,
+%  respectively.} and use
+%equation \ref {fringeresponse} to write
+%
+%\begin{equation} \label{r0}
+%R(h_s) = A \int I(h-h_s) \cos( 2\pi U \sin h) \ dh +  
+%	B \int I(h-h_s) \sin( 2\pi U \sin h) \ dh
+%\end{equation} 
+%
+%	Our source occupies a small angle, so we can expand $h$ around $h_s$
+%by writing $[\Delta h = h-h_s]$. We use equation \ref{taylorexpansion} to
+%expand $\sin h$ as $\sin h \approx \sin( h_s) + \Delta h \cos( h_s)$.
+%Things are getting algebraically cumbersome, so let's eliminate
+%clutter by defining 
+%
+%\begin{mathletters}
+%\begin{equation}
+%\alpha(h_s) = 2 \pi U \sin(h_s) 
+%\end{equation}
+%\begin{equation}
+%\beta(h_s, \Delta h) = 2 \pi U \cos(h_s) \  \Delta h = 2 \pi f_f \Delta h
+%\end{equation}
+%\end{mathletters}
+%
+%\noindent [where $U = \left( {B \over \lambda} \cos\delta \right)$] so that equation \ref{r0} becomes
+%
+%\begin{equation} \label{r1}
+%R(h_s) = A \int I(h-h_s) \cos( \alpha + \beta) \ dh +  
+%	B \int I(h-h_s) \sin( \alpha + \beta) \ dh
+%\end{equation} 
+%
+%\noindent Now, as usual, we use trig identities [$\cos(\alpha + \beta) =
+%  \cos(\alpha) \cos(\beta) - \sin(\alpha) \sin(\beta)$ and $\sin(\alpha
+%  + \beta) = \sin(\alpha) \cos(\beta) + \cos(\alpha) \sin(\beta)$]. The
+%  first (cosine) term of equation \ref{r1} becomes
+%
+%\begin{equation}
+%R^{\cos}(h_s) = A \; \cos(\alpha) \int I(\Delta h) \cos( \beta) \ d \Delta h 
+%-A \; \sin(\alpha) \int I(\Delta h) \sin( \beta) \ d \Delta h 
+%\end{equation}
+%
+%\noindent with an equivalent, similar expression for $R^{\sin}(h_s)$. We
+%imagine $I(\Delta h)$ as being composed of little slices in hour angle,
+%with each little slice of the source characterized by its position
+%offset $\Delta h$ and its intensity $I(\Delta h)$. 
+%*****************************
+%
+%\begin{equation} \label{interfeqn}
+%R(h_s) = 
+%\underbrace{ \left\{ A \; \cos[\alpha(h_s)]
+%\ + B \; \sin[\alpha(h_s)]
+%\right\}}_{Point-source\ 
+%Fringe} \times 
+%\underbrace{\int I(\Delta h) \cos[ \beta(h_s,\Delta h)] \ d \Delta h}_{Fringe \ Modulator} 
+%\end{equation}
+%
+%Now at any one time (hour angle $h_s$) the fringe pattern in the
+%vicinity of the source is a sine wave with frequency $f_f(h_s)$ cycles
+%per radian and has the functional form $F(f_f,\Delta h) = [A' \cos( 2
+%\pi f_f \Delta h) + \sin( 2 \pi f_f \Delta h)]$, where $A'$ and $B'$ are
+%constants that tell the fringe amplitude and phase with respect to
+%$\Delta h = 0$, i.e.\ with respect to $h_s$.  $F(f_f,\Delta h)$ covers
+%the source with fringes of angular frequency $f_f$, and the
+%interferometer response $R(h_s)$ is the integral of this local fringe
+%pattern times the source intensity distribution, so we have
+%
+%\begin{equation}
+%R(h_s) = \int F(f_f,\Delta h) I(\Delta h) \ d \Delta h
+%\end{equation}
+%
+%\noindent (Recall $f_f(h_s)$ depends on $h_s$, so $R$ is a function of $h_s$.)
+%This equation is physically intuitive because it expresses the fringe
+%response at any particular hour angle as depending on the fringe
+%frequency and the source structure; the source is small, so it covers a
+%small range of hour angle, i.e.\ a small range of $\Delta h$. 
 
