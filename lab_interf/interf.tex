@@ -66,7 +66,7 @@ your report should address.
 \item Obtain horizon-to-horizon data on the Sun.
 
 \item VLBI nonlinear least-squares fringe fitting to determine the most
-  accurate source declination and/or baseline projected lengths.
+  accurate baseline lengths.
 
 \item Use nonlinear least-squares fitting to obtain an accurate diameter
   for the Sun. This illustrates the general Fourier transform
@@ -85,9 +85,9 @@ behind, so try to get ahead early. Below is a suggested schedule.
 \begin{enumerate}
 
 \item {\it Week 1:} Each {\it group} uses rotation
-  matrices to calculate when objects of interest are up. It observes the
+  matrices to calculate when objects of interest are up. Observe the
   Sun for a short time to confirm that it sees fringes,
-  and then does a horizon-to-horizon observation, which
+  and then do a horizon-to-horizon observation, which
   requires writing an observing script to run automatically.
 
 Each {\it person} calculates Fourier power spectra of the Sun data,
@@ -124,6 +124,9 @@ but you may also log in remotely:
 ssh <username>@ugastro.berkeley.edu
 ssh pi@10.32.92.201
 \end{verbatim}
+If you'd like, you may use {\tt ssh} key exchange and {\tt .ssh/config} directives
+to allow you to {\tt scp} data from the RPi directly to your computer. Otherwise,
+you'll need to upload data to the cloud from the RPi.
 
 \begin{itemize}
 \item \verb+ifm = ugradio.interf.Interferometer()+ provides an interface for controlling 
@@ -193,28 +196,19 @@ system on the input ra/dec parameters.
 \section{Our X-Band Interferometer}
 
 \noindent
-With our interferometer, which operates at about 10.5 GHz, our
-attention focuses on small sources.  Our interferometer has a relatively
-short baseline and the fringe spacing is larger than the size of all
-sources except the Sun and Moon.  So for our interferometer all of
-these sources look like ``point sources'', for which all the radiation
-appears to come from a single point---just like a star in optical
-astronomy.  The output of the interferometer is a sinusoidal-like signal
-called the ``fringe''. All of the information resides in the frequency,
-amplitude and phase of the fringe.
-
-If you know the baseline, the fringe properties are direct indicators
-of the point-source declination.  With our $\sim 20$-m baseline $B$ we
-can get a fringe spacing ${\lambda \over B}\sim 5'$, and with a
-horizon-to-horizon measurement we can measure the declination 100 times
-more accurately (depending...).  In addition, we can achieve partial
-angular resolution on the Sun and measure its diameter to a
-fraction of a percent---this turns out to be more interesting than it
-sounds!
+Our interferometer operates at about 10.5 GHz,
+but the exact frequency is set by your choice of frequency for
+the two local oscillators. The first one (in the neighborhood of 8.75 GHz,
++12 dBm) goes to a DSB mixer that converts RF down to an intermediate 
+frequency (IF). The second (in the neighborhood of 1.54 GHz, +8 dBm)
+is a SSB mixer converting IF to baseband for sampling. There is some
+flexibility for where to set the first mixer (RF to IF). The second LO
+must match the IF filters. Look at the system diagram in
+{\tt ugradio/lab\_interf} for details.
 
 To compute interferometric visibilities, we 
 have an FX (Fourier transform, cross-multiply) correlator implemented on a
-SNAP signal processing board. This board (designed here at UCB!) is versatile 
+SNAP signal processing board. This board (designed here at UCB) is versatile 
 and reprogrammable. For this lab, it has been configured to digitize two signals ($v_1(t)$ and $v_2(t)$)
 at 500 Msps each, compute the real Fourier transform of 2048 time samples into 1024 channels for each
 input, and to cross-multiply
