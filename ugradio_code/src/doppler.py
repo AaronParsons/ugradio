@@ -88,36 +88,15 @@ def get_projected_velocity(
 
     # fine for standard catalog ICRS/J2000 coordinates
     sc = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame="icrs")
-
-    # If FK5, use:
-    # sc = SkyCoord(
-    #     ra=ra * u.deg,
-    #     dec=dec * u.deg,
-    #     frame="fk5",
-    #     equinox=Time(epoch, format="jd", scale="tt"),
-    # )
-
-    # topocentric -> barycentric correction
-    barycorr = sc.radial_velocity_correction(obstime=obstime, location=location)
-
-    # barycentric -> chosen LSR correction
-    los_icrs = SkyCoord(
-        ra=ra * u.deg,
-        dec=dec * u.deg,
-        distance=1 * u.pc,
-        radial_velocity=0 * u.km / u.s,
-        frame="icrs",
-    )
-
-    if lsr_frame.lower() == "lsrk":
-        los_lsr = los_icrs.transform_to(LSRK())
-    elif lsr_frame.lower() == "lsr":
-        los_lsr = los_icrs.transform_to(LSR())
-    else:
+    frame = lsr_frame.lower()
+    if frame not in ("lsrk", "lsr"):
         raise ValueError("lsr_frame must be 'lsrk' or 'lsr'")
 
-    lsrv_corr = los_lsr.radial_velocity
+    corr = sc.radial_velocity_correction(
+        kind=frame,
+        obstime=obstime,
+        location=location,
+    )
 
-    v = (barycorr + lsrv_corr).to(u.m / u.s).value
-    return v
+    return corr.to(u.m / u.s).value
     
