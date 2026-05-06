@@ -79,6 +79,7 @@ def get_projected_velocity(
         radial velocity to express it in the requested LSR frame.
     """
 
+
     obstime = Time(jd, format="jd", scale="utc")
     location = EarthLocation.from_geodetic(
         lon=obs_lon * u.deg,
@@ -88,15 +89,32 @@ def get_projected_velocity(
 
     # fine for standard catalog ICRS/J2000 coordinates
     sc = SkyCoord(ra=ra * u.deg, dec=dec * u.deg, frame="icrs")
-    frame = lsr_frame.lower()
-    if frame not in ("lsrk", "lsr"):
-        raise ValueError("lsr_frame must be 'lsrk' or 'lsr'")
 
-    corr = sc.radial_velocity_correction(
-        kind=frame,
+    los_icrs = SkyCoord(
+        ra=ra * u.deg,
+        dec=dec * u.deg,
+        distance=1.0 * u.kpc,
+        pm_ra_cosdec=0.0 * u.mas / u.yr,
+        pm_dec=0.0 * u.mas / u.yr,
+        radial_velocity=0.0 * u.km / u.s,
+        frame="icrs",
+    )
+
+    barycorr = sc.radial_velocity_correction(
+        kind="barycentric",
         obstime=obstime,
         location=location,
     )
 
-    return corr.to(u.m / u.s).value
+    frame = lsr_frame.lower()
+    if frame == "lsrk":
+        los_lsr = los_icrs.transform_to(LSRK())
+    elif frame == "lsr":
+        los_lsr = los_icrs.transform_to(LSR())
+    else:
+        raise ValueError("lsr_frame must be 'lsrk' or 'lsr'")
+
+    lsr_corr = los_lsr.radial_velocity
+
+    return (barycorr + lsr_corr).to_value(u.m / u.s)
     
